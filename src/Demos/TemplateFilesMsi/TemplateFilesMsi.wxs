@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?include ..\..\..\src\Version\Version.wxi ?>
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi" xmlns:SystemTools="http://schemas.appsecinc.com/wix/SystemToolsExtension">
+    <Product Id="c6194ae1-4cc8-40b3-9b76-a0703ee9426b" Name="Template Files Demo" Language="1033" Version="$(var.ProductVersion)" Manufacturer="$(var.CompanyName)" UpgradeCode="3eb3c17e-9ac4-4ade-96a9-8acb64d8978c">
+        <Package InstallerVersion="200" Compressed="yes" />
+        <Media Id="1" Cabinet="TemplateFilesMsi.cab" EmbedCab="yes" />
+        <Directory Id="TARGETDIR" Name="SourceDir">
+            <Directory Id="ProgramFilesFolder">
+                <Directory Id="INSTALLLOCATION" Name="TemplateFiles">
+                    <Component Id="ProductComponent" Guid="51dbba04-df21-4468-afa1-4d72ea62e9a3">
+                        <File Id="File_template" Source="File.template" Name="File.template" />
+                        <SystemTools:TemplateFile Id="File_template_process_component" Source="[#File_template]" Target="[INSTALLLOCATION]ComponentFile.txt" ExecuteOnInstall="yes">
+                            <SystemTools:TemplateFileProperty Id="INSTALLLOCATION_property" Name="INSTALLLOCATION" Value="[INSTALLLOCATION]" />
+                            <SystemTools:TemplateFileProperty Id="ALLUSERS_property" Name="ALLUSERS" Value="[ALLUSERS]" />
+                            <SystemTools:TemplateFileProperty Id="TEST_property" Name="TEST" Value="test" />
+                            <SystemTools:TemplateFileProperty Id="FILENAME_property" Name="Filename" Value="ComponentFile.txt" />
+                        </SystemTools:TemplateFile>
+                    </Component>
+                </Directory>
+            </Directory>
+        </Directory>
+        <SystemTools:TemplateFile Id="File_template_process" Source="[#File_template]" Target="[INSTALLLOCATION]File.txt" ExecuteOnInstall="yes">
+            <SystemTools:TemplateFileProperty Id="FILENAME_template_process_property" Name="Filename" Value="File.txt" />
+        </SystemTools:TemplateFile>
+        <Feature Id="ProductFeature" Title="TemplateFilesFeature" Level="1">
+            <ComponentRef Id="ProductComponent" />
+        </Feature>
+    </Product>
+</Wix>

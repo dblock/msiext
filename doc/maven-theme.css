@@ -1,0 +1,86 @@
+body, td, select, input, li, p {
+  font-family: Verdana, Helvetica, Arial, sans-serif;
+  font-size: 12px;
+}
+a {
+  text-decoration: none;
+}
+a:link {
+  color:#36a;
+}
+a:visited  {
+  color:#47a;
+}
+a:active, a:hover {
+  color:#69c;
+}
+a.externalLink, a.externalLink:link, a.externalLink:visited, a.externalLink:active, a.externalLink:hover {
+  background: url(../images/external.png) right center no-repeat;
+  padding-right: 15px;
+}
+a.newWindow, a.newWindow:link, a.newWindow:visited, a.newWindow:active, a.newWindow:hover {
+  background: url(../images/newwindow.png) right center no-repeat;
+  padding-right: 18px;
+}
+h1 {
+  padding: 4px 4px 4px 6px;
+  border: 1px solid black;
+  background-color: #ddd;
+  color: #900;
+  font-weight:900;
+  font-size: 20px;
+}
+h2 {
+  padding: 4px 4px 4px 6px;
+  border: 1px solid #999;
+  color: #900;
+  background-color: #ddd;
+  font-weight:900;
+  font-size: 16px;
+}
+h3 {
+  padding: 4px 4px 4px 6px;
+  border: 1px solid #aaa;
+  color: #900;
+  background-color: #eee;
+  font-weight: 800;
+  font-size: 14px;
+}
+#breadcrumbs {
+  border-top: 1px solid #aaa;
+  border-bottom: 1px solid #aaa;
+  background-color: #ccc;
+}
+#leftColumn {
+  margin: 10px 0 0 5px;
+  border: 1px solid #999;
+  background-color: #eee;
+}
+#navcolumn h5 {
+  font-size: smaller;
+  border-bottom: 1px solid #aaaaaa;
+  padding-top: 2px;
+}
+
+table.bodyTable th {
+  color: white;
+  background-color: #bbb;
+  text-align: left;
+  font-weight: bold;
+}
+
+table.bodyTable th, table.bodyTable td {
+  font-size: 1em;
+}
+
+table.bodyTable tr.a {
+  background-color: #ddd;
+}
+
+table.bodyTable tr.b {
+  background-color: #eee;
+}
+
+.source {
+  border: 1px solid #999;
+}

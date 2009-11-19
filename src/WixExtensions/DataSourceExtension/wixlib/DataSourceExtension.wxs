@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
+    <?ifdef Debug ?>
+    <?define ConfigurationName=Debug ?>
+    <?else ?>
+    <?define ConfigurationName=Release ?>
+    <?endif ?>
+    <?define SolutionDir=$(sys.SOURCEFILEDIR)..\..\..\.. ?>
+    <?define BinDir=$(var.SolutionDir)\target\$(var.ConfigurationName)\bin ?>
+    <Fragment>
+        <UI>
+            <ProgressText Action="CreateDatabases_SQLServer_Deferred_Install">!(loc.CreateDatabases)</ProgressText>
+            <ProgressText Action="CreateDatabases_SQLServer_Deferred_UnInstall">!(loc.CreateDatabases)</ProgressText>
+            <ProgressText Action="CreateDatabases_Access_Deferred_Install">!(loc.CreateDatabases)</ProgressText>
+            <ProgressText Action="CreateDatabases_Access_Deferred_UnInstall">!(loc.CreateDatabases)</ProgressText>
+            <ProgressText Action="Execute_ODBC_Deferred_Install">!(loc.ExecuteSQLStrings)</ProgressText>
+            <ProgressText Action="Execute_ODBC_Deferred_UnInstall">!(loc.ExecuteSQLStrings)</ProgressText>
+            <ProgressText Action="DataFile_SQLServer_Deferred_Install">!(loc.InsertData)</ProgressText>
+            <ProgressText Action="DataFile_SQLServer_Deferred_UnInstall">!(loc.InsertData)</ProgressText>
+            <ProgressText Action="DataSource_ODBC_Deferred_Install">!(loc.ConfigureDataSource)</ProgressText>
+            <ProgressText Action="DataSource_ODBC_Deferred_UnInstall">!(loc.ConfigureDataSource)</ProgressText>
+        </UI>
+        <CustomAction Id="CreateDatabases_SQLServer_Immediate_Install" BinaryKey="DataSourceCA" DllEntry="CreateDatabases_SQLServer_Immediate" Execute="immediate" Return="check" />
+        <CustomAction Id="CreateDatabases_SQLServer_Immediate_UnInstall" BinaryKey="DataSourceCA" DllEntry="CreateDatabases_SQLServer_Immediate" Execute="immediate" Return="check" />
+        <CustomAction Id="CreateDatabases_SQLServer_Deferred_Install" BinaryKey="DataSourceCA" DllEntry="CreateDatabases_SQLServer_Deferred" Execute="deferred" Return="check" Impersonate="yes" TerminalServerAware="yes" />
+        <CustomAction Id="CreateDatabases_SQLServer_Deferred_UnInstall" BinaryKey="DataSourceCA" DllEntry="CreateDatabases_SQLServer_Deferred" Execute="deferred" Return="check" Impersonate="yes" TerminalServerAware="yes" />
+        <CustomAction Id="CreateDatabases_Access_Immediate_Install" BinaryKey="DataSourceCA" DllEntry="CreateDatabases_Access_Immediate" Execute="immediate" Return="check" />
+        <CustomAction Id="CreateDatabases_Access_Immediate_UnInstall" BinaryKey="DataSourceCA" DllEntry="CreateDatabases_Access_Immediate" Execute="immediate" Return="check" />
+        <CustomAction Id="CreateDatabases_Access_Deferred_Install" BinaryKey="DataSourceCA" DllEntry="CreateDatabases_Access_Deferred" Execute="deferred" Return="check" Impersonate="yes" TerminalServerAware="yes" />
+        <CustomAction Id="CreateDatabases_Access_Deferred_UnInstall" BinaryKey="DataSourceCA" DllEntry="CreateDatabases_Access_Deferred" Execute="deferred" Return="check" Impersonate="yes" TerminalServerAware="yes" />
+        <CustomAction Id="Execute_ODBC_Immediate_Install" BinaryKey="DataSourceCA" DllEntry="Execute_ODBC_Immediate" Execute="immediate" Return="check" />
+        <CustomAction Id="Execute_ODBC_Immediate_UnInstall" BinaryKey="DataSourceCA" DllEntry="Execute_ODBC_Immediate" Execute="immediate" Return="check" />
+        <CustomAction Id="Execute_ODBC_Deferred_Install" BinaryKey="DataSourceCA" DllEntry="Execute_ODBC_Deferred" Execute="deferred" Return="check" Impersonate="yes" TerminalServerAware="yes" />
+        <CustomAction Id="Execute_ODBC_Deferred_UnInstall" BinaryKey="DataSourceCA" DllEntry="Execute_ODBC_Deferred" Execute="deferred" Return="check" Impersonate="yes" TerminalServerAware="yes" />
+        <CustomAction Id="DataFile_SQLServer_Immediate_Install" BinaryKey="DataSourceCA" DllEntry="DataFile_SQLServer_Immediate" Execute="immediate" Return="check" />
+        <CustomAction Id="DataFile_SQLServer_Immediate_UnInstall" BinaryKey="DataSourceCA" DllEntry="DataFile_SQLServer_Immediate" Execute="immediate" Return="check" />
+        <CustomAction Id="DataFile_SQLServer_Deferred_Install" BinaryKey="DataSourceCA" DllEntry="DataFile_SQLServer_Deferred" Execute="deferred" Return="check" Impersonate="yes" TerminalServerAware="yes" />
+        <CustomAction Id="DataFile_SQLServer_Deferred_UnInstall" BinaryKey="DataSourceCA" DllEntry="DataFile_SQLServer_Deferred" Execute="deferred" Return="check" Impersonate="yes" TerminalServerAware="yes" />
+        <CustomAction Id="DataSource_ODBC_Immediate_Install" BinaryKey="DataSourceCA" DllEntry="DataSource_ODBC_Immediate" Execute="immediate" Return="check" />
+        <CustomAction Id="DataSource_ODBC_Immediate_UnInstall" BinaryKey="DataSourceCA" DllEntry="DataSource_ODBC_Immediate" Execute="immediate" Return="check" />
+        <CustomAction Id="DataSource_ODBC_Deferred_Install" BinaryKey="DataSourceCA" DllEntry="DataSource_ODBC_Deferred" Execute="deferred" Return="check" Impersonate="yes" TerminalServerAware="yes" />
+        <CustomAction Id="DataSource_ODBC_Deferred_UnInstall" BinaryKey="DataSourceCA" DllEntry="DataSource_ODBC_Deferred" Execute="deferred" Return="check" Impersonate="yes" TerminalServerAware="yes" />
+        <InstallExecuteSequence>
+            <!-- install first creates databases, then executes sql, then inserts data -->
+            <Custom Action="CreateDatabases_SQLServer_Immediate_Install" After="InstallFiles" Overridable="yes">NOT Installed</Custom>
+            <Custom Action="CreateDatabases_SQLServer_Deferred_Install" After="CreateDatabases_SQLServer_Immediate_Install" Overridable="yes">NOT Installed</Custom>
+            <Custom Action="CreateDatabases_Access_Immediate_Install" After="CreateDatabases_SQLServer_Deferred_Install" Overridable="yes">NOT Installed</Custom>
+            <Custom Action="CreateDatabases_Access_Deferred_Install" After="CreateDatabases_Access_Immediate_Install" Overridable="yes">NOT Installed</Custom>
+            <Custom Action="DataSource_ODBC_Immediate_Install" After="CreateDatabases_Access_Deferred_Install" Overridable="yes">NOT Installed</Custom>
+            <Custom Action="DataSource_ODBC_Deferred_Install" After="DataSource_ODBC_Immediate_Install" Overridable="yes">NOT Installed</Custom>
+            <Custom Action="Execute_ODBC_Immediate_Install" After="DataSource_ODBC_Deferred_Install" Overridable="yes">NOT Installed</Custom>
+            <Custom Action="Execute_ODBC_Deferred_Install" After="DataSource_ODBC_Immediate_Install" Overridable="yes">NOT Installed</Custom>
+            <Custom Action="DataFile_SQLServer_Immediate_Install" After="Execute_ODBC_Deferred_Install" Overridable="yes">NOT Installed</Custom>
+            <Custom Action="DataFile_SQLServer_Deferred_Install" After="DataFile_SQLServer_Immediate_Install" Overridable="yes">NOT Installed</Custom>
+            <!-- uninstall does the same in reverse order -->
+            <Custom Action="DataFile_SQLServer_Immediate_UnInstall" After="InstallFiles" Overridable="yes">Installed</Custom>
+            <Custom Action="DataFile_SQLServer_Deferred_UnInstall" After="DataFile_SQLServer_Immediate_UnInstall" Overridable="yes">Installed</Custom>
+            <Custom Action="Execute_ODBC_Immediate_UnInstall" After="DataFile_SQLServer_Deferred_UnInstall" Overridable="yes">Installed</Custom>
+            <Custom Action="Execute_ODBC_Deferred_UnInstall" After="Execute_ODBC_Immediate_UnInstall" Overridable="yes">Installed</Custom>
+            <Custom Action="CreateDatabases_SQLServer_Immediate_UnInstall" After="Execute_ODBC_Deferred_UnInstall" Overridable="yes">Installed</Custom>
+            <Custom Action="CreateDatabases_SQLServer_Deferred_UnInstall" After="CreateDatabases_SQLServer_Immediate_UnInstall" Overridable="yes">Installed</Custom>
+            <Custom Action="CreateDatabases_Access_Immediate_UnInstall" After="CreateDatabases_SQLServer_Deferred_UnInstall" Overridable="yes">Installed</Custom>
+            <Custom Action="CreateDatabases_Access_Deferred_UnInstall" After="CreateDatabases_Access_Immediate_UnInstall" Overridable="yes">Installed</Custom>
+            <Custom Action="DataSource_ODBC_Immediate_UnInstall" After="CreateDatabases_Access_Immediate_UnInstall" Overridable="yes">Installed</Custom>
+            <Custom Action="DataSource_ODBC_Deferred_UnInstall" After="DataSource_ODBC_Immediate_UnInstall" Overridable="yes">Installed</Custom>
+        </InstallExecuteSequence>
+    </Fragment>
+    <Fragment>
+        <Binary Id="DataSourceCA" SourceFile="$(var.BinDir)\DataSource.dll" />
+    </Fragment>
+</Wix>

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="Windows-1252"?>
+<VisualStudioPropertySheet
+	ProjectType="Visual C++"
+	Version="8.00"
+	Name="ASI_DLL_Debug"
+	InheritedPropertySheets=".\ASI_DLL_Neutral.vsprops;.\ASI_Common_Debug.vsprops"
+	>
+	<Tool
+		Name="VCCLCompilerTool"
+		RuntimeLibrary="3"
+	/>
+</VisualStudioPropertySheet>

@@ -1,0 +1,8 @@
+Id	Source	Target	Wildcard	Overwrite	Condition	Attributes
+s72	l0	l0	S0	S0	S0	I2
+Win32_CopyFiles	Id
+CopyAlways	[SOURCELOCATION]TestData_SystemToolsUnitTests\Binary.idt	[INSTALLLOCATION]CopyAlways.wxs				1
+CopyConditional	[SOURCELOCATION]TestData_SystemToolsUnitTests\Binary.idt	[INSTALLLOCATION]CopyConditional.wxs			COPY_CONDITIONAL = 1	1
+CopyOverwrite	[SOURCELOCATION]TestData_SystemToolsUnitTests\Binary.idt	[INSTALLLOCATION]CopyAlways.wxs		yes		1
+CopyDirectory	[SOURCELOCATION]TestData_SystemToolsUnitTests	[INSTALLLOCATION]CopyDirectory\	*.idt	yes		1
+CopyDirectoryRecursive	[SOURCELOCATION]TestData_SystemToolsUnitTests	[INSTALLLOCATION]CopyDirectoryRecursive\	*.*	yes		17

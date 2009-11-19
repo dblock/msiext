@@ -1,0 +1,432 @@
+//////////////////////////////////////////////////////////////////////////
+// sqlres.idl 
+// 
+// description: IDL file for VB Conflict Resolver type library.
+// adapted from sqlres.h
+// author: jimraf 10DEC1998
+// 
+// 30APR1999	Added GetDestinationOwnerName() to IReplRowChange
+// 10MAY1999	Added INTERACTIVE_RESOLVER_INFO struct
+//////////////////////////////////////////////////////////////////////////
+//#include <olectl.h>
+
+// This file will be processed by the MIDL tool to
+// produce the type library (sqlres.tlb) and marshalling code.
+
+import "oaidl.idl";
+//import "ocidl.idl";
+import "unknwn.idl";
+
+#ifdef GENVBTYPELIB
+#define LPUNICODESTR wchar_t*
+#define INTEGERTYPE long
+#define BOOLTYPE REPOLE_BOOL
+#define PGUIDTYPE REPLGUID*
+#define SQLDATATYPE_TYPE REPOLE_SQL_DATATYPE
+#else
+#define LPUNICODESTR LPWSTR
+#define INTEGERTYPE DWORD
+#define BOOLTYPE BOOL
+#define PGUIDTYPE LPGUID
+#define SQLDATATYPE_TYPE long
+#endif
+
+//////////////////////////////////////////////////////////////////////////
+// enumerated constants
+//////////////////////////////////////////////////////////////////////////
+
+//
+// enum REPOLE_SQL_DATATYPE
+//
+// this is just an enum I made out of ODBC constants.
+// UNKNOWN_TYPE is bogus, and will/should never be returned by a call
+// to GetColumnDatatype()
+//
+
+typedef [v1_enum] enum {
+	REPOLEType_SQL_UNKNOWN_TYPE    = 0,
+	REPOLEType_SQL_CHAR            = 1,
+	REPOLEType_SQL_NUMERIC         = 2,
+	REPOLEType_SQL_DECIMAL         = 3,
+	REPOLEType_SQL_INTEGER         = 4,
+	REPOLEType_SQL_SMALLINT        = 5,
+	REPOLEType_SQL_FLOAT           = 6,
+	REPOLEType_SQL_REAL            = 7,
+	REPOLEType_SQL_DOUBLE          = 8,
+	REPOLEType_SQL_DATETIME        = 9,
+	REPOLEType_SQL_VARCHAR         = 12,
+	REPOLEType_SQL_DATE			   = 9,
+	REPOLEType_SQL_INTERVAL		   = 10,
+	REPOLEType_SQL_TIME 		   = 10,
+	REPOLEType_SQL_TIMESTAMP       = 11,
+	REPOLEType_SQL_LONGVARCHAR     = -1,
+	REPOLEType_SQL_BINARY          = -2,
+	REPOLEType_SQL_VARBINARY       = -3,
+	REPOLEType_SQL_LONGVARBINARY   = -4,
+	REPOLEType_SQL_BIGINT          = -5,
+	REPOLEType_SQL_TINYINT         = -6,
+	REPOLEType_SQL_BIT             = -7,
+	REPOLEType_SQL_GUID			   = -11
+} REPOLE_SQL_DATATYPE;
+
+typedef [v1_enum] enum {
+	REPOLEDataSource_Native 		= 0x0000,
+	REPOLEDataSource_ODBC 			= 0x0001,
+	REPOLEDataSource_Jet 			= 0x0002,
+	REPOLEDataSource_OLEDB 			= 0x0003,
+	REPOLEDataSource_Exchange		= 0x0004,
+	REPOLEDataSource_Oracle			= 0x0005,
+	REPOLEDataSource_DB2Universal	= 0x0006,
+	REPOLEDataSource_SSCE			= 0x0007,
+	REPOLEDataSource_XML			= 0x0008
+
+}  REPOLE_DATASOURCE_TYPE;
+
+typedef [v1_enum] enum {
+	REPOLESecurity_Min 			= 0,				
+	REPOLESecurity_Normal 		= 0,
+	REPOLESecurity_Integrated 	= 1,
+	REPOLESecurity_Mixed 		= 2,
+	REPOLESecurity_Max 			= 2,
+	REPOLESecurity_Invalid		= -1
+}  REPOLE_SECURITY_TYPE;
+
+typedef enum {	
+    METADATA_TYPE_Missing			= 	0x0000,	
+    METADATA_TYPE_Tombstone			= 	0x0001,
+    METADATA_TYPE_Contents			= 	0x0002,	
+    METADATA_TYPE_ContentsDeferred 	= 	0x0003,	//  This means row exists, but isn't in contents yet
+    METADATA_TYPE_Reserved	 		= 	0x0004,	//  Reserved for future use 
+    METADATA_TYPE_PartialDelete 	= 	0x0005,	//  Tombstone indicates row no longer belongs at partial replica
+    METADATA_TYPE_SystemDelete 		= 	0x0006	//  Tombstone indicates situations like dupkey/dupindex violation
+} METADATA_TYPE;
+
+typedef [v1_enum] enum {
+	REPOLEChange_SubscriberInsert						= 0x00000001,
+	REPOLEChange_PublisherInsert						= 0x00010000,
+
+ 	REPOLEChange_SubscriberDelete_NoConflict			= 0x00000002,
+ 	REPOLEChange_PublisherDelete_NoConflict				= 0x00020000,
+ 	REPOLEChange_SubscriberSystemDelete					= 0x00000004,
+ 	REPOLEChange_PublisherSystemDelete					= 0x00040000,
+ 	REPOLEChange_SubscriberDelete_Conflict				= 0x00000008,
+ 	REPOLEChange_PublisherDelete_Conflict				= 0x00080000,
+ 	REPOLEChange_SubscriberRemoveFromPartial			= 0x00000010,
+ 	REPOLEChange_PublisherRemoveFromPartial				= 0x00100000,
+
+ 	REPOLEChange_SubscriberUpdate_NoConflict			= 0x00000020,
+ 	REPOLEChange_PublisherUpdate_NoConflict				= 0x00200000,
+ 	REPOLEChange_SubscriberUpdate_ConflictWithDelete	= 0x00000040,
+ 	REPOLEChange_PublisherUpdate_ConflictWithDelete		= 0x00400000,
+ 	REPOLEChange_SubscriberUpdate_ConflictColTrack		= 0x00000080,
+ 	REPOLEChange_PublisherUpdate_ConflictColTrack		= 0x00800000,
+ 	REPOLEChange_SubscriberUpdate_ConflictNoColTrack	= 0x00000100,
+ 	REPOLEChange_PublisherUpdate_ConflictNoColTrack		= 0x01000000,
+
+
+ 	REPOLEChange_UploadInsertFailed						= 0x00000200,
+ 	REPOLEChange_DownloadInsertFailed					= 0x02000000,
+ 	REPOLEChange_UploadDeleteFailed						= 0x00000400,
+ 	REPOLEChange_DownloadDeleteFailed					= 0x04000000,
+ 	REPOLEChange_UploadUpdateFailed						= 0x00000800,
+ 	REPOLEChange_DownloadUpdateFailed					= 0x08000000,
+
+    REPOLEUpdateConflicts = (REPOLEChange_SubscriberUpdate_ConflictColTrack  
+        | REPOLEChange_PublisherUpdate_ConflictColTrack 
+        | REPOLEChange_SubscriberUpdate_ConflictNoColTrack  
+        | REPOLEChange_PublisherUpdate_ConflictNoColTrack),
+    REPOLEAllConflicts = (REPOLEChange_SubscriberDelete_Conflict 
+        | REPOLEChange_PublisherDelete_Conflict | REPOLEChange_SubscriberUpdate_ConflictWithDelete 
+        | REPOLEChange_PublisherUpdate_ConflictWithDelete | REPOLEUpdateConflicts),
+    REPOLEAllErrors = (REPOLEChange_UploadInsertFailed | REPOLEChange_DownloadInsertFailed 
+        | REPOLEChange_UploadDeleteFailed | REPOLEChange_DownloadDeleteFailed 
+        | REPOLEChange_UploadUpdateFailed | REPOLEChange_DownloadUpdateFailed),
+    REPOLEAllNonConflicts = (REPOLEChange_SubscriberInsert | REPOLEChange_PublisherInsert
+        | REPOLEChange_SubscriberDelete_NoConflict | REPOLEChange_PublisherDelete_NoConflict
+        | REPOLEChange_SubscriberSystemDelete | REPOLEChange_PublisherSystemDelete 
+        | REPOLEChange_SubscriberRemoveFromPartial | REPOLEChange_SubscriberUpdate_NoConflict 
+        | REPOLEChange_PublisherUpdate_NoConflict),
+    REPOLEAllChanges = (REPOLEAllConflicts | REPOLEAllErrors | REPOLEAllNonConflicts)
+	
+}  REPOLE_CHANGE_TYPE;
+
+typedef [v1_enum] enum {
+	REPOLEConflict_Min						= 1,
+	REPOLEConflict_UpdateConflict			= 1,
+	REPOLEConflict_ColumnUpdateConflict		= 2,
+	REPOLEConflict_UpdateDeleteWinsConflict	= 3,
+	REPOLEConflict_UpdateWinsDeleteConflict	= 4,
+ 	REPOLEConflict_UploadInsertFailed		= 5,
+ 	REPOLEConflict_DownloadInsertFailed		= 6,
+ 	REPOLEConflict_UploadDeleteFailed		= 7,
+ 	REPOLEConflict_DownloadDeleteFailed		= 8,
+ 	REPOLEConflict_UploadUpdateFailed		= 9,
+ 	REPOLEConflict_DownloadUpdateFailed		= 10,
+	REPOLEConflict_ResolutionDone			= 11,
+	REPOLEConflict_Max						= 11
+}  REPOLE_CONFLICT_TYPE;
+
+typedef [v1_enum] enum {
+	REPOLEColumn_NotUpdated			 		= 0x0001,	// No updates to column or data values match
+	REPOLEColumn_UpdatedNoConflict			= 0x0002,	// Column updated at src, no column level conflict
+	REPOLEColumn_UpdatedWithConflict		= 0x0003,	// Column updated at src, conflicts with change at destination
+	REPOLEColumn_DifferNoTrack				= 0x0004	// No column tracking info, data values are different
+}  REPOLE_COLSTATUS_TYPE;
+
+typedef [v1_enum] enum {
+	REPOLEPriority_Source		= 0x0001,	// The source has the higher priority
+	REPOLEPriority_Destination 	= 0x0002,	// The destination has the higher priority
+	REPOLEPriority_Equal		= 0x0003	// Source and destination have equal priority
+}  REPOLE_PRIORITY_TYPE;
+
+typedef [v1_enum] enum {
+    REPOLEColumnAttribute_Updatable 	= 0x0001,
+    REPOLEColumnAttribute_Identity 		= 0x0002
+} REPOLE_COLUMN_ATTRIBUTES;
+
+typedef [v1_enum] enum {
+    REPOLEExtErrorNoneOrNotSpecified = 0x00000000,	// all errors we do not address specifically
+    REPOLEExtErrorDupKey 			= 0x00000001,	// SQL error 2627
+    REPOLEExtErrorDupUniqueIndex 	= 0x00000002	// SQL error 2601
+} REPOLE_EXTENDEDERROR_TYPE;
+
+//
+// enum REPOLE_BOOL
+//
+// another hack enum. ensures that proper values for true & false are enforced.
+//
+
+typedef [v1_enum] enum {
+    REPOLEBool_FALSE = 0,
+    REPOLEBool_TRUE = 1
+} REPOLE_BOOL;
+
+//////////////////////////////////////////////////////////////////////////
+// REPLGUID type. Defining this ensures that people coding a resolver
+// in VB will use the correct definition of a GUID. I've seen some
+// bad ones.
+//////////////////////////////////////////////////////////////////////////
+ 
+typedef struct REPLGUID {
+    long Data1;
+    short Data2;
+    short Data3;
+    unsigned char Data4[8];
+} REPLGUID;
+
+//////////////////////////////////////////////////////////////////////////
+// interface IConnectionInfo
+//
+// this interface is implemented by Microsoft. The definition is included
+// here only so it appears in the type library & can be used in VB.
+//////////////////////////////////////////////////////////////////////////
+
+[
+	object,
+	uuid(37E95A52-1CA3-11d0-A11B-00AA003E4672),
+	helpstring("IConnectionInfo interface"),
+	pointer_default(unique)
+]
+
+interface IConnectionInfo : IUnknown
+{
+	HRESULT GetConnectName ([out, string, size_is(cbConnectName)] LPUNICODESTR ConnectName, INTEGERTYPE cbConnectName);
+	HRESULT GetServerName ([out, string, size_is(cbServerName)] LPUNICODESTR ServerName, INTEGERTYPE cbServerName);
+	HRESULT GetHostName ([out, string, size_is(cbHostName)] LPUNICODESTR HostName, INTEGERTYPE cbHostName);
+	HRESULT GetServerRole ([out, string, size_is(cbServerRole)] LPUNICODESTR ServerRole, INTEGERTYPE cbServerRole);
+	HRESULT GetInternetAddress ([out, string, size_is(cbInternetAddress)] LPUNICODESTR InternetAddress, INTEGERTYPE cbInternetAddress);
+	HRESULT GetInternetNetwork ([out, string, size_is(cbInternetNetwork)] LPUNICODESTR InternetNetwork, INTEGERTYPE cbInternetNetwork);
+	HRESULT GetDatabase ([out, string, size_is(cbDatabase)] LPUNICODESTR Database, INTEGERTYPE cbDatabase);
+	HRESULT GetDatabaseStatus ([out] long *plDatabaseStatus);
+	HRESULT GetDatasourcePath ([out, string, size_is(cbDatasourcePath)] LPUNICODESTR DatasourcePath, INTEGERTYPE cbDatasourcePath);
+	HRESULT GetDataSourceType ([out] REPOLE_DATASOURCE_TYPE* pRetValue);
+	HRESULT GetSecurityMode ([out] REPOLE_SECURITY_TYPE* pRetValue);
+	HRESULT GetLogin ([out, string, size_is(cbLogin)] LPUNICODESTR Login, INTEGERTYPE cbLogin);
+	HRESULT GetPassword ([out, string, size_is(cbPassword)] LPUNICODESTR Password, INTEGERTYPE cbPassword);
+	HRESULT GetODBCEnvironmentHandle ([out] long* phenv);
+	HRESULT GetLoginTimeout ([out] long *plLoginTimeout);
+	HRESULT GetQueryTimeout ([out] long *plQueryTimeout);
+	HRESULT GetPacketSize ([out] unsigned long *pusPacketSize);
+	HRESULT GetApplicationName ([out, string, size_is(cbApplicationName)] LPUNICODESTR ApplicationName, INTEGERTYPE cbApplicationName);
+	HRESULT GetProviderName ([out, string, size_is(cbProviderName)] LPUNICODESTR ProviderName, INTEGERTYPE cbProviderName);
+	HRESULT GetDatasource ([out, string, size_is(cbDatasource)] LPUNICODESTR Datasource, INTEGERTYPE cbDatasource);
+	HRESULT GetLocation ([out, string, size_is(cbLocation)] LPUNICODESTR Location, INTEGERTYPE cbLocation);
+	HRESULT GetProviderString ([out, string, size_is(cbProviderString)] LPUNICODESTR ProviderString, INTEGERTYPE cbProviderString);
+	HRESULT GetCatalog ([out, string, size_is(cbCatalog)] LPUNICODESTR Catalog, INTEGERTYPE cbCatalog);
+#ifdef GENVBTYPELIB
+	HRESULT GetDBCreatedThisSession ([out] long *pbDBCreatedThisSession);
+#else
+	HRESULT GetDBCreatedThisSession ([out] BOOL *pbDBCreatedThisSession);
+#endif
+    HRESULT SetConnectName([in] LPCWSTR  ConnectName);
+    HRESULT SetServerName([in] LPCWSTR  ServerName);
+    HRESULT SetHostName([in] LPCWSTR  HostName);
+	HRESULT SetServerRole([in] LPCWSTR  ServerRole);
+    HRESULT SetInternetAddress([in] LPCWSTR  InternetAddress);
+    HRESULT SetInternetNetwork([in] LPCWSTR  InternetNetwork);
+    HRESULT SetDatabase([in] LPCWSTR  Database);
+	HRESULT SetDatabaseStatus([in] LONG lDatabaseStatus);
+    HRESULT SetDatasourcePath([in] LPCWSTR  DatasourcePath);
+    HRESULT SetDataSourceType([in] REPOLE_DATASOURCE_TYPE DataSourceType);
+    HRESULT SetSecurityMode([in] REPOLE_SECURITY_TYPE SecurityMode);
+    HRESULT SetLogin([in] LPCWSTR  Login);
+    HRESULT SetPassword([in] LPCWSTR  Password);
+    HRESULT SetODBCEnvironmentHandle([in] long henv);
+    HRESULT SetLoginTimeout([in] LONG lLoginTimeout);
+    HRESULT SetQueryTimeout([in] LONG lQueryTimeout);
+    HRESULT SetPacketSize([in] unsigned long usPacketSize);
+    HRESULT SetApplicationName([in] LPCWSTR  ApplicationName);
+	HRESULT SetProviderName([in] LPCWSTR  ProviderName);
+	HRESULT SetDatasource([in] LPCWSTR  Datasource);
+	HRESULT SetLocation([in] LPCWSTR  Location);
+	HRESULT SetProviderString([in] LPCWSTR  ProviderString);
+	HRESULT SetCatalog([in] LPCWSTR  Catalog);
+#ifdef GENVBTYPELIB
+	HRESULT SetDBCreatedThisSession([in] long bDBCreatedThisSession);
+#else
+	HRESULT SetDBCreatedThisSession([in] BOOL bDBCreatedThisSession);
+#endif
+    HRESULT SetBcpBatchSize([in] LONG lBcpBatchSize);
+    HRESULT GetBcpBatchSize([out] LONG * plBcpBatchSize);
+
+#ifdef GENVBTYPELIB
+	HRESULT GetWaitServerResponse([out] long *pbWaitingForResponse, [out] INTEGERTYPE *pdwWaitingSinceTickCount);
+	HRESULT SetWaitServerResponse([in] long bWaitingForResponse, [in] INTEGERTYPE dwWaitingSinceTickCount);
+	HRESULT GetUseInprocLoader([out] long *pbUseInprocLoader);
+	HRESULT SetUseInprocLoader([in] long bUseInprocLoader);
+#else
+	HRESULT GetWaitServerResponse([out] BOOL *pbWaitingForResponse, [out] INTEGERTYPE *pdwWaitingSinceTickCount);
+	HRESULT SetWaitServerResponse([in] BOOL bWaitingForResponse, [in] INTEGERTYPE dwWaitingSinceTickCount);
+	HRESULT GetUseInprocLoader([out] BOOL *pbUseInprocLoader);
+	HRESULT SetUseInprocLoader([in] BOOL bUseInprocLoader);
+#endif
+
+	HRESULT SetCodePage([in] LONG lCodePage);
+    HRESULT GetCodePage([out] LONG * plCodePage);
+	HRESULT SetLCID([in] LONG lLCID);
+    HRESULT GetLCID([out] LONG * plLCID);
+	HRESULT SetComparisonStyle([in] LONG lComparisonStyle);
+    HRESULT GetComparisonStyle([out] LONG * plComparisonStyle);
+    HRESULT SetNumDeadlockRetries([in] LONG lNumDeadlockRetries);
+    HRESULT GetNumDeadlockRetries([out] LONG * plNumDeadlockRetries);
+	
+	HRESULT SetMajorVersion(LONG lMajorVersion);
+	HRESULT GetMajorVersion(LONG *plMajorVersion);
+    HRESULT SetMinorVersion(LONG lMinorVersion);
+	HRESULT GetMinorVersion(LONG *plMinorVersion);
+};
+
+//////////////////////////////////////////////////////////////////////////
+// interface IReplRowChange
+//
+// this interface is implemented by Microsoft. The definition is included
+// here only so it appears in the type library & can be used in VB.
+//////////////////////////////////////////////////////////////////////////
+
+[
+	object,
+	uuid(FC2F91C2-1CA2-11d0-A11B-00AA003E4672),
+	helpstring("IReplRowChange interface"),
+	pointer_default(unique)
+]
+
+interface IReplRowChange : IUnknown
+{
+	HRESULT GetTableName ([out, string, size_is(cbTableName)] LPUNICODESTR pTableName, INTEGERTYPE cbTableName );
+	HRESULT GetRowIdentifier ([out] PGUIDTYPE pRowGuid );
+	HRESULT GetResolverProcedureName ([out, string, size_is(cbResolverProcedureName)] LPUNICODESTR pResolverProcedureName, INTEGERTYPE cbResolverProcedureName );
+	HRESULT GetNumColumns ([out] INTEGERTYPE *pdwColumnCount );
+	HRESULT GetChangeType ([out] REPOLE_CHANGE_TYPE *pChangeType);
+	HRESULT GetColumnStatus (INTEGERTYPE ColumnId, [out] REPOLE_COLSTATUS_TYPE *pColStatus);
+	HRESULT GetColumnName (INTEGERTYPE ColumnId, [out, string, size_is(cbColumnName)] LPUNICODESTR pColumnName, INTEGERTYPE cbColumnName);
+	HRESULT GetColumnDatatype (INTEGERTYPE ColumnId, [out] SQLDATATYPE_TYPE * plDataType);
+
+#ifdef GENVBTYPELIB
+	HRESULT GetSourceColumnValue (INTEGERTYPE ColumnId, [out] VARIANT *pvBuffer, [in] INTEGERTYPE cbBufferMax, [out] INTEGERTYPE *pcbBufferActual);
+	HRESULT GetDestinationColumnValue (INTEGERTYPE ColumnId, [out] VARIANT *pvBuffer, [in] INTEGERTYPE cbBufferMax, [out] INTEGERTYPE *pcbBufferActual);
+#else
+	[local] HRESULT GetSourceColumnValue (INTEGERTYPE ColumnId, [out] void *pvBuffer, [in] INTEGERTYPE bBufferMax, [out] INTEGERTYPE *pcbBufferActual);
+	[call_as(GetSourceColumnValue)] HRESULT RemoteGetSourceColumnValue (INTEGERTYPE ColumnId, [out] VARIANT *pvBuffer, [in] INTEGERTYPE cbBufferMax, [out] INTEGERTYPE *pcbBufferActual);
+	[local] HRESULT GetDestinationColumnValue (INTEGERTYPE ColumnId, [out] void *pvBuffer, [in] INTEGERTYPE cbBufferMax, [out] INTEGERTYPE *pcbBufferActual);
+	[call_as(GetDestinationColumnValue)] HRESULT RemoteGetDestinationColumnValue (INTEGERTYPE ColumnId, [out] VARIANT *pvBuffer, [in] INTEGERTYPE cbBufferMax, [out] INTEGERTYPE *pcbBufferActual);
+#endif
+
+	HRESULT GetPriorityWinner ([out] REPOLE_PRIORITY_TYPE* pPriorityWinner);
+	HRESULT GetSourceConnectionInfo ([out] IConnectionInfo **ppSourceConnectionInfo, [out] BOOLTYPE *pfIsPublisher);
+	HRESULT GetDestinationConnectionInfo ([out] IConnectionInfo **ppDestinationConnectionInfo, [out] BOOLTYPE *pfIsPublisher);
+	HRESULT DeleteRow ();
+	HRESULT CopyRowFromSource ();
+	HRESULT CopyColumnFromSource (INTEGERTYPE ColumnId);
+	HRESULT ForceRememberChange();
+
+#ifdef GENVBTYPELIB
+	HRESULT SetColumn (INTEGERTYPE ColumnId, [in] VARIANT *pvBuffer, INTEGERTYPE cbBuffer);
+#else
+	[local] HRESULT SetColumn (INTEGERTYPE ColumnId, [in] void *pvBuffer, INTEGERTYPE cbBuffer);
+	[call_as(SetColumn)] HRESULT RemoteSetColumn (INTEGERTYPE ColumnId, [in] VARIANT *pvBuffer, INTEGERTYPE cbBuffer);
+#endif
+
+	HRESULT UpdateRow ();
+	HRESULT InsertRow ();
+	HRESULT LogConflict ([in] BOOLTYPE bLogSourceConflict, [in] REPOLE_CONFLICT_TYPE ConflictType, [in] BOOLTYPE bOnlyLogIfUpdater, [in, string, optional, defaultvalue("")] BSTR pszConflictMessage, [in, optional, defaultvalue(FALSE)] BOOLTYPE bLogConflictOnUpload);
+	HRESULT LogError ([in] REPOLE_CHANGE_TYPE ChangeType, [in, string, optional, defaultvalue("")] BSTR  pszErrorMessage);
+	HRESULT GetErrorInfo ([out] INTEGERTYPE *pErrCode, [string] LPUNICODESTR pErrText);
+	HRESULT DoDummyUpdate ([in] BOOLTYPE fUpLineage, [in] BOOLTYPE fAtPublisher);
+	HRESULT GetTableOwnerName ([out, string, size_is(cbOwnerName)] LPUNICODESTR pOwnerName, INTEGERTYPE cbOwnerName);
+	HRESULT GetRowGuidColName ([out, string, size_is(cbRowGuidColName)] LPUNICODESTR pRowGuidColName, INTEGERTYPE cbRowGuidColName);
+    HRESULT GetDestinationOwnerName([out, string, size_is(cbDestName)] LPUNICODESTR pDestOwnerName, INTEGERTYPE cbDestName);
+	HRESULT GetColumnAttributes (INTEGERTYPE ColumnId, [out]  REPOLE_COLUMN_ATTRIBUTES* plColumnAttributes);
+	HRESULT GetExtendedError ([out]  REPOLE_EXTENDEDERROR_TYPE* pExtError);
+	HRESULT SetExtendedError ([in]  REPOLE_EXTENDEDERROR_TYPE ExtError);
+};
+
+//////////////////////////////////////////////////////////////////////////
+// interface ICustomResolver
+//
+// this is the interface that needs to be implemented by ISVs.
+//////////////////////////////////////////////////////////////////////////
+
+[
+	object,
+	uuid(FC2F91C1-1CA2-11d0-A11B-00AA003E4672),
+	helpstring("ICustomResolver interface"),
+	pointer_default(unique)
+]
+
+interface ICustomResolver : IUnknown
+{
+#ifdef GENVBTYPELIB
+	HRESULT Reconcile ([in] IReplRowChange *pRowChange, INTEGERTYPE dwFlags, [in] IReplRowChange *pvReserved );
+#else
+	[local] HRESULT Reconcile ([in] IReplRowChange *pRowChange, INTEGERTYPE dwFlags, [in] void *pvReserved );
+	[call_as(Reconcile)] HRESULT RemoteReconcile ([in] IReplRowChange *pRowChange, INTEGERTYPE dwFlags, [in] IReplRowChange *pvReserved );	
+#endif
+	HRESULT GetHandledStates ([in, out] INTEGERTYPE *ResolverBm );
+};
+
+
+//////////////////////////////////////////////////////////////////////////
+// type library definition
+//////////////////////////////////////////////////////////////////////////
+ 
+[
+	uuid(16469B60-92F0-11d2-A8DC-00C04F9FC436),
+	version(7.0),
+	helpstring("Microsoft SQL Replication Conflict Resolver Library")
+]
+
+library SQLResolver
+{
+	importlib ("stdole32.tlb");
+
+	[
+		uuid(16469B61-92F0-11d2-A8DC-00C04F9FC436),
+		helpstring("Microsoft SQL Conflict Resolver"),
+	]
+	
+	coclass IVBCustomResolver 
+	{
+	[default] interface ICustomResolver;
+	}
+
+};

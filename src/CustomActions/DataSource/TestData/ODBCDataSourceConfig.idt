@@ -1,0 +1,5 @@
+Id	ComponentId	Driver	Name	Value	Type	Condition	Attributes
+s72	S72	S255	S255	S0	S12	S0	I2
+ODBCDataSourceConfig	Id
+MSSQLDatabaseDataSource		SQL Server	[DSN_NAME_SQL]	Server=localhost;Description=TestDSN;Database=master;Trusted_Connection=yes	User		9
+AccessDatabaseDataSource		Microsoft Access Driver (*.MDB)	[DSN_NAME_ACCESS]	DBQ=[INSTALLLOCATION]Test.mdb	User		9

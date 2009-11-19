@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?><Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+    <PropertyGroup>
+        <ProjectGuid>{5038dc15-fe7a-484e-bf8a-d98b88eb4dd4}</ProjectGuid>
+        <OutputName>DataSource</OutputName>
+        <OutputType>Library</OutputType>
+        <BindFiles>True</BindFiles>
+        <Pedantic>True</Pedantic>
+	<WixTargetsPath Condition=" '$(WixTargetsPath)' == '' AND '$(MSBuildExtensionsPath32)' != '' ">$(MSBuildExtensionsPath32)\Microsoft\WiX\v3.0\Wix.targets</WixTargetsPath>
+	<WixTargetsPath Condition=" '$(WixTargetsPath)' == '' ">$(MSBuildExtensionsPath)\Microsoft\WiX\v3.0\Wix.targets</WixTargetsPath>
+    </PropertyGroup>
+    <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+        <DebugSymbols>true</DebugSymbols>
+        <DebugType>full</DebugType>
+        <Optimize>false</Optimize>
+        <OutputPath>..\..\..\..\target\Debug_Win32\bin\</OutputPath>
+        <DefineConstants>DEBUG;TRACE</DefineConstants>
+        <ErrorReport>prompt</ErrorReport>
+        <WarningLevel>4</WarningLevel>
+    </PropertyGroup>
+    <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+        <DebugType>pdbonly</DebugType>
+        <Optimize>true</Optimize>
+        <OutputPath>..\..\..\..\target\Release_Win32\bin\</OutputPath>
+        <DefineConstants>TRACE</DefineConstants>
+        <ErrorReport>prompt</ErrorReport>
+        <WarningLevel>4</WarningLevel>
+    </PropertyGroup>
+    <ItemGroup>
+        <Compile Include="DataSourceExtension.wxs" />
+    </ItemGroup>
+    <ItemGroup>
+        <EmbeddedResource Include="en-US.wxl" />
+    </ItemGroup>
+    <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
+        <OutputPath>..\..\..\..\target\Debug\bin</OutputPath>
+        <IntermediateOutputPath>..\..\..\..\target\Debug\obj\DataSourceExtension</IntermediateOutputPath>
+        <DefineConstants>Debug</DefineConstants>
+        <IncludeSearchPaths />
+        <Pedantic>True</Pedantic>
+        <ShowSourceTrace>False</ShowSourceTrace>
+        <SuppressSchemaValidation>False</SuppressSchemaValidation>
+        <SuppressSpecificWarnings />
+        <TreatWarningsAsErrors>False</TreatWarningsAsErrors>
+        <VerboseOutput>False</VerboseOutput>
+        <LibBindFiles>True</LibBindFiles>
+        <LibSuppressIntermediateFileVersionMatching>False</LibSuppressIntermediateFileVersionMatching>
+        <LibSuppressSchemaValidation>False</LibSuppressSchemaValidation>
+        <LibSuppressSpecificWarnings />
+        <LibTreatWarningsAsErrors>False</LibTreatWarningsAsErrors>
+        <LibVerboseOutput>False</LibVerboseOutput>
+    </PropertyGroup>
+    <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
+        <OutputPath>..\..\..\..\target\Release\bin</OutputPath>
+        <IntermediateOutputPath>..\..\..\..\target\Release\obj\DataSourceExtension</IntermediateOutputPath>
+        <DefineConstants>TRACE</DefineConstants>
+        <IncludeSearchPaths />
+        <Pedantic>True</Pedantic>
+        <ShowSourceTrace>False</ShowSourceTrace>
+        <SuppressSchemaValidation>False</SuppressSchemaValidation>
+        <SuppressSpecificWarnings />
+        <TreatWarningsAsErrors>False</TreatWarningsAsErrors>
+        <VerboseOutput>False</VerboseOutput>
+        <LibBindFiles>True</LibBindFiles>
+        <LibSuppressIntermediateFileVersionMatching>False</LibSuppressIntermediateFileVersionMatching>
+        <LibSuppressSchemaValidation>False</LibSuppressSchemaValidation>
+        <LibSuppressSpecificWarnings />
+        <LibTreatWarningsAsErrors>False</LibTreatWarningsAsErrors>
+        <LibVerboseOutput>False</LibVerboseOutput>
+    </PropertyGroup>
+    <Import Project="$(WixTargetsPath)" />
+</Project>

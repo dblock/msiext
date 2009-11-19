@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Include xmlns="http://schemas.microsoft.com/wix/2006/wi">
+    <Fragment>
+        <Property Id="DATABASE_SERVER" Value="(local)" />
+        <Property Id="DATABASE_LOGON_TYPE" Value="DatabaseIntegratedAuth" />
+        <UI>
+            <Dialog Id="InvalidLogonDlg" Width="260" Height="85" Title="Invalid Logon">
+                <Control Id="Return" Type="PushButton" X="102" Y="57" Width="56" Height="17" Default="yes" Cancel="yes" Text="OK">
+                    <Publish Event="EndDialog" Value="Return">1</Publish>
+                </Control>
+                <Control Id="Text" Type="Text" X="48" Y="15" Width="194" Height="30" Text="[LOGON_ERROR]" />
+                <Control Id="Icon" Type="Icon" X="15" Y="15" Width="24" Height="24" FixedSize="yes" IconSize="32" Text="WixUI_Ico_Exclam" />
+            </Dialog>
+            <Dialog Id="ChooseDatabaseDlg" Width="370" Height="270" Title="Choose a Database">
+                <Control Id="Next" Type="PushButton" X="236" Y="243" Width="56" Height="17" Default="yes" Text="!(loc.WixUINext)">
+                    <Publish Property="DATABASE_LOGON_TYPE" Value="[DATABASE_LOGON_TYPE]">1</Publish>
+                    <Publish Property="DATABASE_SERVER" Value="[DATABASE_SERVER]">1</Publish>
+                    <Publish Property="DATABASE_USERNAME" Value="[DATABASE_USERNAME]"><![CDATA[DATABASE_LOGON_TYPE = "DatabaseAccount"]]></Publish>
+                    <Publish Property="DATABASE_PASSWORD" Value="[DATABASE_PASSWORD]"><![CDATA[DATABASE_LOGON_TYPE = "DatabaseAccount"]]></Publish>
+                    <Publish Property="DATABASE_USERNAME"><![CDATA[DATABASE_LOGON_TYPE <> "DatabaseAccount"]]></Publish>
+                    <Publish Property="DATABASE_PASSWORD"><![CDATA[DATABASE_LOGON_TYPE <> "DatabaseAccount"]]></Publish>
+                    <Condition Action="disable"><![CDATA[LOGON_VALID <> 1 AND DATABASE_LOGON_TYPE = "DatabaseAccount"]]></Condition>
+                    <Condition Action="enable"><![CDATA[LOGON_VALID = 1 OR DATABASE_LOGON_TYPE <> "DatabaseAccount"]]></Condition>
+                </Control>
+                <Control Id="Back" Type="PushButton" X="180" Y="243" Width="56" Height="17" Text="!(loc.WixUIBack)" />
+                <Control Id="Cancel" Type="PushButton" X="304" Y="243" Width="56" Height="17" Cancel="yes" Text="!(loc.WixUICancel)">
+                    <Publish Event="SpawnDialog" Value="CancelDlg">1</Publish>
+                </Control>
+                <Control Id="Description" Type="Text" X="25" Y="23" Width="280" Height="15" Transparent="yes" NoPrefix="yes" Text="Please choose a database to connect to." />
+                <Control Id="Title" Type="Text" X="15" Y="6" Width="200" Height="15" Transparent="yes" NoPrefix="yes" Text="Choose a Database" />
+                <Control Id="BannerBitmap" Type="Bitmap" X="0" Y="0" Width="370" Height="44" TabSkip="no" Text="WixUI_Bmp_Banner" />
+                <Control Id="BannerLine" Type="Line" X="0" Y="44" Width="370" Height="0" />
+                <Control Id="BottomLine" Type="Line" X="0" Y="234" Width="370" Height="0" />
+                <Control Id="ServerLabel" Type="Text" X="20" Y="50" Width="290" Height="15" Text="Server:" />
+                <Control Id="Server" Type="ComboBox" X="30" Y="65" Width="200" Height="18" Property="DATABASE_SERVER">
+                    <ComboBox Property="DATABASE_SERVER">
+                        <ListItem Text="[DATABASE_SERVER]" Value="[DATABASE_SERVER]" />
+                    </ComboBox>
+                    <Publish Property="LOGON_VALID" Value="0">1</Publish>
+                </Control>
+                <Control Id="DatabaseType" Type="RadioButtonGroup" X="20" Y="90" Width="290" Height="40" Property="DATABASE_LOGON_TYPE">
+                    <RadioButtonGroup Property="DATABASE_LOGON_TYPE">
+                        <RadioButton Value="DatabaseIntegratedAuth" X="0" Y="0" Width="290" Height="16" Text="Trusted (Windows Authentication)" />
+                        <RadioButton Value="DatabaseAccount" X="0" Y="20" Width="290" Height="16" Text="Specify Username and Password (SQL Authentication)" />
+                    </RadioButtonGroup>
+                </Control>
+                <Control Id="UsernameLabel" Type="Text" X="20" Y="130" Width="290" Height="20" Text="Username:">
+                    <Condition Action="disable"><![CDATA[DATABASE_LOGON_TYPE <> "DatabaseAccount"]]></Condition>
+                    <Condition Action="enable"><![CDATA[DATABASE_LOGON_TYPE = "DatabaseAccount"]]></Condition>
+                </Control>
+                <Control Id="Username" Type="Edit" X="30" Y="148" Width="200" Height="18" Property="DATABASE_USERNAME" Text="{64}">
+                    <Condition Action="disable"><![CDATA[DATABASE_LOGON_TYPE <> "DatabaseAccount"]]></Condition>
+                    <Condition Action="enable"><![CDATA[DATABASE_LOGON_TYPE = "DatabaseAccount"]]></Condition>
+                    <Publish Property="LOGON_VALID" Value="0">1</Publish>
+                </Control>
+                <Control Id="PasswordLabel" Type="Text" X="20" Y="170" Width="290" Height="20" Text="Password:">
+                    <Condition Action="disable"><![CDATA[DATABASE_LOGON_TYPE <> "DatabaseAccount"]]></Condition>
+                    <Condition Action="enable"><![CDATA[DATABASE_LOGON_TYPE = "DatabaseAccount"]]></Condition>
+                </Control>
+                <Control Id="Password" Password="yes" Type="Edit" X="30" Y="188" Width="200" Height="18" Property="DATABASE_PASSWORD">
+                    <Condition Action="disable"><![CDATA[DATABASE_LOGON_TYPE <> "DatabaseAccount"]]></Condition>
+                    <Condition Action="enable"><![CDATA[DATABASE_LOGON_TYPE = "DatabaseAccount"]]></Condition>
+                    <Publish Property="LOGON_VALID" Value="0">1</Publish>
+                </Control>
+                <Control Id="Test" Type="PushButton" X="40" Y="215" Width="100" Height="17" Text="Test Connection">
+                    <Condition Action="disable"><![CDATA[DATABASE_LOGON_TYPE <> "DatabaseAccount" OR DATABASE_USERNAME = ""]]></Condition>
+                    <Condition Action="enable"><![CDATA[DATABASE_LOGON_TYPE = "DatabaseAccount" AND DATABASE_USERNAME <> ""]]></Condition>
+                    <!-- test connection -->
+                    <Publish Property="ODBC_SERVER" Value="[DATABASE_SERVER]" Order="1">1</Publish>
+                    <Publish Property="ODBC_SERVER" Value="[ComputerName]" Order="1"><![CDATA[DATABASE_SERVER = "(local)"]]></Publish>
+                    <Publish Property="ODBC_CONNECTION_STRING" Value="Driver=SQL Server;Server=[ODBC_SERVER],1433;Uid=[DATABASE_USERNAME];Pwd=[DATABASE_PASSWORD]" Order="2">1</Publish>
+                    <Publish Event="DoAction" Value="ODBC_Connect" Order="3">1</Publish>
+                    <Publish Property="LOGON_VALID" Value="1" Order="4"><![CDATA[ODBC_CONNECTION_ESTABLISHED]]></Publish>
+                    <Publish Property="LOGON_VALID" Value="0" Order="4"><![CDATA[NOT ODBC_CONNECTION_ESTABLISHED]]></Publish>
+                    <Publish Property="LOGON_ERROR" Value="Unexpected Error" Order="4"><![CDATA[(NOT ODBC_CONNECTION_ESTABLISHED) AND (ODBC_ERROR = "")]]></Publish>
+                    <Publish Property="LOGON_ERROR" Value="[ODBC_ERROR]" Order="4"><![CDATA[NOT ODBC_CONNECTION_ESTABLISHED]]></Publish>
+                    <Publish Event="SpawnDialog" Value="InvalidLogonDlg" Order="5"><![CDATA[NOT ODBC_CONNECTION_ESTABLISHED]]></Publish>
+                </Control>
+                <Control Id="TestResult_Success" Type="Bitmap" X="210" Y="10" Width="24" Height="24" Text="success_bmp">
+                    <Condition Action="hide"><![CDATA[LOGON_VALID <> 1 OR DATABASE_LOGON_TYPE <> "DatabaseAccount"]]></Condition>
+                    <Condition Action="show"><![CDATA[LOGON_VALID = 1 AND DATABASE_LOGON_TYPE = "DatabaseAccount"]]></Condition>
+                </Control>
+                <Control Id="TestResult_Failure" Type="Bitmap" X="210" Y="10" Width="24" Height="24" Text="error_bmp">
+                    <Condition Action="hide"><![CDATA[LOGON_VALID = 1 OR DATABASE_LOGON_TYPE <> "DatabaseAccount"]]></Condition>
+                    <Condition Action="show"><![CDATA[LOGON_VALID <> 1 AND DATABASE_LOGON_TYPE = "DatabaseAccount"]]></Condition>
+                </Control>
+            </Dialog>
+        </UI>
+        <!-- DMO -->
+        <CustomAction Id="SetSqlDmoListLocal" Property="SQLDMO_LIST_LOCAL" Value="(local)" Execute="immediate" />
+        <CustomAction Id="SetSqlDmoListIndex" Property="SQLDMO_LIST_INDEX" Value="2" Execute="immediate" />
+        <CustomAction Id="SetSqlDmoListProperty" Property="SQLDMO_LIST_PROPERTY" Value="DATABASE_SERVER" Execute="immediate" />
+        <CustomAction Id="SetSqlDmoListType" Property="SQLDMO_LIST_TYPE" Value="ComboBox" Execute="immediate" />
+        <InstallUISequence>
+            <Custom Action="SetSqlDmoListProperty" After="CostInitialize" />
+            <Custom Action="SetSqlDmoListType" After="SetSqlDmoListProperty" />
+            <Custom Action="SetSqlDmoListIndex" After="SetSqlDmoListType" />
+            <Custom Action="SetSqlDmoListLocal" After="SetSqlDmoListIndex" />
+            <Custom Action="SQLDMO_ListAvailableSQLServers" After="SetSqlDmoListType">NOT Installed</Custom>
+        </InstallUISequence>
+    </Fragment>
+</Include>

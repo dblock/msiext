@@ -1,0 +1,27 @@
+LIBRARY	DataSource
+
+;DESCRIPTION "Application Security Inc. Custom Action Library - Data Source"
+
+EXPORTS
+
+	ConfigDataSource
+    ConfigDataSource_Access
+    ConfigDataSource_SQLServer
+;   ConfigDataSource_Oracle
+    SQLDMO_ListAvailableSQLServers
+    ODBC_Connect
+    ODBC_Execute
+    ODBC_GetScalar
+    ODBC_GetString
+    ODBC_GetXml
+    CreateDatabases_SQLServer_Immediate
+    CreateDatabases_SQLServer_Deferred
+    CreateDatabases_Access_Immediate
+    CreateDatabases_Access_Deferred
+    Execute_ODBC_Immediate
+    Execute_ODBC_Deferred
+    DataFile_SQLServer_Immediate
+    DataFile_SQLServer_Deferred
+    DataSource_ODBC_Immediate
+    DataSource_ODBC_Deferred
+    

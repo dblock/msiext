@@ -1,0 +1,9 @@
+LIBRARY	ActiveDirectory
+
+;DESCRIPTION "Application Security Inc. Custom Action Library - Active Directory"
+
+EXPORTS
+
+	DirectoryObjectPicker
+	DirectoryGetDcName
+	ADSI_GetAttributeValue

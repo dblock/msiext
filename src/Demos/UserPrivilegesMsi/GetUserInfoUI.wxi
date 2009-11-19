@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Include xmlns="http://schemas.microsoft.com/wix/2006/wi">
+    <Fragment>
+        <UI>
+            <Dialog Id="UserInfoDlg" Width="280" Height="100" Title="Logon Info">
+                <Control Id="Return" Type="PushButton" X="102" Y="65" Width="56" Height="17" Default="yes" Cancel="yes" Text="OK">
+                    <Publish Event="EndDialog" Value="Return">1</Publish>
+                </Control>
+                <Control Id="UserNameText" Type="Text" X="48" Y="15" Width="220" Height="10" Text="[USER_NAME]" />
+                <Control Id="UserSidText" Type="Text" X="48" Y="25" Width="220" Height="10" Text="[USER_SID]" />
+                <Control Id="UserFormatText" Type="Text" X="48" Y="35" Width="220" Height="10" Text="Use: [USERNAME_FULL]" />
+                <Control Id="Icon" Type="Icon" X="15" Y="15" Width="24" Height="24" FixedSize="yes" IconSize="32" Text="WixUI_Ico_Exclam" />
+            </Dialog>
+            <Dialog Id="GetUserInfoDlg" Width="370" Height="270" Title="User Info">
+                <Control Id="Next" Type="PushButton" X="236" Y="243" Width="56" Height="17" Default="yes" Text="!(loc.WixUINext)" />
+                <Control Id="Back" Type="PushButton" X="180" Y="243" Width="56" Height="17" Text="!(loc.WixUIBack)" />
+                <Control Id="Cancel" Type="PushButton" X="304" Y="243" Width="56" Height="17" Cancel="yes" Text="!(loc.WixUICancel)">
+                    <Publish Event="SpawnDialog" Value="CancelDlg">1</Publish>
+                </Control>
+                <Control Id="EnvironmentUsernameLabel" Type="Text" X="20" Y="60" Width="290" Height="20" Text="Environment:" />
+                <Control Id="EnvironmentUsername" Type="Text" X="30" Y="75" Width="200" Height="18" Text="[ENVIRONMENT_USERNAME_FULL]" />
+                <Control Id="Description" Type="Text" X="25" Y="23" Width="280" Height="15" Transparent="yes" NoPrefix="yes" Text="Get user info." />
+                <Control Id="Title" Type="Text" X="15" Y="6" Width="200" Height="15" Transparent="yes" NoPrefix="yes" Text="User Info" />
+                <Control Id="BannerBitmap" Type="Bitmap" X="0" Y="0" Width="370" Height="44" TabSkip="no" Text="WixUI_Bmp_Banner" />
+                <Control Id="BannerLine" Type="Line" X="0" Y="44" Width="370" Height="0" />
+                <Control Id="BottomLine" Type="Line" X="0" Y="234" Width="370" Height="0" />
+                <Control Id="ImpersonateUsernameLabel" Type="Text" X="20" Y="100" Width="290" Height="20" Text="Username:" />
+                <Control Id="ImpersonateUsername" Type="Edit" X="30" Y="120" Width="200" Height="18" Property="IMPERSONATE_USERNAME" Text="{64}" />
+                <Control Id="ImpersonatePasswordLabel" Type="Text" X="20" Y="150" Width="290" Height="20" Text="Password:" />
+                <Control Id="ImpersonatePassword" Password="yes" Type="Edit" X="30" Y="170" Width="200" Height="18" Property="IMPERSONATE_PASSWORD" />
+                <Control Id="GetUserInfo" Type="PushButton" X="40" Y="200" Width="100" Height="17" Text="&amp;Get User Info">
+                    <Publish Property="IMPERSONATE_USERNAME" Value="[IMPERSONATE_USERNAME]" Order="1">1</Publish>
+                    <Publish Property="IMPERSONATE_PASSWORD" Value="[IMPERSONATE_PASSWORD]" Order="1">1</Publish>
+                    <!-- general username properties -->
+                    <Publish Event="DoAction" Value="GetUserInfo" Order="2">1</Publish>
+                    <!-- username in the DNS domain format -->
+                    <Publish Property="USER_FQN" Order="3">1</Publish>
+                    <Publish Property="USERNAME_FORMAT" Value="NameDnsDomain" Order="3">1</Publish>
+                    <Publish Event="DoAction" Value="GetUserNameFormatted" Order="4">1</Publish>
+                    <Publish Property="USERNAME_DNSDOMAIN" Value="[USER_FQN]" Order="5">1</Publish>
+                    <!-- either keep USER_NAME or USERNAME_DNSDOMAIN -->
+                    <Publish Property="USERNAME_FULL" Value="[USERNAME_DNSDOMAIN]" Order="6">1</Publish>
+                    <Publish Property="USERNAME_FULL" Value="[USER_NAME]" Order="7">NOT USERNAME_FULL</Publish>
+                    <!-- show dialog -->
+                    <Publish Event="SpawnDialog" Value="UserInfoDlg" Order="8">1</Publish>
+                </Control>
+            </Dialog>
+        </UI>
+        <CustomAction Id="SetUserDNSDomain" Property="ENVIRONMENT_USERDNSDOMAIN" Value="[%USERDNSDOMAIN]" Execute="immediate" />
+        <CustomAction Id="SetDomainUsername" Property="ENVIRONMENT_USERNAME_FULL" Value="[%USERDNSDOMAIN]\[%USERNAME]" Execute="immediate" />
+        <CustomAction Id="SetLocalUsername" Property="ENVIRONMENT_USERNAME_FULL" Value="[%USERDOMAIN]\[%USERNAME]" Execute="immediate" />
+        <InstallUISequence>
+            <Custom Action="SetUserDNSDomain" After="AppSearch">1</Custom>
+            <Custom Action="SetDomainUsername" After="SetUserDNSDomain">ENVIRONMENT_USERDNSDOMAIN</Custom>
+            <Custom Action="SetLocalUsername" After="SetDomainUsername">NOT ENVIRONMENT_USERDNSDOMAIN</Custom>
+        </InstallUISequence>
+    </Fragment>
+</Include>

@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
+    <?ifdef Debug ?>
+    <?define ConfigurationName=Debug ?>
+    <?else ?>
+    <?define ConfigurationName=Release ?>
+    <?endif ?>
+    <?define SolutionDir=$(sys.SOURCEFILEDIR)..\..\..\.. ?>
+    <?define BinDir=$(var.SolutionDir)\target\$(var.ConfigurationName)\bin ?>
+    <Fragment>
+        <UI>
+            <ProgressText Action="CreateLocalUsers_Deferred">!(loc.CreatingLocalUsers)</ProgressText>
+            <ProgressText Action="CreateLocalGroups_Deferred">!(loc.CreatingLocalGroups)</ProgressText>
+            <ProgressText Action="AddLocalGroupMembers_Deferred">!(loc.AddingLocalGroupMembers)</ProgressText>
+            <ProgressText Action="DeleteLocalUsers_Deferred">!(loc.DeletingLocalUsers)</ProgressText>
+            <ProgressText Action="DeleteLocalGroups_Deferred">!(loc.DeletingLocalGroups)</ProgressText>
+            <ProgressText Action="RemoveLocalGroupMembers_Deferred">!(loc.RemovingLocalGroupMembers)</ProgressText>
+        </UI>
+        <!-- install custom actions -->
+        <CustomAction Id="CreateLocalUsers_Immediate" BinaryKey="UserPrivilegesCA" DllEntry="LocalUsers_Immediate" Execute="immediate" Return="check" SuppressModularization="yes" />
+        <CustomAction Id="CreateLocalUsers_Deferred" BinaryKey="UserPrivilegesCA" DllEntry="LocalUsers_Deferred" Execute="deferred" Return="check" Impersonate="no" SuppressModularization="yes" />
+        <CustomAction Id="CreateLocalGroups_Immediate" BinaryKey="UserPrivilegesCA" DllEntry="LocalGroups_Immediate" Execute="immediate" Return="check" SuppressModularization="yes" />
+        <CustomAction Id="CreateLocalGroups_Deferred" BinaryKey="UserPrivilegesCA" DllEntry="LocalGroups_Deferred" Execute="deferred" Return="check" Impersonate="no" SuppressModularization="yes" />
+        <CustomAction Id="AddLocalGroupMembers_Immediate" BinaryKey="UserPrivilegesCA" DllEntry="LocalGroupMembers_Immediate" Execute="immediate" Return="check" SuppressModularization="yes" />
+        <CustomAction Id="AddLocalGroupMembers_Deferred" BinaryKey="UserPrivilegesCA" DllEntry="LocalGroupMembers_Deferred" Execute="deferred" Return="check" Impersonate="no" SuppressModularization="yes" />
+        <!-- uninstall custom actions -->
+        <CustomAction Id="DeleteLocalUsers_Immediate" BinaryKey="UserPrivilegesCA" DllEntry="LocalUsers_Immediate" Execute="immediate" Return="check" SuppressModularization="yes" />
+        <CustomAction Id="DeleteLocalUsers_Deferred" BinaryKey="UserPrivilegesCA" DllEntry="LocalUsers_Deferred" Execute="deferred" Return="check" Impersonate="no" SuppressModularization="yes" />
+        <CustomAction Id="DeleteLocalGroups_Immediate" BinaryKey="UserPrivilegesCA" DllEntry="LocalGroups_Immediate" Execute="immediate" Return="check" SuppressModularization="yes" />
+        <CustomAction Id="DeleteLocalGroups_Deferred" BinaryKey="UserPrivilegesCA" DllEntry="LocalGroups_Deferred" Execute="deferred" Return="check" Impersonate="no" SuppressModularization="yes" />
+        <CustomAction Id="RemoveLocalGroupMembers_Immediate" BinaryKey="UserPrivilegesCA" DllEntry="LocalGroupMembers_Immediate" Execute="immediate" Return="check" SuppressModularization="yes" />
+        <CustomAction Id="RemoveLocalGroupMembers_Deferred" BinaryKey="UserPrivilegesCA" DllEntry="LocalGroupMembers_Deferred" Execute="deferred" Return="check" Impersonate="no" SuppressModularization="yes" />
+        <InstallExecuteSequence>
+            <!-- install -->
+            <Custom Action="CreateLocalUsers_Immediate" After="InstallFiles" Overridable="yes">NOT Installed</Custom>
+            <Custom Action="CreateLocalUsers_Deferred" After="CreateLocalUsers_Immediate" Overridable="yes">NOT Installed</Custom>
+            <Custom Action="CreateLocalGroups_Immediate" After="CreateLocalUsers_Deferred" Overridable="yes">NOT Installed</Custom>
+            <Custom Action="CreateLocalGroups_Deferred" After="CreateLocalGroups_Immediate" Overridable="yes">NOT Installed</Custom>
+            <Custom Action="AddLocalGroupMembers_Immediate" After="CreateLocalGroups_Deferred" Overridable="yes">NOT Installed</Custom>
+            <Custom Action="AddLocalGroupMembers_Deferred" After="AddLocalGroupMembers_Immediate" Overridable="yes">NOT Installed</Custom>
+            <!-- uninstall (reverse order) -->
+            <Custom Action="RemoveLocalGroupMembers_Immediate" After="RemoveFiles" Overridable="yes">Installed</Custom>
+            <Custom Action="RemoveLocalGroupMembers_Deferred" After="RemoveLocalGroupMembers_Immediate" Overridable="yes">Installed</Custom>
+            <Custom Action="DeleteLocalGroups_Immediate" After="RemoveLocalGroupMembers_Deferred" Overridable="yes">Installed</Custom>
+            <Custom Action="DeleteLocalGroups_Deferred" After="DeleteLocalGroups_Immediate" Overridable="yes">Installed</Custom>
+            <Custom Action="DeleteLocalUsers_Immediate" After="DeleteLocalGroups_Deferred" Overridable="yes">Installed</Custom>
+            <Custom Action="DeleteLocalUsers_Deferred" After="DeleteLocalUsers_Immediate" Overridable="yes">Installed</Custom>
+        </InstallExecuteSequence>
+    </Fragment>
+    <Fragment>
+        <Binary Id="UserPrivilegesCA" SourceFile="$(var.BinDir)\UserPrivileges.dll" />
+    </Fragment>
+</Wix>

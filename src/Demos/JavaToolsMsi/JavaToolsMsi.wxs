@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?include ..\..\..\src\Version\Version.wxi ?>
+<?define BinDir=$(var.MSBuildProjectDirectory)\target\$(var.Configuration)\bin ?>
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi" xmlns:AppSecInc="http://schemas.appsecinc.com/wix/JavaToolsExtension">
+    <Product Id="7D041C7F-DAE7-4923-B7E7-688D7DB3E887" Name="Java Tools Demo MSI" Language="1033" Version="$(var.ProductVersion)" Manufacturer="$(var.CompanyName)" UpgradeCode="FBB49C13-B112-4878-B47E-E0825FDF6FDC">
+        <Package InstallerVersion="200" Compressed="yes" />
+        <Media Id="1" Cabinet="JavaToolsMsi.cab" EmbedCab="yes" />
+        <Property Id="JAR_EXTRACT" Value="1" />
+        <Directory Id="TARGETDIR" Name="SourceDir">
+            <Directory Id="ProgramFilesFolder">
+                <Directory Id="INSTALLLOCATION" Name="JavaToolsDemo">
+                    <Component Id="ProductComponent" Guid="ca70ba08-0c57-4fa2-b6c1-57a00123e391">
+                        <File Id="JavaToolsMsi_wxs" Name="JavaToolsMsi.wxs" Source="JavaToolsMsi.wxs" />
+                        <File Id="JavaToolsUI_wxi" Name="JavaToolsUI.wxi" Source="JavaToolsUI.wxi" />
+                        <File Id="JavaToolsMsiExtract_jar" Name="JavaToolsMsiExtract.jar" Source="Data\\JavaToolsMsi.jar" />
+                        <AppSecInc:JavaArchive Id="JavaToolsArchiveExtract" Directory="[INSTALLLOCATION]" JarFile="[INSTALLLOCATION]JavaToolsMsiExtract.jar" Operation="xvf">
+                            <Condition>JAR_EXTRACT = 1</Condition>
+                        </AppSecInc:JavaArchive>
+                        <AppSecInc:JavaArchive Id="JavaToolsArchiveCompress" Directory="[INSTALLLOCATION]" JarFile="[INSTALLLOCATION]JavaToolsMsiCompressed.jar" Operation="cvf">
+                            <AppSecInc:JavaArchiveFile Id="JavaToolsMsiCompress_JavaToolsMsi_wxs" Directory="[INSTALLLOCATION]" File="JavaToolsMsi.wxs">
+                JAR_COMPRESS = 1
+              </AppSecInc:JavaArchiveFile>
+                            <AppSecInc:JavaArchiveFile Id="JavaToolsMsiCompress_JavaToolsUI_wxi" Directory="[INSTALLLOCATION]" File="JavaToolsUI.wxi">
+                JAR_COMPRESS = 1
+              </AppSecInc:JavaArchiveFile>
+                            <Condition>JAR_COMPRESS = 1</Condition>
+                        </AppSecInc:JavaArchive>
+                    </Component>
+                </Directory>
+            </Directory>
+        </Directory>
+        <Feature Id="ProductFeature" Title="Demo Feature" Level="1">
+            <ComponentRef Id="ProductComponent" />
+        </Feature>
+        <UIRef Id="CaTestUI" />
+        <UI Id="CaTestUI">
+            <TextStyle Id="WixUI_Font_Normal" FaceName="Tahoma" Size="8" />
+            <TextStyle Id="WixUI_Font_Bigger" FaceName="Tahoma" Size="12" />
+            <TextStyle Id="WixUI_Font_Title" FaceName="Tahoma" Size="9" Bold="yes" />
+            <Property Id="DefaultUIFont" Value="WixUI_Font_Normal" />
+            <Property Id="WixUI_Mode" Value="InstallDir" />
+            <Property Id="ARPNOMODIFY" Value="1" />
+            <DialogRef Id="ErrorDlg" />
+            <DialogRef Id="FatalError" />
+            <DialogRef Id="FilesInUse" />
+            <DialogRef Id="MsiRMFilesInUse" />
+            <DialogRef Id="PrepareDlg" />
+            <DialogRef Id="ProgressDlg" />
+            <DialogRef Id="ResumeDlg" />
+            <DialogRef Id="UserExit" />
+            <DialogRef Id="JavaToolsDlg" />
+            <Publish Dialog="ExitDialog" Control="Finish" Event="EndDialog" Value="Return" Order="999">1</Publish>
+            <Publish Dialog="WelcomeDlg" Control="Next" Event="NewDialog" Value="JavaToolsDlg">1</Publish>
+            <Publish Dialog="JavaToolsDlg" Control="Back" Event="NewDialog" Value="MaintenanceTypeDlg" Order="1">Installed</Publish>
+            <Publish Dialog="JavaToolsDlg" Control="Back" Event="NewDialog" Value="WelcomeDlg" Order="2">NOT Installed</Publish>
+            <Publish Dialog="JavaToolsDlg" Control="Next" Event="NewDialog" Value="VerifyReadyDlg" Order="2">1</Publish>
+            <Publish Dialog="VerifyReadyDlg" Control="Back" Event="NewDialog" Value="JavaToolsDlg" Order="1">NOT Installed OR WixUI_InstallMode="Change"</Publish>
+            <Publish Dialog="MaintenanceTypeDlg" Control="Back" Event="NewDialog" Value="MaintenanceWelcomeDlg">1</Publish>
+        </UI>
+        <UIRef Id="WixUI_Common" />
+    </Product>
+    <?include JavaToolsUI.wxi ?>
+</Wix>

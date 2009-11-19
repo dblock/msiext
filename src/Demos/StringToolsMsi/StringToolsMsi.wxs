@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<?include ..\..\..\src\Version\Version.wxi ?>
+<?define BinDir=$(var.MSBuildProjectDirectory)\target\$(var.Configuration)\bin ?>
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
+    <Product Id="E3E10EAD-E4B9-42ea-82DC-084C36698032" Name="StringTools Demo MSI" Language="1033" Version="$(var.ProductVersion)" Manufacturer="$(var.CompanyName)" UpgradeCode="E1B13B86-F3A1-4d5e-8F0F-12F1176B872F">
+        <Package InstallerVersion="200" Compressed="yes" />
+        <Media Id="1" Cabinet="StringToolsMsi.cab" EmbedCab="yes" />
+        <Binary Id="StringTools" SourceFile="$(var.BinDir)\StringTools.dll" />
+        <CustomAction Id="StringReplace" BinaryKey="StringTools" DllEntry="String_Replace" Execute="immediate" Return="check" />
+        <CustomAction Id="StringTrim" BinaryKey="StringTools" DllEntry="String_Trim" Execute="immediate" Return="check" />
+        <CustomAction Id="RegexMatch" BinaryKey="StringTools" DllEntry="Regex_Match" Execute="immediate" Return="check" />
+        <CustomAction Id="RegexReplace" BinaryKey="StringTools" DllEntry="Regex_Replace" Execute="immediate" Return="check" />
+        <Directory Id="TARGETDIR" Name="SourceDir">
+            <Directory Id="ProgramFilesFolder">
+                <Directory Id="INSTALLLOCATION" Name="StringToolsDemo">
+                    <Component Id="ProductComponent" Guid="ca70ba08-0c57-4fa2-b6c1-57a00123e391">
+                        <File Id="StringToolsMsi_wxs" Name="StringToolsMsi.wxs" Source="StringToolsMsi.wxs" />
+                    </Component>
+                </Directory>
+            </Directory>
+        </Directory>
+        <Feature Id="ProductFeature" Title="Demo Feature" Level="1">
+            <ComponentRef Id="ProductComponent" />
+        </Feature>
+        <UIRef Id="CaTestUI" />
+        <UI Id="CaTestUI">
+            <TextStyle Id="WixUI_Font_Normal" FaceName="Tahoma" Size="8" />
+            <TextStyle Id="WixUI_Font_Bigger" FaceName="Tahoma" Size="12" />
+            <TextStyle Id="WixUI_Font_Title" FaceName="Tahoma" Size="9" Bold="yes" />
+            <Property Id="DefaultUIFont" Value="WixUI_Font_Normal" />
+            <Property Id="WixUI_Mode" Value="InstallDir" />
+            <Property Id="ARPNOMODIFY" Value="1" />
+            <DialogRef Id="ErrorDlg" />
+            <DialogRef Id="FatalError" />
+            <DialogRef Id="FilesInUse" />
+            <DialogRef Id="MsiRMFilesInUse" />
+            <DialogRef Id="PrepareDlg" />
+            <DialogRef Id="ProgressDlg" />
+            <DialogRef Id="ResumeDlg" />
+            <DialogRef Id="UserExit" />
+            <DialogRef Id="StringToolsReplaceDlg" />
+            <DialogRef Id="StringToolsTrimDlg" />
+            <DialogRef Id="StringToolsRegexDlg" />
+            <Publish Dialog="ExitDialog" Control="Finish" Event="EndDialog" Value="Return" Order="999">1</Publish>
+            <Publish Dialog="WelcomeDlg" Control="Next" Event="NewDialog" Value="StringToolsReplaceDlg">1</Publish>
+            <Publish Dialog="StringToolsReplaceDlg" Control="Back" Event="NewDialog" Value="MaintenanceTypeDlg" Order="1">Installed</Publish>
+            <Publish Dialog="StringToolsReplaceDlg" Control="Back" Event="NewDialog" Value="WelcomeDlg" Order="2">NOT Installed</Publish>
+            <Publish Dialog="StringToolsReplaceDlg" Control="Next" Event="NewDialog" Value="StringToolsTrimDlg" Order="3">1</Publish>
+            <Publish Dialog="StringToolsTrimDlg" Control="Back" Event="NewDialog" Value="StringToolsReplaceDlg" Order="4">1</Publish>
+            <Publish Dialog="StringToolsTrimDlg" Control="Next" Event="NewDialog" Value="StringToolsRegexDlg" Order="5">1</Publish>
+            <Publish Dialog="StringToolsRegexDlg" Control="Back" Event="NewDialog" Value="StringToolsTrimDlg" Order="6">1</Publish>
+            <Publish Dialog="StringToolsRegexDlg" Control="Next" Event="NewDialog" Value="VerifyReadyDlg" Order="7">1</Publish>
+            <Publish Dialog="VerifyReadyDlg" Control="Back" Event="NewDialog" Value="StringToolsRegexDlg" Order="8">NOT Installed OR WixUI_InstallMode="Change"</Publish>
+            <Publish Dialog="MaintenanceTypeDlg" Control="Back" Event="NewDialog" Value="MaintenanceWelcomeDlg">1</Publish>
+        </UI>
+        <UIRef Id="WixUI_Common" />
+    </Product>
+    <?include StringToolsReplaceUI.wxi ?>
+    <?include StringToolsTrimUI.wxi ?>
+    <?include StringToolsRegexUI.wxi ?>
+</Wix>

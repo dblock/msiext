@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<WixLocalization Culture="en-us" xmlns="http://schemas.microsoft.com/wix/2006/localization">
+    <String Id="ServiceDlg_Header" Overridable="yes">[ProductName] Setup</String>
+    <String Id="ServiceDlg_Title" Overridable="yes">{\WixUI_Font_Title}Service Log On Credentials</String>
+    <String Id="ServiceDlg_SubTitle" Overridable="yes">Please provide the Windows Service account for the service.</String>
+    <String Id="ServiceDlg_BannerBitmap" Overridable="yes">WixUI_Bmp_Banner</String>
+    <String Id="ServiceDlg_Description" Overridable="yes">[ProductName] installs and runs as an independent Windows service.  To operate in this manner, you must supply the user account credentials for [ProductName] to run successfully.</String>
+    <String Id="ServiceDlg_LocalSystemText" Overridable="yes">Run service as LocalSystem</String>
+    <String Id="ServiceDlg_AccountText" Overridable="yes">Run service as:</String>
+    <String Id="ServiceDlg_UsernameLabel" Overridable="yes">Account:</String>
+    <String Id="ServiceDlg_UsernameBrowse" Overridable="yes">&amp;Browse ...</String>
+    <String Id="ServiceDlg_PasswordLabel" Overridable="yes">Password:</String>
+    <String Id="ServiceDlg_AccountTestLabel" Overridable="yes">&amp;Test Credentials</String>
+    <String Id="ServiceDlg_TestPrompt" Overridable="yes">Click 'Test Credentials' button to proceed</String>
+    <String Id="ServiceDlg_InvalidLogonError" Overridable="yes">Invalid user account or password.</String>
+    <String Id="ServiceDlg_AccountDoesNotHaveLogonAsServiceRights" Overridable="yes">Logon is valid, but this account does not have logon as a service right.</String>
+    <String Id="ServiceDlg_AccountNotInAdministratorsGroup" Overridable="yes">This account is not a member of the Administrators group.</String>
+
+    <String Id="ServicePortDlg_Header" Overridable="yes">[ProductName] Setup</String>
+    <String Id="ServicePortDlg_Title" Overridable="yes">{\WixUI_Font_Title}Port Selection</String>
+    <String Id="ServicePortDlg_SubTitle" Overridable="yes">Choose a port.</String>
+    <String Id="ServicePortDlg_Description" Overridable="yes">Please choose a port.</String>
+    <String Id="ServicePortDlg_PortNumberLabel" Overridable="yes">Port Number (1-65535):</String>
+    <String Id="ServicePortDlg_Recomendation" Overridable="yes">It is recommended that you accept the selected default port.</String>
+    <String Id="ServicePortDlg_TestPortLabel" Overridable="yes">Test Port</String>
+    <String Id="ServicePortDlg_TestPrompt" Overridable="yes">Click 'Test Port' button to proceed</String>
+    <String Id="ServicePortDlg_ErrorTitle" Overridable="yes">Invalid Information</String>
+    <String Id="ServicePortDlg_InvalidPortMessage" Overridable="yes">You must enter a valid port value.</String>
+    <String Id="ServicePortDlg_TestPortFailedMessage" Overridable="yes">Failed to bind to port:</String>
+
+
+    <String Id="InvalidLoginError_Title">Invalid Login</String>
+
+    <String Id="RuntimeDbCredDlg_Header" Overridable="yes">[ProductName] Setup</String>
+    <String Id="RuntimeDbCredDlg_Title" Overridable="yes">{\WixUI_Font_Title}Database Run Time Credentials</String>
+    <String Id="RuntimeDbCredDlg_SubTitle" Overridable="yes">Please enter credentials to connect to the database.</String>
+    <String Id="RuntimeDbCredDlg_BannerBitmap" Overridable="yes">WixUI_Bmp_Banner</String>
+    <String Id="RuntimeDbCredDlg_Description1" Overridable="yes">[ProductName] must be able to connect to its database to function correctly.</String>
+    <String Id="RuntimeDbCredDlg_Description" Overridable="yes">The user supplied here will be used to access the [ProductName] database on [DATABASE_SERVER] at runtime.</String>
+    <String Id="RuntimeDbCredDlg_IntegratedAuth" Overridable="yes">Windows Authentication (using '[SERVICE_DISPLAY_USERNAME]' Windows Service account)</String>
+    <String Id="RuntimeDbCredDlg_PasswordAuth" Overridable="yes">SQL Authentication</String>
+    <String Id="RuntimeDbCredDlg_UsernameLabel" Overridable="yes">Login:</String>
+    <String Id="RuntimeDbCredDlg_UsernameBrowse" Overridable="yes">&amp;Browse ...</String>
+    <String Id="RuntimeDbCredDlg_TestConnectionLabel" Overridable="yes">&amp;Test Connection</String>
+    <String Id="RuntimeDbCredDlg_PasswordLabel" Overridable="yes">Password:</String>
+    <String Id="RuntimeDbCredDlg_WindowsAuthNotAvailable" Overridable="yes">Note: Windows Authentication is not available for connecting to the remote database when [ProductName] service is running as Local System.  Please specify SQL credentials.</String>
+    <String Id="RuntimeDbCredDlg_WindowsAuthRecommendation" Overridable="yes">We highly recommend using Windows Authentication as the preferred choice for database connections.</String>
+    <String Id="RuntimeDbCredDlg_NoRequiredPermissions" Overridable="yes">The user does not have required permissions (select, insert, update) in [ProductName] Database.</String>
+    <String Id="RuntimeDbCredDlg_CannotTestConnectionForLocalSystem" Overridable="yes">*Cannot test Windows Authentication when LocalSystem is selected.</String>
+    <String Id="RuntimeDbCredDlg_TestPrompt" Overridable="yes">Click 'Test Connection' button to proceed</String>
+
+  <String Id="DbCreateCredDlg_Header" Overridable="yes">[ProductName] Setup</String>
+  <String Id="DbCreateCredDlg_Title" Overridable="yes">{\WixUI_Font_Title}Database Creation Credentials</String>
+  <String Id="DbCreateCredDlg_SubTitle" Overridable="yes">Please enter credentials to create the database.</String>
+  <String Id="DbCreateCredDlg_BannerBitmap" Overridable="yes">WixUI_Bmp_Banner</String>
+  <String Id="DbCreateCredDlg_Description1" Overridable="yes">[ProductName] installation must be able to create a backend database to function correctly.</String>
+  <String Id="DbCreateCredDlg_Description" Overridable="yes">The user supplied here will be used to create a database for [ProductName] on [DATABASE_SERVER].</String>
+  <String Id="DbCreateCredDlg_IntegratedAuth_CurrentUser" Overridable="yes">Windows Authentication (using currently logged on Windows user.)</String>
+  <String Id="DbCreateCredDlg_PasswordAuth" Overridable="yes">SQL Authentication</String>
+  <String Id="DbCreateCredDlg_UsernameLabel" Overridable="yes">Login:</String>
+  <String Id="DbCreateCredDlg_UsernameBrowse" Overridable="yes">&amp;Browse ...</String>
+  <String Id="DbCreateCredDlg_TestConnectionLabel" Overridable="yes">&amp;Test Connection</String>
+  <String Id="DbCreateCredDlg_PasswordLabel" Overridable="yes">Password:</String>
+  <String Id="DbCreateCredDlg_WindowsAuthRecommendation" Overridable="yes">We highly recommend using Windows Authentication as the preferred choice for database connections.</String>
+  <String Id="DbCreateCredDlg_NoCREATE_DATABASEPermissions" Overridable="yes">The user does not have CREATE DATABASE permissions on the [DATABASE_SERVER] server.</String>
+  <String Id="DbCreateCredDlg_TestPrompt" Overridable="yes">Click 'Test Connection' button to proceed</String>
+  
+
+    <String Id="SelectDbDlg_Title" Overridable="yes">{\WixUI_Font_Title}[ProductName] repository</String>
+    <String Id="SelectDbDlg_SubTitle" Overridable="yes">Select database server location.</String>
+    <String Id="SelectDbDlg_Description" Overridable="yes">Please select the database server from the drop-down list below.  Alternatively, you can also specify it by typing it as "hostname\instance" (e.g. myserver\myinstance) or "hostname:port" (e.g. myserver:1833).</String>
+    <String Id="SelectDbDlg_ServerLabel" Overridable="yes">Database Instance:</String>
+    <String Id="SelectDbDlg_DbBrowse" Overridable="yes">&amp;Browse ...</String>
+    <String Id="SelectDbDlg_InvalidSyntax" Overridable="yes">Invalid server syntax: [DATABASE_SERVER]</String>
+    <String Id="SelectDbDlg_EmptyServer" Overridable="yes">Please enter or select database server first</String>
+    <String Id="SelectDbDlg_Header" Overridable="yes">[ProductName] Setup</String>
+    <String Id="SelectDbDlg_BannerBitmap" Overridable="yes">WixUI_Bmp_Banner</String>
+</WixLocalization>
+

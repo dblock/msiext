@@ -1,0 +1,1 @@
+CREATE TABLE [FileTableNotEncoded] ( [FileTableNotEncoded_Id] int IDENTITY(1,1) NOT NULL )

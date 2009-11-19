@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?include ..\..\..\src\Version\Version.wxi ?>
+<?define BinDir=$(var.MSBuildProjectDirectory)\target\$(var.Configuration)\bin ?>
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
+    <Product Id="39b40407-0eb8-4e57-8055-d1c78a19e91f" Name="Active Directory Demo MSI" Language="1033" Version="$(var.ProductVersion)" Manufacturer="$(var.CompanyName)" UpgradeCode="82d9172d-91db-433f-8d85-f55f731b5006">
+        <Package InstallerVersion="200" Compressed="yes" />
+        <Media Id="1" Cabinet="ActiveDirectoryMsi.cab" EmbedCab="yes" />
+        <Binary Id="ActiveDirectory" SourceFile="$(var.BinDir)\ActiveDirectory.dll" />
+        <Directory Id="TARGETDIR" Name="SourceDir">
+            <Directory Id="ProgramFilesFolder">
+                <Directory Id="INSTALLLOCATION" Name="ActiveDirectoryDemo">
+                    <Component Id="ProductComponent" Guid="aee20c4f-f784-47a3-8160-ae6db2c20133">
+                        <File Id="ActiveDirectoryMsi_wxs" Name="ActiveDirectoryMsi.wxs" Source="ActiveDirectoryMsi.wxs" />
+                    </Component>
+                </Directory>
+            </Directory>
+        </Directory>
+        <Feature Id="ProductFeature" Title="Demo Feature" Level="1">
+            <ComponentRef Id="ProductComponent" />
+        </Feature>
+        <UIRef Id="CaTestUI" />
+        <UI Id="CaTestUI">
+            <TextStyle Id="WixUI_Font_Normal" FaceName="Tahoma" Size="8" />
+            <TextStyle Id="WixUI_Font_Bigger" FaceName="Tahoma" Size="12" />
+            <TextStyle Id="WixUI_Font_Title" FaceName="Tahoma" Size="9" Bold="yes" />
+            <Property Id="DefaultUIFont" Value="WixUI_Font_Normal" />
+            <Property Id="WixUI_Mode" Value="InstallDir" />
+            <Property Id="ARPNOMODIFY" Value="1" />
+            <DialogRef Id="ErrorDlg" />
+            <DialogRef Id="FatalError" />
+            <DialogRef Id="FilesInUse" />
+            <DialogRef Id="MsiRMFilesInUse" />
+            <DialogRef Id="PrepareDlg" />
+            <DialogRef Id="ProgressDlg" />
+            <DialogRef Id="ResumeDlg" />
+            <DialogRef Id="UserExit" />
+            <DialogRef Id="ChooseActiveDirectoryDlg" />
+            <Publish Dialog="ExitDialog" Control="Finish" Event="EndDialog" Value="Return" Order="999">1</Publish>
+            <Publish Dialog="WelcomeDlg" Control="Next" Event="NewDialog" Value="ChooseActiveDirectoryDlg">1</Publish>
+            <Publish Dialog="ChooseActiveDirectoryDlg" Control="Back" Event="NewDialog" Value="MaintenanceTypeDlg" Order="1">Installed</Publish>
+            <Publish Dialog="ChooseActiveDirectoryDlg" Control="Back" Event="NewDialog" Value="WelcomeDlg" Order="2">NOT Installed</Publish>
+            <Publish Dialog="ChooseActiveDirectoryDlg" Control="Next" Event="NewDialog" Value="VerifyReadyDlg" Order="2">1</Publish>
+            <Publish Dialog="VerifyReadyDlg" Control="Back" Event="NewDialog" Value="ChooseActiveDirectoryDlg" Order="1">NOT Installed OR WixUI_InstallMode="Change"</Publish>
+            <Publish Dialog="MaintenanceTypeDlg" Control="Back" Event="NewDialog" Value="MaintenanceWelcomeDlg">1</Publish>
+        </UI>
+        <UIRef Id="WixUI_Common" />
+    </Product>
+    <?include ChooseActiveDirectoryUI.wxi ?>
+</Wix>

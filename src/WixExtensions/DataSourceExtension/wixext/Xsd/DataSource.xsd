@@ -1,0 +1,1076 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xs:schema xmlns:html="http://www.w3.org/1999/xhtml"
+            xmlns:wix="http://schemas.microsoft.com/wix/2006/wi"
+             xmlns:xs="http://www.w3.org/2001/XMLSchema"
+            xmlns:xse="http://schemas.microsoft.com/wix/2005/XmlSchemaExtension"
+      targetNamespace="http://schemas.appsecinc.com/wix/DataSourceExtension"
+                xmlns="http://schemas.appsecinc.com/wix/DataSourceExtension">
+  <xs:annotation>
+    <xs:documentation>
+      <![CDATA[
+Windows Installer XML DataSource Extension
+
+This extension significantly simplifies authoring of data source connection points, creating databases at install time
+and dropping databases during uninstall. Unlike the wix Sql extensions it is constructed on top of pure ODBC and built
+to support other database types in the near future.
+
+\par Example: Executing Statements on a Generic ODBC Connection
+\code
+<AppSecInc:ODBCConnection Id="LocalGenericConnection" ConnectionString="Driver={SQL Server};Server=localhost,1433;Database=master;Trusted_Connection=Yes;" />
+<Component Id="MasterDatabaseSysDatabases" Guid="0399235A-BFF3-41ef-993C-8FA9C0E354D6" KeyPath="yes">
+  <AppSecInc:ODBCExecute Id="SelectSysDatabases" ConnectionId="LocalGenericConnection" Sql="SELECT * FROM sysdatabases" OutputFilename="[INSTALLLOCATION]SysDatabases.xml" ExecuteOnInstall="yes" />
+</Component>
+\endcode
+
+\par Example: Creating an MSSQL Database and Executing SQL Statements
+\code
+<AppSecInc:MSSQLDatabaseConnection Id="LocalSQLServerConnection" IpAddress="localhost" Port="1433" Protocol="Tcp" WindowsAuthentication="yes" />
+<Binary Id="CreateBinaryTable_sql" SourceFile="CreateBinaryTable.sql" />
+...
+<File Id="CreateFileTable_sql" Name="CreateTable.sql" Source="CreateTable.sql" />
+...
+<AppSecInc:MSSQLDatabase Id="MSSQLDemoDatabase" Name="[MSSQL_DATABASE_NAME]" Connection="LocalSQLServerConnection" CreateOnInstall="yes" DropOnUnInstall="yes">
+ <AppSecInc:MSSQLDatabaseOption Id="MSSQLDemoDatabase_TrustWorthyOn" Value="TRUSTWORTHY ON" />
+ <AppSecInc:MSSQLDatabaseFileSpec Id="MSSQLDemoDatabase_PRIMARY" Name="Demo_mdf" Filename="[INSTALLLOCATION]Demo.mdf" Size="10MB" Type="PRIMARY" />
+ <AppSecInc:MSSQLDatabaseFileSpec Id="MSSQLDemoDatabase_LOG" Name="Demo_ldf" Filename="[INSTALLLOCATION]Demo.ldf" Size="12MB" Type="LOG ON" />
+ <AppSecInc:ODBCExecute Id="MSSQLDemoDatabase_CreateOptionalTable1" Sql="CREATE TABLE [\[][MSSQL_DATABASE_NAME]Optional[\]].[\[]dbo[\]].[\[]OptionalTable1[\]] ( [\[]OptionalTable1_Id[\]] [\[]int[\]] IDENTITY(1,1) NOT NULL )" ExecuteOnInstall="yes" />
+ <AppSecInc:ODBCExecute Id="MSSQLDemoDatabase_DropOptionalTable1" Sql="DROP TABLE [\[][MSSQL_DATABASE_NAME]Optional[\]].[\[]dbo[\]].[\[]OptionalTable1[\]]" ExecuteOnUnInstall="yes" />
+ <AppSecInc:ODBCExecuteBinary Id="MSSQLDemoDatabase_Binary" ExecuteOnInstall="yes" BinaryId="CreateBinaryTable_sql" />
+ <AppSecInc:ODBCExecuteFile Id="[#CreateFileTable_sql]" ExecuteOnInstall="yes" />
+</AppSecInc:MSSQLDatabase>
+\endcode
+
+\par Example: Inserting BULK Data into an MSSQL Database
+\code
+<AppSecInc:MSSQLDatabase Id="MSSQLDemoDatabase" Name="[MSSQL_DATABASE_NAME]" ConnectionId="LocalSQLServerConnection" CreateOnInstall="yes" DropOnUnInstall="yes">
+ <AppSecInc:MSSQLDataFile Id="MSSQLDemoDatabase_BulkInsert_CSV" Filename="[INSTALLLOCATION]BinaryTable.csv" ExecuteOnInstall="yes" Schema="dbo" Table="BinaryTableEncoded">
+  <AppSecInc:MSSQLDataFileParameter Id="MSSQLDemoDatabase_BulkInsert_CSV_KEEPIDENTITY" Value="KEEPIDENTITY" />
+  <AppSecInc:MSSQLDataFileParameter Id="MSSQLDemoDatabase_BulkInsert_CSV_DATAFILETYPE" Value="DATAFILETYPE = 'char'" />
+  <AppSecInc:MSSQLDataFileParameter Id="MSSQLDemoDatabase_BulkInsert_CSV_FIELDTERMINATOR" Value="FIELDTERMINATOR = ','" />                
+ </AppSecInc:MSSQLDataFile>
+ <AppSecInc:MSSQLDataBinaryFile Id="MSSQLDemoDatabase_BulkInsert_Binary_CSV" BinaryId="BinaryTable_csv" ExecuteOnInstall="yes" Schema="dbo" Table="BinaryTableNotEncoded">
+  <AppSecInc:MSSQLDataFileParameter Id="MSSQLDemoDatabase_BulkInsert_Binary_CSV_KEEPIDENTITY" Value="KEEPIDENTITY" />
+  <AppSecInc:MSSQLDataFileParameter Id="MSSQLDemoDatabase_BulkInsert_Binary_CSV_DATAFILETYPE" Value="DATAFILETYPE = 'char'" />
+  <AppSecInc:MSSQLDataFileParameter Id="MSSQLDemoDatabase_BulkInsert_Binary_CSV_FIELDTERMINATOR" Value="FIELDTERMINATOR = ','" />
+ </AppSecInc:MSSQLDataBinaryFile>
+</AppSecInc:MSSQLDatabase>
+\endcode
+
+\par Example: Creating Generic, Access and MSSQL Data Sources
+\code
+<AppSecInc:ODBCDataSource Id="MSSQLDatabaseDataSource_DemoDatabase_ODBC" CreateOnInstall="yes" DeleteOnUnInstall="yes" Driver="SQL Server" 
+ Name="DemoODBCGenericSystemDSN" Type="system" Value="Server=localhost;Description=[MSSQL_DATABASE_NAME] DSN created by ODBCDataSource;Database=[MSSQL_DATABASE_NAME];Trusted_Connection=yes" />
+<AppSecInc:MSSQLDataSource Id="MSSQLDatabaseDataSource_DemoDatabase_MSSQL" CreateOnInstall="yes" DeleteOnUnInstall="yes"
+ Name="DemoMSSQLDatabaseUserDSN" Type="user" Address="localhost" Description="[MSSQL_DATABASE_NAME] DSN created by MSSQLDataSource" 
+ Database="[MSSQL_DATABASE_NAME]" TrustedConnection="yes" Server="localhost" Network="DBMSSOCN" />
+<AppSecInc:AccessDataSource Id="AccessDemoDatabase_DataSource" CreateOnInstall="yes" DBQ="[INSTALLLOCATION]Database.mdf" 
+ Name="DemoAccessDatabaseSystemDSN" Type="system" Description="Access Demo DSN" DeleteOnUnInstall="yes" /> 
+\endcode
+
+\par Example: Creating a Microsoft Access Database
+
+\code
+<Property Id="ACCESS_DATABASE_DBQ" Value="[INSTALLLOCATION]AccessDemoDatabase.mdf">
+  <!-- database name saved for uninstall -->
+  <RegistrySearch Id="AccessDatabaseDBQSearch" Root="HKLM" Type="raw" Key="SOFTWARE\AppSecInc\AccessDatabaseMsi" Name="ACCESS_DATABASE_DBQ" />
+</Property>
+<Component Id="AccessDatabaseMsiComponent" Guid="D2CF0414-4650-4192-8A6F-41F1FB31C290">
+  ...
+  <AppSecInc:AccessDatabase Id="AccessDemoDatabase" DBQ="[ACCESS_DATABASE_DBQ]" ConnectionId="AccessConnection" CreateOnInstall="yes" DropOnUnInstall="yes">
+    <AppSecInc:ODBCExecute Id="AccessDemoDatabase_CreateTable1" Sql="CREATE TABLE Table1 ( Table1_Id INTEGER NOT NULL )" ExecuteOnInstall="yes" OutputFilename="[INSTALLLOCATION]CreateTable1.xml" />
+    <AppSecInc:ODBCExecute Id="AccessDemoDatabase_DropTable1" Sql="DROP TABLE Table1" ExecuteOnUnInstall="yes" />
+  </AppSecInc:AccessDatabase>
+</Component>
+<!-- save the database name for uninstall -->
+<Component Id="AccessDatabaseMsiRegistry" Guid="9B3E538F-8C30-4c68-8C00-97B1FA14522A">
+  <RegistryKey Id="AccessDatabaseMsiRegistryKey" Root="HKLM" Key="Software\AppSecInc\AccessDatabaseMsi" Action="createAndRemoveOnUninstall">
+    <RegistryValue Id="AccessDatabaseMsiRegistryKey_Access_DATABASE_DBQ" Name="ACCESS_DATABASE_DBQ" Value="[ACCESS_DATABASE_DBQ]" Type="string" />
+  </RegistryKey>
+</Component>
+\endcode
+]]>
+</xs:documentation>
+  </xs:annotation>
+
+  <xs:import namespace="http://schemas.microsoft.com/wix/2006/wi" />
+
+  <xs:element name="ODBCConnection">
+    <xs:annotation>
+      <xs:documentation>
+        A generic ODBC connection.
+      </xs:documentation>
+      <xs:appinfo>
+        <xse:parent namespace="http://schemas.microsoft.com/wix/2006/wi" ref="Fragment" />
+        <xse:parent namespace="http://schemas.microsoft.com/wix/2006/wi" ref="Module" />
+        <xse:parent namespace="http://schemas.microsoft.com/wix/2006/wi" ref="Product" />
+      </xs:appinfo>
+    </xs:annotation>
+    <xs:complexType>
+      <xs:attribute name="Id" type="xs:string" use="required">
+        <xs:annotation>
+          <xs:documentation>Identifier for the connection (primary key).</xs:documentation>
+        </xs:annotation>
+      </xs:attribute>
+      <xs:attribute name="ConnectionString" type="xs:string" use="required">
+        <xs:annotation>
+          <xs:documentation>Connection string, including driver and driver-specific parameters.</xs:documentation>
+        </xs:annotation>
+      </xs:attribute>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="MSSQLDatabaseConnection">
+    <xs:annotation>
+      <xs:documentation>
+        An ODBC connection specialized for a Microsoft SQL Server.
+      </xs:documentation>
+      <xs:appinfo>
+        <xse:parent namespace="http://schemas.microsoft.com/wix/2006/wi" ref="Fragment" />
+        <xse:parent namespace="http://schemas.microsoft.com/wix/2006/wi" ref="Module" />
+        <xse:parent namespace="http://schemas.microsoft.com/wix/2006/wi" ref="Product" />
+      </xs:appinfo>
+    </xs:annotation>
+    <xs:complexType>
+      <xs:attribute name="Id" type="xs:string" use="required">
+        <xs:annotation>
+          <xs:documentation>Identifier for the connection (primary key).</xs:documentation>
+        </xs:annotation>
+      </xs:attribute>
+      <xs:attribute name="IpAddress" type="xs:string" use="optional" default="localhost">
+        <xs:annotation>
+          <xs:documentation>IP address or host name of the database, default is "localhost".</xs:documentation>
+        </xs:annotation>
+      </xs:attribute>
+      <xs:attribute name="Port" type="xs:integer" use="optional" default="1433">
+        <xs:annotation>
+          <xs:documentation>Database port, default is 1433.</xs:documentation>
+        </xs:annotation>
+      </xs:attribute>
+      <xs:attribute name="Protocol" use="optional">
+        <xs:annotation>
+          <xs:documentation>Protocol to use</xs:documentation>
+        </xs:annotation>
+        <xs:simpleType>
+          <xs:restriction base="xs:NMTOKEN">
+            <xs:enumeration value="Tcp" />
+            <xs:enumeration value="Np" />
+            <xs:enumeration value="Rpc" />
+            <xs:enumeration value="Np" />
+            <xs:enumeration value="Lpc" />
+            <xs:enumeration value="Spx" />
+            <xs:enumeration value="Vines" />
+            <xs:enumeration value="Adsp" />
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:attribute>
+      <xs:attribute name="Instance" type="xs:string" use="optional">
+        <xs:annotation>
+          <xs:documentation>Optional name of the database instance.</xs:documentation>
+        </xs:annotation>
+      </xs:attribute>
+      <xs:attribute name="Username" type="xs:string" use="optional">
+        <xs:annotation>
+          <xs:documentation>Optional username for SQL Server authentication.</xs:documentation>
+        </xs:annotation>
+      </xs:attribute>
+      <xs:attribute name="Password" type="xs:string" use="optional">
+        <xs:annotation>
+          <xs:documentation>Optional password for SQL Server authentication.</xs:documentation>
+        </xs:annotation>
+      </xs:attribute>
+      <xs:attribute name="WindowsAuthentication" use="optional" type="YesNoType">
+        <xs:annotation>
+          <xs:documentation>Use Windows Authentication, ignore username and password.</xs:documentation>
+        </xs:annotation>
+      </xs:attribute>
+      <xs:attribute name="Database" type="xs:string" use="optional">
+        <xs:annotation>
+          <xs:documentation>Default database name.</xs:documentation>
+        </xs:annotation>
+      </xs:attribute>
+      <xs:attribute name="Application" type="xs:string" use="optional">
+        <xs:annotation>
+          <xs:documentation>Optional application name.</xs:documentation>
+        </xs:annotation>
+      </xs:attribute>
+      <xs:attribute name="NamedPipe" type="xs:string" use="optional">
+        <xs:annotation>
+          <xs:documentation>Optional named pipe for the database instance.</xs:documentation>
+        </xs:annotation>
+      </xs:attribute>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="MSSQLDatabase">
+    <xs:annotation>
+      <xs:documentation>
+       Implements an MSSQL database.
+      </xs:documentation>
+      <xs:appinfo>
+        <xse:parent namespace="http://schemas.microsoft.com/wix/2006/wi" ref="Component" />
+      </xs:appinfo>
+    </xs:annotation>
+    <xs:complexType>
+      <xs:choice minOccurs="0" maxOccurs="unbounded">
+        <xs:element ref="MSSQLDatabaseFileSpec" maxOccurs="unbounded" />
+        <xs:element ref="MSSQLDatabaseOption" maxOccurs="unbounded" />
+        <xs:element ref="MSSQLDataFile" maxOccurs="unbounded" />
+        <xs:element ref="MSSQLDataBinaryFile" maxOccurs="unbounded" />
+        <xs:element ref="ODBCExecute" maxOccurs="unbounded" />
+        <xs:element ref="ODBCExecuteBinary" maxOccurs="unbounded" />
+        <xs:element ref="ODBCExecuteFile" maxOccurs="unbounded" />
+      </xs:choice>
+      <xs:attribute name="Id" type="xs:string" use="required">
+        <xs:annotation>
+          <xs:documentation>Identifier for the database (primary key).</xs:documentation>
+        </xs:annotation>
+      </xs:attribute>
+      <xs:attribute name="Name" type="xs:string" use="required">
+        <xs:annotation>
+          <xs:documentation>Name of the MSSQL database.</xs:documentation>
+        </xs:annotation>
+      </xs:attribute>
+      <xs:attribute name="Collate" type="xs:string" use="optional">
+        <xs:annotation>
+          <xs:documentation>Optional database collation, eg. French_CI_AI.</xs:documentation>
+        </xs:annotation>
+      </xs:attribute>
+      <xs:attribute name="Purpose" type="xs:string" use="optional">
+        <xs:annotation>
+          <xs:documentation>Optional database purpose, eg. ATTACH.</xs:documentation>
+        </xs:annotation>
+      </xs:attribute>
+      <xs:attribute name="CreateOnInstall" use="optional" type="YesNoType">
+        <xs:annotation>
+          <xs:documentation>Create the database at install time.</xs:documentation>
+        </xs:annotation>
+      </xs:attribute>
+      <xs:attribute name="CreateOnUnInstall" use="optional" type="YesNoType">
+        <xs:annotation>
+          <xs:documentation>Create the database at uninstall time.</xs:documentation>
+        </xs:annotation>
+      </xs:attribute>
+      <xs:attribute name="DropOnInstall" use="optional" type="YesNoType">
+        <xs:annotation>
+          <xs:documentation>Drop the database at install time.</xs:documentation>
+        </xs:annotation>
+      </xs:attribute>
+      <xs:attribute name="DropOnUnInstall" use="optional" type="YesNoType">
+        <xs:annotation>
+          <xs:documentation>Drop the database at uninstall time.</xs:documentation>
+        </xs:annotation>
+      </xs:attribute>
+      <xs:attribute name="CheckIfExists" use="optional" type="YesNoType">
+        <xs:annotation>
+          <xs:documentation>
+            Check whether the database exists before creating or dropping it.
+            Create the database if it doesn't exist.
+            Drop the database if it exists.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:attribute>
+      <xs:attribute name="ConnectionId" type="xs:string" use="required">
+        <xs:annotation>
+          <xs:documentation>MSSQLConnection to use for operations on this database.</xs:documentation>
+        </xs:annotation>
+      </xs:attribute>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="MSSQLDatabaseOption">
+    <xs:complexType>
+      <xs:annotation>
+        <xs:appinfo>
+          <xse:parent namespace="http://schemas.appsecinc.com/wix/DataSourceExtension" ref="MSSQLDatabase" />
+        </xs:appinfo>
+      </xs:annotation>
+      <xs:simpleContent>
+        <xs:extension base="xs:string">
+          <xs:attribute name="Id" type="xs:string" use="required">
+            <xs:annotation>
+              <xs:documentation>Identifier for the option(primary key).</xs:documentation>
+            </xs:annotation>
+          </xs:attribute>
+          <xs:attribute name="Value" type="xs:string" use="required">
+            <xs:annotation>
+              <xs:documentation>Database option, eg. TRUSTWORTHY ON.</xs:documentation>
+            </xs:annotation>
+          </xs:attribute>
+        </xs:extension>
+      </xs:simpleContent>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="MSSQLDatabaseFileSpec">
+    <xs:complexType>
+      <xs:annotation>
+        <xs:appinfo>
+          <xse:parent namespace="http://schemas.appsecinc.com/wix/DataSourceExtension" ref="MSSQLDatabase" />
+        </xs:appinfo>
+      </xs:annotation>
+      <xs:simpleContent>
+        <xs:extension base="xs:string">
+          <xs:attribute name="Id" type="xs:string" use="required">
+            <xs:annotation>
+              <xs:documentation>Identifier for the file spec (primary key).</xs:documentation>
+            </xs:annotation>
+          </xs:attribute>
+          <xs:attribute name="Type" type="xs:string" use="optional">
+            <xs:annotation>
+              <xs:documentation>File spec type, eg. PRIMARY, LOG ON or FILEGROUP Group1.</xs:documentation>
+            </xs:annotation>
+          </xs:attribute>
+          <xs:attribute name="Filename" type="xs:string" use="required">
+            <xs:annotation>
+              <xs:documentation>The operating-system file name for the database file.</xs:documentation>
+            </xs:annotation>
+          </xs:attribute>
+          <xs:attribute name="Name" type="xs:string" use="optional">
+            <xs:annotation>
+              <xs:documentation>The logical name for the database file.</xs:documentation>
+            </xs:annotation>
+          </xs:attribute>
+          <xs:attribute name="Size" type="xs:string" use="optional">
+            <xs:annotation>
+              <xs:documentation>The size of the database file, eg. 10MB.</xs:documentation>
+            </xs:annotation>
+          </xs:attribute>
+          <xs:attribute name="MaxSize" type="xs:string" use="optional">
+            <xs:annotation>
+              <xs:documentation>Maximum size to which the database file can grow.</xs:documentation>
+            </xs:annotation>
+          </xs:attribute>
+          <xs:attribute name="GrowthSize" type="xs:string" use="optional">
+            <xs:annotation>
+              <xs:documentation>Growth increment of the database file.</xs:documentation>
+            </xs:annotation>
+          </xs:attribute>
+        </xs:extension>
+      </xs:simpleContent>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="MSSQLDataBinaryFile">
+    <xs:annotation>
+      <xs:documentation>
+        Implements execution of a binary file that contains ODBC statements.
+      </xs:documentation>
+      <xs:appinfo>
+        <xse:parent namespace="http://schemas.microsoft.com/wix/2006/wi" ref="Component" />
+        <xse:parent namespace="http://schemas.microsoft.com/wix/2006/wi" ref="MSSQLDatabase" />
+      </xs:appinfo>
+    </xs:annotation>
+    <xs:complexType>
+      <xs:choice minOccurs="0" maxOccurs="unbounded">
+        <xs:element ref="MSSQLDataFileParameter" maxOccurs="unbounded" />
+        <xs:element ref="wix:Condition" />
+      </xs:choice>
+      <xs:attribute name="Id" type="xs:string" use="required">
+        <xs:annotation>
+          <xs:documentation>Identifier for the ODBC file statement (primary key).</xs:documentation>
+        </xs:annotation>
+      </xs:attribute>
+      <xs:attribute name="BinaryId" type="xs:string" use="required">
+        <xs:annotation>
+          <xs:documentation>File that contains SQL statements to be executed.</xs:documentation>
+        </xs:annotation>
+      </xs:attribute>
+      <xs:attribute name="EvaluateProperties" type="YesNoType" use="optional" default="yes">
+        <xs:annotation>
+          <xs:documentation>Set to yes to evaluate MSI properties within the query, file, no to automatically encode all [ ] characters.</xs:documentation>
+        </xs:annotation>
+      </xs:attribute>
+      <xs:attribute name="ConnectionId" type="xs:string" use="optional">
+        <xs:annotation>
+          <xs:documentation>MSSQLConnection to use for executing this statement (when not nested under a database element).</xs:documentation>
+        </xs:annotation>
+      </xs:attribute>
+      <xs:attribute name="ExecuteOnInstall" use="optional" type="YesNoType">
+        <xs:annotation>
+          <xs:documentation>Execute statement at install time.</xs:documentation>
+        </xs:annotation>
+      </xs:attribute>
+      <xs:attribute name="ExecuteOnUnInstall" use="optional" type="YesNoType">
+        <xs:annotation>
+          <xs:documentation>Execute statement at uninstall time.</xs:documentation>
+        </xs:annotation>
+      </xs:attribute>
+      <xs:attribute name="Table" type="xs:string" use="required">
+        <xs:annotation>
+          <xs:documentation>The table name where to BULK INSERT data into.</xs:documentation>
+        </xs:annotation>
+      </xs:attribute>
+      <xs:attribute name="Schema" type="xs:string" use="optional">
+        <xs:annotation>
+          <xs:documentation>The schema, eg. dbo.</xs:documentation>
+        </xs:annotation>
+      </xs:attribute>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="MSSQLDataFile">
+    <xs:complexType>
+      <xs:annotation>
+        <xs:appinfo>
+          <xse:parent namespace="http://schemas.appsecinc.com/wix/DataSourceExtension" ref="MSSQLDatabase" />
+        </xs:appinfo>
+      </xs:annotation>
+      <xs:choice minOccurs="0" maxOccurs="unbounded">
+        <xs:element ref="MSSQLDataFileParameter" maxOccurs="unbounded" />
+        <xs:element ref="wix:Condition" />
+      </xs:choice>
+      <xs:attribute name="Id" type="xs:string" use="required">
+        <xs:annotation>
+          <xs:documentation>Identifier for the data file (primary key).</xs:documentation>
+        </xs:annotation>
+      </xs:attribute>
+      <xs:attribute name="Filename" type="xs:string" use="required">
+        <xs:annotation>
+          <xs:documentation>The operating-system file name that contains data to BULK INSERT.</xs:documentation>
+        </xs:annotation>
+      </xs:attribute>
+      <xs:attribute name="Database" type="xs:string" use="optional">
+        <xs:annotation>
+          <xs:documentation>The name of the database when not nested under an MSSQLDatabase.</xs:documentation>
+        </xs:annotation>
+      </xs:attribute>
+      <xs:attribute name="Schema" type="xs:string" use="optional">
+        <xs:annotation>
+          <xs:documentation>The schema, eg. dbo.</xs:documentation>
+        </xs:annotation>
+      </xs:attribute>
+      <xs:attribute name="Table" type="xs:string" use="required">
+        <xs:annotation>
+          <xs:documentation>The table name where to BULK INSERT data into.</xs:documentation>
+        </xs:annotation>
+      </xs:attribute>
+      <xs:attribute name="ConnectionId" type="xs:string" use="optional">
+        <xs:annotation>
+          <xs:documentation>MSSQLConnection to use for executing this statement (when not nested under a database element).</xs:documentation>
+        </xs:annotation>
+      </xs:attribute>
+      <xs:attribute name="ExecuteOnInstall" use="optional" type="YesNoType">
+        <xs:annotation>
+          <xs:documentation>Execute statement at install time.</xs:documentation>
+        </xs:annotation>
+      </xs:attribute>
+      <xs:attribute name="ExecuteOnUnInstall" use="optional" type="YesNoType">
+        <xs:annotation>
+          <xs:documentation>Execute statement at uninstall time.</xs:documentation>
+        </xs:annotation>
+      </xs:attribute>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="MSSQLDataFileParameter">
+    <xs:complexType>
+      <xs:annotation>
+        <xs:appinfo>
+          <xse:parent namespace="http://schemas.appsecinc.com/wix/DataSourceExtension" ref="MSSQLDataFile" />
+          <xse:parent namespace="http://schemas.appsecinc.com/wix/DataSourceExtension" ref="MSSQLDataBinaryFile" />
+        </xs:appinfo>
+      </xs:annotation>
+      <xs:simpleContent>
+        <xs:extension base="xs:string">
+          <xs:attribute name="Id" type="xs:string" use="required">
+            <xs:annotation>
+              <xs:documentation>Identifier for the option(primary key).</xs:documentation>
+            </xs:annotation>
+          </xs:attribute>
+          <xs:attribute name="Value" type="xs:string" use="required">
+            <xs:annotation>
+              <xs:documentation>BULK INSERT option, eg. KEEPIDENTITY or MAXERRORS = 5.</xs:documentation>
+            </xs:annotation>
+          </xs:attribute>
+        </xs:extension>
+      </xs:simpleContent>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="AccessDatabaseConnection">
+    <xs:annotation>
+      <xs:documentation>
+        An ODBC connection specialized for a Microsoft Access database.
+      </xs:documentation>
+      <xs:appinfo>
+        <xse:parent namespace="http://schemas.microsoft.com/wix/2006/wi" ref="Fragment" />
+        <xse:parent namespace="http://schemas.microsoft.com/wix/2006/wi" ref="Module" />
+        <xse:parent namespace="http://schemas.microsoft.com/wix/2006/wi" ref="Product" />
+      </xs:appinfo>
+    </xs:annotation>
+    <xs:complexType>
+      <xs:attribute name="Id" type="xs:string" use="required">
+        <xs:annotation>
+          <xs:documentation>Identifier for the connection (primary key).</xs:documentation>
+        </xs:annotation>
+      </xs:attribute>
+      <xs:attribute name="DBQ" type="xs:string" use="required">
+        <xs:annotation>
+          <xs:documentation>Database file.</xs:documentation>
+        </xs:annotation>
+      </xs:attribute>
+      <xs:attribute name="Username" type="xs:string" use="optional">
+        <xs:annotation>
+          <xs:documentation>Optional username for SQL Server authentication.</xs:documentation>
+        </xs:annotation>
+      </xs:attribute>
+      <xs:attribute name="Password" type="xs:string" use="optional">
+        <xs:annotation>
+          <xs:documentation>Optional password for SQL Server authentication.</xs:documentation>
+        </xs:annotation>
+      </xs:attribute>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="AccessDatabase">
+    <xs:annotation>
+      <xs:documentation>
+        Implements a Microsoft Access database.
+      </xs:documentation>
+      <xs:appinfo>
+        <xse:parent namespace="http://schemas.microsoft.com/wix/2006/wi" ref="Component" />
+      </xs:appinfo>
+    </xs:annotation>
+    <xs:complexType>
+      <xs:choice minOccurs="0" maxOccurs="unbounded">
+        <xs:element ref="ODBCExecute" maxOccurs="unbounded" />
+        <xs:element ref="ODBCExecuteBinary" maxOccurs="unbounded" />
+        <xs:element ref="ODBCExecuteFile" maxOccurs="unbounded" />
+      </xs:choice>
+      <xs:attribute name="Id" type="xs:string" use="required">
+        <xs:annotation>
+          <xs:documentation>Identifier for the database (primary key).</xs:documentation>
+        </xs:annotation>
+      </xs:attribute>
+      <xs:attribute name="DBQ" type="xs:string" use="required">
+        <xs:annotation>
+          <xs:documentation>MDB file name of the Access database.</xs:documentation>
+        </xs:annotation>
+      </xs:attribute>
+      <xs:attribute name="CreateOnInstall" use="optional" type="YesNoType">
+        <xs:annotation>
+          <xs:documentation>Create the database at install time.</xs:documentation>
+        </xs:annotation>
+      </xs:attribute>
+      <xs:attribute name="CreateOnUnInstall" use="optional" type="YesNoType">
+        <xs:annotation>
+          <xs:documentation>Create the database at uninstall time.</xs:documentation>
+        </xs:annotation>
+      </xs:attribute>
+      <xs:attribute name="DropOnInstall" use="optional" type="YesNoType">
+        <xs:annotation>
+          <xs:documentation>Drop the database at install time.</xs:documentation>
+        </xs:annotation>
+      </xs:attribute>
+      <xs:attribute name="DropOnUnInstall" use="optional" type="YesNoType">
+        <xs:annotation>
+          <xs:documentation>Drop the database at uninstall time.</xs:documentation>
+        </xs:annotation>
+      </xs:attribute>
+      <xs:attribute name="CheckIfExists" use="optional" type="YesNoType">
+        <xs:annotation>
+          <xs:documentation>
+            Check whether the database exists before creating or dropping it.
+            Create the database if it doesn't exist.
+            Drop the database if it exists.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:attribute>
+      <xs:attribute name="ConnectionId" type="xs:string" use="required">
+        <xs:annotation>
+          <xs:documentation>AccessConnection to use for operations on this database.</xs:documentation>
+        </xs:annotation>
+      </xs:attribute>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="ODBCExecute">
+    <xs:annotation>
+      <xs:documentation>
+        Implements execution of an ODBC statement.
+
+        ODBCExecute can be nested under a database (eg. MSSQLDatabase), component or product/module/fragment. When nested
+        under a database or component, conditions of the latter apply. When nested under product, module or fragment, you
+        can specify explicit conditions that will be combined with ExecuteOnInstall and ExecuteOnUnInstall.
+
+        Note that ODBCExecute runs automatically after databases are created on install and before databases are dropped
+        on uninstall.
+      </xs:documentation>
+      <xs:appinfo>
+        <xse:parent namespace="http://schemas.microsoft.com/wix/2006/wi" ref="Component" />
+        <xse:parent namespace="http://schemas.microsoft.com/wix/2006/wi" ref="MSSQLDatabase" />
+        <xse:parent namespace="http://schemas.microsoft.com/wix/2006/wi" ref="AccessDatabase" />
+      </xs:appinfo>
+    </xs:annotation>
+    <xs:complexType>
+      <xs:simpleContent>
+        <xs:extension base="xs:string">
+          <xs:annotation>
+            <xs:documentation>
+              Condition that determines if the statement is executed. If nested under a component or a database, the condition is
+              combined with the parent's conditions.
+            </xs:documentation>
+          </xs:annotation>
+          <xs:attribute name="Id" type="xs:string" use="required">
+            <xs:annotation>
+              <xs:documentation>Identifier for the ODBC statement (primary key).</xs:documentation>
+            </xs:annotation>
+          </xs:attribute>
+          <xs:attribute name="Sql" type="xs:string" use="optional">
+            <xs:annotation>
+              <xs:documentation>SQL statement to be executed.</xs:documentation>
+            </xs:annotation>
+          </xs:attribute>
+          <xs:attribute name="OutputFilename" type="xs:string" use="optional">
+            <xs:annotation>
+              <xs:documentation>Save structured output to an XML file.</xs:documentation>
+            </xs:annotation>
+          </xs:attribute>
+          <xs:attribute name="EvaluateProperties" type="YesNoType" use="optional" default="yes">
+            <xs:annotation>
+              <xs:documentation>Set to yes to evaluate MSI properties within the SQL query, no to automatically encode all [ ] characters.</xs:documentation>
+            </xs:annotation>
+          </xs:attribute>
+          <xs:attribute name="ConnectionId" type="xs:string" use="optional">
+            <xs:annotation>
+              <xs:documentation>MSSQLConnection to use for executing this statement (when not nested under a database element).</xs:documentation>
+            </xs:annotation>
+          </xs:attribute>
+          <xs:attribute name="ExecuteOnInstall" use="optional" type="YesNoType">
+            <xs:annotation>
+              <xs:documentation>Execute statement at install time.</xs:documentation>
+            </xs:annotation>
+          </xs:attribute>
+          <xs:attribute name="ExecuteOnUnInstall" use="optional" type="YesNoType">
+            <xs:annotation>
+              <xs:documentation>Execute statement at uninstall time.</xs:documentation>
+            </xs:annotation>
+          </xs:attribute>
+          <xs:attribute name="Delimiter" type="xs:string" use="optional">
+            <xs:annotation>
+              <xs:documentation>Line delimiter. The contents of the SQL file will be split and executed one-by-one.</xs:documentation>
+            </xs:annotation>
+          </xs:attribute>
+        </xs:extension>
+      </xs:simpleContent>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="ODBCExecuteFile">
+    <xs:annotation>
+      <xs:documentation>
+        Implements execution of a file that contains ODBC statements.
+
+        ODBCExecuteFile behaves like ODBCExecute, but executes a file. Unlike ODBCExecute Sql parameter, the contents of 
+        the file cannot contain MSI properties and hence should not be encoded.        
+      </xs:documentation>
+      <xs:appinfo>
+        <xse:parent namespace="http://schemas.microsoft.com/wix/2006/wi" ref="Component" />
+        <xse:parent namespace="http://schemas.microsoft.com/wix/2006/wi" ref="MSSQLDatabase" />
+        <xse:parent namespace="http://schemas.microsoft.com/wix/2006/wi" ref="AccessDatabase" />
+      </xs:appinfo>
+    </xs:annotation>
+    <xs:complexType>
+      <xs:simpleContent>
+        <xs:extension base="xs:string">
+          <xs:annotation>
+            <xs:documentation>
+              Condition that determines if the statement is executed. If nested under a component or a database, the condition is
+              combined with the parent's conditions.
+            </xs:documentation>
+          </xs:annotation>
+          <xs:attribute name="Id" type="xs:string" use="required">
+            <xs:annotation>
+              <xs:documentation>Identifier for the ODBC file statement (primary key).</xs:documentation>
+            </xs:annotation>
+          </xs:attribute>
+          <xs:attribute name="Filename" type="xs:string" use="required">
+            <xs:annotation>
+              <xs:documentation>File that contains SQL statements to be executed.</xs:documentation>
+            </xs:annotation>
+          </xs:attribute>
+          <xs:attribute name="OutputFilename" type="xs:string" use="optional">
+            <xs:annotation>
+              <xs:documentation>Save output to a file.</xs:documentation>
+            </xs:annotation>
+          </xs:attribute>
+          <xs:attribute name="EvaluateProperties" type="YesNoType" use="optional" default="yes">
+            <xs:annotation>
+              <xs:documentation>Set to yes to evaluate MSI properties within the file, no to automatically encode all [ ] characters.</xs:documentation>
+            </xs:annotation>
+          </xs:attribute>
+          <xs:attribute name="ConnectionId" type="xs:string" use="optional">
+            <xs:annotation>
+              <xs:documentation>MSSQLConnection to use for executing this statement (when not nested under a database element).</xs:documentation>
+            </xs:annotation>
+          </xs:attribute>
+          <xs:attribute name="ExecuteOnInstall" use="optional" type="YesNoType">
+            <xs:annotation>
+              <xs:documentation>Execute statement at install time.</xs:documentation>
+            </xs:annotation>
+          </xs:attribute>
+          <xs:attribute name="ExecuteOnUnInstall" use="optional" type="YesNoType">
+            <xs:annotation>
+              <xs:documentation>Execute statement at uninstall time.</xs:documentation>
+            </xs:annotation>
+          </xs:attribute>
+          <xs:attribute name="Delimiter" type="xs:string" use="optional">
+            <xs:annotation>
+              <xs:documentation>Line delimiter. The contents of the SQL file will be split and executed one-by-one.</xs:documentation>
+            </xs:annotation>
+          </xs:attribute>
+        </xs:extension>
+      </xs:simpleContent>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="ODBCExecuteBinary">
+    <xs:annotation>
+      <xs:documentation>
+        Implements execution of a file that contains ODBC statements.
+
+        ODBCExecuteBinary behaves like ODBCExecute, but executes an embedded binary file. This is the most flexible construct 
+        since it can execute both files that contain MSI properties and files that contain SQL statements to be executed as-is.
+        In addition binary files are never physically placed on disk during execution.
+      </xs:documentation>
+      <xs:appinfo>
+        <xse:parent namespace="http://schemas.microsoft.com/wix/2006/wi" ref="Component" />
+        <xse:parent namespace="http://schemas.microsoft.com/wix/2006/wi" ref="MSSQLDatabase" />
+        <xse:parent namespace="http://schemas.microsoft.com/wix/2006/wi" ref="AccessDatabase" />
+      </xs:appinfo>
+    </xs:annotation>
+    <xs:complexType>
+      <xs:simpleContent>
+        <xs:extension base="xs:string">
+          <xs:annotation>
+            <xs:documentation>
+              Condition that determines if the statement is executed. If nested under a component or a database, the condition is
+              combined with the parent's conditions.
+            </xs:documentation>
+          </xs:annotation>
+          <xs:attribute name="Id" type="xs:string" use="required">
+            <xs:annotation>
+              <xs:documentation>Identifier for the ODBC file statement (primary key).</xs:documentation>
+            </xs:annotation>
+          </xs:attribute>
+          <xs:attribute name="BinaryId" type="xs:string" use="required">
+            <xs:annotation>
+              <xs:documentation>File that contains SQL statements to be executed.</xs:documentation>
+            </xs:annotation>
+          </xs:attribute>
+          <xs:attribute name="OutputFilename" type="xs:string" use="optional">
+            <xs:annotation>
+              <xs:documentation>Save output to a file.</xs:documentation>
+            </xs:annotation>
+          </xs:attribute>
+          <xs:attribute name="EvaluateProperties" type="YesNoType" use="optional" default="yes">
+            <xs:annotation>
+              <xs:documentation>Set to yes to evaluate MSI properties within the query, file, no to automatically encode all [ ] characters.</xs:documentation>
+            </xs:annotation>
+          </xs:attribute>
+          <xs:attribute name="ConnectionId" type="xs:string" use="optional">
+            <xs:annotation>
+              <xs:documentation>MSSQLConnection to use for executing this statement (when not nested under a database element).</xs:documentation>
+            </xs:annotation>
+          </xs:attribute>
+          <xs:attribute name="ExecuteOnInstall" use="optional" type="YesNoType">
+            <xs:annotation>
+              <xs:documentation>Execute statement at install time.</xs:documentation>
+            </xs:annotation>
+          </xs:attribute>
+          <xs:attribute name="ExecuteOnUnInstall" use="optional" type="YesNoType">
+            <xs:annotation>
+              <xs:documentation>Execute statement at uninstall time.</xs:documentation>
+            </xs:annotation>
+          </xs:attribute>
+          <xs:attribute name="Delimiter" type="xs:string" use="optional">
+            <xs:annotation>
+              <xs:documentation>Line delimiter. The contents of the SQL file will be split and executed one-by-one.</xs:documentation>
+            </xs:annotation>
+          </xs:attribute>
+        </xs:extension>
+      </xs:simpleContent>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="ODBCDataSource">
+    <xs:annotation>
+      <xs:documentation>
+        Implements creation and deletion of an ODBC DSN.
+
+        ODBCDataSource can be nested under a component or product/module/fragment. When nested
+        under a component, conditions of the latter apply. When nested under product, module or fragment, you
+        can specify explicit conditions that will be combined with CreateOnInstall, CreateOnUnInstall, DeleteOnInstall and 
+        DeleteOnUnInstall options.
+
+        Note that ODBCDataSource runs automatically before databases are created on install and after databases are dropped
+        on uninstall.
+      </xs:documentation>
+      <xs:appinfo>
+        <xse:parent namespace="http://schemas.microsoft.com/wix/2006/wi" ref="Component" />
+      </xs:appinfo>
+    </xs:annotation>
+    <xs:complexType>
+      <xs:simpleContent>
+        <xs:extension base="xs:string">
+          <xs:annotation>
+            <xs:documentation>
+              Condition that determines if the datasource is created or deleted. If nested under a component, the condition is
+              combined with the parent's conditions.
+            </xs:documentation>
+          </xs:annotation>
+          <xs:attribute name="Id" type="xs:string" use="required">
+            <xs:annotation>
+              <xs:documentation>Identifier for the ODBC datasource (primary key).</xs:documentation>
+            </xs:annotation>
+          </xs:attribute>
+          <xs:attribute name="Driver" type="xs:string" use="required">
+            <xs:annotation>
+              <xs:documentation>ODBC driver, eg. "SQL Server".</xs:documentation>
+            </xs:annotation>
+          </xs:attribute>
+          <xs:attribute name="Name" type="xs:string" use="required">
+            <xs:annotation>
+              <xs:documentation>Name of the DSN, pre-pended as DSN=name to the value string.</xs:documentation>
+            </xs:annotation>
+          </xs:attribute>
+          <xs:attribute name="Value" type="xs:string" use="required">
+            <xs:annotation>
+              <xs:documentation>Value of the DSN, this is driver-specific.</xs:documentation>
+            </xs:annotation>
+          </xs:attribute>
+          <xs:attribute name="CreateOnInstall" use="optional" type="YesNoType">
+            <xs:annotation>
+              <xs:documentation>Create DSN at install time.</xs:documentation>
+            </xs:annotation>
+          </xs:attribute>
+          <xs:attribute name="CreateOnUnInstall" use="optional" type="YesNoType">
+            <xs:annotation>
+              <xs:documentation>Create DSN at uninstall time.</xs:documentation>
+            </xs:annotation>
+          </xs:attribute>
+          <xs:attribute name="DeleteOnInstall" use="optional" type="YesNoType">
+            <xs:annotation>
+              <xs:documentation>Delete DSN at install time.</xs:documentation>
+            </xs:annotation>
+          </xs:attribute>
+          <xs:attribute name="DeleteOnUnInstall" use="optional" type="YesNoType">
+            <xs:annotation>
+              <xs:documentation>Delete DSN at uninstall time.</xs:documentation>
+            </xs:annotation>
+          </xs:attribute>
+          <xs:attribute name="Type" use="required" type="DSNType">
+            <xs:annotation>
+              <xs:documentation>DSN type.</xs:documentation>
+            </xs:annotation>
+          </xs:attribute>
+        </xs:extension>
+      </xs:simpleContent>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="MSSQLDataSource">
+    <xs:annotation>
+      <xs:documentation>
+        Implements creation and deletion of an MSSQL DSN.
+
+        MSSQLDataSource can be nested under a component or product/module/fragment. When nested
+        under a component, conditions of the latter apply. When nested under product, module or fragment, you
+        can specify explicit conditions that will be combined with CreateOnInstall, CreateOnUnInstall, DeleteOnInstall and
+        DeleteOnUnInstall options.
+
+        Note that MSSQLDataSource runs automatically before databases are created on install and after databases are dropped
+        on uninstall.
+
+        \todo Nest under MSSQLDatabase and inherit connection properties from the MSSQLDatabaseConnection
+      </xs:documentation>
+      <xs:appinfo>
+        <xse:parent namespace="http://schemas.microsoft.com/wix/2006/wi" ref="Component" />
+      </xs:appinfo>
+    </xs:annotation>
+    <xs:complexType>
+      <xs:simpleContent>
+        <xs:extension base="xs:string">
+          <xs:annotation>
+            <xs:documentation>
+              Condition that determines if the datasource is created or deleted. If nested under a component, the condition is
+              combined with the parent's conditions.
+            </xs:documentation>
+          </xs:annotation>
+          <xs:attribute name="Id" type="xs:string" use="required">
+            <xs:annotation>
+              <xs:documentation>Identifier for the ODBC datasource (primary key).</xs:documentation>
+            </xs:annotation>
+          </xs:attribute>
+          <xs:attribute name="Name" type="xs:string" use="required">
+            <xs:annotation>
+              <xs:documentation>Name of the DSN.</xs:documentation>
+            </xs:annotation>
+          </xs:attribute>
+          <xs:attribute name="Server" type="xs:string" use="required">
+            <xs:annotation>
+              <xs:documentation>The name or label for the connection entry. </xs:documentation>
+            </xs:annotation>
+          </xs:attribute>
+          <xs:attribute name="Network" type="xs:string" use="required">
+            <xs:annotation>
+              <xs:documentation>The name of the Net-Library module to use, in capital letters, without the .dll suffix (for example, DBMSSOCN, not dbmssocn.dll).</xs:documentation>
+            </xs:annotation>
+          </xs:attribute>
+          <xs:attribute name="Address" type="xs:string" use="required">
+            <xs:annotation>
+              <xs:documentation>The network address of the Windows NT server running SQL Server.</xs:documentation>
+            </xs:annotation>
+          </xs:attribute>
+          <xs:attribute name="Database" type="xs:string" use="optional">
+            <xs:annotation>
+              <xs:documentation>The default database for the ODBC data source.</xs:documentation>
+            </xs:annotation>
+          </xs:attribute>
+          <xs:attribute name="Description" type="xs:string" use="optional">
+            <xs:annotation>
+              <xs:documentation>Optional DSN description.</xs:documentation>
+            </xs:annotation>
+          </xs:attribute>
+          <xs:attribute name="TrustedConnection" type="YesNoType" use="optional">
+            <xs:annotation>
+              <xs:documentation>Specifies whether the data source should use trusted connections when connecting to SQL Server.</xs:documentation>
+            </xs:annotation>
+          </xs:attribute>
+          <xs:attribute name="CreateOnInstall" use="optional" type="YesNoType">
+            <xs:annotation>
+              <xs:documentation>Create DSN at install time.</xs:documentation>
+            </xs:annotation>
+          </xs:attribute>
+          <xs:attribute name="CreateOnUnInstall" use="optional" type="YesNoType">
+            <xs:annotation>
+              <xs:documentation>Create DSN at uninstall time.</xs:documentation>
+            </xs:annotation>
+          </xs:attribute>
+          <xs:attribute name="DeleteOnInstall" use="optional" type="YesNoType">
+            <xs:annotation>
+              <xs:documentation>Delete DSN at install time.</xs:documentation>
+            </xs:annotation>
+          </xs:attribute>
+          <xs:attribute name="DeleteOnUnInstall" use="optional" type="YesNoType">
+            <xs:annotation>
+              <xs:documentation>Delete DSN at uninstall time.</xs:documentation>
+            </xs:annotation>
+          </xs:attribute>
+          <xs:attribute name="Type" use="required" type="DSNType">
+            <xs:annotation>
+              <xs:documentation>DSN type.</xs:documentation>
+            </xs:annotation>
+          </xs:attribute>
+        </xs:extension>
+      </xs:simpleContent>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="AccessDataSource">
+    <xs:annotation>
+      <xs:documentation>
+        Implements creation and deletion of a Microsoft Access DSN.
+
+        AccessDataSource can be nested under a component or product/module/fragment. When nested
+        under a component, conditions of the latter apply. When nested under product, module or fragment, you
+        can specify explicit conditions that will be combined with CreateOnInstall, CreateOnUnInstall, DeleteOnInstall and
+        DeleteOnUnInstall options.
+
+        Note that AccessDataSource runs automatically before databases are created on install and after databases are dropped
+        on uninstall.
+      </xs:documentation>
+      <xs:appinfo>
+        <xse:parent namespace="http://schemas.microsoft.com/wix/2006/wi" ref="Component" />
+      </xs:appinfo>
+    </xs:annotation>
+    <xs:complexType>
+      <xs:simpleContent>
+        <xs:extension base="xs:string">
+          <xs:annotation>
+            <xs:documentation>
+              Condition that determines if the datasource is created or deleted. If nested under a component, the condition is
+              combined with the parent's conditions.
+            </xs:documentation>
+          </xs:annotation>
+          <xs:attribute name="Id" type="xs:string" use="required">
+            <xs:annotation>
+              <xs:documentation>Identifier for the ODBC datasource (primary key).</xs:documentation>
+            </xs:annotation>
+          </xs:attribute>
+          <xs:attribute name="Name" type="xs:string" use="required">
+            <xs:annotation>
+              <xs:documentation>Name of the DSN.</xs:documentation>
+            </xs:annotation>
+          </xs:attribute>
+          <xs:attribute name="DBQ" type="xs:string" use="required">
+            <xs:annotation>
+              <xs:documentation>Complete path to the .mdb database file. Note that creating the DSN will succeed with the wrong path, but the database will be inaccessible.</xs:documentation>
+            </xs:annotation>
+          </xs:attribute>
+          <xs:attribute name="Username" type="xs:string" use="optional">
+            <xs:annotation>
+              <xs:documentation>Optional database username.</xs:documentation>
+            </xs:annotation>
+          </xs:attribute>
+          <xs:attribute name="Password" type="xs:string" use="optional">
+            <xs:annotation>
+              <xs:documentation>Optional database password.</xs:documentation>
+            </xs:annotation>
+          </xs:attribute>
+          <xs:attribute name="Description" type="xs:string" use="optional">
+            <xs:annotation>
+              <xs:documentation>Optional DSN description.</xs:documentation>
+            </xs:annotation>
+          </xs:attribute>
+          <xs:attribute name="CreateOnInstall" use="optional" type="YesNoType">
+            <xs:annotation>
+              <xs:documentation>Create DSN at install time.</xs:documentation>
+            </xs:annotation>
+          </xs:attribute>
+          <xs:attribute name="CreateOnUnInstall" use="optional" type="YesNoType">
+            <xs:annotation>
+              <xs:documentation>Create DSN at uninstall time.</xs:documentation>
+            </xs:annotation>
+          </xs:attribute>
+          <xs:attribute name="DeleteOnInstall" use="optional" type="YesNoType">
+            <xs:annotation>
+              <xs:documentation>Delete DSN at install time.</xs:documentation>
+            </xs:annotation>
+          </xs:attribute>
+          <xs:attribute name="DeleteOnUnInstall" use="optional" type="YesNoType">
+            <xs:annotation>
+              <xs:documentation>Delete DSN at uninstall time.</xs:documentation>
+            </xs:annotation>
+          </xs:attribute>
+          <xs:attribute name="Type" use="required" type="DSNType">
+            <xs:annotation>
+              <xs:documentation>DSN type.</xs:documentation>
+            </xs:annotation>
+          </xs:attribute>
+        </xs:extension>
+      </xs:simpleContent>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:simpleType name="YesNoType">
+    <xs:annotation>
+      <xs:documentation>Values of this type will either be "yes" or "no".</xs:documentation>
+    </xs:annotation>
+    <xs:restriction base="xs:NMTOKEN">
+      <xs:enumeration value="no" />
+      <xs:enumeration value="yes" />
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="DSNType">
+    <xs:annotation>
+      <xs:documentation>Values of this type will either be "yes" or "no".</xs:documentation>
+    </xs:annotation>
+    <xs:restriction base="xs:NMTOKEN">
+      <xs:enumeration value="user" />
+      <xs:enumeration value="system" />
+    </xs:restriction>
+  </xs:simpleType>
+
+</xs:schema>

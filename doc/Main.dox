@@ -1,0 +1,98 @@
+/*! \mainpage AppSecInc. MSI Extensions
+
+\section mainpage_intro AppSecInc. MSI Extensions
+
+\li \subpage license
+\li \subpage thirdparty_licenses
+
+\subsection dev_deployment_wixextensions Wix Extensions
+
+\li \ref Wix::Extensions::SystemTools
+\li \ref Wix::Extensions::JavaTools
+\li \ref Wix::Extensions::DataSource
+\li \ref Wix::Extensions::UserPrivileges
+\li \ref Wix::Extensions::CommonUi
+
+\subsection dev_misc Misc
+
+\li \subpage impersonate
+\li \subpage customactions
+
+\subsection dev_tools Tools
+\li \subpage dsn_exe
+\li \subpage odbq_exe
+
+\subsection dev_ca_immediate Immediate Custom Actions
+
+\par System (SystemTools.dll)
+
+\li \ref Win32_CopyFile, \ref Win32_MoveFile, \ref Win32_DeleteFile, \ref Win32_GetFileSize, \ref Win32_FileExists
+\li \ref Win32_CreateDirectory, \ref Win32_DeleteDirectory
+\li \ref CompareVersion
+\li \ref Service_Control, \ref Service_Delete, \ref Service_RenameRegistryEntry, \ref Service_ChangeBinaryPathName, \ref Service_ChangeDisplayName, \ref Service_ChangeDescription
+\li \ref Registry_CopyBranch, \ref Registry_DeleteBranch, \ref Registry_MoveBranch
+
+\par Strings (StringTools.dll)
+
+\li \ref String_Replace, \ref String_Trim
+\li \ref Regex_Match, \ref Regex_Replace
+\li \ref String_ToLower, \ref String_ToUpper
+
+\par Active Directory (ActiveDirectory.dll)
+
+\li \ref DirectoryObjectPicker
+\li \ref DirectoryGetDcName
+\li \ref ADSI_GetAttributeValue
+
+\par Data Sources (DataSource.dll)
+
+\li \ref ConfigDataSource, \ref ConfigDataSource_Access, \ref ConfigDataSource_SQLServer 
+\li \ref SQLDMO_ListAvailableSQLServers
+\li \ref ODBC_Connect, \ref ODBC_Execute, \ref ODBC_GetString, \ref ODBC_GetScalar, \ref ODBC_GetXml
+
+\par Security & Authentication (UserPrivileges.dll)
+
+\li \ref CheckCredentials 
+\li \ref CheckPrivilege
+\li \ref CheckMembership
+\li \ref GetUserInfo, \ref GetUserNameFormatted
+
+\par Cryptography (Cryptography.dll)
+
+\li \ref CryptProtectDataHex 
+\li \ref CryptUnprotectDataHex
+\li \ref HexEncodeA & \ref HexEncodeW
+\li \ref HexDecodeA & \ref HexDecodeW
+\li \ref DESEDE3_GenerateKey, \ref DESEDE3_Encrypt & \ref DESEDE3_Decrypt
+
+\par Xml (XmlTools.dll)
+
+\li \ref Xml_SelectNodeXml, \ref Xml_SelectNodeValue & \ref Xml_SelectNodeAttributeValue
+\li \ref Xml_XslTransform
+
+\par Msi (MsiTools.dll)
+
+\li \ref BinaryWrite
+
+\par TcpIp (SystemTools.dll)
+
+\li \ref TcpIp_BindSocket, \ref TcpIp_Connect
+
+\subsection dev_demos Demo Installers
+
+\li \subpage active_directory_demo_msi_wxs
+\li \subpage compareversionmergemodule_wxs
+\li \subpage copyfilesmergemodule_wxs
+\li \subpage data_source_demo_msi_wxs
+\li \subpage java_tools_demo_msi_wxs
+\li \subpage mssql_database_demo_msi_wxs
+\li \subpage stringtools_demo_msi_wxs
+\li \subpage system_tools_demo_msi_wxs
+\li \subpage template_files_demo_wxs
+\li \subpage user_privileges_demo_msi_wxs
+\li \subpage local_users_and_groups_demo_wxs
+\li \subpage common_ui_demo_wxs
+\li \subpage access_database_demo_msi_wxs
+\li \subpage delete_windows_service_msi_wxs
+
+*/

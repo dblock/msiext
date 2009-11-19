@@ -1,0 +1,5 @@
+Id	ComponentId	ConnectionStringId	Database	Schema	Table	Filename	BinaryId	Condition	Attributes
+s72	S72	s72	S72	S255	s255	S255	S72	S0	I2
+MSSQLDataFile	Id
+MSSQLDemoDatabase_BulkInsert_Binary_CSV		LocalSQLServerConnection	[MSSQL_DATABASE_NAME]	dbo	BulkInsertTable		MSSQL_BinaryTable_csv		1
+MSSQLDemoDatabase_BulkInsert_CSV		LocalSQLServerConnection	[MSSQL_DATABASE_NAME]	dbo	BulkInsertTable	[SOURCELOCATION]Binary\MSSQL_BinaryTable2.ibd			1

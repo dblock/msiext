@@ -1,0 +1,131 @@
+<Project DefaultTargets="all" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" >
+  <Import Project="$(MSBuildExtensionsPath)\MSBuildCommunityTasks\MSBuild.Community.Tasks.Targets"/>
+  <PropertyGroup Condition="'$(Configuration)'==''">
+    <Configuration>Debug</Configuration>
+  </PropertyGroup>
+  <PropertyGroup>
+    <ObjDir>target\$(Configuration)\obj</ObjDir>
+    <BinDir>target\$(Configuration)\bin</BinDir>
+    <DropDir>target\$(Configuration)\drop</DropDir>
+    <ProductName>MSI Extensions</ProductName>
+    <CompanyName>Application Security Inc.</CompanyName>
+    <Copyright>Copyright (c) Application Security Inc.</Copyright>
+    <Trademark>All Rights Reserved</Trademark>
+  </PropertyGroup>
+  <Target Name="all">
+    <Message Importance="high" Text="Building project ..." />
+    <CallTarget Targets="clean" />
+    <CallTarget Targets="version" />
+    <CallTarget Targets="build" />
+    <CallTarget Targets="doc" />
+    <CallTarget Targets="drop" />
+    <CallTarget Targets="test" />
+  </Target>
+  <Target Name="version">
+    <Version Major="1" Minor="1">
+      <Output TaskParameter="Major" PropertyName="Major" />
+      <Output TaskParameter="Minor" PropertyName="Minor" />
+      <Output TaskParameter="Revision" PropertyName="Revision" />
+    </Version>
+    <SvnVersion LocalPath=".">
+      <Output TaskParameter="Revision" PropertyName="Build" />
+    </SvnVersion>
+    <CreateItem Include="Major" AdditionalMetadata="ReplacementValue=$(Major)">
+      <Output TaskParameter="Include" ItemName="AssemblyInfoTokens"/>
+    </CreateItem>
+    <CreateItem Include="Minor" AdditionalMetadata="ReplacementValue=$(Minor)">
+      <Output TaskParameter="Include" ItemName="AssemblyInfoTokens"/>
+    </CreateItem>
+    <CreateItem Include="Build" AdditionalMetadata="ReplacementValue=$(Build)">
+      <Output TaskParameter="Include" ItemName="AssemblyInfoTokens"/>
+    </CreateItem>
+    <CreateItem Include="Revision" AdditionalMetadata="ReplacementValue=$(Revision)">
+      <Output TaskParameter="Include" ItemName="AssemblyInfoTokens"/>
+    </CreateItem>
+    <CreateItem Include="Configuration" AdditionalMetadata="ReplacementValue=$(Configuration)">
+      <Output TaskParameter="Include" ItemName="AssemblyInfoTokens"/>
+    </CreateItem>
+    <CreateItem Include="ProductName" AdditionalMetadata="ReplacementValue=$(ProductName)">
+      <Output TaskParameter="Include" ItemName="AssemblyInfoTokens"/>
+    </CreateItem>
+    <CreateItem Include="CompanyName" AdditionalMetadata="ReplacementValue=$(CompanyName)">
+      <Output TaskParameter="Include" ItemName="AssemblyInfoTokens"/>
+    </CreateItem>
+    <CreateItem Include="Copyright" AdditionalMetadata="ReplacementValue=$(Copyright)">
+      <Output TaskParameter="Include" ItemName="AssemblyInfoTokens"/>
+    </CreateItem>
+    <CreateItem Include="Trademark" AdditionalMetadata="ReplacementValue=$(Trademark)">
+      <Output TaskParameter="Include" ItemName="AssemblyInfoTokens"/>
+    </CreateItem>
+    <CreateItem Include="ProductId" AdditionalMetadata="ReplacementValue=$(ProductId)">
+      <Output TaskParameter="Include" ItemName="AssemblyInfoTokens"/>
+    </CreateItem>
+    <CreateItem Include="MSBuildProjectDirectory" AdditionalMetadata="ReplacementValue=$(MSBuildProjectDirectory)">
+      <Output TaskParameter="Include" ItemName="AssemblyInfoTokens"/>
+    </CreateItem>
+    <Message Text="Version: $(Major).$(Minor).$(Build).$(Revision)"/>
+    <MakeDir Directories="src\Version" />
+    <AssemblyInfo CodeLanguage="CS" OutputFile="src\Version\GlobalAssemblyInfo.cs"
+       AssemblyCompany="$(CompanyName)" AssemblyProduct="$(ProductName)"
+       AssemblyCopyright="$(Copyright)" AssemblyTrademark="$(Trademark)"
+       CLSCompliant="true" AssemblyDelaySign="false" AssemblyKeyName="" AssemblyCulture=""
+       AssemblyVersion="$(Major).$(Minor).$(Build).$(Revision)"
+       AssemblyFileVersion="$(Major).$(Minor).$(Build).$(Revision)" />
+    <TemplateFile Template="src\Version\Version.h.template" OutputFilename="Version.h" Tokens="@(AssemblyInfoTokens)"/>
+    <TemplateFile Template="src\Version\Version.wxi.template" OutputFilename="Version.wxi" Tokens="@(AssemblyInfoTokens)"/>
+  </Target>
+  <Target Name="clean">
+    <MSBuild Projects="Msi.sln" Targets="Clean" />
+    <Delete Files="src\Version\Version.h
+     ;src\Version\GlobalAssemblyInfo.cs" />
+    <Delete Files="doc\Doxyfile" />
+    <DeleteTree Directories="target" />
+    <DeleteTree Directories="src\**\bin;src\**\obj;externals\**\obj" Recursive="true" />
+    <Delete Files="src\Version\Version.wxi" />
+  </Target>
+  <Target Name="build" DependsOnTargets="version">
+    <MSBuild Projects="Msi.sln" Targets="Build" />
+  </Target>
+  <Target Name="drop" DependsOnTargets="version">
+    <CreateItem Include="$(BinDir)\*.dll" Exclude="$(BinDir)\*Extension.dll;$(BinDir)\wix.dll">
+      <Output TaskParameter="Include" ItemName="CustomActionBinaries" />
+    </CreateItem>
+    <CreateItem Include="$(BinDir)\*Extension.dll">
+      <Output TaskParameter="Include" ItemName="WixExtensionBinaries" />
+    </CreateItem>
+    <CreateItem Include="$(BinDir)\*.msi">
+      <Output TaskParameter="Include" ItemName="DemoMsis" />
+    </CreateItem>
+    <CreateItem Include="$(BinDir)\*.exe" Exclude="$(BinDir)\*UnitTests.exe">
+      <Output TaskParameter="Include" ItemName="ToolBinaries" />
+    </CreateItem>
+    <MakeDir Directories="$(DropDir)\CustomActions" />
+    <Copy DestinationFolder="$(DropDir)\CustomActions" SourceFiles="@(CustomActionBinaries)" />
+    <MakeDir Directories="$(DropDir)\Symbols" />
+    <Copy DestinationFolder="$(DropDir)\Symbols" SourceFiles="$(BinDir)\%(CustomActionBinaries.Filename).pdb" />
+    <MakeDir Directories="$(DropDir)\WixExtensions" />
+    <Copy DestinationFolder="$(DropDir)\WixExtensions" SourceFiles="@(WixExtensionBinaries)" />
+    <MakeDir Directories="$(DropDir)\Demos" />
+    <Copy DestinationFolder="$(DropDir)\Demos" SourceFiles="@(DemoMsis)" />
+    <MakeDir Directories="$(DropDir)\Tools" />
+    <Copy DestinationFolder="$(DropDir)\Tools" SourceFiles="@(ToolBinaries)" />
+    <Copy DestinationFiles="$(DropDir)\License.html" SourceFiles="License\epl-v10.html" />
+  </Target>
+  <Target Name="doc" DependsOnTargets="version">
+    <Message Text="Building Documentation ..." />
+    <MakeDir Directories="$(DropDir)\Docs" />
+    <TemplateFile Template="doc\Doxyfile.template" OutputFilename="Doxyfile" Tokens="@(AssemblyInfoTokens)"/>
+    <Exec WorkingDirectory="doc" Command="doxygen.exe Doxyfile" />
+  </Target>
+  <Target Name="test" DependsOnTargets="version">
+    <CreateItem Include="$(BinDir)\**\*UnitTests.exe">
+      <Output TaskParameter="Include" ItemName="UnitTests" />
+    </CreateItem>
+    <Message Text="Running %(UnitTests.Filename)%(UnitTests.Extension) ..." />
+    <Exec WorkingDirectory="$(BinDir)" Command="%(UnitTests.Filename)%(UnitTests.Extension)" />
+  </Target>
+  <Target Name="slnfix">
+    <Copy SourceFiles="msi.sln" DestinationFiles="msi.bak" />
+    <Exec Command="build\tools\SlnDependencyReorder.exe msi.bak > msi.sln" />
+  </Target>
+</Project>

@@ -1,0 +1,44 @@
+LIBRARY SystemTools
+
+;DESCRIPTION "Application Security Inc. Custom Action Library - System Tools"
+
+EXPORTS    
+	Win32_CopyFile
+	Win32_MoveFile
+	Win32_DeleteFile
+	Win32_GetFileSize
+	Win32_FileExists
+	Win32_CopyFiles_Immediate
+	Win32_CopyFiles_Deferred
+	Win32_MoveFiles_Immediate
+	Win32_MoveFiles_Deferred
+	Win32_DeleteFiles_Immediate
+	Win32_DeleteFiles_Deferred
+	Win32_CreateDirectory
+	Win32_DeleteDirectory
+	Win32_GetParentDirectory
+	CompareVersion	
+	CompareVersions
+	TcpIp_BindSocket
+	TcpIp_Connect
+	TcpIp_ListAddresses
+	Win32_Execute_Immediate
+	Win32_Execute_Deferred
+	Win32_Execute_Rollback
+	Service_Control
+	Service_RenameRegistryEntry
+	Service_Delete
+	Service_ChangeBinaryPathName
+	Service_ChangeDisplayName
+	Service_ChangeDescription
+	Service_GetConfig
+	TemplateFiles_Immediate
+	TemplateFiles_Deferred
+	Registry_CopyBranch
+	Registry_MoveBranch
+	Registry_DeleteBranch
+	Registry_CreateKey
+	Registry_SetStringValue
+	Registry_KeyExists
+	Win32_RegistryCopy_Immediate
+	Win32_RegistryCopy_Deferred

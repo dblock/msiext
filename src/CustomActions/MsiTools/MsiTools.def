@@ -1,0 +1,6 @@
+LIBRARY MsiTools
+
+;DESCRIPTION "Application Security Inc. Custom Action Library - MSI Tools"
+
+EXPORTS
+    BinaryWrite

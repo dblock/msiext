@@ -1,0 +1,8 @@
+LIBRARY JavaTools
+
+;DESCRIPTION "Application Security Inc. Custom Action Library - Java Tools"
+
+EXPORTS
+    JavaArchive_Immediate
+    JavaArchive_Deferred
+

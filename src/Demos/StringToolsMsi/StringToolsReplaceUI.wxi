@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Include xmlns="http://schemas.microsoft.com/wix/2006/wi">
+    <Fragment>
+        <UI>
+            <Dialog Id="StringToolsReplaceDlg" Width="370" Height="270" Title="Replace a String">
+                <Control Id="Title" Type="Text" X="15" Y="5" Width="200" Height="15" Transparent="yes" NoPrefix="yes" Text="Replace String" />
+                <Control Id="SubTitle" Type="Text" X="25" Y="21" Width="220" Height="20" Transparent="yes" NoPrefix="yes" Text="Please enter string to replace" />
+                <Control Id="BannerBitmap" Type="Bitmap" X="0" Y="0" Width="370" Height="44" TabSkip="no" Text="WixUI_Bmp_Banner" />
+                <Control Id="BannerLine" Type="Line" X="0" Y="44" Width="370" Height="0" />
+                <Control Id="BottomLine" Type="Line" X="0" Y="234" Width="370" Height="0" />
+                <Control Id="StringLabel" Type="Text" X="20" Y="70" Width="130" Height="10" Text="String:" />
+                <Control Id="String" Type="Edit" X="30" Y="85" Width="130" Height="15" Property="STRING_VALUE_FROM" />
+                <Control Id="ReplaceButton" Type="PushButton" X="235" Y="80" Width="75" Height="17" Text="&amp;Replace ...">
+                    <Publish Property="STRING_VALUE_FROM" Value="[STRING_VALUE_FROM]" Order="1">1</Publish>
+                    <Publish Property="STRING_REPLACE_FROM" Value="[STRING_REPLACE_FROM]" Order="1">1</Publish>
+                    <Publish Property="STRING_REPLACE_TO" Value="[STRING_REPLACE_TO]" Order="1">1</Publish>
+                    <Publish Event="DoAction" Value="StringReplace" Order="2">1</Publish>
+                    <Publish Property="STRING_VALUE_TO" Value="[STRING_VALUE_TO]" Order="3">1</Publish>
+                    <Publish Property="STRING_REPLACE_COUNT" Value="[STRING_REPLACE_COUNT]" Order="3">1</Publish>
+                </Control>
+                <Control Id="ReplaceFromLabel" Type="Text" X="20" Y="110" Width="320" Height="10" Text="From:" />
+                <Control Id="ReplaceFromValue" Type="Edit" X="30" Y="125" Width="130" Height="15" Property="STRING_REPLACE_FROM" />
+                <Control Id="ReplaceToLabel" Type="Text" X="20" Y="140" Width="320" Height="10" Text="To:" />
+                <Control Id="ReplaceToValue" Type="Edit" X="30" Y="155" Width="130" Height="15" Property="STRING_REPLACE_TO" />
+                <Control Id="ResultString" Type="Edit" X="20" Y="190" Width="100" Height="17" Property="STRING_VALUE_TO" />
+                <Control Id="ResultCount" Type="Edit" X="130" Y="190" Width="25" Height="17" Property="STRING_REPLACE_COUNT" />
+                <Control Id="Back" Type="PushButton" X="180" Y="243" Width="56" Height="17" Text="Back" />
+                <Control Id="Cancel" Type="PushButton" X="304" Y="243" Width="56" Height="17" Cancel="yes" Text="Cancel">
+                    <Publish Event="SpawnDialog" Value="CancelDlg">1</Publish>
+                </Control>
+                <Control Id="Next" Type="PushButton" X="236" Y="243" Width="56" Height="17" Default="yes" Text="!(loc.WixUINext)" />
+            </Dialog>
+        </UI>
+    </Fragment>
+</Include>

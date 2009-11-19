@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="Windows-1252"?>
+<VisualStudioPropertySheet
+	ProjectType="Visual C++"
+	Version="8.00"
+	Name="ASI_Exe_Debug"
+	InheritedPropertySheets=".\ASI_Exe_Neutral.vsprops;.\ASI_Common_Debug.vsprops"
+	>
+</VisualStudioPropertySheet>

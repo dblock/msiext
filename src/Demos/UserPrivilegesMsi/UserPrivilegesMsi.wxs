@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?include ..\..\..\src\Version\Version.wxi ?>
+<?define BinDir=$(var.MSBuildProjectDirectory)\target\$(var.Configuration)\bin ?>
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
+    <Product Id="971f35e3-cfee-4515-8e2b-c283b7ccf7fa" Name="User Privileges Demo MSI" Language="1033" Version="$(var.ProductVersion)" Manufacturer="$(var.CompanyName)" UpgradeCode="ec8c9eeb-951c-4357-be21-a4c3425e4abe">
+        <Package InstallerVersion="200" Compressed="yes" />
+        <Binary Id="success_bmp" SourceFile="$(sys.SOURCEFILEDIR)success.bmp" />
+        <Binary Id="error_bmp" SourceFile="$(sys.SOURCEFILEDIR)error.bmp" />
+        <Binary Id="ActiveDirectory" SourceFile="$(var.BinDir)\ActiveDirectory.dll" />
+        <CustomAction Id="DirectoryObjectPicker" BinaryKey="ActiveDirectory" DllEntry="DirectoryObjectPicker" Execute="immediate" Return="check" />
+        <Binary Id="UserPrivileges" SourceFile="$(var.BinDir)\UserPrivileges.dll" />
+        <CustomAction Id="CheckCredentials" BinaryKey="UserPrivileges" DllEntry="CheckCredentials" Execute="immediate" Return="check" />
+        <CustomAction Id="CheckPrivilege" BinaryKey="UserPrivileges" DllEntry="CheckPrivilege" Execute="immediate" Return="check" />
+        <CustomAction Id="GetUserInfo" BinaryKey="UserPrivileges" DllEntry="GetUserInfo" Execute="immediate" Return="check" />
+        <CustomAction Id="GetUserNameFormatted" BinaryKey="UserPrivileges" DllEntry="GetUserNameFormat" Execute="immediate" Return="ignore" />
+        <Media Id="1" Cabinet="UserPrivilegesMsi.cab" EmbedCab="yes" />
+        <Directory Id="TARGETDIR" Name="SourceDir">
+            <Directory Id="ProgramFilesFolder">
+                <Directory Id="INSTALLLOCATION" Name="UserPrivilegesDemo">
+                    <Component Id="ProductComponent" Guid="b9e76ee8-0489-42c9-88d0-a5d3861cb753">
+                        <File Id="UserPrivilegesMsi_wxs" Name="UserPrivilegesMsi.wxs" Source="UserPrivilegesMsi.wxs" />
+                    </Component>
+                </Directory>
+            </Directory>
+        </Directory>
+        <Feature Id="ProductFeature" Title="Demo Feature" Level="1">
+            <ComponentRef Id="ProductComponent" />
+        </Feature>
+        <UIRef Id="CaTestUI" />
+        <UI Id="CaTestUI">
+            <TextStyle Id="WixUI_Font_Normal" FaceName="Tahoma" Size="8" />
+            <TextStyle Id="WixUI_Font_Bigger" FaceName="Tahoma" Size="12" />
+            <TextStyle Id="WixUI_Font_Title" FaceName="Tahoma" Size="9" Bold="yes" />
+            <Property Id="DefaultUIFont" Value="WixUI_Font_Normal" />
+            <Property Id="WixUI_Mode" Value="InstallDir" />
+            <Property Id="ARPNOMODIFY" Value="1" />
+            <DialogRef Id="ErrorDlg" />
+            <DialogRef Id="FatalError" />
+            <DialogRef Id="FilesInUse" />
+            <DialogRef Id="MsiRMFilesInUse" />
+            <DialogRef Id="PrepareDlg" />
+            <DialogRef Id="ProgressDlg" />
+            <DialogRef Id="ResumeDlg" />
+            <DialogRef Id="UserExit" />
+            <DialogRef Id="TestCredentialsDlg" />
+            <Publish Dialog="ExitDialog" Control="Finish" Event="EndDialog" Value="Return" Order="999">1</Publish>
+            <Publish Dialog="WelcomeDlg" Control="Next" Event="NewDialog" Value="GetUserInfoDlg">1</Publish>
+            <Publish Dialog="GetUserInfoDlg" Control="Back" Event="NewDialog" Value="MaintenanceTypeDlg" Order="1">Installed</Publish>
+            <Publish Dialog="GetUserInfoDlg" Control="Back" Event="NewDialog" Value="WelcomeDlg" Order="2">NOT Installed</Publish>
+            <Publish Dialog="GetUserInfoDlg" Control="Next" Event="NewDialog" Value="TestCredentialsDlg" Order="2">1</Publish>
+            <Publish Dialog="TestCredentialsDlg" Control="Back" Event="NewDialog" Value="GetUserInfoDlg" Order="1">Installed</Publish>
+            <Publish Dialog="TestCredentialsDlg" Control="Back" Event="NewDialog" Value="GetUserInfoDlg" Order="2">NOT Installed</Publish>
+            <Publish Dialog="TestCredentialsDlg" Control="Next" Event="NewDialog" Value="VerifyReadyDlg" Order="2">1</Publish>
+            <Publish Dialog="VerifyReadyDlg" Control="Back" Event="NewDialog" Value="TestCredentialsDlg" Order="1">NOT Installed OR WixUI_InstallMode="Change"</Publish>
+            <Publish Dialog="MaintenanceTypeDlg" Control="Back" Event="NewDialog" Value="MaintenanceWelcomeDlg">1</Publish>
+        </UI>
+        <UIRef Id="WixUI_Common" />
+    </Product>
+    <?include TestCredentialsUI.wxi ?>
+    <?include GetUserInfoUI.wxi ?>
+</Wix>

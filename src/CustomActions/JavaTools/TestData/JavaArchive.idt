@@ -1,0 +1,5 @@
+Id	Operation	ToolPath	Directory	JarFile	ManifestFile	Condition
+s72	s6	S255	s255	s255	S255	S0
+JavaArchive	Id
+JavaToolsArchiveCompress	cvf	[JDKBINLOCATION]jar.exe	[SOURCELOCATION]	[SOURCELOCATION]JavaToolsUnitTestsCompress.jar		JAR_COMPRESS = 1
+JavaToolsArchiveExtract	xvf	[JDKBINLOCATION]jar.exe	[SOURCELOCATION]	[SOURCELOCATION]JavaToolsUnitTestsExtract.jar		JAR_EXTRACT = 1

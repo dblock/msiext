@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<WixLocalization Culture="en-us" xmlns="http://schemas.microsoft.com/wix/2006/localization">
+    <String Id="CreateDatabases">Making database changes</String>
+    <String Id="ExecuteSQLStrings">Executing SQL</String>
+    <String Id="InsertData">Populating database data</String>
+    <String Id="ConfigureDataSource">Configuring data sources</String>
+</WixLocalization>
+

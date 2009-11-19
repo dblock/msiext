@@ -1,0 +1,2 @@
+CREATE TABLE "TableNotEncoded" ( "TableNotEncoded_Id" INTEGER NOT NULL )
+

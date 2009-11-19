@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
+    <Fragment xmlns="http://schemas.microsoft.com/wix/2006/wi">
+        <UI>
+			<!--
+   Popup dialog for displaying a custom error message. Set ERROR_MESSAGE to display a custom message.
+   -->
+            <Dialog Id="GenericErrorDlg" Width="260" Height="100" Title="[ERROR_TITLE]">
+                <Control Id="Return" Type="PushButton" X="102" Y="75" Width="56" Height="17" Default="yes" Cancel="yes" Text="OK">
+                    <Publish Event="EndDialog" Value="Return">1</Publish>
+                </Control>
+                <Control Id="Text" Type="Text" X="48" Y="15" Width="200" Height="55" Text="[ERROR_MESSAGE]" />
+                <Control Id="Icon" Type="Icon" X="15" Y="15" Width="24" Height="24" FixedSize="yes" IconSize="32" Text="WixUI_Ico_Exclam" />
+            </Dialog>
+        </UI>
+    </Fragment>
+</Wix>

@@ -1,0 +1,10 @@
+<bookstore xmlns="http://www.lucernepublishing.com">
+ <book id="1" returned="false">
+   <title>&apos;Emma&apos;</title>
+   <read>false</read>
+ </book>
+ <book id="2" returned="true">
+  <title>&apos;Emma 2&apos;</title>
+  <read>1</read>
+ </book>
+</bookstore>

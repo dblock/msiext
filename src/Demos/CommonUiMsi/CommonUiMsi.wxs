@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?include ..\..\..\src\Version\Version.wxi ?>
+
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
+    <Product Id="A4995A7E-A4D7-4BAC-8AAF-B5ED9D1EA25D" Name="Common UI Demo" Language="1033" Version="$(var.ProductVersion)" Manufacturer="$(var.CompanyName)" UpgradeCode="E5E33559-D539-439A-8B31-1D452543BEB2">
+        <Package InstallerVersion="200" Compressed="yes" />
+
+        <Media Id="1" Cabinet="CommonUiMsi.cab" EmbedCab="yes" />
+
+        <Directory Id="TARGETDIR" Name="SourceDir">
+            <Directory Id="ProgramFilesFolder">
+                <Directory Id="INSTALLLOCATION" Name="CommonUiDemo">
+
+                    <Component Id="ProductComponent" Guid="EC488BCB-2CD5-44C5-B426-D12B2C907B26">
+                        <File Id="CommonUiMsi_wxs" Name="CommonUiMsi.wxs" Source="CommonUiMsi.wxs" />
+                    </Component>
+
+                </Directory>
+            </Directory>
+        </Directory>
+
+        <Feature Id="ProductFeature" Title="Demo Feature" Level="1">
+            <ComponentRef Id="ProductComponent" />
+        </Feature>
+
+        <Property Id="CREATE_DATABASE_LOGON_TYPE" Value="SqlAuth" />
+        <Property Id="CHECK_CREATE_DATABASE_PERMS" Value="yes" />
+
+        <Property Id="RUNTIME_DATABASE_LOGON_TYPE" Value="WinAuth" />
+        <Property Id="CHECK_RUNTIME_DATABASE_PERMS" Value="yes" />
+        <Property Id="RUNTIME_DATABASE_NAME" Value="Northwind" />
+        <Property Id="RUNTIME_DATABASE_PERMS_TABLE" Value="Authors" />
+
+
+        <Property Id="PORTNUMBER" Value="20080" />
+        <Property Id="CURRENTPORTNUMBER" Value="135" />
+        <Property Id="SERVICE_LOGON_BROWSE" Value="1" />
+        <Property Id="SERVICE_REQUIRE_ADMIN" Value="1" />
+
+        <UI>
+
+            <!-- CommonU UI Dialogs-->
+            <DialogRef Id="SelectDbDlg" />
+            <DialogRef Id="RuntimeDbCredDlg" />
+            <DialogRef Id="DbCreateCredDlg" />
+            <DialogRef Id="ServiceCredDlg" />
+            <DialogRef Id="ServicePortDlg" />
+            <DialogRef Id="GenericErrorDlg" />
+
+            <!-- UIExtension Dialogs-->
+            <DialogRef Id="WelcomeDlg" />
+            <DialogRef Id="VerifyReadyDlg" />
+
+            <DialogRef Id="ErrorDlg" />
+            <DialogRef Id="FatalError" />
+            <DialogRef Id="FilesInUse" />
+            <DialogRef Id="UserExit" />
+
+
+            <Publish Dialog="WelcomeDlg" Control="Next" Event="NewDialog" Value="ServiceCredDlg">NOT Installed</Publish>
+
+            <Publish Dialog="ServiceCredDlg" Control="Next" Event="NewDialog" Value="ServicePortDlg">NOT Installed</Publish>
+            <Publish Dialog="ServiceCredDlg" Control="Back" Event="NewDialog" Value="WelcomeDlg">NOT Installed</Publish>
+
+            <Publish Dialog="ServicePortDlg" Control="Next" Event="NewDialog" Value="SelectDbDlg">NOT Installed</Publish>
+            <Publish Dialog="ServicePortDlg" Control="Back" Event="NewDialog" Value="ServiceCredDlg">NOT Installed</Publish>
+
+            <Publish Dialog="SelectDbDlg" Control="Next" Event="NewDialog" Value="DbCreateCredDlg">NOT Installed</Publish>
+            <Publish Dialog="SelectDbDlg" Control="Back" Event="NewDialog" Value="ServicePortDlg">NOT Installed</Publish>
+
+            <Publish Dialog="DbCreateCredDlg" Control="Next" Event="NewDialog" Value="RuntimeDbCredDlg">NOT Installed</Publish>
+            <Publish Dialog="DbCreateCredDlg" Control="Back" Event="NewDialog" Value="SelectDbDlg">NOT Installed</Publish>
+          
+            <Publish Dialog="RuntimeDbCredDlg" Control="Next" Event="NewDialog" Value="VerifyReadyDlg">NOT Installed</Publish>
+            <Publish Dialog="RuntimeDbCredDlg" Control="Back" Event="NewDialog" Value="DbCreateCredDlg">NOT Installed</Publish>
+
+            <Publish Dialog="VerifyReadyDlg" Control="Back" Event="NewDialog" Value="RuntimeDbCredDlg">NOT Installed</Publish>
+
+            <Publish Dialog="ExitDialog" Control="Back" Event="EndDialog" Value="VerifyReadyDlg">1</Publish>
+            <Publish Dialog="ExitDialog" Control="Finish" Event="EndDialog" Value="Return" Order="999">1</Publish>
+        </UI>
+    </Product>
+</Wix>

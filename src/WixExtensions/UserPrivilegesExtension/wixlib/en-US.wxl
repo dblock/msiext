@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<WixLocalization Culture="en-us" xmlns="http://schemas.microsoft.com/wix/2006/localization">
+    <String Id="CreatingLocalUsers">Creating local users</String>
+    <String Id="CreatingLocalGroups">Creating local groups</String>
+    <String Id="AddingLocalGroupMembers">Adding local group members</String>
+    <String Id="DeletingLocalUsers">Deleting local users</String>
+    <String Id="DeletingLocalGroups">Deleting local groups</String>
+    <String Id="RemovingLocalGroupMembers">Removing local group members</String>
+</WixLocalization>

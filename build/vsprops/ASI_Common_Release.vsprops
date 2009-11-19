@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="Windows-1252"?>
+<VisualStudioPropertySheet
+	ProjectType="Visual C++"
+	Version="8.00"
+	Name="ASI_Common_Release"
+	>
+	<Tool
+		Name="VCCLCompilerTool"
+		Optimization="2"
+		InlineFunctionExpansion="2"
+		EnableIntrinsicFunctions="true"
+		FavorSizeOrSpeed="1"
+		PreprocessorDefinitions="NDEBUG"
+		StringPooling="true"
+		MinimalRebuild="true"
+		BasicRuntimeChecks="0"
+		SmallerTypeCheck="false"
+		RuntimeLibrary="2"
+		DisableLanguageExtensions="false"
+		DebugInformationFormat="3"
+	/>
+	<Tool
+		Name="VCLinkerTool"
+		LinkIncremental="1"
+		OptimizeReferences="2"
+		EnableCOMDATFolding="2"
+		OptimizeForWindows98="1"
+	/>
+	<Tool
+		Name="VCResourceCompilerTool"
+		PreprocessorDefinitions="NDEBUG"
+	/>
+</VisualStudioPropertySheet>

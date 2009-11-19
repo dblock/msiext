@@ -1,0 +1,5 @@
+Id	JavaArchiveId	Name	Directory	Condition
+s72	s72	s255	S255	S0
+JavaArchiveFile	Id
+JavaToolsMsiCompress_JavaArchive_idt	JavaToolsArchiveCompress	JavaArchive.idt	[SOURCELOCATION]	JAR_COMPRESS = 1
+JavaToolsMsiCompress_JavaArchiveFile_idt	JavaToolsArchiveCompress	JavaArchiveFile.idt	[SOURCELOCATION]	JAR_COMPRESS = 1

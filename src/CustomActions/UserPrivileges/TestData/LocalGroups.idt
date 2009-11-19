@@ -1,0 +1,5 @@
+Id	ComponentId	Name	Description	Attributes
+s72	S72	s0	S0	I2
+LocalGroups	Id
+DemoLocalGroup1		DemoLocalGroup1	Demo local group 1 should contain a user after installation.	25
+DemoLocalGroup2		DemoLocalGroup2	Demo local group 2 should contain a user after installation.	25

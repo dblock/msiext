@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?include ..\..\..\src\Version\Version.wxi ?>
+<?define BinDir=$(var.MSBuildProjectDirectory)\target\$(var.Configuration)\bin ?>
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi" xmlns:AppSecInc="http://schemas.appsecinc.com/wix/DataSourceExtension">
+    <Product Id="1F6D32DC-B9C0-4ab6-8B01-7AA297A7723A" Name="MSSQL Database Demo MSI" Language="1033" Version="$(var.ProductVersion)" Manufacturer="$(var.CompanyName)" UpgradeCode="9C37AA2F-7DB1-41c9-BE04-379C84BF6E9E">
+        <Package InstallerVersion="200" Compressed="yes" />
+        <Media Id="1" Cabinet="MSSQLDatabaseMsi.cab" EmbedCab="yes" />
+        <Binary Id="DataSource" SourceFile="$(var.BinDir)\DataSource.dll" />
+        <!-- the local database connection -->
+        <AppSecInc:ODBCConnection Id="LocalGenericConnection" ConnectionString="Driver={SQL Server};Server=localhost,1433;Database=master;Trusted_Connection=Yes;" />
+        <AppSecInc:MSSQLDatabaseConnection Id="LocalSQLServerConnection" IpAddress="localhost" Port="1433" Protocol="Tcp" WindowsAuthentication="yes" />
+        <AppSecInc:MSSQLDatabaseConnection Id="LocalSQLServerConnectionDemoDatabase" IpAddress="localhost" Port="1433" Protocol="Tcp" WindowsAuthentication="yes" Database="[MSSQL_DATABASE_NAME]" />
+        <!-- the name of the database being created -->
+        <Property Id="MSSQL_DATABASE_NAME" Value="MSSQLDemoDatabase">
+            <RegistrySearch Id="MssqlDatabaseNameSearch" Root="HKLM" Type="raw" Key="SOFTWARE\AppSecInc\MSSQLDatabaseMsi" Name="MSSQL_DATABASE_NAME" />
+        </Property>
+        <Binary Id="CreateBinaryTable_Encoded_sql" SourceFile="CreateBinaryTable_Encoded.sql" />
+        <Binary Id="CreateBinaryTable_NotEncoded_sql" SourceFile="CreateBinaryTable_NotEncoded.sql" />
+        <Binary Id="ExecuteManyGoStatements_sql" SourceFile="ExecuteManyGoStatements.sql" />
+        <Binary Id="BinaryTable_csv" SourceFile="BinaryTable.csv" />
+        <CustomAction Id="ODBC_GetString" BinaryKey="DataSource" DllEntry="ODBC_GetString" Execute="immediate" Return="ignore" />
+        <Directory Id="TARGETDIR" Name="SourceDir">
+            <Directory Id="ProgramFilesFolder">
+                <Directory Id="INSTALLLOCATION" Name="MSSQLDatabaseDemo">
+                    <Component Id="MSSQLDatabaseMsiComponent" Guid="ca70ba08-0c57-4fa2-b6c1-57a00123e391">
+                        <File Id="MSSQLDatabaseMsi_wxs" Name="MSSQLDatabaseMsi.wxs" Source="MSSQLDatabaseMsi.wxs" />
+                        <File Id="CreateFileTable_NotEncoded_sql" Name="CreateFileTable_NotEncoded.sql" Source="CreateFileTable_NotEncoded.sql" />
+                        <File Id="BinaryTable_csv" Name="BinaryTable.csv" Source="BinaryTable.csv" />
+                        <!-- a demo database -->
+                        <AppSecInc:MSSQLDatabase Id="MSSQLDemoDatabase" Name="[MSSQL_DATABASE_NAME]" ConnectionId="LocalSQLServerConnection" CreateOnInstall="yes" DropOnUnInstall="yes">
+                            <AppSecInc:MSSQLDatabaseOption Id="MSSQLDemoDatabase_TrustWorthyOn" Value="TRUSTWORTHY ON" />
+                            <AppSecInc:MSSQLDatabaseFileSpec Id="MSSQLDemoDatabase_PRIMARY" Name="Demo_mdf" Filename="[MSSQL_DATABASE_MDF_PATH]" Size="10MB" Type="PRIMARY" />
+                            <AppSecInc:MSSQLDatabaseFileSpec Id="MSSQLDemoDatabase_LOG" Name="Demo_ldf" Filename="[MSSQL_DATABASE_LDF_PATH]" Size="12MB" Type="LOG ON" />
+                            <AppSecInc:ODBCExecute Id="MSSQLDemoDatabase_CreateTable1" Sql="CREATE TABLE [\[][MSSQL_DATABASE_NAME][\]].[\[]dbo[\]].[\[]Table1[\]] ( [\[]Table1_Id[\]] [\[]int[\]] IDENTITY(1,1) NOT NULL )" ExecuteOnInstall="yes" OutputFilename="[INSTALLLOCATION]CreateTable1.xml" />
+                            <AppSecInc:ODBCExecute Id="MSSQLDemoDatabase_DropTable1" Sql="DROP TABLE [\[][MSSQL_DATABASE_NAME][\]].[\[]dbo[\]].[\[]Table1[\]]" ExecuteOnUnInstall="yes" />
+                            <!-- a binary sql that has properties and is evaluated -->
+                            <AppSecInc:ODBCExecuteBinary Id="MSSQLDemoDatabase_CreateBinaryTable_Encoded" ExecuteOnInstall="yes" EvaluateProperties="yes" BinaryId="CreateBinaryTable_Encoded_sql" />
+                            <!-- a csv bulk insert -->
+                            <AppSecInc:MSSQLDataFile Id="MSSQLDemoDatabase_BulkInsert_CSV" Filename="[INSTALLLOCATION]BinaryTable.csv" ExecuteOnInstall="yes" Schema="dbo" Table="BinaryTableEncoded">
+                                <AppSecInc:MSSQLDataFileParameter Id="MSSQLDemoDatabase_BulkInsert_CSV_KEEPIDENTITY" Value="KEEPIDENTITY" />
+                                <AppSecInc:MSSQLDataFileParameter Id="MSSQLDemoDatabase_BulkInsert_CSV_DATAFILETYPE" Value="DATAFILETYPE = 'char'" />
+                                <AppSecInc:MSSQLDataFileParameter Id="MSSQLDemoDatabase_BulkInsert_CSV_FIELDTERMINATOR" Value="FIELDTERMINATOR = ','" />
+                            </AppSecInc:MSSQLDataFile>
+                            <AppSecInc:MSSQLDataBinaryFile Id="MSSQLDemoDatabase_BulkInsert_Binary_CSV" BinaryId="BinaryTable_csv" ExecuteOnInstall="yes" Schema="dbo" Table="BinaryTableNotEncoded">
+                                <AppSecInc:MSSQLDataFileParameter Id="MSSQLDemoDatabase_BulkInsert_Binary_CSV_KEEPIDENTITY" Value="KEEPIDENTITY" />
+                                <AppSecInc:MSSQLDataFileParameter Id="MSSQLDemoDatabase_BulkInsert_Binary_CSV_DATAFILETYPE" Value="DATAFILETYPE = 'char'" />
+                                <AppSecInc:MSSQLDataFileParameter Id="MSSQLDemoDatabase_BulkInsert_Binary_CSV_FIELDTERMINATOR" Value="FIELDTERMINATOR = ','" />
+                            </AppSecInc:MSSQLDataBinaryFile>
+                        </AppSecInc:MSSQLDatabase>
+                        <!-- a binary sql that doesn't have properties and is not evaluated -->
+                        <AppSecInc:ODBCExecuteBinary Id="MSSQLDemoDatabase_CreateBinaryTable_NotEncoded" ConnectionId="LocalSQLServerConnectionDemoDatabase" ExecuteOnInstall="yes" EvaluateProperties="no" BinaryId="CreateBinaryTable_NotEncoded_sql" />
+                        <!-- files are always executed as is -->
+                        <AppSecInc:ODBCExecuteFile Id="MSSQLDemoDatabase_CreateFileTable_NotEncoded" ConnectionId="LocalSQLServerConnectionDemoDatabase" ExecuteOnInstall="yes" Filename="[#CreateFileTable_NotEncoded_sql]" />
+                        <!-- a binary sql that is split and evaluated statement by statement -->
+                        <AppSecInc:ODBCExecuteBinary Id="MSSQLDemoDatabase_ExecuteManyGOStatements" ConnectionId="LocalSQLServerConnectionDemoDatabase" BinaryId="ExecuteManyGoStatements_sql" EvaluateProperties="no" Delimiter="GO" ExecuteOnInstall="yes" />
+                        <AppSecInc:ODBCExecute Id="MSSQLDemoDatabase_ExecuteSelect" ConnectionId="LocalSQLServerConnectionDemoDatabase" Sql="SELECT name, usertype, id FROM [\[]master[\]].dbo.syscolumns" ExecuteOnInstall="yes" OutputFilename="[INSTALLLOCATION]Columns.xml" />
+                    </Component>
+                    <Component Id="MSSQLDatabaseMsiOptionalComponent" Guid="A402A68A-9F8E-4809-8A7E-B20D410C9950">
+                        <File Id="MSSQLOptionalDatabaseMsi_wxs" Name="MSSQLOptionalDatabaseMsi.wxs" Source="MSSQLDatabaseMsi.wxs" />
+                        <!-- an optional demo database -->
+                        <AppSecInc:MSSQLDatabase Id="MSSQLOptionalDemoDatabase" Name="[MSSQL_DATABASE_NAME]Optional" ConnectionId="LocalSQLServerConnection" CreateOnInstall="yes" DropOnUnInstall="yes">
+                            <AppSecInc:MSSQLDatabaseOption Id="MSSQLOptionalDemoDatabase_TrustWorthyOn" Value="TRUSTWORTHY ON" />
+                            <AppSecInc:MSSQLDatabaseFileSpec Id="MSSQLOptionalDemoDatabase_PRIMARY" Name="OptionalDemo_mdf" Filename="[INSTALLLOCATION]OptionalDemo.mdf" Size="10MB" Type="PRIMARY" />
+                            <AppSecInc:MSSQLDatabaseFileSpec Id="MSSQLOptionalDemoDatabase_LOG" Name="OptionalDemo_ldf" Filename="[INSTALLLOCATION]OptionalDemo.ldf" Size="12MB" Type="LOG ON" />
+                            <AppSecInc:ODBCExecute Id="MSSQLDemoDatabase_CreateOptionalTable1" Sql="CREATE TABLE [\[][MSSQL_DATABASE_NAME]Optional[\]].[\[]dbo[\]].[\[]OptionalTable1[\]] ( [\[]OptionalTable1_Id[\]] [\[]int[\]] IDENTITY(1,1) NOT NULL )" ExecuteOnInstall="yes" />
+                            <AppSecInc:ODBCExecute Id="MSSQLDemoDatabase_DropOptionalTable1" Sql="DROP TABLE [\[][MSSQL_DATABASE_NAME]Optional[\]].[\[]dbo[\]].[\[]OptionalTable1[\]]" ExecuteOnUnInstall="yes" />
+                        </AppSecInc:MSSQLDatabase>
+                        <Condition>INSTALL_MSSQL_OPTIONAL_DATABASE</Condition>
+                    </Component>
+                    <Component Id="MSSQLDatabaseDataSource" Guid="723F0382-FC5D-45AF-95EC-DA69DA9431DC" KeyPath="yes">
+                        <AppSecInc:ODBCDataSource Id="MSSQLDatabaseDataSource_DemoDatabase_ODBC" CreateOnInstall="yes" DeleteOnUnInstall="yes" Driver="SQL Server" Name="DemoDatabaseSystemDSN" Type="system" Value="Server=localhost;Description=[MSSQL_DATABASE_NAME] DSN created by ODBCDataSource;Database=[MSSQL_DATABASE_NAME];Trusted_Connection=yes" />
+                        <AppSecInc:MSSQLDataSource Id="MSSQLDatabaseDataSource_DemoDatabase_MSSQL" CreateOnInstall="yes" DeleteOnUnInstall="yes" Name="DemoDatabaseUserDSN" Type="user" Address="localhost" Description="[MSSQL_DATABASE_NAME] DSN created by MSSQLDataSource" Database="[MSSQL_DATABASE_NAME]" TrustedConnection="yes" Server="localhost,1433" Network="DBMSSOCN" />
+                    </Component>
+                    <Component Id="MasterDatabaseSysDatabases" Guid="0399235A-BFF3-41ef-993C-8FA9C0E354D6" KeyPath="yes">
+                        <AppSecInc:ODBCExecute Id="SelectSysDatabases" ConnectionId="LocalGenericConnection" Sql="SELECT * FROM sysdatabases" OutputFilename="[INSTALLLOCATION]SysDatabases.xml" ExecuteOnInstall="yes" />
+                    </Component>
+                    <Component Id="MSSQLDatabaseMsiRegistry" Guid="F402654A-AAAF-48ab-9C07-F7FEF09CAEFB">
+                        <RegistryKey Id="MSSQLDatabaseMsiRegistryKey" Root="HKLM" Key="Software\AppSecInc\MSSQLDatabaseMsi" Action="createAndRemoveOnUninstall">
+                            <RegistryValue Id="MSSQLDatabaseMsiRegistryKey_MSSQL_DATABASE_NAME" Name="MSSQL_DATABASE_NAME" Value="[MSSQL_DATABASE_NAME]" Type="string" />
+                        </RegistryKey>
+                    </Component>
+                </Directory>
+            </Directory>
+        </Directory>
+        <!-- a statement that doesn't belong to a component or database -->
+        <AppSecInc:ODBCExecute Id="Master_SelectVersion" Sql="SELECT @@VERSION" ExecuteOnInstall="yes" ConnectionId="LocalSQLServerConnection">
+      EXECUTE_MSSQL_OPTIONAL_STATEMENTS
+    </AppSecInc:ODBCExecute>
+        <Feature Id="ProductFeature" Title="Demo Feature" Level="1">
+            <ComponentRef Id="MSSQLDatabaseMsiComponent" />
+            <ComponentRef Id="MSSQLDatabaseMsiOptionalComponent" />
+            <ComponentRef Id="MSSQLDatabaseMsiRegistry" />
+            <ComponentRef Id="MSSQLDatabaseDataSource" />
+            <ComponentRef Id="MasterDatabaseSysDatabases" />
+        </Feature>
+        <UIRef Id="MSSQLDatabaseUI" />
+        <UI Id="MSSQLDatabaseUI">
+            <TextStyle Id="WixUI_Font_Normal" FaceName="Tahoma" Size="8" />
+            <TextStyle Id="WixUI_Font_Bigger" FaceName="Tahoma" Size="12" />
+            <TextStyle Id="WixUI_Font_Title" FaceName="Tahoma" Size="9" Bold="yes" />
+            <Property Id="DefaultUIFont" Value="WixUI_Font_Normal" />
+            <Property Id="WixUI_Mode" Value="InstallDir" />
+            <Property Id="ARPNOMODIFY" Value="1" />
+            <DialogRef Id="ErrorDlg" />
+            <DialogRef Id="FatalError" />
+            <DialogRef Id="FilesInUse" />
+            <DialogRef Id="MsiRMFilesInUse" />
+            <DialogRef Id="PrepareDlg" />
+            <DialogRef Id="ProgressDlg" />
+            <DialogRef Id="ResumeDlg" />
+            <DialogRef Id="UserExit" />
+            <DialogRef Id="MSSQLDatabaseDlg" />
+            <DialogRef Id="MSSQLDatabaseRecommendPathDlg" />
+            <Publish Dialog="ExitDialog" Control="Finish" Event="EndDialog" Value="Return" Order="999">1</Publish>
+            <Publish Dialog="WelcomeDlg" Control="Next" Event="NewDialog" Value="MSSQLDatabaseDlg">1</Publish>
+            <Publish Dialog="MSSQLDatabaseDlg" Control="Back" Event="NewDialog" Value="MaintenanceTypeDlg" Order="1">Installed</Publish>
+            <Publish Dialog="MSSQLDatabaseDlg" Control="Back" Event="NewDialog" Value="WelcomeDlg" Order="2">NOT Installed</Publish>
+            <Publish Dialog="MSSQLDatabaseDlg" Control="Next" Event="NewDialog" Value="MSSQLDatabaseRecommendPathDlg" Order="2">1</Publish>
+            <Publish Dialog="MSSQLDatabaseRecommendPathDlg" Control="Back" Event="NewDialog" Value="MSSQLDatabaseDlg" Order="1">Installed</Publish>
+            <Publish Dialog="MSSQLDatabaseRecommendPathDlg" Control="Back" Event="NewDialog" Value="MSSQLDatabaseDlg" Order="2">NOT Installed</Publish>
+            <Publish Dialog="MSSQLDatabaseRecommendPathDlg" Control="Next" Event="NewDialog" Value="VerifyReadyDlg" Order="2">1</Publish>
+            <Publish Dialog="VerifyReadyDlg" Control="Back" Event="NewDialog" Value="MSSQLDatabaseDlg" Order="1">NOT Installed OR WixUI_InstallMode="Change"</Publish>
+            <Publish Dialog="MaintenanceTypeDlg" Control="Back" Event="NewDialog" Value="MaintenanceWelcomeDlg">1</Publish>
+        </UI>
+        <UIRef Id="WixUI_Common" />
+    </Product>
+    <?include MSSQLDatabaseUI.wxi ?>
+    <?include MSSQLDatabaseRecommendPathUI.wxi ?>
+</Wix>

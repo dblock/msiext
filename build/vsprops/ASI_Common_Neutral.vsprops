@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="Windows-1252"?>
+<VisualStudioPropertySheet
+	ProjectType="Visual C++"
+	Version="8.00"
+	Name="ASI_Common_Neutral"
+	IntermediateDirectory="$(ProjectDir)obj\$(ConfigurationName)\"
+	>
+	<Tool
+		Name="VCCLCompilerTool"
+		AdditionalOptions="/Zm200"
+		AdditionalIncludeDirectories="&quot;$(SolutionDir)src&quot;;&quot;$(SolutionDir)src\Version&quot;;&quot;$(SolutionDir)src\Common&quot;;&quot;$(SolutionDir)src\Framework&quot;;&quot;$(SolutionDir)externals&quot;;&quot;$(SolutionDir)externals\cppunit\include&quot;;&quot;$(SolutionDir)externals\boost\include&quot;"
+		PreprocessorDefinitions="_WINDOWS;WIN32;UNICODE"
+		UsePrecompiledHeader="2"
+		ProgramDataBaseFileName="$(IntDir)\$(TargetName).pdb"
+		WarningLevel="3"
+	/>
+	<Tool
+		Name="VCLibrarianTool"
+		OutputFile="$(OutDir)\$(ProjectName).lib"
+	/>
+	<Tool
+		Name="VCLinkerTool"
+		GenerateDebugInformation="true"
+		ProgramDatabaseFile="$(TargetDir)\$(TargetName).pdb"
+		SubSystem="1"
+		ImportLibrary="$(TargetDir)$(TargetName).lib"
+		TargetMachine="1"
+	/>
+	<Tool
+		Name="VCMIDLTool"
+		OutputDirectory=""
+	/>
+	<Tool
+		Name="VCResourceCompilerTool"
+		Culture="1033"
+		AdditionalIncludeDirectories="&quot;$(SolutionDir)src&quot;"
+	/>
+</VisualStudioPropertySheet>

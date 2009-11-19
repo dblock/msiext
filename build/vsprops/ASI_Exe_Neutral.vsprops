@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="Windows-1252"?>
+<VisualStudioPropertySheet
+	ProjectType="Visual C++"
+	Version="8.00"
+	Name="ASI_Exe_Neutral"
+	InheritedPropertySheets=".\ASI_Common_Bin_Neutral.vsprops"
+	>
+	<Tool
+		Name="VCLinkerTool"
+		AdditionalDependencies="odbc32.lib odbccp32.lib ws2_32.lib iphlpapi.lib crypt32.lib version.lib wsock32.lib oldnames.lib Secur32.lib"
+	/>
+</VisualStudioPropertySheet>

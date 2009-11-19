@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xs:schema xmlns:html="http://www.w3.org/1999/xhtml"
+            xmlns:wix="http://schemas.microsoft.com/wix/2006/wi"
+             xmlns:xs="http://www.w3.org/2001/XMLSchema"
+            xmlns:xse="http://schemas.microsoft.com/wix/2005/XmlSchemaExtension"
+      targetNamespace="http://schemas.appsecinc.com/wix/JavaToolsExtension"
+                xmlns="http://schemas.appsecinc.com/wix/JavaToolsExtension">
+  <xs:annotation>
+    <xs:documentation>
+      <![CDATA[
+Windows Installer XML Java Tools Extension
+
+This extension significantly simplifies managing JAVA archives in a windows installer.
+        
+The java archives belong to a component. A java archive can be extracted or compressed, 
+an optional manifest file specified, etc. The extension attempts to locate jar.exe under JAVA_HOME if 
+JavaArchive.ToolPath is not specified.
+
+The custom action constructs a command line to <em>jar {ctxu}[vfm0Mi] [jar-file] [manifest-file] [-C dir] files ...</em>
+and executes it.
+
+\par Example: Adding and Extracting JAR Files
+\code
+<Wix ... xmlns:AppSecIncJavaTools="http://schemas.appsecinc.com/wix/JavaToolsExtension">
+ <Product ...>
+   ...
+   <Component Id="ProductComponent" Guid="ca70ba08-0c57-4fa2-b6c1-57a00123e391">
+     <File Id="JavaToolsMsi_wxs" Name="JavaToolsMsi.wxs" Source="JavaToolsMsi.wxs" />
+     <File Id="JavaToolsUI_wxi" Name="JavaToolsUI.wxi" Source="JavaToolsUI.wxi" />
+     <File Id="JavaToolsMsiExtract_jar" Name="JavaToolsMsiExtract.jar" Source="Data\\JavaToolsMsi.jar" />
+     <AppSecInc:JavaArchive Id="JavaToolsArchiveExtract" Directory="[INSTALLLOCATION]" JarFile="[INSTALLLOCATION]JavaToolsMsiExtract.jar" Operation="xvf">
+       <Condition>JAR_EXTRACT = 1</Condition>
+     </AppSecInc:JavaArchive>
+     <AppSecInc:JavaArchive Id="JavaToolsArchiveCompress" Directory="[INSTALLLOCATION]" JarFile="[INSTALLLOCATION]JavaToolsMsiCompressed.jar" Operation="cvf">
+       <AppSecInc:JavaArchiveFile Id="JavaToolsMsiCompress_JavaToolsMsi_wxs" Directory="[INSTALLLOCATION]" File="JavaToolsMsi.wxs">
+         JAR_COMPRESS = 1
+       </AppSecInc:JavaArchiveFile>
+       <AppSecInc:JavaArchiveFile Id="JavaToolsMsiCompress_JavaToolsUI_wxi" Directory="[INSTALLLOCATION]" File="JavaToolsUI.wxi">
+         JAR_COMPRESS = 1
+       </AppSecInc:JavaArchiveFile>
+     </AppSecInc:JavaArchive>           
+   </Component>
+ </Product>
+</Wix>
+\endcode        
+        ]]>
+    </xs:documentation>
+  </xs:annotation>
+  <xs:import namespace="http://schemas.microsoft.com/wix/2006/wi" />
+  <xs:element name="JavaArchive">
+    <xs:annotation>
+      <xs:appinfo>
+        <xse:parent namespace="http://schemas.microsoft.com/wix/2006/wi" ref="Component" />
+      </xs:appinfo>
+      <xs:documentation>
+        Implements a single JAVA archive.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:complexType>
+      <xs:choice minOccurs="0" maxOccurs="unbounded">
+        <xs:element ref="JavaArchiveFile"/>
+        <xs:element ref="wix:Condition" />
+      </xs:choice>
+      <xs:attribute name="Id" type="xs:string" use="required">
+        <xs:annotation>
+          <xs:documentation>Identifier for the java archive operation (primary key).</xs:documentation>
+        </xs:annotation>
+      </xs:attribute>
+      <xs:attribute name="JarFile" type="xs:string" use="required">
+        <xs:annotation>
+          <xs:documentation>Name of the JAR file.</xs:documentation>
+        </xs:annotation>
+      </xs:attribute>
+      <xs:attribute name="ManifestFile" type="xs:string" use="optional">
+        <xs:annotation>
+          <xs:documentation>Optional manifest file.</xs:documentation>
+        </xs:annotation>
+      </xs:attribute>
+      <xs:attribute name="Directory" type="xs:string" use="required">
+        <xs:annotation>
+          <xs:documentation>Directory in which to execute jar.exe.</xs:documentation>
+        </xs:annotation>
+      </xs:attribute>
+      <xs:attribute name="ToolPath" type="xs:string" use="optional">
+        <xs:annotation>
+          <xs:documentation>Optional tool path to jar.exe (JDK directory or full path to an executable).</xs:documentation>
+        </xs:annotation>
+      </xs:attribute>
+      <xs:attribute name="Operation" type="xs:string" use="required">
+        <xs:annotation>
+          <xs:documentation>Operation, eg. vfc.</xs:documentation>
+        </xs:annotation>
+      </xs:attribute>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="JavaArchiveFile">
+    <xs:complexType>
+      <xs:annotation>
+        <xs:appinfo>
+          <xse:parent namespace="http://schemas.appsecinc.com/wix/JavaToolsExtension" ref="JavaArchive" />
+        </xs:appinfo>
+      </xs:annotation>
+      <xs:simpleContent>
+        <xs:extension base="xs:string">
+          <xs:annotation>
+            <xs:documentation>
+              Condition that determines if the file should be copied. Must be blank or evaluate to true
+              for the file to be copied.
+            </xs:documentation>
+          </xs:annotation>
+          <xs:attribute name="Id" type="xs:string" use="required">
+            <xs:annotation>
+              <xs:documentation>Identifier for the java archive file (primary key).</xs:documentation>
+            </xs:annotation>
+          </xs:attribute>
+          <xs:attribute name="File" type="xs:string" use="required">
+            <xs:annotation>
+              <xs:documentation>File to include in the archive.</xs:documentation>
+            </xs:annotation>
+          </xs:attribute>
+          <xs:attribute name="Directory" type="xs:string" use="optional">
+            <xs:annotation>
+              <xs:documentation>Optional directory to pass as -C to jar.exe before the file to include in the archive.</xs:documentation>
+            </xs:annotation>
+          </xs:attribute>
+        </xs:extension>
+      </xs:simpleContent>
+    </xs:complexType>
+  </xs:element>
+</xs:schema>

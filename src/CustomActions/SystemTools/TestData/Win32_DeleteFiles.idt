@@ -1,0 +1,7 @@
+Id	File	Wildcard	Condition	Attributes
+s72	l0	S0	S0	I2
+Win32_DeleteFiles	Id
+Delete1	[INSTALLLOCATION]DeleteFile1.tmp			17
+Delete2	[INSTALLLOCATION]DeleteFile2.tmp			18
+DeleteAll	[INSTALLLOCATION]\DeleteAllDirectory	*.del		17
+DeleteAllSub	[INSTALLLOCATION]\DeleteAllDirectory	*.*		113

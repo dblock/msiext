@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
+    <?ifdef Debug ?>
+    <?define ConfigurationName=Debug ?>
+    <?else ?>
+    <?define ConfigurationName=Release ?>
+    <?endif ?>
+    <?define SolutionDir=$(sys.SOURCEFILEDIR)..\..\..\.. ?>
+    <?define BinDir=$(var.SolutionDir)\target\$(var.ConfigurationName)\bin ?>
+    <Fragment>
+        <CustomAction Id="JavaArchive_Immediate" BinaryKey="JavaToolsCA" DllEntry="JavaArchive_Immediate" Execute="immediate" Return="check" SuppressModularization="yes" />
+        <CustomAction Id="JavaArchive_Deferred" BinaryKey="JavaToolsCA" DllEntry="JavaArchive_Deferred" Execute="deferred" Return="check" Impersonate="no" SuppressModularization="yes" />
+        <InstallExecuteSequence>
+            <Custom Action="JavaArchive_Immediate" After="InstallFiles" Overridable="yes">NOT Installed</Custom>
+            <Custom Action="JavaArchive_Deferred" After="JavaArchive_Immediate" Overridable="yes">NOT Installed</Custom>
+        </InstallExecuteSequence>
+    </Fragment>
+    <Fragment>
+        <Binary Id="JavaToolsCA" SourceFile="$(var.BinDir)\JavaTools.dll" />
+    </Fragment>
+</Wix>

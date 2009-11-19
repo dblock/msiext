@@ -1,0 +1,5 @@
+Id	TemplateFileId	Name	Value
+s72	s72	s0	S0
+TemplateFileProperties	Id
+TEST1_property	File_template_process	TEST1	test1
+TEST2_property	File_template_process	TEST2	test2

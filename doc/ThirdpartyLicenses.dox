@@ -1,0 +1,31 @@
+/*! \page thirdparty_licenses Thirdparty Licenses
+
+\section thirdpartylicenses_intro Third-Party Licenses
+
+MSI Extensions use several 3rd party components used under the following licenses.
+
+\subsection boost Boost
+
+\todo
+
+\subsection cppunit CppUnit
+
+\todo
+
+\subsection cryptopp Crypto++
+
+\todo
+
+\subsection msi Windows Installer SDK
+
+\todo
+
+\subsection sql Microsoft SQL Server SDK
+
+\todo
+
+\subsection tclap Tclap Command-Line Parser
+
+\todo
+
+*/

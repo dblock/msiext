@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?include ..\..\..\src\Version\Version.wxi ?>
+<?define BinDir=$(var.MSBuildProjectDirectory)\target\$(var.Configuration)\bin ?>
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
+    <Product Id="1305872e-167a-4793-ba63-3b49846a3380" Name="Data Source Demo MSI" Language="1033" Version="$(var.ProductVersion)" Manufacturer="$(var.CompanyName)" UpgradeCode="66aced07-38c7-42d9-b373-771dc08d7130">
+        <Package InstallerVersion="200" Compressed="yes" />
+        <Media Id="1" Cabinet="DataSourceMsi.cab" EmbedCab="yes" />
+        <Binary Id="success_bmp" SourceFile="$(sys.SOURCEFILEDIR)success.bmp" />
+        <Binary Id="error_bmp" SourceFile="$(sys.SOURCEFILEDIR)error.bmp" />
+        <Binary Id="DataSource" SourceFile="$(var.BinDir)\DataSource.dll" />
+        <CustomAction Id="SQLDMO_ListAvailableSQLServers" BinaryKey="DataSource" DllEntry="SQLDMO_ListAvailableSQLServers" Execute="immediate" Return="ignore" />
+        <CustomAction Id="ODBC_Connect" BinaryKey="DataSource" DllEntry="ODBC_Connect" Execute="immediate" Return="ignore" />
+        <Directory Id="TARGETDIR" Name="SourceDir">
+            <Directory Id="ProgramFilesFolder">
+                <Directory Id="INSTALLLOCATION" Name="DataSourceDemo">
+                    <Component Id="ProductComponent" Guid="ca70ba08-0c57-4fa2-b6c1-57a00123e391">
+                        <File Id="DataSourceMsi_wxs" Name="DataSourceMsi.wxs" Source="DataSourceMsi.wxs" />
+                    </Component>
+                </Directory>
+            </Directory>
+        </Directory>
+        <Feature Id="ProductFeature" Title="Demo Feature" Level="1">
+            <ComponentRef Id="ProductComponent" />
+        </Feature>
+        <!-- test for DataSource::ConfigDataSource_SQLServer -->
+        <CustomAction Id="ConfigDataSource_Set_ODBC_FLAG" Property="ODBC_FLAG" Value="ODBC_ADD_DSN" />
+        <CustomAction Id="ConfigDataSource_Set_DSN_NAME" Property="DSN_NAME" Value="CaTestDSN" />
+        <CustomAction Id="ConfigDataSource_Set_DSN_MSSQL_SERVER" Property="DSN_MSSQL_SERVER" Value="[DATABASE_SERVER]" />
+        <CustomAction Id="ConfigDataSource_Set_DSN_MSSQL_NETWORK" Property="DSN_MSSQL_NETWORK" Value="DBMSSOCN" />
+        <CustomAction Id="ConfigDataSource_Set_DSN_MSSQL_DATABASE" Property="DSN_MSSQL_DATABASE" Value="[DATABASE_NAME]" />
+        <CustomAction Id="ConfigDataSource_Set_DSN_MSSQL_TRUSTED_CONNECTION" Property="DSN_MSSQL_TRUSTED_CONNECTION" Value="true" />
+        <CustomAction Id="ConfigDataSource_SQLServer" BinaryKey="DataSource" DllEntry="ConfigDataSource_SQLServer" Execute="immediate" Return="check" />
+        <InstallExecuteSequence>
+            <!-- dsn -->
+            <Custom Action="ConfigDataSource_Set_ODBC_FLAG" After="RegisterTypeLibraries">NOT Installed</Custom>
+            <Custom Action="ConfigDataSource_Set_DSN_NAME" After="ConfigDataSource_Set_ODBC_FLAG">NOT Installed</Custom>
+            <Custom Action="ConfigDataSource_Set_DSN_MSSQL_SERVER" After="ConfigDataSource_Set_DSN_NAME">NOT Installed</Custom>
+            <Custom Action="ConfigDataSource_Set_DSN_MSSQL_NETWORK" After="ConfigDataSource_Set_DSN_MSSQL_SERVER">NOT Installed</Custom>
+            <Custom Action="ConfigDataSource_Set_DSN_MSSQL_DATABASE" After="ConfigDataSource_Set_DSN_MSSQL_NETWORK">NOT Installed</Custom>
+            <Custom Action="ConfigDataSource_Set_DSN_MSSQL_TRUSTED_CONNECTION" After="ConfigDataSource_Set_DSN_MSSQL_DATABASE"><![CDATA[(NOT Installed) AND NOT (DATABASE_LOGON_TYPE = "DatabaseAccount")]]></Custom>
+            <Custom Action="ConfigDataSource_SQLServer" After="ConfigDataSource_Set_DSN_MSSQL_TRUSTED_CONNECTION">NOT Installed</Custom>
+        </InstallExecuteSequence>
+        <UIRef Id="CaTestUI" />
+        <UI Id="CaTestUI">
+            <TextStyle Id="WixUI_Font_Normal" FaceName="Tahoma" Size="8" />
+            <TextStyle Id="WixUI_Font_Bigger" FaceName="Tahoma" Size="12" />
+            <TextStyle Id="WixUI_Font_Title" FaceName="Tahoma" Size="9" Bold="yes" />
+            <Property Id="DefaultUIFont" Value="WixUI_Font_Normal" />
+            <Property Id="WixUI_Mode" Value="InstallDir" />
+            <Property Id="ARPNOMODIFY" Value="1" />
+            <DialogRef Id="ErrorDlg" />
+            <DialogRef Id="FatalError" />
+            <DialogRef Id="FilesInUse" />
+            <DialogRef Id="MsiRMFilesInUse" />
+            <DialogRef Id="PrepareDlg" />
+            <DialogRef Id="ProgressDlg" />
+            <DialogRef Id="ResumeDlg" />
+            <DialogRef Id="UserExit" />
+            <DialogRef Id="ChooseDatabaseDlg" />
+            <Publish Dialog="ExitDialog" Control="Finish" Event="EndDialog" Value="Return" Order="999">1</Publish>
+            <Publish Dialog="WelcomeDlg" Control="Next" Event="NewDialog" Value="ChooseDatabaseDlg">1</Publish>
+            <Publish Dialog="ChooseDatabaseDlg" Control="Back" Event="NewDialog" Value="MaintenanceTypeDlg" Order="1">Installed</Publish>
+            <Publish Dialog="ChooseDatabaseDlg" Control="Back" Event="NewDialog" Value="WelcomeDlg" Order="2">NOT Installed</Publish>
+            <Publish Dialog="ChooseDatabaseDlg" Control="Next" Event="NewDialog" Value="VerifyReadyDlg" Order="2">1</Publish>
+            <Publish Dialog="VerifyReadyDlg" Control="Back" Event="NewDialog" Value="ChooseDatabaseDlg" Order="1">NOT Installed OR WixUI_InstallMode="Change"</Publish>
+            <Publish Dialog="MaintenanceTypeDlg" Control="Back" Event="NewDialog" Value="MaintenanceWelcomeDlg">1</Publish>
+        </UI>
+        <UIRef Id="WixUI_Common" />
+    </Product>
+    <?include ChooseDatabaseUI.wxi ?>
+</Wix>

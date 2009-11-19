@@ -1,0 +1,71 @@
+﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="3.5">
+  <PropertyGroup>
+    <ProjectGuid>{1CE83FFA-30EF-4A2B-A19C-73010FD452EB}</ProjectGuid>
+    <AssemblyName>WixDataSourceExtension</AssemblyName>
+    <OutputType>Library</OutputType>
+    <RootNamespace>AppSecInc.Wix.Extensions</RootNamespace>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>..\..\..\..\target\Debug\bin\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>..\..\..\..\target\Release\bin\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="..\..\..\Version\GlobalAssemblyInfo.cs">
+      <Link>GlobalAssemblyInfo.cs</Link>
+    </Compile>
+    <Compile Include="AccessConnectionInfo.cs" />
+    <Compile Include="AssemblyInfo.cs" />
+    <Compile Include="DataSourceCompiler.cs" />
+    <Compile Include="DataSourceExtension.cs" />
+    <Compile Include="MSSQLConnectionInfo.cs" />
+    <EmbeddedResource Include="Data\tables.xml">
+      <LogicalName>$(RootNamespace).Data.tables.xml</LogicalName>
+    </EmbeddedResource>
+    <MsgGenSource Include="Data\messages.xml">
+      <ResourcesLogicalName>$(RootNamespace).Data.Messages.resources</ResourcesLogicalName>
+    </MsgGenSource>
+    <EmbeddedResource Include="Xsd\DataSource.xsd">
+      <LogicalName>$(RootNamespace).Xsd.DataSource.xsd</LogicalName>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="$(OutputPath)\DataSource.wixlib">
+      <Link>Data\DataSource.wixlib</Link>
+    </EmbeddedResource>
+    <XsdGenSource Include="Xsd\DataSource.xsd">
+      <CommonNamespace>AppSecInc.Wix.Serialize</CommonNamespace>
+      <Namespace>AppSecInc.Wix.Extensions.Serialize.DataSource</Namespace>
+    </XsdGenSource>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Xsd\DataSource.xsx">
+      <DependentUpon>DataSource.xsd</DependentUpon>
+    </None>
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <ItemGroup>
+    <Reference Include="Microsoft.Build.Framework" />
+    <Reference Include="Microsoft.Build.Utilities" />
+    <Reference Include="System" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+    <Reference Include="wix, Version=3.0.3621.0, Culture=neutral, PublicKeyToken=ce35f76fcda82bad, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>C:\Program Files\Windows Installer XML v3\bin\wix.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+  </ItemGroup>
+</Project>

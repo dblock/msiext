@@ -1,0 +1,24 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<tableDefinitions xmlns="http://schemas.microsoft.com/wix/2006/tables">
+  <tableDefinition name="LocalUsers">
+    <columnDefinition name="Id" type="string" length="72" primaryKey="yes" modularize="column" category="identifier" />
+    <columnDefinition name="ComponentId" type="string" length="72" modularize="column" category="identifier" nullable="yes" keyTable="Component" keyColumn="1" />
+    <columnDefinition name="Username" type="string" length="0" modularize="property" category="formatted" />
+    <columnDefinition name="Password" type="string" length="0" modularize="property" category="formatted" nullable="yes" />
+    <columnDefinition name="Attributes" type="number" length="2" nullable="yes" minValue="0" maxValue="127" />
+  </tableDefinition>
+  <tableDefinition name="LocalGroups">
+    <columnDefinition name="Id" type="string" length="72" primaryKey="yes" modularize="column" category="identifier" />
+    <columnDefinition name="ComponentId" type="string" length="72" modularize="column" category="identifier" nullable="yes" keyTable="Component" keyColumn="1" />
+    <columnDefinition name="Name" type="string" length="0" modularize="property" category="formatted" />
+    <columnDefinition name="Description" type="string" length="0" modularize="property" category="formatted" nullable="yes" />
+    <columnDefinition name="Attributes" type="number" length="2" nullable="yes" minValue="0" maxValue="127" />
+  </tableDefinition>
+  <tableDefinition name="LocalGroupMembers">
+    <columnDefinition name="Id" type="string" length="72" primaryKey="yes" modularize="column" category="identifier" />
+    <columnDefinition name="ComponentId" type="string" length="72" modularize="column" category="identifier" nullable="yes" keyTable="Component" keyColumn="1" />
+    <columnDefinition name="LocalUserId" type="string" length="72" modularize="column" category="identifier" keyTable="LocalUsers" keyColumn="1" />
+    <columnDefinition name="LocalGroupId" type="string" length="72" modularize="column" category="identifier" keyTable="LocalGroups" keyColumn="1" />
+    <columnDefinition name="Attributes" type="number" length="2" nullable="yes" minValue="0" maxValue="127" />
+  </tableDefinition>
+</tableDefinitions>

@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
+    <?ifdef Debug ?>
+    <?define ConfigurationName=Debug ?>
+    <?else ?>
+    <?define ConfigurationName=Release ?>
+    <?endif ?>
+    <?define SolutionDir=$(sys.SOURCEFILEDIR)..\..\..\.. ?>
+    <?define BinDir=$(var.SolutionDir)\target\$(var.ConfigurationName)\bin ?>
+    <Fragment>
+        <UI>
+            <ProgressText Action="Win32_CopyFiles_Deferred_Install">!(loc.CopyingFiles)</ProgressText>
+            <ProgressText Action="Win32_CopyFiles_Deferred_UnInstall">!(loc.CopyingFiles)</ProgressText>
+        </UI>
+        <CustomAction Id="Win32_CopyFiles_Immediate_Install" SuppressModularization="yes" BinaryKey="SystemToolsCA" DllEntry="Win32_CopyFiles_Immediate" Execute="immediate" Return="check" />
+        <CustomAction Id="Win32_CopyFiles_Deferred_Install" SuppressModularization="yes" BinaryKey="SystemToolsCA" DllEntry="Win32_CopyFiles_Deferred" Execute="deferred" Return="check" />
+        <CustomAction Id="Win32_CopyFiles_Immediate_UnInstall" SuppressModularization="yes" BinaryKey="SystemToolsCA" DllEntry="Win32_CopyFiles_Immediate" Execute="immediate" Return="check" />
+        <CustomAction Id="Win32_CopyFiles_Deferred_UnInstall" SuppressModularization="yes" BinaryKey="SystemToolsCA" DllEntry="Win32_CopyFiles_Deferred" Execute="deferred" Return="check" />
+        <InstallExecuteSequence>
+            <Custom Action="Win32_CopyFiles_Immediate_Install" After="InstallFiles" Overridable="yes">NOT Installed</Custom>
+            <Custom Action="Win32_CopyFiles_Deferred_Install" After="Win32_CopyFiles_Immediate_Install" Overridable="yes">NOT Installed</Custom>
+            <Custom Action="Win32_CopyFiles_Immediate_UnInstall" Before="Win32_CopyFiles_Deferred_UnInstall" Overridable="yes">Installed</Custom>
+            <Custom Action="Win32_CopyFiles_Deferred_UnInstall" Before="RemoveFiles" Overridable="yes">Installed</Custom>
+        </InstallExecuteSequence>
+    </Fragment>
+    <Fragment>
+        <UI>
+            <ProgressText Action="Win32_MoveFiles_Deferred_Install">!(loc.MovingFiles)</ProgressText>
+            <ProgressText Action="Win32_MoveFiles_Deferred_UnInstall">!(loc.MovingFiles)</ProgressText>
+        </UI>
+        <CustomAction Id="Win32_MoveFiles_Immediate_Install" SuppressModularization="yes" BinaryKey="SystemToolsCA" DllEntry="Win32_MoveFiles_Immediate" Execute="immediate" Return="check" />
+        <CustomAction Id="Win32_MoveFiles_Deferred_Install" SuppressModularization="yes" BinaryKey="SystemToolsCA" DllEntry="Win32_MoveFiles_Deferred" Execute="deferred" Return="check" />
+        <CustomAction Id="Win32_MoveFiles_Immediate_UnInstall" SuppressModularization="yes" BinaryKey="SystemToolsCA" DllEntry="Win32_MoveFiles_Immediate" Execute="immediate" Return="check" />
+        <CustomAction Id="Win32_MoveFiles_Deferred_UnInstall" SuppressModularization="yes" BinaryKey="SystemToolsCA" DllEntry="Win32_MoveFiles_Deferred" Execute="deferred" Return="check" />
+        <InstallExecuteSequence>
+            <Custom Action="Win32_MoveFiles_Immediate_Install" After="InstallFiles" Overridable="yes">NOT Installed</Custom>
+            <Custom Action="Win32_MoveFiles_Deferred_Install" After="Win32_MoveFiles_Immediate_Install" Overridable="yes">NOT Installed</Custom>
+            <Custom Action="Win32_MoveFiles_Immediate_UnInstall" Before="Win32_MoveFiles_Deferred_UnInstall" Overridable="yes">Installed</Custom>
+            <Custom Action="Win32_MoveFiles_Deferred_UnInstall" Before="RemoveFiles" Overridable="yes">Installed</Custom>
+        </InstallExecuteSequence>
+    </Fragment>
+    <Fragment>
+        <UI>
+            <ProgressText Action="Win32_DeleteFiles_Deferred_Install">!(loc.DeletingFiles)</ProgressText>
+            <ProgressText Action="Win32_DeleteFiles_Deferred_UnInstall">!(loc.DeletingFiles)</ProgressText>
+        </UI>
+        <CustomAction Id="Win32_DeleteFiles_Immediate_Install" SuppressModularization="yes" BinaryKey="SystemToolsCA" DllEntry="Win32_DeleteFiles_Immediate" Execute="immediate" Return="check" />
+        <CustomAction Id="Win32_DeleteFiles_Deferred_Install" SuppressModularization="yes" BinaryKey="SystemToolsCA" DllEntry="Win32_DeleteFiles_Deferred" Execute="deferred" Return="check" />
+        <CustomAction Id="Win32_DeleteFiles_Immediate_UnInstall" SuppressModularization="yes" BinaryKey="SystemToolsCA" DllEntry="Win32_DeleteFiles_Immediate" Execute="immediate" Return="check" />
+        <CustomAction Id="Win32_DeleteFiles_Deferred_UnInstall" SuppressModularization="yes" BinaryKey="SystemToolsCA" DllEntry="Win32_DeleteFiles_Deferred" Execute="deferred" Return="check" />
+        <InstallExecuteSequence>
+            <Custom Action="Win32_DeleteFiles_Immediate_Install" Before="Win32_DeleteFiles_Deferred_Install" Overridable="yes">NOT Installed</Custom>
+            <Custom Action="Win32_DeleteFiles_Deferred_Install" Before="InstallFiles" Overridable="yes">NOT Installed</Custom>
+            <Custom Action="Win32_DeleteFiles_Immediate_UnInstall" After="RemoveFiles" Overridable="yes">Installed</Custom>
+            <Custom Action="Win32_DeleteFiles_Deferred_UnInstall" After="Win32_DeleteFiles_Immediate_UnInstall" Overridable="yes">Installed</Custom>
+        </InstallExecuteSequence>
+    </Fragment>
+    <Fragment>
+        <UI>
+            <ProgressText Action="Win32_Execute_Deferred">!(loc.ExecutingCommands)</ProgressText>
+        </UI>
+        <CustomAction Id="Win32_Execute_Immediate" SuppressModularization="yes" BinaryKey="SystemToolsCA" DllEntry="Win32_Execute_Immediate" Execute="immediate" Return="check" />
+        <CustomAction Id="Win32_Execute_Deferred" SuppressModularization="yes" BinaryKey="SystemToolsCA" DllEntry="Win32_Execute_Deferred" Execute="deferred" Return="check" />
+        <!-- CustomAction Id="Win32_Execute_Rollback" SuppressModularization="yes" BinaryKey="SystemToolsCA" DllEntry="Win32_Execute_Rollback" Execute="rollback" Return="check" /-->
+        <InstallExecuteSequence>
+            <Custom Action="Win32_Execute_Immediate" After="InstallInitialize" Overridable="yes">1</Custom>
+            <Custom Action="Win32_Execute_Deferred" After="InstallFiles" Overridable="yes">1</Custom>
+            <!-- Custom Action="Win32_Execute_Rollback" After="InstallFiles" Overridable="yes">1</Custom -->
+        </InstallExecuteSequence>
+    </Fragment>
+    <Fragment>
+        <CustomAction Id="CompareVersions" BinaryKey="SystemToolsCA" DllEntry="CompareVersions" Execute="immediate" Return="check" />
+        <InstallExecuteSequence>
+            <Custom Action="CompareVersions" After="AppSearch" Overridable="yes">1</Custom>
+        </InstallExecuteSequence>
+        <InstallUISequence>
+            <Custom Action="CompareVersions" After="AppSearch" Overridable="yes">1</Custom>
+        </InstallUISequence>
+    </Fragment>
+    <Fragment>
+        <UI>
+            <ProgressText Action="TemplateFiles_Deferred">!(loc.ProcessingTemplateFiles)</ProgressText>
+        </UI>
+        <CustomAction Id="TemplateFiles_Immediate" SuppressModularization="yes" BinaryKey="SystemToolsCA" DllEntry="TemplateFiles_Immediate" Execute="immediate" Return="check" />
+        <CustomAction Id="TemplateFiles_Deferred" SuppressModularization="yes" BinaryKey="SystemToolsCA" DllEntry="TemplateFiles_Deferred" Execute="deferred" Return="check" />
+        <!-- CustomAction Id="TemplateFiles_Rollback" SuppressModularization="yes" BinaryKey="SystemToolsCA" DllEntry="TemplateFiles_Rollback" Execute="rollback" Return="check" /-->
+        <InstallExecuteSequence>
+            <Custom Action="TemplateFiles_Immediate" After="InstallFiles" Overridable="yes">1</Custom>
+            <Custom Action="TemplateFiles_Deferred" After="TemplateFiles_Immediate" Overridable="yes">1</Custom>
+            <!-- Custom Action="TemplateFiles_Rollback" After="InstallFiles" Overridable="yes">1</Custom -->
+        </InstallExecuteSequence>
+    </Fragment>
+    <Fragment>
+        <UI>
+            <ProgressText Action="Win32_RegistryCopy_Deferred_Install">!(loc.CopyingRegistryKeys)</ProgressText>
+            <ProgressText Action="Win32_RegistryCopy_Deferred_UnInstall">!(loc.CopyingRegistryKeys)</ProgressText>
+            <ProgressText Action="Win32_RegistryCopy_Rollback">!(loc.CopyingRegistryKeys)</ProgressText>
+        </UI>
+        <CustomAction Id="Win32_RegistryCopy_Immediate_Install" SuppressModularization="yes" BinaryKey="SystemToolsCA" DllEntry="Win32_RegistryCopy_Immediate" Execute="immediate" Return="check" />
+        <CustomAction Id="Win32_RegistryCopy_Deferred_Install" SuppressModularization="yes" BinaryKey="SystemToolsCA" DllEntry="Win32_RegistryCopy_Deferred" Execute="deferred" Return="check" />
+        <CustomAction Id="Win32_RegistryCopy_Immediate_UnInstall" SuppressModularization="yes" BinaryKey="SystemToolsCA" DllEntry="Win32_RegistryCopy_Immediate" Execute="immediate" Return="check" />
+        <CustomAction Id="Win32_RegistryCopy_Deferred_UnInstall" SuppressModularization="yes" BinaryKey="SystemToolsCA" DllEntry="Win32_RegistryCopy_Deferred" Execute="deferred" Return="check" />
+        <CustomAction Id="Win32_RegistryCopy_Rollback" SuppressModularization="yes" BinaryKey="SystemToolsCA" DllEntry="Win32_RegistryCopy_Deferred" Execute="rollback" Return="check" />
+        <InstallExecuteSequence>
+            <Custom Action="Win32_RegistryCopy_Immediate_Install" Before="Win32_RegistryCopy_Deferred_Install" Overridable="yes">NOT Installed</Custom>
+            <Custom Action="Win32_RegistryCopy_Deferred_Install" Before="WriteRegistryValues" Overridable="yes">NOT Installed</Custom>
+            <Custom Action="Win32_RegistryCopy_Immediate_UnInstall" Before="Win32_RegistryCopy_Deferred_UnInstall" Overridable="yes">Installed</Custom>
+            <Custom Action="Win32_RegistryCopy_Deferred_UnInstall" Before="WriteRegistryValues" Overridable="yes">Installed</Custom>
+            <Custom Action="Win32_RegistryCopy_Rollback" Before="Win32_RegistryCopy_Deferred_Install" Overridable="yes">1</Custom>
+        </InstallExecuteSequence>
+    </Fragment>
+    <Fragment>
+        <Binary Id="SystemToolsCA" SourceFile="$(var.BinDir)\SystemTools.dll" />
+    </Fragment>
+</Wix>

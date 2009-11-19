@@ -1,0 +1,254 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xs:schema xmlns:html="http://www.w3.org/1999/xhtml"
+            xmlns:wix="http://schemas.microsoft.com/wix/2006/wi"
+             xmlns:xs="http://www.w3.org/2001/XMLSchema"
+            xmlns:xse="http://schemas.microsoft.com/wix/2005/XmlSchemaExtension"
+      targetNamespace="http://schemas.appsecinc.com/wix/UserPrivilegesExtension"
+                xmlns="http://schemas.appsecinc.com/wix/UserPrivilegesExtension">
+  <xs:annotation>
+    <xs:documentation>
+      <![CDATA[
+Windows Installer XML UserPrivileges Extension
+
+This extension significantly simplifies managing local users and groups.
+        ]]>
+    </xs:documentation>
+  </xs:annotation>
+  <xs:import namespace="http://schemas.microsoft.com/wix/2006/wi" />
+  <xs:element name="LocalUser">
+    <xs:annotation>
+      <xs:appinfo>
+        <xse:parent namespace="http://schemas.microsoft.com/wix/2006/wi" ref="Component" />
+        <xse:parent namespace="http://schemas.microsoft.com/wix/2006/wi" ref="Product" />
+        <xse:parent namespace="http://schemas.microsoft.com/wix/2006/wi" ref="Module" />
+        <xse:parent namespace="http://schemas.microsoft.com/wix/2006/wi" ref="Fragment" />
+      </xs:appinfo>
+      <xs:documentation>
+        <![CDATA[
+Defines, creates or deletes a local user. 
+
+When nested under a Component, component conditions apply.
+
+\par Example:
+\code
+<Wix ... xmlns:UserPrivileges="http://schemas.appsecinc.com/wix/UserPrivilegesExtension">
+ <Component ...>
+  <UserPrivileges:LocalUser Id="DemoLocalUser1" Username="DemoLocalUser1" Password="admin123" CreateOnInstall="yes" DeleteOnUnInstall="yes" CheckIfExists="yes" />
+ </Component>
+</Wix>
+\endcode
+        ]]>
+      </xs:documentation>
+    </xs:annotation>
+    <xs:complexType>
+      <xs:choice minOccurs="0" maxOccurs="unbounded">
+        <xs:element ref="LocalGroupMember" maxOccurs="unbounded" />
+      </xs:choice>
+      <xs:attribute name="Id" type="xs:string" use="required">
+        <xs:annotation>
+          <xs:documentation>Identifier for the local user (primary key).</xs:documentation>
+        </xs:annotation>
+      </xs:attribute>
+      <xs:attribute name="Username" type="xs:string" use="required">
+        <xs:annotation>
+          <xs:documentation>Username.</xs:documentation>
+        </xs:annotation>
+      </xs:attribute>
+      <xs:attribute name="Password" type="xs:string" use="optional">
+        <xs:annotation>
+          <xs:documentation>Optional password, required when creating a user.</xs:documentation>
+        </xs:annotation>
+      </xs:attribute>
+      <xs:attribute name="CreateOnInstall" use="optional" type="YesNoType">
+        <xs:annotation>
+          <xs:documentation>Create the user at install time.</xs:documentation>
+        </xs:annotation>
+      </xs:attribute>
+      <xs:attribute name="CreateOnUnInstall" use="optional" type="YesNoType">
+        <xs:annotation>
+          <xs:documentation>Create the user at uninstall time.</xs:documentation>
+        </xs:annotation>
+      </xs:attribute>
+      <xs:attribute name="DeleteOnInstall" use="optional" type="YesNoType">
+        <xs:annotation>
+          <xs:documentation>Delete the user at install time.</xs:documentation>
+        </xs:annotation>
+      </xs:attribute>
+      <xs:attribute name="DeleteOnUnInstall" use="optional" type="YesNoType">
+        <xs:annotation>
+          <xs:documentation>Delete the user at uninstall time.</xs:documentation>
+        </xs:annotation>
+      </xs:attribute>
+      <xs:attribute name="CheckIfExists" use="optional" type="YesNoType">
+        <xs:annotation>
+          <xs:documentation>
+            Check whether the user exists before creating or deleting it.
+            Create the user if it doesn't exist.
+            Delete the user if it exists.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:attribute>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="LocalGroup">
+    <xs:annotation>
+      <xs:appinfo>
+        <xse:parent namespace="http://schemas.microsoft.com/wix/2006/wi" ref="Component" />
+        <xse:parent namespace="http://schemas.microsoft.com/wix/2006/wi" ref="Product" />
+        <xse:parent namespace="http://schemas.microsoft.com/wix/2006/wi" ref="Module" />
+        <xse:parent namespace="http://schemas.microsoft.com/wix/2006/wi" ref="Fragment" />
+      </xs:appinfo>
+      <xs:documentation>
+        <![CDATA[
+Defines, creates or deletes a local group. 
+
+When nested under a Component, component conditions apply.
+
+\par Example:
+\code
+<Wix ... xmlns:UserPrivileges="http://schemas.appsecinc.com/wix/UserPrivilegesExtension">
+ <Component ...>
+  <UserPrivileges:LocalGroup Id="DemoLocalGroup1" Name="DemoLocalGroup1" Description="Demo local group 1." CheckIfExists="yes" CreateOnInstall="yes" DeleteOnUnInstall="yes" />
+ </Component>
+</Wix>
+\endcode
+        ]]>
+      </xs:documentation>
+    </xs:annotation>
+    <xs:complexType>
+      <xs:choice minOccurs="0" maxOccurs="unbounded">
+        <xs:element ref="LocalGroupMember" maxOccurs="unbounded" />
+      </xs:choice>
+      <xs:attribute name="Id" type="xs:string" use="required">
+        <xs:annotation>
+          <xs:documentation>Identifier for the local group (primary key).</xs:documentation>
+        </xs:annotation>
+      </xs:attribute>
+      <xs:attribute name="Name" type="xs:string" use="required">
+        <xs:annotation>
+          <xs:documentation>Group name.</xs:documentation>
+        </xs:annotation>
+      </xs:attribute>
+      <xs:attribute name="Description" type="xs:string" use="optional">
+        <xs:annotation>
+          <xs:documentation>Group description.</xs:documentation>
+        </xs:annotation>
+      </xs:attribute>
+      <xs:attribute name="CreateOnInstall" use="optional" type="YesNoType">
+        <xs:annotation>
+          <xs:documentation>Create the group at install time.</xs:documentation>
+        </xs:annotation>
+      </xs:attribute>
+      <xs:attribute name="CreateOnUnInstall" use="optional" type="YesNoType">
+        <xs:annotation>
+          <xs:documentation>Create the group at uninstall time.</xs:documentation>
+        </xs:annotation>
+      </xs:attribute>
+      <xs:attribute name="DeleteOnInstall" use="optional" type="YesNoType">
+        <xs:annotation>
+          <xs:documentation>Delete the group at install time.</xs:documentation>
+        </xs:annotation>
+      </xs:attribute>
+      <xs:attribute name="DeleteOnUnInstall" use="optional" type="YesNoType">
+        <xs:annotation>
+          <xs:documentation>Delete the group at uninstall time.</xs:documentation>
+        </xs:annotation>
+      </xs:attribute>
+      <xs:attribute name="CheckIfExists" use="optional" type="YesNoType">
+        <xs:annotation>
+          <xs:documentation>
+            Check whether the group exists before creating or deleting it.
+            Create the group if it doesn't exist.
+            Delete the group if it exists.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:attribute>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="LocalGroupMember">
+    <xs:annotation>
+      <xs:documentation>
+        <![CDATA[
+Adds or removes a user in a local group.
+
+When nested under a Component, a LocalUser under a Component or a LocalGroup under a Component, component conditions apply.
+
+\par Example:
+\code
+<Wix ... xmlns:UserPrivileges="http://schemas.appsecinc.com/wix/UserPrivilegesExtension">
+ <Component ...>
+  <UserPrivileges:LocalUser Id="DemoLocalUser1" Username="DemoLocalUser1" Password="admin123" CreateOnInstall="yes" DeleteOnUnInstall="yes" CheckIfExists="yes" />
+  <UserPrivileges:LocalGroup Id="DemoLocalGroup1" Name="DemoLocalGroup1" Description="Demo local group 1 should contain a user after installation." CheckIfExists="yes" CreateOnInstall="yes" DeleteOnUnInstall="yes">
+   <UserPrivileges:LocalGroupMember Id="DemoLocalUser1_DemoLocalGroup1_Member" UserId="DemoLocalUser1" AddOnInstall="yes" RemoveOnUnInstall="yes" CheckIfMember="yes" />
+  </UserPrivileges:LocalGroup>
+ </Component>
+</Wix>
+\endcode
+        ]]>
+      </xs:documentation>
+      <xs:appinfo>
+        <xse:parent namespace="http://schemas.microsoft.com/wix/2006/wi" ref="Component" />
+        <xse:parent namespace="http://schemas.microsoft.com/wix/2006/wi" ref="Product" />
+        <xse:parent namespace="http://schemas.microsoft.com/wix/2006/wi" ref="Module" />
+        <xse:parent namespace="http://schemas.microsoft.com/wix/2006/wi" ref="Fragment" />
+        <xse:parent ref="LocalGroup" />
+        <xse:parent ref="LocalUser" />
+      </xs:appinfo>
+    </xs:annotation>
+    <xs:complexType>
+      <xs:attribute name="Id" type="xs:string" use="required">
+        <xs:annotation>
+          <xs:documentation>Identifier for the group member.</xs:documentation>
+        </xs:annotation>
+      </xs:attribute>
+      <xs:attribute name="UserId" type="xs:string" use="optional">
+        <xs:annotation>
+          <xs:documentation>User to add or remove to/from the group.</xs:documentation>
+        </xs:annotation>
+      </xs:attribute>
+      <xs:attribute name="GroupId" type="xs:string" use="optional">
+        <xs:annotation>
+          <xs:documentation>Group to add or remove the user to.</xs:documentation>
+        </xs:annotation>
+      </xs:attribute>
+      <xs:attribute name="AddOnInstall" use="optional" type="YesNoType">
+        <xs:annotation>
+          <xs:documentation>Add user at install time.</xs:documentation>
+        </xs:annotation>
+      </xs:attribute>
+      <xs:attribute name="AddOnUnInstall" use="optional" type="YesNoType">
+        <xs:annotation>
+          <xs:documentation>Add user at uninstall time.</xs:documentation>
+        </xs:annotation>
+      </xs:attribute>
+      <xs:attribute name="RemoveOnInstall" use="optional" type="YesNoType">
+        <xs:annotation>
+          <xs:documentation>Remove user at install time.</xs:documentation>
+        </xs:annotation>
+      </xs:attribute>
+      <xs:attribute name="RemoveOnUnInstall" use="optional" type="YesNoType">
+        <xs:annotation>
+          <xs:documentation>Remove user at uninstall time.</xs:documentation>
+        </xs:annotation>
+      </xs:attribute>
+      <xs:attribute name="CheckIfMember" use="optional" type="YesNoType">
+        <xs:annotation>
+          <xs:documentation>
+            Check whether the user is a group member before adding or removing it.
+            Add the user if it's not a group member.
+            Remove the user if it is a group member.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:attribute>
+    </xs:complexType>
+  </xs:element>
+  <xs:simpleType name="YesNoType">
+    <xs:annotation>
+      <xs:documentation>Values of this type will either be "yes" or "no".</xs:documentation>
+    </xs:annotation>
+    <xs:restriction base="xs:NMTOKEN">
+      <xs:enumeration value="no" />
+      <xs:enumeration value="yes" />
+    </xs:restriction>
+  </xs:simpleType>
+</xs:schema>

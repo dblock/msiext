@@ -1,0 +1,4 @@
+Id	ComponentId	DBQ	ConnectionStringId	Attributes
+s72	S72	s255	s72	I2
+AccessDatabase	Id
+AccessDemoDatabase		[ACCESS_DATABASE_DBQ]	AccessConnection	3

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?include ..\..\..\src\Version\Version.wxi ?>
+<?define BinDir=$(var.MSBuildProjectDirectory)\target\$(var.Configuration)\bin ?>
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi" xmlns:AppSecInc="http://schemas.appsecinc.com/wix/SystemToolsExtension">
+    <Module Id="CopyFilesMergeModule" Language="1033" Version="$(var.ProductVersion)">
+        <Package Id="D47382D3-42C2-427a-839F-9D7BF20290DD" Manufacturer="$(var.CompanyName)" InstallerVersion="200" />
+        <Directory Id="TARGETDIR" Name="SourceDir">
+            <Directory Id="MergeRedirectFolder">
+                <Component Id="CopyFileMergeComponent" Guid="2A248FE6-86FA-4011-A796-BB15833C281B">
+                    <File Id="CopyFilesMsm_wxs" Name="CopyFilesMsm.wxs" Source="CopyFilesMsm.wxs" />
+                </Component>
+            </Directory>
+        </Directory>
+        <AppSecInc:CopyFile Id="CopyFileMergeModuleId" Source="[#CopyFilesMsm_wxs]" Target="[MergeRedirectFolder]CopyFilesMsm_Copy.wxs" CopyOnInstall="yes" />
+    </Module>
+</Wix>

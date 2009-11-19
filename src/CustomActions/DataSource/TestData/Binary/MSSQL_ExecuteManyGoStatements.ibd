@@ -1,0 +1,6 @@
+SET IDENTITY_INSERT BinaryTableEncoded ON
+INSERT INTO BinaryTableEncoded ( BinaryTableEncoded_Id ) VALUES ( 7 )
+GO
+SET IDENTITY_INSERT BinaryTableEncoded ON
+INSERT INTO BinaryTableEncoded ( BinaryTableEncoded_Id ) VALUES ( 8 )
+GO

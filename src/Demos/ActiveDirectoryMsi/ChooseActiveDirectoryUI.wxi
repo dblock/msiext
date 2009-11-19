@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Include xmlns="http://schemas.microsoft.com/wix/2006/wi">
+    <Fragment>
+        <UI>
+            <Dialog Id="ChooseActiveDirectoryDlg" Width="370" Height="270" Title="Active Directory">
+                <Control Id="Title" Type="Text" X="15" Y="5" Width="200" Height="15" Transparent="yes" NoPrefix="yes" Text="Active Directory" />
+                <Control Id="SubTitle" Type="Text" X="25" Y="21" Width="220" Height="20" Transparent="yes" NoPrefix="yes" Text="Please specify an Active Directory" />
+                <Control Id="BannerBitmap" Type="Bitmap" X="0" Y="0" Width="370" Height="44" TabSkip="no" Text="WixUI_Bmp_Banner" />
+                <Control Id="BannerLine" Type="Line" X="0" Y="44" Width="370" Height="0" />
+                <Control Id="BottomLine" Type="Line" X="0" Y="234" Width="370" Height="0" />
+                <Control Id="DomainLabel" Type="Text" X="20" Y="60" Width="320" Height="10" Text="Domain:" />
+                <Control Id="Domain" Type="Edit" X="30" Y="75" Width="130" Height="15" Property="DOMAIN_NAME" Text="{64}" />
+                <Control Id="HostLabel" Type="Text" X="20" Y="90" Width="320" Height="10" Text="Host:" />
+                <Control Id="Host" Type="Edit" X="30" Y="105" Width="130" Height="15" Property="ACTIVE_DIRECTORY_SERVER" Text="{64}" />
+                <Control Id="DNLabel" Type="Text" X="20" Y="120" Width="320" Height="10" Text="distinguishedName:" />
+                <Control Id="DNValue" Type="Edit" X="30" Y="135" Width="130" Height="15" Property="ACTIVE_DIRECTORY_SERVER_DISTINGUISHED_NAME" Text="{64}" />
+                <Control Id="ErrorLabel" Type="Text" X="30" Y="160" Width="320" Height="10" Text="[CA_ERROR]" />
+                <Control Id="Back" Type="PushButton" X="180" Y="243" Width="56" Height="17" Text="Back" />
+                <Control Id="Cancel" Type="PushButton" X="304" Y="243" Width="56" Height="17" Cancel="yes" Text="Cancel">
+                    <Publish Event="SpawnDialog" Value="CancelDlg">1</Publish>
+                </Control>
+                <Control Id="Next" Type="PushButton" X="236" Y="243" Width="56" Height="17" Default="yes" Text="!(loc.WixUINext)" />
+            </Dialog>
+        </UI>
+        <!-- find active directory -->
+        <CustomAction Id="SetDSFlags" Property="DS_FLAGS" Value="DS_IP_REQUIRED|DS_ONLY_LDAP_NEEDED|DS_RETURN_DNS_NAME" />
+        <CustomAction Id="FindActiveDirectory" BinaryKey="ActiveDirectory" DllEntry="DirectoryGetDcName" Execute="immediate" Return="ignore" />
+        <CustomAction Id="SetActiveDirectory" Property="ACTIVE_DIRECTORY_SERVER" Value="[DS_DOMAINCONTROLLER_NAME]" />
+        <CustomAction Id="SetDomainName" Property="DOMAIN_NAME" Value="[DS_DOMAIN_NAME]" />
+        <!-- find distinguishedName -->
+        <CustomAction Id="SetLdapPath" Property="ADSI_LDAP_PATH" Value="LDAP://[DS_DOMAINCONTROLLER_NAME]" />
+        <CustomAction Id="SetAdsiPropertyName" Property="ADSI_PROPERTY_NAME" Value="distinguishedName" />
+        <CustomAction Id="GetAdsiPropertyValue" BinaryKey="ActiveDirectory" DllEntry="ADSI_GetAttributeValue" Execute="immediate" Return="ignore" />
+        <CustomAction Id="SetDN" Property="ACTIVE_DIRECTORY_SERVER_DISTINGUISHED_NAME" Value="[ADSI_PROPERTY_VALUE]" />
+        <InstallUISequence>
+            <!-- find active directory -->
+            <Custom Action="SetDSFlags" After="CostInitialize">1</Custom>
+            <Custom Action="FindActiveDirectory" After="SetDSFlags">1</Custom>
+            <Custom Action="SetActiveDirectory" After="FindActiveDirectory">1</Custom>
+            <Custom Action="SetDomainName" After="SetActiveDirectory">1</Custom>
+            <!-- find distinguishedName -->
+            <Custom Action="SetLdapPath" After="SetActiveDirectory">1</Custom>
+            <Custom Action="SetAdsiPropertyName" After="SetLdapPath">DS_DOMAINCONTROLLER_NAME</Custom>
+            <Custom Action="GetAdsiPropertyValue" After="SetAdsiPropertyName">1</Custom>
+            <Custom Action="SetDN" After="SetAdsiPropertyName">1</Custom>
+        </InstallUISequence>
+    </Fragment>
+</Include>

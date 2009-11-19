@@ -1,0 +1,948 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xs:schema xmlns:html="http://www.w3.org/1999/xhtml"
+            xmlns:wix="http://schemas.microsoft.com/wix/2006/wi"
+             xmlns:xs="http://www.w3.org/2001/XMLSchema"
+            xmlns:xse="http://schemas.microsoft.com/wix/2005/XmlSchemaExtension"
+      targetNamespace="http://schemas.appsecinc.com/wix/SystemToolsExtension"
+                xmlns="http://schemas.appsecinc.com/wix/SystemToolsExtension">
+  <xs:annotation>
+    <xs:documentation>
+      Windows Installer XML System Extension
+
+      This extension significantly simplifies various system tasks that aren't natively supported by Windows installer.
+    </xs:documentation>
+  </xs:annotation>
+
+  <xs:import namespace="http://schemas.microsoft.com/wix/2006/wi" />
+
+  <xs:element name="CopyFile">
+    <xs:annotation>
+      <xs:appinfo>
+        <xse:parent namespace="http://schemas.microsoft.com/wix/2006/wi" ref="Product" />
+        <xse:parent namespace="http://schemas.microsoft.com/wix/2006/wi" ref="Module" />
+        <xse:parent namespace="http://schemas.microsoft.com/wix/2006/wi" ref="Fragment" />
+      </xs:appinfo>
+      <xs:documentation>
+        <![CDATA[
+Copies a file outside of component rules.
+
+\par Example:
+\code
+<Wix ... xmlns:AppSecIncSystemTools="http://schemas.appsecinc.com/wix/SystemToolsExtension">
+<Product ...>
+ ...
+  <Component Id="ProductComponent" ... >
+   <File Id="test1" Name="test1.txt" src="test1.txt" />
+   <File Id="test2" Name="test2.txt" src="test2.txt" />
+  </Component>
+ ...
+ <AppSecIncSystemTools:CopyFile Id="test1" Source="[#test1]" Target="[#test1] (Copy)" CopyOnInstall="yes" />
+ <AppSecIncSystemTools:CopyFile Id="test2" Source="[#test2]" Target="[#test2] (Copy)" CopyOnInstall="yes">
+  COPY_CONDITIONAL_FILES = 1
+ </AppSecIncSystemTools:CopyFile>
+</Product>
+</Wix>
+\endcode
+        ]]>
+      </xs:documentation>
+    </xs:annotation>
+    <xs:complexType>
+      <xs:simpleContent>
+        <xs:extension base="xs:string">
+          <xs:annotation>
+            <xs:documentation>
+              Condition that determines if the file should be copied. Must be blank or evaluate to true
+              for the file to be copied.
+            </xs:documentation>
+          </xs:annotation>
+          <xs:attribute name="Id" type="xs:string" use="required">
+            <xs:annotation>
+              <xs:documentation>Identifier for the file copy operation (primary key).</xs:documentation>
+            </xs:annotation>
+          </xs:attribute>
+          <xs:attribute name="Source" type="xs:string" use="required">
+            <xs:annotation>
+              <xs:documentation>Name of the source file to be copied.</xs:documentation>
+            </xs:annotation>
+          </xs:attribute>
+          <xs:attribute name="Target" type="xs:string" use="required">
+            <xs:annotation>
+              <xs:documentation>Name of the output target.</xs:documentation>
+            </xs:annotation>
+          </xs:attribute>
+          <xs:attribute name="CopyOnInstall" use="optional" type="YesNoType">
+            <xs:annotation>
+              <xs:documentation>Copy file at install time.</xs:documentation>
+            </xs:annotation>
+          </xs:attribute>
+          <xs:attribute name="CopyOnUnInstall" use="optional" type="YesNoType">
+            <xs:annotation>
+              <xs:documentation>Copy file at uninstall time.</xs:documentation>
+            </xs:annotation>
+          </xs:attribute>
+          <xs:attribute name="Overwrite" use="optional">
+            <xs:annotation>
+              <xs:documentation>Specifies the overwrite behavior when the target file exists.</xs:documentation>
+            </xs:annotation>
+            <xs:simpleType>
+              <xs:restriction base="xs:NMTOKEN">
+                <xs:enumeration value="yes" />
+                <xs:enumeration value="no" />
+                <xs:enumeration value="error" />
+              </xs:restriction>
+            </xs:simpleType>
+          </xs:attribute>
+        </xs:extension>
+      </xs:simpleContent>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="MoveFile">
+    <xs:annotation>
+      <xs:appinfo>
+        <xse:parent namespace="http://schemas.microsoft.com/wix/2006/wi" ref="Product" />
+        <xse:parent namespace="http://schemas.microsoft.com/wix/2006/wi" ref="Module" />
+        <xse:parent namespace="http://schemas.microsoft.com/wix/2006/wi" ref="Fragment" />
+      </xs:appinfo>
+      <xs:documentation>
+        <![CDATA[
+Moves a file outside of component rules.
+
+\par Example:
+\code
+<Wix ... xmlns:AppSecIncSystemTools="http://schemas.appsecinc.com/wix/SystemToolsExtension">
+<Product ...>
+ ...
+  <Component Id="ProductComponent" ... >
+   <File Id="test1" Name="test1.txt" src="test1.txt" />
+   <File Id="test2" Name="test2.txt" src="test2.txt" />
+  </Component>
+ ...
+ <AppSecIncSystemTools:MoveFile Id="test1" Source="[#test1]" Target="[#test1] (Moved)" MoveOnInstall="yes" />
+ <AppSecIncSystemTools:MoveFile Id="test2" Source="[#test2]" Target="[#test2] (Moved)" MoveOnInstall="yes">
+  MOVE_CONDITIONAL_FILES = 1
+ </AppSecIncSystemTools:MoveFile>
+</Product>
+</Wix>
+\endcode
+        ]]>
+      </xs:documentation>
+    </xs:annotation>
+    <xs:complexType>
+      <xs:simpleContent>
+        <xs:extension base="xs:string">
+          <xs:annotation>
+            <xs:documentation>
+              Condition that determines if the file should be moved. Must be blank or evaluate to true
+              for the file to be moved.
+            </xs:documentation>
+          </xs:annotation>
+          <xs:attribute name="Id" type="xs:string" use="required">
+            <xs:annotation>
+              <xs:documentation>Identifier for the file move operation (primary key).</xs:documentation>
+            </xs:annotation>
+          </xs:attribute>
+          <xs:attribute name="Source" type="xs:string" use="required">
+            <xs:annotation>
+              <xs:documentation>Name of the source file to be moved.</xs:documentation>
+            </xs:annotation>
+          </xs:attribute>
+          <xs:attribute name="Target" type="xs:string" use="required">
+            <xs:annotation>
+              <xs:documentation>Name of the output target.</xs:documentation>
+            </xs:annotation>
+          </xs:attribute>
+          <xs:attribute name="MoveOnInstall" use="optional" type="YesNoType">
+            <xs:annotation>
+              <xs:documentation>Move file at install time.</xs:documentation>
+            </xs:annotation>
+          </xs:attribute>
+          <xs:attribute name="MoveOnUnInstall" use="optional" type="YesNoType">
+            <xs:annotation>
+              <xs:documentation>Move file at uninstall time.</xs:documentation>
+            </xs:annotation>
+          </xs:attribute>
+          <xs:attribute name="Overwrite" use="optional">
+            <xs:annotation>
+              <xs:documentation>Specifies the overwrite behavior when the target file exists.</xs:documentation>
+            </xs:annotation>
+            <xs:simpleType>
+              <xs:restriction base="xs:NMTOKEN">
+                <xs:enumeration value="yes" />
+                <xs:enumeration value="no" />
+                <xs:enumeration value="error" />
+              </xs:restriction>
+            </xs:simpleType>
+          </xs:attribute>
+        </xs:extension>
+      </xs:simpleContent>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="DeleteFile">
+    <xs:annotation>
+      <xs:appinfo>
+        <xse:parent namespace="http://schemas.microsoft.com/wix/2006/wi" ref="Product" />
+        <xse:parent namespace="http://schemas.microsoft.com/wix/2006/wi" ref="Module" />
+        <xse:parent namespace="http://schemas.microsoft.com/wix/2006/wi" ref="Fragment" />
+      </xs:appinfo>
+      <xs:documentation>
+        <![CDATA[
+Deletes a file outside of component rules.
+
+\par Example:
+\code
+<Wix ... xmlns:AppSecIncSystemTools="http://schemas.appsecinc.com/wix/SystemToolsExtension">
+ <Product ...>
+  ...
+  <AppSecIncSystemTools:DeleteFile Id="test1" File="[INSTALLLOCATION]OldFile.txt" DeleteOnInstall="yes" CheckIfExists="yes" />
+ </Product>
+</Wix>
+\endcode
+        ]]>
+      </xs:documentation>
+    </xs:annotation>
+    <xs:complexType>
+      <xs:simpleContent>
+        <xs:extension base="xs:string">
+          <xs:annotation>
+            <xs:documentation>
+              Condition that determines if the file should be deleted. Must be blank or evaluate to true
+              for the file to be deleted.
+            </xs:documentation>
+          </xs:annotation>
+          <xs:attribute name="Id" type="xs:string" use="required">
+            <xs:annotation>
+              <xs:documentation>Identifier for the file deleted operation (primary key).</xs:documentation>
+            </xs:annotation>
+          </xs:attribute>
+          <xs:attribute name="File" type="xs:string" use="required">
+            <xs:annotation>
+              <xs:documentation>Name of the file to be deleted.</xs:documentation>
+            </xs:annotation>
+          </xs:attribute>
+          <xs:attribute name="DeleteOnInstall" use="optional" type="YesNoType">
+            <xs:annotation>
+              <xs:documentation>Delete a file at install time.</xs:documentation>
+            </xs:annotation>
+          </xs:attribute>
+          <xs:attribute name="DeleteOnUnInstall" use="optional" type="YesNoType">
+            <xs:annotation>
+              <xs:documentation>Delete a file at uninstall time.</xs:documentation>
+            </xs:annotation>
+          </xs:attribute>
+          <xs:attribute name="CheckIfExists" use="optional" type="YesNoType">
+            <xs:annotation>
+              <xs:documentation>
+                Check whether a file exists before deleting it.
+                If CheckIfExists is "no" and the file doesn't exist, the custom action will fail.
+              </xs:documentation>
+            </xs:annotation>
+          </xs:attribute>
+        </xs:extension>
+      </xs:simpleContent>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="CompareVersion">
+    <xs:annotation>
+      <xs:appinfo>
+        <xse:parent namespace="http://schemas.microsoft.com/wix/2006/wi" ref="Product" />
+        <xse:parent namespace="http://schemas.microsoft.com/wix/2006/wi" ref="Module" />
+        <xse:parent namespace="http://schemas.microsoft.com/wix/2006/wi" ref="Fragment" />
+      </xs:appinfo>
+      <xs:documentation>
+        <![CDATA[
+The extension provides a simple method of correctly comparing two versions in dotted form. 
+It sets a property if the version is between the minimum and maximum versions.
+
+\par Example:
+The following example uses a registry search to get the version of an installed
+program, then uses SystemTools::CompareVersion to check that a suitable version is installed.
+\code
+<Wix ... xmlns:AppSecIncSystemTools="http://schemas.appsecinc.com/wix/SystemToolsExtension">
+<Product ...>
+ ...
+ <Property Id="PROGRAM_VERSION">
+   <RegistrySearch Id='RegistrySearchProgramVer' Type='raw'
+     Root='HKLM'
+     Key='SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\{FFFFFFFFF-FFFF-FFFF-FFFF-FFFFFFFFFFFF}'
+     Name='DisplayVersion' />
+ </Property>
+
+ <AppSecIncSystemTools:CompareVersion Id="checkVersion" InstalledVersion="[PROGRAM_VERSION]" MinimumVersion="3.9" Property="ProgramVersionCorrect" />
+ 
+ <Condition Message="Incorrect version!">
+   ProgramVersionCorrect OR Installed
+ </Condition>
+ ...
+</Product>
+</Wix>
+\endcode
+        ]]>
+      </xs:documentation>
+    </xs:annotation>
+    <xs:complexType>
+      <xs:simpleContent>
+        <xs:extension base="xs:string">
+          <xs:attribute name="Id" type="xs:string" use="required">
+            <xs:annotation>
+              <xs:documentation>Identifier for the version compare (primary key).</xs:documentation>
+            </xs:annotation>
+          </xs:attribute>
+          <xs:attribute name="InstalledVersion" type="xs:string" use="required">
+            <xs:annotation>
+              <xs:documentation>The version to be checked</xs:documentation>
+            </xs:annotation>
+          </xs:attribute>
+          <xs:attribute name="MinimumVersion" type="xs:string" use="required">
+            <xs:annotation>
+              <xs:documentation>The minimum version.</xs:documentation>
+            </xs:annotation>
+          </xs:attribute>
+          <xs:attribute name="MaximumVersion" type="xs:string" use="optional">
+            <xs:annotation>
+              <xs:documentation>The maximum version.</xs:documentation>
+            </xs:annotation>
+          </xs:attribute>
+          <xs:attribute name="Property" type="xs:string" use="required">
+            <xs:annotation>
+              <xs:documentation>The property to be set if the installed version lies between the minimum and maximum versions.</xs:documentation>
+            </xs:annotation>
+          </xs:attribute>
+        </xs:extension>
+      </xs:simpleContent>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="Execute">
+    <xs:annotation>
+      <xs:appinfo>
+        <xse:parent namespace="http://schemas.microsoft.com/wix/2006/wi" ref="Component" />
+      </xs:appinfo>
+      <xs:documentation>
+        <![CDATA[
+The extension simplifies authoring MSI packages that need semi-silent command-line execute behavior.
+Execute will run any number of commands after InstallFiles, while \ref ScheduleExecute lets you specify the runtime
+behavior and additional runtime conditions just like for any regular custom action.
+
+An optional condition that combines with options may be specified.
+
+\par Example:
+\code
+<Component Id="SystemToolsMsiComponent" Guid="ca70ba08-0c57-4fa2-b6c1-57a00123e391">
+ <File Id="SystemToolsMsi_wxs" Name="SystemToolsMsi.wxs" Source="SystemToolsMsi.wxs" />
+ <AppSecInc:Execute Id="SystemToolsMsi_wxs_copy" CommandLine="cmd.exe /C copy SystemToolsMsi.wxs SystemToolsMsi_Copy.wxs /y" ErrorMessage="Failed to copy file." ExecuteOnInstall="yes" ContinueOnError="yes" />
+ <AppSecInc:Execute Id="SystemToolsMsi_wxs_delete" CommandLine="cmd.exe /C del SystemToolsMsi_Copy.wxs" ErrorMessage="Failed to delete file." ExecuteOnUnInstall="yes" ContinueOnError="yes" />
+</Component>
+\endcode
+        ]]>
+      </xs:documentation>
+    </xs:annotation>
+    <xs:complexType>
+      <xs:simpleContent>
+        <xs:extension base="xs:string">
+          <xs:annotation>
+            <xs:documentation>
+              Condition that determines if the command is executed. If nested under a component, the condition is
+              combined with the parent's conditions.
+            </xs:documentation>
+          </xs:annotation>
+          <xs:attribute name="Id" type="xs:string" use="required">
+            <xs:annotation>
+              <xs:documentation>Identifier for the execute statement (primary key).</xs:documentation>
+            </xs:annotation>
+          </xs:attribute>
+          <xs:attribute name="Directory" type="xs:string" use="optional">
+            <xs:annotation>
+              <xs:documentation>Optional directory in which to execute the command.</xs:documentation>
+            </xs:annotation>
+          </xs:attribute>
+          <xs:attribute name="CommandLine" type="xs:string" use="required">
+            <xs:annotation>
+              <xs:documentation>Command-line to execute.</xs:documentation>
+            </xs:annotation>
+          </xs:attribute>
+          <xs:attribute name="ErrorMessage" type="xs:string" use="optional">
+            <xs:annotation>
+              <xs:documentation>Optional error message to display instead of a raw error.</xs:documentation>
+            </xs:annotation>
+          </xs:attribute>
+          <xs:attribute name="ReturnCode" type="xs:integer" use="optional">
+            <xs:annotation>
+              <xs:documentation>Optional return code that indicates success of the process, defaults to zero.</xs:documentation>
+            </xs:annotation>
+          </xs:attribute>
+          <xs:attribute name="ContinueOnError" use="optional" type="YesNoType">
+            <xs:annotation>
+              <xs:documentation>Continue on error.</xs:documentation>
+            </xs:annotation>
+          </xs:attribute>
+          <xs:attribute name="ExecuteOnInstall" use="optional" type="YesNoType">
+            <xs:annotation>
+              <xs:documentation>Execute command at install time.</xs:documentation>
+            </xs:annotation>
+          </xs:attribute>
+          <xs:attribute name="ExecuteOnUnInstall" use="optional" type="YesNoType">
+            <xs:annotation>
+              <xs:documentation>Execute command at uninstall time.</xs:documentation>
+            </xs:annotation>
+          </xs:attribute>
+          <xs:attribute name="ExecuteOnRollback" use="optional" type="YesNoType">
+            <xs:annotation>
+              <xs:documentation>Execute command at rollback time.</xs:documentation>
+            </xs:annotation>
+          </xs:attribute>
+        </xs:extension>
+      </xs:simpleContent>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="ScheduleExecute">
+    <xs:annotation>
+      <xs:appinfo>
+        <xse:parent namespace="http://schemas.microsoft.com/wix/2006/wi" ref="Component" />
+      </xs:appinfo>
+      <xs:documentation>
+        <![CDATA[
+To manually schedule an \ref Execute action, use ScheduleExecute. This creates a custom action invoking Win32_Execute_Deferred with
+the ID of the ScheduleExecute declaration. Explicit options, including ExecuteOnInstall and ExecuteOnUnInstall still apply and
+ScheduleExecute may also be nested under a component to inherit the component's condition.
+
+\par Example:
+\code
+<AppSecInc:ScheduleExecute Id="Scheduled_copy" CommandLine="cmd.exe /C copy Source.txt Target.txt" ExecuteOnInstall="yes" />
+<AppSecInc:ScheduleExecute Id="Scheduled_delete" CommandLine="cmd.exe /C del Target.txt" ExecuteOnUnInstall="yes" />
+<AppSecInc:ScheduleExecute Id="Scheduled_rollback" CommandLine="cmd.exe /C del Target.txt" ExecuteOnRollback="yes" />
+...
+<InstallExecuteSequence>
+<Custom Action="Scheduled_copy" After="InstallFiles">NOT Installed</Custom>
+<Custom Action="Scheduled_delete" After="InstallFiles">Installed</Custom>
+<Custom Action="Scheduled_rollback" After="InstallFiles">NOT Installed</Custom>
+</InstallExecuteSequence>
+\endcode
+        ]]>
+      </xs:documentation>
+    </xs:annotation>
+    <xs:complexType>
+      <xs:simpleContent>
+        <xs:extension base="xs:string">
+          <xs:annotation>
+            <xs:documentation>
+              Condition that determines if the command is executed. If nested under a component, the condition is
+              combined with the parent's conditions.
+            </xs:documentation>
+          </xs:annotation>
+          <xs:attribute name="Id" type="xs:string" use="required">
+            <xs:annotation>
+              <xs:documentation>Identifier for the execute statement (primary key).</xs:documentation>
+            </xs:annotation>
+          </xs:attribute>
+          <xs:attribute name="Directory" type="xs:string" use="optional">
+            <xs:annotation>
+              <xs:documentation>Optional directory in which to execute the command.</xs:documentation>
+            </xs:annotation>
+          </xs:attribute>
+          <xs:attribute name="CommandLine" type="xs:string" use="required">
+            <xs:annotation>
+              <xs:documentation>Command-line to execute.</xs:documentation>
+            </xs:annotation>
+          </xs:attribute>
+          <xs:attribute name="ErrorMessage" type="xs:string" use="optional">
+            <xs:annotation>
+              <xs:documentation>Optional error message to display instead of a raw error.</xs:documentation>
+            </xs:annotation>
+          </xs:attribute>
+          <xs:attribute name="ReturnCode" type="xs:integer" use="optional">
+            <xs:annotation>
+              <xs:documentation>Optional return code that indicates success of the process, defaults to zero.</xs:documentation>
+            </xs:annotation>
+          </xs:attribute>
+          <xs:attribute name="ContinueOnError" use="optional" type="YesNoType">
+            <xs:annotation>
+              <xs:documentation>Continue on error.</xs:documentation>
+            </xs:annotation>
+          </xs:attribute>
+          <xs:attribute name="ExecuteOnInstall" use="optional" type="YesNoType">
+            <xs:annotation>
+              <xs:documentation>Execute command at install time.</xs:documentation>
+            </xs:annotation>
+          </xs:attribute>
+          <xs:attribute name="ExecuteOnUnInstall" use="optional" type="YesNoType">
+            <xs:annotation>
+              <xs:documentation>Execute command at uninstall time.</xs:documentation>
+            </xs:annotation>
+          </xs:attribute>
+          <xs:attribute name="ExecuteOnRollback" use="optional" type="YesNoType">
+            <xs:annotation>
+              <xs:documentation>Execute command at rollback time.</xs:documentation>
+            </xs:annotation>
+          </xs:attribute>
+        </xs:extension>
+      </xs:simpleContent>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="TemplateFile">
+    <xs:annotation>
+      <xs:appinfo>
+        <xse:parent namespace="http://schemas.microsoft.com/wix/2006/wi" ref="Component" />
+      </xs:appinfo>
+      <xs:documentation>
+        <![CDATA[
+Implements formatting of a template file.
+
+The extension allows processing of template files in-place or into a new file.
+To evaluate a property called PROPERTYNAME in a template file, write [PROPERTYNAME].
+Non-declared properties are not evaluated. Declared properties with empty values are evaluated to their empty value.
+
+An optional condition that combines with options may be specified as a Condition node under TemplateFile.
+
+\par Example:
+\code
+<SystemTools:TemplateFile Id="File_template_process_component" Source="[#File_template]" Target="[INSTALLLOCATION]File.txt" ExecuteOnInstall="yes">
+ <SystemTools:TemplateFileProperty Id="INSTALLLOCATION_property" Name="INSTALLLOCATION" Value="[INSTALLLOCATION]" />
+ <SystemTools:TemplateFileProperty Id="TEST_property" Name="TEST" Value="test" />
+ <SystemTools:TemplateFileProperty Id="FILENAME_property" Name="Filename" Value="File.txt" />
+</SystemTools:TemplateFile>
+\endcode
+
+In addition to properties specified by TemplateFileProperty, built-in properties are available. Those are not all 
+MSI properties, only those that were declared at build time. If the property has changed during installation, its old
+value is provided by default: overwrite the property value with the current one by explicitly declaring 
+TemplateFileProperty with a value.
+
+\code
+ <SystemTools:TemplateFileProperty Id="PROPERTY1" Name="PROPERTY1" Value="[PROPERTY1]" />
+\endcode
+        ]]>
+      </xs:documentation>
+    </xs:annotation>
+    <xs:complexType>
+      <xs:choice minOccurs="0" maxOccurs="unbounded">
+        <xs:element ref="TemplateFileProperty"/>
+        <xs:element ref="wix:Condition" />
+      </xs:choice>
+      <xs:attribute name="Id" type="xs:string" use="required">
+        <xs:annotation>
+          <xs:documentation>Identifier for the template file (primary key).</xs:documentation>
+        </xs:annotation>
+      </xs:attribute>
+      <xs:attribute name="Source" type="xs:string" use="required">
+        <xs:annotation>
+          <xs:documentation>Name of the template file to be processed.</xs:documentation>
+        </xs:annotation>
+      </xs:attribute>
+      <xs:attribute name="Target" type="xs:string" use="optional">
+        <xs:annotation>
+          <xs:documentation>Target file to be written. When omitted, the source file is processed in-place and overwritten.</xs:documentation>
+        </xs:annotation>
+      </xs:attribute>
+      <xs:attribute name="ExecuteOnInstall" use="optional" type="YesNoType">
+        <xs:annotation>
+          <xs:documentation>Process the template file at install time.</xs:documentation>
+        </xs:annotation>
+      </xs:attribute>
+      <xs:attribute name="ExecuteOnUnInstall" use="optional" type="YesNoType">
+        <xs:annotation>
+          <xs:documentation>Process the template file at uninstall time.</xs:documentation>
+        </xs:annotation>
+      </xs:attribute>
+      <!--
+      <xs:attribute name="ExecuteOnRollback" use="optional" type="YesNoType">
+        <xs:annotation>
+          <xs:documentation>Process the template file at rollback time.</xs:documentation>
+        </xs:annotation>
+      </xs:attribute>
+      -->
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="TemplateFileProperty">
+    <xs:annotation>
+      <xs:appinfo>
+        <xse:parent ref="TemplateFile" />
+      </xs:appinfo>
+      <xs:documentation>
+        Publishes a single property for a template file.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:complexType>
+      <xs:simpleContent>
+        <xs:extension base="xs:string">
+          <xs:attribute name="Id" type="xs:string" use="required">
+            <xs:annotation>
+              <xs:documentation>Identifier for the property (primary key).</xs:documentation>
+            </xs:annotation>
+          </xs:attribute>
+          <xs:attribute name="Name" type="xs:string" use="required">
+            <xs:annotation>
+              <xs:documentation>Name of the property to be processed.</xs:documentation>
+            </xs:annotation>
+          </xs:attribute>
+          <xs:attribute name="Value" type="xs:string" use="optional">
+            <xs:annotation>
+              <xs:documentation>Value of the property.</xs:documentation>
+            </xs:annotation>
+          </xs:attribute>
+        </xs:extension>
+      </xs:simpleContent>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="CopyFiles">
+    <xs:annotation>
+      <xs:appinfo>
+        <xse:parent namespace="http://schemas.microsoft.com/wix/2006/wi" ref="Product" />
+        <xse:parent namespace="http://schemas.microsoft.com/wix/2006/wi" ref="Module" />
+        <xse:parent namespace="http://schemas.microsoft.com/wix/2006/wi" ref="Fragment" />
+      </xs:appinfo>
+      <xs:documentation>
+        <![CDATA[
+Copies a set of files outside of component rules, with subdirectories.
+        ]]>
+      </xs:documentation>
+    </xs:annotation>
+    <xs:complexType>
+      <xs:simpleContent>
+        <xs:extension base="xs:string">
+          <xs:annotation>
+            <xs:documentation>
+              Condition that determines if the files should be copied. Must be blank or evaluate to true
+              for the files to be copied.
+            </xs:documentation>
+          </xs:annotation>
+          <xs:attribute name="Id" type="xs:string" use="required">
+            <xs:annotation>
+              <xs:documentation>Identifier for the files copy operation (primary key).</xs:documentation>
+            </xs:annotation>
+          </xs:attribute>
+          <xs:attribute name="Source" type="xs:string" use="required">
+            <xs:annotation>
+              <xs:documentation>Directory containing files to be copied.</xs:documentation>
+            </xs:annotation>
+          </xs:attribute>
+          <xs:attribute name="Wildcard" type="xs:string" use="optional" default="*.*">
+            <xs:annotation>
+              <xs:documentation>Wildcard of files to be copied.</xs:documentation>
+            </xs:annotation>
+          </xs:attribute>
+          <xs:attribute name="Target" type="xs:string" use="required">
+            <xs:annotation>
+              <xs:documentation>Name of the target directory.</xs:documentation>
+            </xs:annotation>
+          </xs:attribute>
+          <xs:attribute name="CopyOnInstall" use="optional" type="YesNoType">
+            <xs:annotation>
+              <xs:documentation>Copy file at install time.</xs:documentation>
+            </xs:annotation>
+          </xs:attribute>
+          <xs:attribute name="CopyOnUnInstall" use="optional" type="YesNoType">
+            <xs:annotation>
+              <xs:documentation>Copy file at uninstall time.</xs:documentation>
+            </xs:annotation>
+          </xs:attribute>
+          <xs:attribute name="Recurse" use="optional" type="YesNoType">
+            <xs:annotation>
+              <xs:documentation>
+                Recurse into subdirectories. Behaves like xcopy, copying files that match Wildcard from 
+                subdirectories.
+              </xs:documentation>
+            </xs:annotation>
+          </xs:attribute>
+          <!--
+          <xs:attribute name="CreateEmptyDirectories" use="optional" type="YesNoType">
+            <xs:annotation>
+              <xs:documentation>Create empty subdirectories.</xs:documentation>
+            </xs:annotation>
+          </xs:attribute>
+          -->
+          <xs:attribute name="Overwrite" use="optional">
+            <xs:annotation>
+              <xs:documentation>Specifies the overwrite behavior when the target file exists.</xs:documentation>
+            </xs:annotation>
+            <xs:simpleType>
+              <xs:restriction base="xs:NMTOKEN">
+                <xs:enumeration value="yes" />
+                <xs:enumeration value="no" />
+                <xs:enumeration value="error" />
+              </xs:restriction>
+            </xs:simpleType>
+          </xs:attribute>
+        </xs:extension>
+      </xs:simpleContent>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="MoveFiles">
+    <xs:annotation>
+      <xs:appinfo>
+        <xse:parent namespace="http://schemas.microsoft.com/wix/2006/wi" ref="Product" />
+        <xse:parent namespace="http://schemas.microsoft.com/wix/2006/wi" ref="Module" />
+        <xse:parent namespace="http://schemas.microsoft.com/wix/2006/wi" ref="Fragment" />
+      </xs:appinfo>
+      <xs:documentation>
+        <![CDATA[
+Moves a set of files outside of component rules, with subdirectories.
+
+Operates on a best-effort basis, ie. neither source nor target directories need to exist for the operation 
+to succeed. Does not move empty directories, only creates target directories that have files.
+
+The move file operation will fail and the installation will rollback on first error.
+        ]]>
+      </xs:documentation>
+    </xs:annotation>
+    <xs:complexType>
+      <xs:simpleContent>
+        <xs:extension base="xs:string">
+          <xs:annotation>
+            <xs:documentation>
+              Condition that determines if the files should be moved. Must be blank or evaluate to true
+              for the files to be moved.
+            </xs:documentation>
+          </xs:annotation>
+          <xs:attribute name="Id" type="xs:string" use="required">
+            <xs:annotation>
+              <xs:documentation>Identifier for the files move operation (primary key).</xs:documentation>
+            </xs:annotation>
+          </xs:attribute>
+          <xs:attribute name="Source" type="xs:string" use="required">
+            <xs:annotation>
+              <xs:documentation>Directory containing files to be moved.</xs:documentation>
+            </xs:annotation>
+          </xs:attribute>
+          <xs:attribute name="Wildcard" type="xs:string" use="optional" default="*.*">
+            <xs:annotation>
+              <xs:documentation>Wildcard of files to be moved.</xs:documentation>
+            </xs:annotation>
+          </xs:attribute>
+          <xs:attribute name="Target" type="xs:string" use="required">
+            <xs:annotation>
+              <xs:documentation>Name of the target directory.</xs:documentation>
+            </xs:annotation>
+          </xs:attribute>
+          <xs:attribute name="MoveOnInstall" use="optional" type="YesNoType">
+            <xs:annotation>
+              <xs:documentation>Move file at install time.</xs:documentation>
+            </xs:annotation>
+          </xs:attribute>
+          <xs:attribute name="MoveOnUnInstall" use="optional" type="YesNoType">
+            <xs:annotation>
+              <xs:documentation>Move file at uninstall time.</xs:documentation>
+            </xs:annotation>
+          </xs:attribute>
+          <xs:attribute name="Recurse" use="optional" type="YesNoType">
+            <xs:annotation>
+              <xs:documentation>
+                Recurse into subdirectories. Behaves like xcopy, moving files that match Wildcard from
+                subdirectories, then deletes the individual files that have been moved.
+              </xs:documentation>
+            </xs:annotation>
+          </xs:attribute>
+          <xs:attribute name="DeleteEmptyDirectories" use="optional" type="YesNoType">
+            <xs:annotation>
+              <xs:documentation>Delete leftover empty subdirectories.</xs:documentation>
+            </xs:annotation>
+          </xs:attribute>
+          <!--
+          <xs:attribute name="CreateEmptyDirectories" use="optional" type="YesNoType">
+            <xs:annotation>
+              <xs:documentation>Create empty subdirectories.</xs:documentation>
+            </xs:annotation>
+          </xs:attribute>
+          -->
+          <xs:attribute name="Overwrite" use="optional">
+            <xs:annotation>
+              <xs:documentation>Specifies the overwrite behavior when the target file exists.</xs:documentation>
+            </xs:annotation>
+            <xs:simpleType>
+              <xs:restriction base="xs:NMTOKEN">
+                <xs:enumeration value="yes" />
+                <xs:enumeration value="no" />
+                <xs:enumeration value="error" />
+              </xs:restriction>
+            </xs:simpleType>
+          </xs:attribute>
+        </xs:extension>
+      </xs:simpleContent>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="DeleteFiles">
+    <xs:annotation>
+      <xs:appinfo>
+        <xse:parent namespace="http://schemas.microsoft.com/wix/2006/wi" ref="Product" />
+        <xse:parent namespace="http://schemas.microsoft.com/wix/2006/wi" ref="Module" />
+        <xse:parent namespace="http://schemas.microsoft.com/wix/2006/wi" ref="Fragment" />
+      </xs:appinfo>
+      <xs:documentation>
+        <![CDATA[
+Deletes a set of files outside of component rules, with subdirectories.
+        ]]>
+      </xs:documentation>
+    </xs:annotation>
+    <xs:complexType>
+      <xs:simpleContent>
+        <xs:extension base="xs:string">
+          <xs:annotation>
+            <xs:documentation>
+              Condition that determines if the files should be deleted. Must be blank or evaluate to true
+              for the files to be deleted.
+            </xs:documentation>
+          </xs:annotation>
+          <xs:attribute name="Id" type="xs:string" use="required">
+            <xs:annotation>
+              <xs:documentation>Identifier for the files delete operation (primary key).</xs:documentation>
+            </xs:annotation>
+          </xs:attribute>
+          <xs:attribute name="Path" type="xs:string" use="required">
+            <xs:annotation>
+              <xs:documentation>Path containing files to be deleted.</xs:documentation>
+            </xs:annotation>
+          </xs:attribute>
+          <xs:attribute name="Wildcard" type="xs:string" use="optional" default="*.*">
+            <xs:annotation>
+              <xs:documentation>Wildcard of files to be deleted.</xs:documentation>
+            </xs:annotation>
+          </xs:attribute>
+          <xs:attribute name="DeleteOnInstall" use="optional" type="YesNoType">
+            <xs:annotation>
+              <xs:documentation>Delete file at install time.</xs:documentation>
+            </xs:annotation>
+          </xs:attribute>
+          <xs:attribute name="DeleteOnUnInstall" use="optional" type="YesNoType">
+            <xs:annotation>
+              <xs:documentation>Delete file at uninstall time.</xs:documentation>
+            </xs:annotation>
+          </xs:attribute>
+          <xs:attribute name="Recurse" use="optional" type="YesNoType">
+            <xs:annotation>
+              <xs:documentation>
+                Recurse into subdirectories. Deletes files, directories and subdirectories.
+              </xs:documentation>
+            </xs:annotation>
+          </xs:attribute>
+          <xs:attribute name="DeleteEmptyDirectories" use="optional" type="YesNoType">
+            <xs:annotation>
+              <xs:documentation>Delete leftover empty subdirectories.</xs:documentation>
+            </xs:annotation>
+          </xs:attribute>
+        </xs:extension>
+      </xs:simpleContent>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="RegistryKeyCopy">
+    <xs:annotation>
+      <xs:appinfo>
+        <xse:parent namespace="http://schemas.microsoft.com/wix/2006/wi" ref="RegistryKey" />
+      </xs:appinfo>
+      <xs:documentation>
+        <![CDATA[
+Defines a registry key copy and restore operation that can be scheduled across a major upgrade.
+        
+\par Example:
+
+The following example will backup the HKEY_LOCAL_MACHINE\\Software\\AppSecInc\\SystemToolsMsi key before it's written by
+the installer and roll back the change if installation fails.
+
+\code
+<Component Id="RegistryBackupComponent" Guid="A9A913DB-CDA9-486c-B4C6-2A109661AEBD">
+  <RegistryKey Id="RegistryKeyToBackup" Action="create" Root="HKLM" Key="SOFTWARE\AppSecInc\SystemToolsMsi">
+    <RegistryValue Id="RegistryKeyToBackupProductCode" Name="ProductCode" Value="[ProductCode]" Action="write" Type="string" />
+    <AppSecInc:RegistryKeyCopy Id="RegistryKeyBackupCopy" TargetRoot="HKEY_LOCAL_MACHINE" TargetPath="SOFTWARE\AppSecInc\SystemToolsMsiBackup"
+      CopyOnInstall="yes" RestoreOnRollback="yes" Overwrite="yes" CheckIfExists="yes" />
+  </RegistryKey>
+</Component>
+\endcode
+
+Note that Windows Installer already performs the restore operation, but it is not designed to work across a major
+upgrade. The default scheduling of this extension simply enables registry key backup. In order to perform a 
+backup and rollback in a major upgrade scneario you must schedule the backup custom action before a previous 
+version of the product is uninstalled.
+
+\code
+<Custom Action="Win32_RegistryCopy_Deferred_Install" Before="RemoveExistingProducts">UpgradingCondition</Custom>
+\endcode
+
+The extension will now backup the registry key before uninstall happens, then restore it on rollback of the major 
+upgrade in an event of failure.
+        ]]>
+      </xs:documentation>
+    </xs:annotation>
+    <xs:complexType>
+      <xs:choice minOccurs="0" maxOccurs="unbounded">
+        <xs:element ref="wix:Condition" />
+      </xs:choice>
+      <xs:attribute name="Id" type="xs:string" use="required">
+        <xs:annotation>
+          <xs:documentation>Identifier for the registry key copy (primary key).</xs:documentation>
+        </xs:annotation>
+      </xs:attribute>
+      <xs:attribute name="TargetRoot" default="HKEY_LOCAL_MACHINE" type="RegistryKeyType">
+        <xs:annotation>
+          <xs:documentation>Target registry root.</xs:documentation>
+        </xs:annotation>
+      </xs:attribute>
+      <xs:attribute name="TargetPath" type="xs:string" use="required">
+        <xs:annotation>
+          <xs:documentation>Target registry key path.</xs:documentation>
+        </xs:annotation>
+      </xs:attribute>
+      <xs:attribute name="CheckIfExists" use="optional" type="YesNoType">
+        <xs:annotation>
+          <xs:documentation>Check whether the source registry key exists before performing a copy operation.</xs:documentation>
+        </xs:annotation>
+      </xs:attribute>
+      <xs:attribute name="Overwrite" use="optional" type="YesNoType">
+        <xs:annotation>
+          <xs:documentation>Overwrite target key if it exists.</xs:documentation>
+        </xs:annotation>
+      </xs:attribute>
+      <xs:attribute name="CopyOnInstall" use="optional" type="YesNoType">
+        <xs:annotation>
+          <xs:documentation>Copy registry key at install time.</xs:documentation>
+        </xs:annotation>
+      </xs:attribute>
+      <xs:attribute name="CopyOnUnInstall" use="optional" type="YesNoType">
+        <xs:annotation>
+          <xs:documentation>Copy registry key at uninstall time.</xs:documentation>
+        </xs:annotation>
+      </xs:attribute>
+      <xs:attribute name="RemoveSource" use="optional" type="YesNoType">
+        <xs:annotation>
+          <xs:documentation>Remove the source registry key after copy (ie. move).</xs:documentation>
+        </xs:annotation>
+      </xs:attribute>
+      <xs:attribute name="RestoreOnRollback" use="optional" type="YesNoType">
+        <xs:annotation>
+          <xs:documentation>Restore registry key contents on rollback.</xs:documentation>
+        </xs:annotation>
+      </xs:attribute>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:simpleType name="YesNoType">
+    <xs:annotation>
+      <xs:documentation>Values of this type will either be "yes" or "no".</xs:documentation>
+    </xs:annotation>
+    <xs:restriction base="xs:NMTOKEN">
+      <xs:enumeration value="no" />
+      <xs:enumeration value="yes" />
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="RegistryKeyType">
+    <xs:annotation>
+      <xs:documentation>Windows registry key types.</xs:documentation>
+    </xs:annotation>
+    <xs:restriction base="xs:NMTOKEN">
+      <xs:enumeration value="HKEY_LOCAL_MACHINE" />
+      <xs:enumeration value="HKEY_CURRENT_USER" />
+      <xs:enumeration value="HKEY_CURRENT_CONFIG" />
+      <xs:enumeration value="HKEY_CLASSES_ROOT" />
+      <xs:enumeration value="HKEY_USERS" />
+    </xs:restriction>
+  </xs:simpleType>
+
+</xs:schema>

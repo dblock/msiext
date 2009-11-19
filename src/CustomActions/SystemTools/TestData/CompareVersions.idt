@@ -1,0 +1,12 @@
+Id	InstalledVersion	MinimumVersion	MaximumVersion	Property
+s72	l0	l0	L0	s72
+CompareVersions	Id
+TestVersionCompare_1	3.8.0	3.8.0		VERSIONPROPERTY_380_380
+TestVersionCompare_2	3.8.1	3.8.0		VERSIONPROPERTY_381_380
+TestVersionCompare_3	3.9.0	3.8.0		VERSIONPROPERTY_390_380
+TestVersionCompare_4	4.0.0	3.8.0		VERSIONPROPERTY_400_380
+TestVersionCompare_5	3.8.0	4.8.0		VERSIONPROPERTY_380_480
+TestVersionCompare_6	3.8.18	3.8		VERSIONPROPERTY_3818_38
+TestVersionCompare_7	3.8.0	3.8.0	3.8.0	VERSIONPROPERTY_380_380_380
+TestVersionCompare_8	3.8.1	3.8.0	3.8.2	VERSIONPROPERTY_381_380_382
+TestVersionCompare_9	3.8.3	3.8.0	3.8.2	VERSIONPROPERTY_380_383_382

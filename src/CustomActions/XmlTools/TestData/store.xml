@@ -1,0 +1,8 @@
+<bookstore xmlns="http://www.lucernepublishing.com">
+ <book id="1">
+  <title>&apos;Emma&apos;</title>
+ </book>
+ <book id="2">
+  <title>&apos;Emma 2&apos;</title>
+ </book>
+</bookstore>

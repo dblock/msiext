@@ -1,0 +1,7 @@
+Action	Type	Source	Target
+s72	i2	S72	S255
+CustomAction	Action
+Win32_CopyFiles_Immediate	1	SystemTools	Win32_CopyFiles_Immediate
+Win32_CopyFiles_Deferred	1	SystemTools	Win32_CopyFiles_Deferred
+Win32_MoveFiles_Immediate	1	SystemTools	Win32_MoveFiles_Immediate
+Win32_MoveFiles_Deferred	1	SystemTools	Win32_MoveFiles_Deferred

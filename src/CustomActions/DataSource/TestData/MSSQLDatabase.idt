@@ -1,0 +1,5 @@
+Id	ComponentId	Name	Collate	Purpose	ConnectionStringId	Attributes
+s72	S72	s255	S32	S32	s72	I2
+MSSQLDatabase	Id
+MSSQLDemoDatabase		[MSSQL_DATABASE_NAME]			LocalSQLServerConnection	3
+MSSQLDemoDatabase2		[MSSQL_DATABASE_NAME]2			LocalSQLServerConnection	35

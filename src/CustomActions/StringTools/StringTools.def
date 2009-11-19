@@ -1,0 +1,11 @@
+LIBRARY StringTools
+
+;DESCRIPTION "Application Security Inc. Custom Action Library - String Tools"
+
+EXPORTS
+    String_Replace
+    String_Trim
+    Regex_Match
+    Regex_Replace
+    String_ToLower
+    String_ToUpper

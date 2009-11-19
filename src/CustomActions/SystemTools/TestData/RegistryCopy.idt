@@ -1,0 +1,4 @@
+Id	RegistryId	TargetRoot	TargetPath	Condition	Attributes
+s72	s72	l0	l0	S0	I2
+RegistryCopy	Id
+RegistryKeyBackupCopy	RegistryKeyToBackup	HKEY_LOCAL_MACHINE	SOFTWARE\AppSecInc\[GUID]		65

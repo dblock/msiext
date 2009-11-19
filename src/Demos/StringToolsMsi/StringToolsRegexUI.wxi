@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Include xmlns="http://schemas.microsoft.com/wix/2006/wi">
+    <Fragment>
+        <UI>
+            <Dialog Id="StringToolsRegexDlg" Width="370" Height="270" Title="Regex">
+                <Control Id="Title" Type="Text" X="15" Y="5" Width="200" Height="15" Transparent="yes" NoPrefix="yes" Text="Regular Expressions" />
+                <Control Id="SubTitle" Type="Text" X="25" Y="21" Width="220" Height="20" Transparent="yes" NoPrefix="yes" Text="Match or Replace strings using regular expressions" />
+                <Control Id="BannerBitmap" Type="Bitmap" X="0" Y="0" Width="370" Height="44" TabSkip="no" Text="WixUI_Bmp_Banner" />
+                <Control Id="BannerLine" Type="Line" X="0" Y="44" Width="370" Height="0" />
+                <Control Id="BottomLine" Type="Line" X="0" Y="234" Width="370" Height="0" />
+                <Control Type="Edit" Width="256" Height="15" X="94" Y="68" Id="RegexMatchInputString" Property="REGEX_MATCH_INPUT_STRING" />
+                <Control Type="Edit" Width="256" Height="15" X="94" Y="90" Id="RegexMatchExpression" Property="REGEX_MATCH_EXPRESSION" />
+                <Control Type="PushButton" Width="82" Height="17" X="94" Y="112" Id="RegexMatch" Text="Regex Match">
+                    <Publish Property="REGEX_MATCH_INPUT_STRING" Value="[REGEX_MATCH_INPUT_STRING]" Order="1">1</Publish>
+                    <Publish Property="REGEX_MATCH_EXPRESSION" Value="[REGEX_MATCH_EXPRESSION]" Order="2">1</Publish>
+                    <Publish Event="DoAction" Value="RegexMatch" Order="3">1</Publish>
+                    <Publish Property="REGEX_MATCH_RESULT" Value="[REGEX_MATCH_RESULT]" Order="4">1</Publish>
+                </Control>
+                <Control Type="Edit" Width="16" Height="15" X="334" Y="112" Id="RegexMatchResult" Property="REGEX_MATCH_RESULT" />
+                <Control Type="Text" Width="50" Height="10" X="41" Y="71" Id="LabelRegexMatchInputString" Text="Input String:" />
+                <Control Type="Text" Width="45" Height="10" X="46" Y="93" Id="LabelRegexMatchExpression" Text="Expression:" />
+                <Control Type="Text" Width="78" Height="12" X="251" Y="115" Id="LabelRegexMatchResult" Text="Regex Match Result:" />
+                <Control Type="Text" Width="50" Height="17" X="41" Y="150" Id="LabelRegexReplaceInputString" Text="Input String:" />
+                <Control Type="Text" Width="45" Height="17" X="44" Y="168" Id="LabelRegexReplaceExpression" Text="Expression:" />
+                <Control Type="Text" Width="32" Height="9" X="60" Y="187" Id="LabelRegexReplaceFormat" Text="Format:" />
+                <Control Type="GroupBox" Width="348" Height="85" X="11" Y="49" Id="GroupRegex_Match" Text="Regex_Match" />
+                <Control Type="GroupBox" Width="348" Height="93" X="11" Y="135" Id="GroupRegexReplace" />
+                <Control Type="Edit" Width="256" Height="15" X="94" Y="146" Id="RegexReplaceInputString" Property="REGEX_REPLACE_INPUT_STRING" />
+                <Control Type="Edit" Width="256" Height="15" X="94" Y="165" Id="RegexReplaceExpression" Property="REGEX_REPLACE_EXPRESSION" />
+                <Control Type="Edit" Width="256" Height="15" X="94" Y="184" Id="RegexReplaceFormat" Property="REGEX_REPLACE_FORMAT" />
+                <Control Type="Edit" Width="256" Height="15" X="94" Y="202" Id="RegexReplaceResult" Property="REGEX_REPLACE_RESULT" />
+                <Control Type="PushButton" Width="67" Height="17" X="22" Y="202" Id="RegexReplace" Text="Regex Replace">
+                    <Publish Property="REGEX_REPLACE_INPUT_STRING" Value="[REGEX_REPLACE_INPUT_STRING]" Order="1">1</Publish>
+                    <Publish Property="REGEX_REPLACE_FORMAT" Value="[REGEX_REPLACE_FORMAT]" Order="2">1</Publish>
+                    <Publish Property="REGEX_REPLACE_EXPRESSION" Value="[REGEX_REPLACE_EXPRESSION]" Order="3">1</Publish>
+                    <Publish Event="DoAction" Value="RegexReplace" Order="4">1</Publish>
+                    <Publish Property="REGEX_REPLACE_RESULT" Value="[REGEX_REPLACE_RESULT]" Order="5">1</Publish>
+                </Control>
+                <Control Id="Next" Type="PushButton" X="236" Y="243" Width="56" Height="17" Default="yes" Text="!(loc.WixUINext)" />
+                <Control Id="Back" Type="PushButton" X="180" Y="243" Width="56" Height="17" Text="Back" />
+                <Control Id="Cancel" Type="PushButton" X="304" Y="243" Width="56" Height="17" Cancel="yes" Text="Cancel">
+                    <Publish Event="SpawnDialog" Value="CancelDlg">1</Publish>
+                </Control>
+            </Dialog>
+        </UI>
+    </Fragment>
+</Include>

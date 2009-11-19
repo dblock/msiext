@@ -1,0 +1,17 @@
+LIBRARY	Cryptography
+
+;DESCRIPTION "Application Security Inc. Custom Action Library - Cryptography"
+
+EXPORTS
+
+	CryptProtectDataHex
+	CryptUnprotectDataHex
+	
+	HexEncodeW
+	HexEncodeA
+	HexDecodeW
+	HexDecodeA
+
+    DESEDE3_GenerateKey
+    DESEDE3_Encrypt
+    DESEDE3_Decrypt

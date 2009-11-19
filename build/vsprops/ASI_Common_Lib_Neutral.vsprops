@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="Windows-1252"?>
+<VisualStudioPropertySheet
+	ProjectType="Visual C++"
+	Version="8.00"
+	Name="ASI_Common_Lib_Neutral"
+	OutputDirectory="$(SolutionDir)target\$(ConfigurationName)\lib"
+	InheritedPropertySheets=".\ASI_Common_Neutral.vsprops"
+	>
+	<Tool
+		Name="VCCLCompilerTool"
+		PreprocessorDefinitions="_LIB"
+	/>
+</VisualStudioPropertySheet>

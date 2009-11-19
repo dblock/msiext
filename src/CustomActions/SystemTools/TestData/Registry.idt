@@ -1,0 +1,4 @@
+Registry	Root	Key	Name	Value	Component_
+s72	i2	l255	L255	L0	s72
+Registry	Registry
+RegistryKeyToBackup	2	SOFTWARE\Microsoft\.NETFramework\Security	*		RegistryBackupComponent

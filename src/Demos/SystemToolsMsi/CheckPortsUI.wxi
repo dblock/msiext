@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Include xmlns="http://schemas.microsoft.com/wix/2006/wi">
+    <Fragment>
+        <UI>
+            <Dialog Id="InvalidPortDlg" Width="260" Height="85" Title="Invalid port">
+                <Control Id="Return" Type="PushButton" X="102" Y="57" Width="56" Height="17" Default="yes" Cancel="yes" Text="OK">
+                    <Publish Event="EndDialog" Value="Return">1</Publish>
+                </Control>
+                <Control Id="Text" Type="Text" X="48" Y="15" Width="194" Height="30" Text="[CA_ERROR]" />
+                <Control Id="Icon" Type="Icon" X="15" Y="15" Width="24" Height="24" FixedSize="yes" IconSize="32" Text="WixUI_Ico_Exclam" />
+            </Dialog>
+            <Dialog Id="CheckPortsDlg" Width="370" Height="270" Title="Check Ports">
+                <Control Id="Title" Type="Text" X="15" Y="5" Width="200" Height="15" Transparent="yes" NoPrefix="yes" Text="Check Available Ports" />
+                <Control Id="SubTitle" Type="Text" X="25" Y="21" Width="220" Height="20" Transparent="yes" NoPrefix="yes" Text="Please specify the port" />
+                <Control Id="BannerBitmap" Type="Bitmap" X="0" Y="0" Width="370" Height="44" TabSkip="no" Text="WixUI_Bmp_Banner" />
+                <Control Id="BannerLine" Type="Line" X="0" Y="44" Width="370" Height="0" />
+                <Control Id="BottomLine" Type="Line" X="0" Y="234" Width="370" Height="0" />
+                <Control Type="Edit" Width="39" Height="15" X="154" Y="75" Id="TcpPort" Property="TCP_PORT" />
+                <Control Type="PushButton" Width="88" Height="17" X="210" Y="75" Id="IsTcpPortAvailable" Text="Test Port">
+                    <Publish Property="CA_ERROR" Order="1">1</Publish>
+                    <Publish Property="TCP_PORT" Value="[TCP_PORT]" Order="1">1</Publish>
+                    <Publish Event="DoAction" Value="TcpIp_BindSocket" Order="2">1</Publish>
+                    <Publish Property="CA_ERROR" Value="[CA_ERROR]" Order="3">1</Publish>
+                    <Publish Event="SpawnDialog" Value="InvalidPortDlg" Order="4">CA_ERROR</Publish>
+                </Control>
+                <Control Id="Back" Type="PushButton" X="180" Y="243" Width="56" Height="17" Text="Back" />
+                <Control Id="Cancel" Type="PushButton" X="304" Y="243" Width="56" Height="17" Cancel="yes" Text="Cancel">
+                    <Publish Event="SpawnDialog" Value="CancelDlg">1</Publish>
+                </Control>
+                <Control Id="Next" Type="PushButton" X="236" Y="243" Width="56" Height="17" Default="yes" Text="!(loc.WixUINext)" />
+                <Control Type="Text" Width="40" Height="17" X="112" Y="75" Id="LablelTcpPort" Text="TCP Port:" />
+                <Control Id="TestResult_Success" Type="Bitmap" X="260" Y="10" Width="24" Height="24" Text="success_bmp">
+                    <Condition Action="show"><![CDATA[NOT CA_ERROR AND TCP_PORT]]></Condition>
+                    <Condition Action="hide"><![CDATA[CA_ERROR OR NOT TCP_PORT]]></Condition>
+                </Control>
+                <Control Id="TestResult_Failure" Type="Bitmap" X="260" Y="10" Width="24" Height="24" Text="error_bmp">
+                    <Condition Action="hide"><![CDATA[NOT CA_ERROR AND TCP_PORT]]></Condition>
+                    <Condition Action="show"><![CDATA[CA_ERROR OR NOT TCP_PORT]]></Condition>
+                </Control>
+            </Dialog>
+        </UI>
+    </Fragment>
+</Include>

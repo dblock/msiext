@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Include xmlns="http://schemas.microsoft.com/wix/2006/wi">
+    <Fragment>
+        <UI>
+            <Dialog Id="StringToolsTrimDlg" Width="370" Height="270" Title="Trim a String">
+                <Control Id="Title" Type="Text" X="15" Y="5" Width="200" Height="15" Transparent="yes" NoPrefix="yes" Text="String_Trim" />
+                <Control Id="SubTitle" Type="Text" X="25" Y="21" Width="220" Height="20" Transparent="yes" NoPrefix="yes" Text="Trim a string" />
+                <Control Id="BannerBitmap" Type="Bitmap" X="0" Y="0" Width="370" Height="44" TabSkip="no" Text="WixUI_Bmp_Banner" />
+                <Control Id="BannerLine" Type="Line" X="0" Y="44" Width="370" Height="0" />
+                <Control Id="BottomLine" Type="Line" X="0" Y="234" Width="370" Height="0" />
+                <Control Type="Edit" Width="194" Height="15" X="94" Y="79" Id="StringTrimInput" Property="STRING_TRIM_INPUT" />
+                <Control Type="Edit" Width="118" Height="15" X="94" Y="105" Id="StringTrimWhitespaces" Property="STRING_TRIM_WHITESPACES" />
+                <Control Type="Edit" Width="192" Height="15" X="94" Y="131" Id="StringTrimResult" Property="STRING_TRIM_RESULT" />
+                <Control Type="PushButton" Width="63" Height="17" X="225" Y="105" Id="StringTrim" Text="StringTrim">
+                    <Publish Property="STRING_TRIM_INPUT" Value="[STRING_TRIM_INPUT]" Order="1">1</Publish>
+                    <Publish Property="STRING_TRIM_WHITESPACES" Value="[STRING_TRIM_WHITESPACES]" Order="2">1</Publish>
+                    <Publish Event="DoAction" Value="StringTrim" Order="3">1</Publish>
+                    <Publish Property="STRING_TRIM_RESULT" Value="[STRING_TRIM_RESULT]" Order="4">1</Publish>
+                </Control>
+                <Control Type="Text" Width="50" Height="10" X="41" Y="79" Id="LabelStringTrimInput" Text="Input String:" />
+                <Control Type="Text" Width="52" Height="17" X="38" Y="109" Id="LableStringTrimWhitespaces" Text="Whitespaces:" />
+                <Control Type="Text" Width="31" Height="10" X="59" Y="131" Id="LabelStringTrimResult" Text="Result:" />
+                <Control Id="Next" Type="PushButton" X="236" Y="243" Width="56" Height="17" Default="yes" Text="!(loc.WixUINext)" />
+                <Control Id="Back" Type="PushButton" X="180" Y="243" Width="56" Height="17" Text="Back" />
+                <Control Id="Cancel" Type="PushButton" X="304" Y="243" Width="56" Height="17" Cancel="yes" Text="Cancel">
+                    <Publish Event="SpawnDialog" Value="CancelDlg">1</Publish>
+                </Control>
+            </Dialog>
+        </UI>
+    </Fragment>
+</Include>

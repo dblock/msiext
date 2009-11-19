@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?include ..\..\..\src\Version\Version.wxi ?>
+<?define BinDir=$(var.MSBuildProjectDirectory)\target\$(var.Configuration)\bin ?>
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi" xmlns:AppSecInc="http://schemas.appsecinc.com/wix/SystemToolsExtension">
+    <Product Id="1F6D32DC-B9C0-4ab6-8B01-7AA297A7723A" Name="System Tools Demo MSI" Language="1033" Version="$(var.ProductVersion)" Manufacturer="$(var.CompanyName)" UpgradeCode="9C37AA2F-7DB1-41c9-BE04-379C84BF6E9E">
+        <Package InstallerVersion="200" Compressed="yes" />
+        <Media Id="1" Cabinet="SystemToolsMsi.cab" EmbedCab="yes" />
+        <Binary Id="success_bmp" SourceFile="$(sys.SOURCEFILEDIR)success.bmp" />
+        <Binary Id="error_bmp" SourceFile="$(sys.SOURCEFILEDIR)error.bmp" />
+        <Binary Id="SystemTools" SourceFile="$(var.BinDir)\SystemTools.dll" />
+        <CustomAction Id="TcpIp_BindSocket" BinaryKey="SystemTools" DllEntry="TcpIp_BindSocket" Execute="immediate" Return="ignore" />
+        <CustomAction Id="Win32_GetFileSize" BinaryKey="SystemTools" DllEntry="Win32_GetFileSize" Execute="immediate" Return="check" />
+        <Directory Id="TARGETDIR" Name="SourceDir">
+            <Directory Id="ProgramFilesFolder">
+                <Directory Id="INSTALLLOCATION" Name="SystemToolsDemo">
+                    <Merge Id="CompareVersionMergeModule" Language="1033" DiskId="1" SourceFile="$(var.BinDir)\CompareVersion.msm" />
+                    <Merge Id="CopyFilesMergeModule" Language="1033" DiskId="1" SourceFile="$(var.BinDir)\CopyFiles.msm" />
+                    <Component Id="SystemToolsMsiComponent" Guid="ca70ba08-0c57-4fa2-b6c1-57a00123e391">
+                        <File Id="SystemToolsMsi_wxs" Name="SystemToolsMsi.wxs" Source="SystemToolsMsi.wxs" />
+                        <AppSecInc:Execute Id="SystemToolsMsi_wxs_copy" CommandLine="cmd.exe /C copy SystemToolsMsi.wxs SystemToolsMsi_Copy.wxs /y" Directory="[INSTALLLOCATION]" ErrorMessage="Failed to copy file." ExecuteOnInstall="yes" ContinueOnError="yes" />
+                        <AppSecInc:Execute Id="SystemToolsMsi_wxs_delete" CommandLine="cmd.exe /C del SystemToolsMsi_Copy.wxs" Directory="[INSTALLLOCATION]" ErrorMessage="Failed to delete file." ExecuteOnUnInstall="yes" ContinueOnError="yes" />
+                    </Component>
+                    <!-- create a registry key, back it up if it exists first -->
+                    <Component Id="RegistryBackupComponent" Guid="A9A913DB-CDA9-486c-B4C6-2A109661AEBD" Permanent="yes">
+                        <RegistryKey Id="RegistryKeyToBackup" Action="create" Root="HKLM" Key="SOFTWARE\AppSecInc\SystemToolsMsi">
+                            <RegistryValue Id="RegistryKeyToBackupProductCode" Name="ProductCode" Value="[ProductCode]" Action="write" Type="string" />
+                            <AppSecInc:RegistryKeyCopy Id="RegistryKeyBackupCopy" TargetRoot="HKEY_LOCAL_MACHINE" CopyOnInstall="yes" RestoreOnRollback="yes" TargetPath="SOFTWARE\AppSecInc\SystemToolsMsiBackup" Overwrite="yes" CheckIfExists="yes" />
+                        </RegistryKey>
+                    </Component>
+                    <Directory Id="SubDir" Name="SubDir">
+                        <Component Id="SystemToolsMsiComponentSubDir" Guid="387C8E26-6C3B-49e8-A072-F0C01B3BB27F">
+                            <File Id="SystemToolsMsi_SubDir_wxs" Name="SystemToolsMsi.wxs" Source="SystemToolsMsi.wxs" />
+                        </Component>
+                    </Directory>
+                </Directory>
+            </Directory>
+        </Directory>
+        <!-- files can be referenced by [#id] and properties can be used in both Source and Target columns -->
+        <AppSecInc:CopyFile Id="CopyAlways" Source="[#SystemToolsMsi_wxs]" Target="[INSTALLLOCATION]SystemToolsMsi_CopyAlways.wxs" CopyOnInstall="yes" />
+        <!-- copy a file on uninstall, delete it on install if it's already there -->
+        <AppSecInc:CopyFile Id="CopyAlwaysOnUnInstall" Source="[#SystemToolsMsi_wxs]" Target="[INSTALLLOCATION]SystemToolsMsi_CopyAlwaysBackup.wxs" CopyOnUnInstall="yes" />
+        <AppSecInc:DeleteFile Id="DeleteAlwaysOnUnInstall" File="[INSTALLLOCATION]SystemToolsMsi_CopyAlways.wxs" DeleteOnUnInstall="yes" CheckIfExists="yes" />
+        <AppSecInc:DeleteFile Id="DeleteAlwaysOnInstall" File="[INSTALLLOCATION]SystemToolsMsi_CopyAlwaysBackup.wxs" DeleteOnInstall="yes" CheckIfExists="yes" />
+        <!-- directories can be referenced by [id] -->
+        <AppSecInc:CopyFile Id="CopyAlwaysSubDir" Source="[SubDir]SystemToolsMsi.wxs" Target="[INSTALLLOCATION]SystemToolsMsi_CopyFromSubDir.wxs" CopyOnInstall="yes" />
+        <AppSecInc:CopyFile Id="CopyConditional" Source="[#SystemToolsMsi_wxs]" Target="[INSTALLLOCATION]SystemToolsMsi_CopyConditional.wxs" CopyOnInstall="yes">
+      COPY_CONDITIONAL = 1
+    </AppSecInc:CopyFile>
+        <AppSecInc:CopyFile Id="CopyOverwrite" Source="[#SystemToolsMsi_wxs]" Target="[INSTALLLOCATION]SystemToolsMsi_CopyConditional.wxs" Overwrite="yes" CopyOnInstall="yes" />
+        <AppSecInc:MoveFile Id="MoveForward" Source="[#SystemToolsMsi_wxs]" Target="[#SystemToolsMsi_wxs].moved" MoveOnInstall="yes" Overwrite="yes" />
+        <AppSecInc:MoveFile Id="MoveBack" Source="[#SystemToolsMsi_wxs].moved" Target="[#SystemToolsMsi_wxs]" MoveOnInstall="yes" Overwrite="yes" />
+        <!-- copy all the files to a subdirectory, delete them on uninstall -->
+        <AppSecInc:CopyFiles Id="CopyAll" CopyOnInstall="yes" Recurse="yes" Source="[INSTALLLOCATION]" Overwrite="yes" Target="[INSTALLLOCATION]\CopyOfAllFiles" Wildcard="*.*" />
+        <AppSecInc:DeleteFiles Id="DeleteAll" DeleteOnUnInstall="yes" Recurse="yes" Path="[INSTALLLOCATION]\CopyOfAllFiles" Wildcard="*.*" DeleteEmptyDirectories="yes" />
+        <!-- execute a manually scheduled command -->
+        <AppSecInc:ScheduleExecute Id="CopySystemToolsMsiScheduled_Copy" CommandLine="cmd.exe /C copy SystemToolsMsi.wxs SystemToolsMsi_CopyScheduled.wxs /y" Directory="[INSTALLLOCATION]" ErrorMessage="Failed to copy file." ExecuteOnInstall="yes" />
+        <AppSecInc:ScheduleExecute Id="CopySystemToolsMsiScheduled_Delete" CommandLine="cmd.exe /C del SystemToolsMsi_CopyScheduled.wxs" Directory="[INSTALLLOCATION]" ErrorMessage="Failed to delete file." ExecuteOnUnInstall="yes" />
+        <Feature Id="ProductFeature" Title="Demo Feature" Level="1">
+            <ComponentRef Id="SystemToolsMsiComponent" />
+            <ComponentRef Id="SystemToolsMsiComponentSubDir" />
+            <ComponentRef Id="RegistryBackupComponent" />
+            <MergeRef Id="CompareVersionMergeModule" />
+            <MergeRef Id="CopyFilesMergeModule" />
+        </Feature>
+        <UIRef Id="CaTestUI" />
+        <UI Id="CaTestUI">
+            <TextStyle Id="WixUI_Font_Normal" FaceName="Tahoma" Size="8" />
+            <TextStyle Id="WixUI_Font_Bigger" FaceName="Tahoma" Size="12" />
+            <TextStyle Id="WixUI_Font_Title" FaceName="Tahoma" Size="9" Bold="yes" />
+            <Property Id="DefaultUIFont" Value="WixUI_Font_Normal" />
+            <Property Id="WixUI_Mode" Value="InstallDir" />
+            <Property Id="ARPNOMODIFY" Value="1" />
+            <DialogRef Id="ErrorDlg" />
+            <DialogRef Id="FatalError" />
+            <DialogRef Id="FilesInUse" />
+            <DialogRef Id="MsiRMFilesInUse" />
+            <DialogRef Id="PrepareDlg" />
+            <DialogRef Id="ProgressDlg" />
+            <DialogRef Id="ResumeDlg" />
+            <DialogRef Id="UserExit" />
+            <DialogRef Id="Win32CopyFilesDlg" />
+            <Publish Dialog="ExitDialog" Control="Finish" Event="EndDialog" Value="Return" Order="999">1</Publish>
+            <Publish Dialog="WelcomeDlg" Control="Next" Event="NewDialog" Value="Win32CopyFilesDlg">1</Publish>
+            <Publish Dialog="Win32CopyFilesDlg" Control="Back" Event="NewDialog" Value="MaintenanceTypeDlg" Order="1">Installed</Publish>
+            <Publish Dialog="Win32CopyFilesDlg" Control="Back" Event="NewDialog" Value="WelcomeDlg" Order="2">NOT Installed</Publish>
+            <Publish Dialog="Win32CopyFilesDlg" Control="Next" Event="NewDialog" Value="CheckPortsDlg" Order="2">1</Publish>
+            <Publish Dialog="CheckPortsDlg" Control="Next" Event="NewDialog" Value="VerifyReadyDlg" Order="1">1</Publish>
+            <Publish Dialog="CheckPortsDlg" Control="Back" Event="NewDialog" Value="Win32CopyFilesDlg" Order="2">1</Publish>
+            <Publish Dialog="VerifyReadyDlg" Control="Back" Event="NewDialog" Value="CheckPortsDlg" Order="1">NOT Installed OR WixUI_InstallMode="Change"</Publish>
+            <Publish Dialog="MaintenanceTypeDlg" Control="Back" Event="NewDialog" Value="MaintenanceWelcomeDlg">1</Publish>
+        </UI>
+        <CustomAction Id="TestRollback" Script="vbscript" Execute="deferred">
+      dim answer
+      answer=MsgBox("Would you like to abort installation and test rollback?",4,"Installation Successful")
+      if answer=6 Then return 3
+    </CustomAction>
+        <InstallExecuteSequence>
+            <Custom Action="CopySystemToolsMsiScheduled_Copy" After="InstallFiles">NOT Installed</Custom>
+            <Custom Action="CopySystemToolsMsiScheduled_Delete" After="RemoveFiles">Installed</Custom>
+            <Custom Action="TestRollback" Before="InstallFinalize" />
+        </InstallExecuteSequence>
+        <UIRef Id="WixUI_Common" />
+    </Product>
+    <?include Win32CopyFilesUI.wxi ?>
+    <?include CheckPortsUI.wxi ?>
+</Wix>

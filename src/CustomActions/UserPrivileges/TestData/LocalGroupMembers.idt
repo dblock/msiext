@@ -1,0 +1,6 @@
+Id	ComponentId	LocalUserId	LocalGroupId	Attributes
+s72	S72	s72	s72	I2
+LocalGroupMembers	Id
+DemoLocalUser1_DemoLocalGroup1_Member		DemoLocalUser1	DemoLocalGroup1	25
+DemoLocalUser2_DemoLocalGroup_Member		DemoLocalUser2	DemoLocalGroup1	25
+DemoLocalUser2_DemoLocalGroup2_Member		DemoLocalUser1	DemoLocalGroup2	25

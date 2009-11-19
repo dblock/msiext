@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?include ..\..\..\src\Version\Version.wxi ?>
+<?define BinDir=$(var.MSBuildProjectDirectory)\target\$(var.Configuration)\bin ?>
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi" xmlns:AppSecInc="http://schemas.appsecinc.com/wix/SystemToolsExtension">
+    <Module Id="CompareVersionMergeModule" Language="1033" Version="$(var.ProductVersion)">
+        <Package Id="29671646-6ef6-40e5-8702-4b708178d81b" Manufacturer="$(var.CompanyName)" InstallerVersion="200" />
+        <Property Id="SQL_SERVER_2005_DISPLAYVERSION">
+            <RegistrySearch Id="RegistrySearchDotNetFramework" Type="raw" Root="HKLM" Key="SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\{2373A92B-1C1C-4E71-B494-5CA97F96AA19}" Name="DisplayVersion" />
+        </Property>
+        <AppSecInc:CompareVersion Id="CompareVersionSQLServer2005" Property="SQL_SERVER_2005_INSTALLED" MinimumVersion="9.2" InstalledVersion="[SQL_SERVER_2005_DISPLAYVERSION]" />
+    </Module>
+</Wix>

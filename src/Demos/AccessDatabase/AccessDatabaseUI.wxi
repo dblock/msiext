@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Include xmlns="http://schemas.microsoft.com/wix/2006/wi">
+    <Fragment>
+        <UI>
+            <Dialog Id="AccessDatabaseDlg" Width="370" Height="270" Title="Database Options">
+                <Control Id="Title" Type="Text" X="15" Y="5" Width="200" Height="15" Transparent="yes" NoPrefix="yes" Text="Database Options" />
+                <Control Id="SubTitle" Type="Text" X="25" Y="21" Width="220" Height="20" Transparent="yes" NoPrefix="yes" Text="Please specify database creation options" />
+                <Control Id="BannerBitmap" Type="Bitmap" X="0" Y="0" Width="370" Height="44" TabSkip="no" Text="WixUI_Bmp_Banner" />
+                <Control Id="BannerLine" Type="Line" X="0" Y="44" Width="370" Height="0" />
+                <Control Id="BottomLine" Type="Line" X="0" Y="234" Width="370" Height="0" />
+                <Control Id="Back" Type="PushButton" X="180" Y="243" Width="56" Height="17" Text="Back" />
+                <Control Id="DatabaseNameLabel" Type="Text" X="20" Y="85" Height="15" Width="150" Text="Please enter a database name:" />
+                <Control Id="DatabaseName" Type="Edit" X="30" Y="100" Height="17" Width="150" Property="ACCESS_DATABASE_NAME">
+                    <Publish Property="ACCESS_DATABASE_DBQ">1</Publish>
+                </Control>
+                <Control Id="Cancel" Type="PushButton" X="304" Y="243" Width="56" Height="17" Cancel="yes" Text="Cancel">
+                    <Publish Event="SpawnDialog" Value="CancelDlg">1</Publish>
+                </Control>
+                <Control Id="Next" Type="PushButton" X="236" Y="243" Width="56" Height="17" Default="yes" Text="!(loc.WixUINext)">
+                    <Publish Property="ACCESS_DATABASE_DBQ" Value="[INSTALLLOCATION][ACCESS_DATABASE_NAME].mdf">NOT ACCESS_DATABASE_DBQ</Publish>
+                </Control>
+            </Dialog>
+        </UI>
+    </Fragment>
+</Include>

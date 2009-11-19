@@ -1,0 +1,8 @@
+Id	ComponentId	Condition	Directory	CommandLine	ErrorMessage	ReturnCode	Attributes
+s72	S72	S0	S0	s0	S255	I0	I2
+Win32_Execute	Id
+SystemToolsMsi_wxs_copy				cmd.exe /C copy "[SOURCELOCATION]TestData_SystemToolsUnitTests\Win32_Execute.idt" "[INSTALLLOCATION]Win32_Execute_Copy.idt" /y	Failed to copy Win32_Execute.idt.	0	2
+SystemToolsMsi_wxs_delete				cmd.exe /C del "[SOURCELOCATION]TestData_SystemToolsUnitTests\Win32_Execute_Copy.idt"	Failed to delete Win32_Execute_Copy.idt.	0	4
+SystemToolsMsi_wxs_copy_conditional		EXECUTE_CONDITIONAL=1		cmd.exe /C copy "[SOURCELOCATION]TestData_SystemToolsUnitTests\Win32_Execute.idt" "[INSTALLLOCATION]Win32_Execute_Conditional.idt" /y	Failed to copy conditional Win32_Execute.idt.	0	2
+CopySystemToolsMsiScheduled_Copy				cmd.exe /C copy "[SOURCELOCATION]TestData_SystemToolsUnitTests\Win32_Execute.idt" "[INSTALLLOCATION]Win32_Execute_ScheduledCopy.idt" /y	Failed to copy file.	0	34
+CopySystemToolsMsiScheduled_Delete				cmd.exe /C del "[INSTALLLOCATION]Win32_Execute_ScheduledCopy.idt"	Failed to delete file.	0	36

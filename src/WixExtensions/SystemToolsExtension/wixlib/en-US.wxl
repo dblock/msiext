@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<WixLocalization Culture="en-us" xmlns="http://schemas.microsoft.com/wix/2006/localization">
+    <String Id="CopyingFiles">Copying files</String>
+    <String Id="MovingFiles">Moving files</String>
+    <String Id="DeletingFiles">Deleting files</String>
+    <String Id="ExecutingCommands">Executing commands</String>
+    <String Id="ProcessingTemplateFiles">Processing template files</String>
+    <String Id="CopyingRegistryKeys">Copying registry keys</String>
+</WixLocalization>
+

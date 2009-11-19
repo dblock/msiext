@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?include ..\..\..\src\Version\Version.wxi ?>
+<?define BinDir=$(var.MSBuildProjectDirectory)\target\$(var.Configuration)\bin ?>
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi" xmlns:UserPrivileges="http://schemas.appsecinc.com/wix/UserPrivilegesExtension">
+    <Product Id="afa5fd8f-fec5-458c-ac46-1a9f8e03beda" Name="Local Users and Groups Demo" Language="1033" Version="$(var.ProductVersion)" Manufacturer="$(var.CompanyName)" UpgradeCode="45c5b77a-a783-4af4-bb08-194f0a5bc9b0">
+        <Package InstallerVersion="200" Compressed="yes" />
+        <Media Id="1" Cabinet="LocalUserGroupsMsi.cab" EmbedCab="yes" />
+        <Directory Id="TARGETDIR" Name="SourceDir">
+            <Directory Id="ProgramFilesFolder">
+                <Directory Id="INSTALLLOCATION" Name="LocalUserGroupsDemo">
+                    <Component Id="LocalUserGroupComponent" Guid="a699172c-006b-4a08-99ae-e2e746092a45">
+                        <File Id="LocalUserGroupsMsi_wxs" Source="LocalUserGroupsMsi.wxs" Name="LocalUserGroupsMsi.wxs" />
+                        <UserPrivileges:LocalUser Id="DemoLocalUser1" Username="DemoLocalUser1" Password="admin123" CreateOnInstall="yes" DeleteOnUnInstall="yes" CheckIfExists="yes" />
+                        <UserPrivileges:LocalUser Id="DemoLocalUser2" Username="DemoLocalUser2" Password="admin123" CreateOnInstall="yes" DeleteOnUnInstall="yes" CheckIfExists="yes">
+                            <UserPrivileges:LocalGroupMember Id="DemoLocalUser2_DemoLocalGroup_Member" GroupId="DemoLocalGroup1" AddOnInstall="yes" RemoveOnUnInstall="yes" CheckIfMember="yes" />
+                        </UserPrivileges:LocalUser>
+                        <UserPrivileges:LocalGroup Id="DemoLocalGroup1" Name="DemoLocalGroup1" Description="Demo local group 1 should contain a user after installation." CheckIfExists="yes" CreateOnInstall="yes" DeleteOnUnInstall="yes">
+                            <UserPrivileges:LocalGroupMember Id="DemoLocalUser1_DemoLocalGroup1_Member" UserId="DemoLocalUser1" AddOnInstall="yes" RemoveOnUnInstall="yes" CheckIfMember="yes" />
+                        </UserPrivileges:LocalGroup>
+                        <UserPrivileges:LocalGroup Id="DemoLocalGroup2" Name="DemoLocalGroup2" Description="Demo local group 2 should contain a user after installation." CheckIfExists="yes" CreateOnInstall="yes" DeleteOnUnInstall="yes" />
+                        <UserPrivileges:LocalGroupMember Id="DemoLocalUser2_DemoLocalGroup2_Member" GroupId="DemoLocalGroup2" UserId="DemoLocalUser1" AddOnInstall="yes" RemoveOnUnInstall="yes" CheckIfMember="yes" />
+                    </Component>
+                </Directory>
+            </Directory>
+        </Directory>
+        <Feature Id="LocalUserGroupFeature" Title="Local Users" Level="1">
+            <ComponentRef Id="LocalUserGroupComponent" />
+        </Feature>
+    </Product>
+</Wix>

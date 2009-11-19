@@ -1,0 +1,213 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xs:schema xmlns:html="http://www.w3.org/1999/xhtml"
+            xmlns:wix="http://schemas.microsoft.com/wix/2006/wi"
+             xmlns:xs="http://www.w3.org/2001/XMLSchema"
+            xmlns:xse="http://schemas.microsoft.com/wix/2005/XmlSchemaExtension"
+      targetNamespace="http://schemas.appsecinc.com/wix/CommonUiExtension"
+                xmlns="http://schemas.appsecinc.com/wix/CommonUiExtension">
+  <xs:annotation>
+    <xs:documentation>
+      <![CDATA[
+Windows Installer XML CommonUi Extension
+
+Provides a set of dialogs that are commonly used in AppSecInc product installers.
+        
+The dialogs included in this extention are:
+\li \c ServiceCredDlg - Allows the user to specify a Windows account or Local System. Includes 
+       a test button that checks that the account is valid and has the Logon as Service permission.
+\li \c ServicePortDlg - Allows the specification of a port. Includes a test button that checks
+       that the port is valid and available.
+\li \c SelectDbDlg - Allows the selection of a SQL database server.
+\li \c RuntimeDbCredDlg - Allows the user to specify either windows authentication using SSPI or
+	   or SQL authentication credentials. Includes a test button that verifies the existance of
+	   a user specified database and that the user has privileges to that database.
+\li \c GenericErrorDlg - an error dialog used by the other dialogs.
+
+You must link with both the WixUIExtension and this WIX extension.
+
+\par Using the Dialogs
+To use the dialogs you add UI references to the dialogs you wish to use then include them
+in the dialog sequence.
+
+\code
+<UI>	
+	<!-- CommonU UI Dialogs-->
+	<DialogRef Id="ServiceCredDlg" />
+	<DialogRef Id="GenericErrorDlg" />
+	
+	<!-- UIExtension Dialogs-->
+	<DialogRef Id="WelcomeDlg"/>
+	<DialogRef Id="VerifyReadyDlg"/>
+	
+	<DialogRef Id="ErrorDlg" />
+	<DialogRef Id="FatalError" />
+	<DialogRef Id="FilesInUse" />
+	<DialogRef Id="UserExit" />
+
+
+	<Publish Dialog="WelcomeDlg" Control="Next" Event="NewDialog" Value="ServiceCredDlg">NOT Installed</Publish>
+	
+	<Publish Dialog="ServiceCredDlg" Control="Next" Event="NewDialog" Value="VerifyReadyDlg">NOT Installed</Publish>
+	<Publish Dialog="ServiceCredDlg" Control="Back" Event="NewDialog" Value="WelcomeDlg">NOT Installed</Publish>
+
+	<Publish Dialog="VerifyReadyDlg" Control="Back" Event="NewDialog" Value="RuntimeDbCredDlg">NOT Installed</Publish>
+
+	<Publish Dialog="ExitDialog" Control="Back" Event="EndDialog" Value="VerifyReadyDlg">1</Publish>
+	<Publish Dialog="ExitDialog" Control="Finish" Event="EndDialog" Value="Return" Order="999">1</Publish>
+</UI>
+\endcode
+
+For a complete example see \subpage common_ui_demo_wxs
+
+\par Text Styles
+The extension provides the following text styles.
+
+\code
+<TextStyle Id="WixUI_Font_Normal" FaceName="Tahoma" Size="8" />
+<TextStyle Id="WixUI_Font_Bigger" FaceName="Tahoma" Size="12" />
+<TextStyle Id="WixUI_Font_Title"  FaceName="Tahoma" Size="9" Bold="yes" />
+<TextStyle Id="WixUI_Bold"        FaceName="Tahoma" Size="8" Bold="yes" />
+<TextStyle Id="WixUI_Italic"      FaceName="Tahoma" Size="8" Italic="yes" />
+<TextStyle Id="WixUI_Underlined"  FaceName="Tahoma" Size="8" Underline="yes" />
+<TextStyle Id="WixUI_ErrorStyle"  FaceName="Tahoma" Size="8" Bold="yes" Red="180" />
+\endcode
+
+\par Overriding Images
+The banner and welcome/end dialog background images included in the extension are the
+generic WixUI images. You can override them by setting two WIX variables
+to point to your own images.
+
+\code
+<WixVariable Id="WixUIBannerBmp" Value="bitmaps\banner.bmp" />
+<WixVariable Id="WixUIDialogBmp" Value="bitmaps\dialog.bmp" />
+\endcode
+
+The banner image should be 498x53 pixels and the dialog image should be 493x312 pixels.
+
+\par ServiceCredDlg
+Prompts for service credentials.
+Properties:
+\li \c SERVICE_LOGON_TYPE one of ServiceAccount or ServiceLocalSystem.
+\li \c SERVICE_LOGON_BROWSE show the Browse button.
+\li \c SERVICE_USERNAME service username or blank if LocalSystem.
+\li \c SERVICE_PASSWORD service password or blank if LocalSystem.
+\li \c SERVICE_DISPLAY_USERNAME service username or LocalSystem if SERVICE_LOGON_TYPE = ServiceLocalSystem.
+\li \c SERVICE_REQUIRE_ADMIN  if this property is set, the dialog will require the user specified to be
+							    in the administrators group.
+
+If a windows user is selected, then SERVICE_USERNAME and SERVICE_PASSWORD will be verified in Active Directory.
+The dialog will also check for the logon as service privilege.
+
+\par ServicePortDlg
+Prompts for a port number.
+Properties:
+\li \c PORTNUMBER	port number entered by the user. The dialog will verify that the port is valid and
+	   available.
+\param CURRENTPORTNUMBER optional current port number, in use, that should not be checked.
+     This is useful for upgrades when the service is currently running on a given port.
+\li \c HOSTNAME		hostname or IP address of the host to check the port on.
+
+\par SelectDbDlg
+Prompts for database location. Also pre-populates the list of available SQL servers via DMO.
+Properties:
+\li \c DATABASE_SERVER	database server (for MSSQL)
+\li \c ODBC_SERVER	    database server suitable for ODBC-based custom actions (for MSSQL)
+
+\par RuntimeDbCredDlg
+Prompts for runtime database credentials. 
+Properties:
+\li \c RUNTIME_DATABASE_LOGON_TYPE	one of WinAuth or SqlAuth
+\li \c RUNTIME_DATABASE_USERNAME	database username (with SqlAuth)
+\li \c RUNTIME_DATABASE_PASSWORD	database password (with SqlAuth) 
+\li \c SERVICE_USERNAME				(read only) database password (with WinAuth)
+\li \c SERVICE_PASSWORD				(read only) database username (with WinAuth)
+\li \c DATABASE_NAME				(read only) The dialog will check that the specified user has permission to this database
+
+You must specify the RUNTIME_DATABASE_LOGIN_TYPE to use this dialog.
+
+\par DbCreateCredDlg
+Prompts for database creation credentials. 
+Properties:
+\li \c CREATE_DATABASE_LOGON_TYPE	one of WinAuthCurrentUser or SqlAuth
+\li \c CHECK_CREATE_DATABASE_PERMS yes/no to check permissions to create database
+\li \c CREATE_DATABASE_USERNAME	database username (with SqlAuth)
+\li \c CREATE_DATABASE_PASSWORD	database password (with SqlAuth) 
+\li \c SERVICE_USERNAME				(read only) database username (with WinAuthServiceUser)
+\li \c SERVICE_PASSWORD				(read only) database password (with WinAuthServiceUser)
+
+You must specify the CREATE_DATABASE_LOGON_TYPE and CHECK_CREATE_DATABASE_PERMS to use this dialog.
+
+\par GenericErrorDlg
+Popup dialog for displaying a custom error message.
+Properties:
+\li \c ERROR_TITLE		Title of the error message box.
+\li \c ERROR_MESSAGE	Custom error message to display.
+
+\par Localization
+Here are all the localized texts.
+
+\code
+<String Id="ServiceDlg_Header" Overridable="yes">[ProductName] Setup</String>
+<String Id="ServiceDlg_Title" Overridable="yes">{\WixUI_Font_Title}Service Log On Credentials</String>
+<String Id="ServiceDlg_SubTitle" Overridable="yes">Please provide the Windows Service account for the service.</String>
+<String Id="ServiceDlg_BannerBitmap" Overridable="yes">WixUI_Bmp_Banner</String>
+<String Id="ServiceDlg_Description" Overridable="yes">[ProductName] installs and runs as an independent Windows service.  To operate in this manner, you must supply the user account credentials for [ProductName] to run successfully.</String>
+<String Id="ServiceDlg_LocalSystemText" Overridable="yes">Run service as LocalSystem</String>
+<String Id="ServiceDlg_AccountText" Overridable="yes">Run service as:</String>
+<String Id="ServiceDlg_UsernameLabel" Overridable="yes">Account:</String>
+<String Id="ServiceDlg_UsernameBrowse" Overridable="yes">&amp;Browse ...</String>
+<String Id="ServiceDlg_PasswordLabel" Overridable="yes">Password:</String>
+<String Id="ServiceDlg_AccountTestLabel" Overridable="yes">&amp;Test Credentials</String>
+<String Id="ServiceDlg_TestPrompt" Overridable="yes">Click 'Test Credentials' button to proceed</String>
+<String Id="ServiceDlg_InvalidLogonError" Overridable="yes">Invalid user account or password.</String>
+<String Id="ServiceDlg_CannotValidateWarning" Overridable="yes">{\WixUI_ErrorStyle}WARNING:</String>
+<String Id="ServiceDlg_CannotValidateWarningText" Overridable="yes">Service credentials cannot be completely validated because you don't have required privileges to run validation. The installer will proceed and assume that provided credentials are valid.</String>
+<String Id="ServiceDlg_AccountDoesNotHaveLogonAsServiceRights" Overridable="yes">This account does not have logon as a service right or account privileges could not be obtained.</String>
+
+<String Id="ServicePortDlg_Header" Overridable="yes">[ProductName] Setup</String>
+<String Id="ServicePortDlg_Title" Overridable="yes">{\WixUI_Font_Title}Port Selection</String>
+<String Id="ServicePortDlg_SubTitle" Overridable="yes">Choose a port.</String>
+<String Id="ServicePortDlg_Description" Overridable="yes">Please choose a port.</String>
+<String Id="ServicePortDlg_PortNumberLabel" Overridable="yes">Port Number (1-65535):</String>
+<String Id="ServicePortDlg_Recomendation" Overridable="yes">It is recommended that you accept the selected default port.</String>
+<String Id="ServicePortDlg_TestPortLabel" Overridable="yes">Test Port</String>
+<String Id="ServicePortDlg_TestPrompt" Overridable="yes">Click 'Test Port' button to proceed</String>
+<String Id="ServicePortDlg_ErrorTitle" Overridable="yes">Invalid Information</String>
+<String Id="ServicePortDlg_InvalidPortMessage" Overridable="yes">You must enter a valid port value.</String>
+<String Id="ServicePortDlg_TestPortFailedMessage" Overridable="yes">Failed to bind to port:</String>
+
+<String Id="InvalidLoginError_Title">Invalid Login</String>
+
+<String Id="RuntimeDbCredDlg_Header" Overridable="yes">[ProductName] Setup</String>
+<String Id="RuntimeDbCredDlg_Title" Overridable="yes">{\WixUI_Font_Title}Database Run Time Credentials</String>
+<String Id="RuntimeDbCredDlg_SubTitle" Overridable="yes">Please enter credentials to connect to the database.</String>
+<String Id="RuntimeDbCredDlg_BannerBitmap" Overridable="yes">WixUI_Bmp_Banner</String>
+<String Id="RuntimeDbCredDlg_Description1" Overridable="yes">[ProductName] must be able to connect to its database to function correctly.</String>
+<String Id="RuntimeDbCredDlg_Description" Overridable="yes">The user supplied here will be used to access the [ProductName] database on [DATABASE_SERVER] at runtime.</String>
+<String Id="RuntimeDbCredDlg_IntegratedAuth" Overridable="yes">Windows Authentication (using '[SERVICE_DISPLAY_USERNAME]' Windows Service account)</String>
+<String Id="RuntimeDbCredDlg_PasswordAuth" Overridable="yes">SQL Authentication</String>
+<String Id="RuntimeDbCredDlg_UsernameLabel" Overridable="yes">Login:</String>
+<String Id="RuntimeDbCredDlg_UsernameBrowse" Overridable="yes">&amp;Browse ...</String>
+<String Id="RuntimeDbCredDlg_TestConnectionLabel" Overridable="yes">&amp;Test Connection</String>
+<String Id="RuntimeDbCredDlg_PasswordLabel" Overridable="yes">Password:</String>
+<String Id="RuntimeDbCredDlg_WindowsAuthNotAvailable" Overridable="yes">Note: Windows Authentication is not available for connecting to the remote database when [ProductName] service is running as Local System.  Please specify SQL credentials.</String>
+<String Id="RuntimeDbCredDlg_WindowsAuthRecommendation" Overridable="yes">We highly recommend using Windows Authentication as the preferred choice for database connections.</String>
+<String Id="RuntimeDbCredDlg_NoRequiredPermissions" Overridable="yes">The user does not have required permissions (select, insert, update) in [ProductName] Database.</String>
+<String Id="RuntimeDbCredDlg_CannotTestConnectionForLocalSystem" Overridable="yes">*Cannot test Windows Authentication when LocalSystem is selected.</String>
+<String Id="RuntimeDbCredDlg_TestPrompt" Overridable="yes">Click 'Test Connection' button to proceed</String>
+
+<String Id="SelectDbDlg_Title" Overridable="yes">{\WixUI_Font_Title}[ProductName] repository</String>
+<String Id="SelectDbDlg_SubTitle" Overridable="yes">Select database server location.</String>
+<String Id="SelectDbDlg_Description" Overridable="yes">Please select the database server from the drop-down list below.  Alternatively, you can also specify it by typing it as "hostname\instance" (e.g. myserver\myinstance) or "hostname:port" (e.g. myserver:1833).</String>
+<String Id="SelectDbDlg_ServerLabel" Overridable="yes">Database Instance:</String>
+<String Id="SelectDbDlg_DbBrowse" Overridable="yes">&amp;Browse ...</String>
+<String Id="SelectDbDlg_InvalidSyntax" Overridable="yes">Invalid server syntax: [DATABASE_SERVER]</String>
+<String Id="SelectDbDlg_EmptyServer" Overridable="yes">Please enter or select database server first</String>
+<String Id="SelectDbDlg_Header" Overridable="yes">[ProductName] Setup</String>
+<String Id="SelectDbDlg_BannerBitmap" Overridable="yes">WixUI_Bmp_Banner</String>
+\endcode
+
+        ]]>
+    </xs:documentation>
+  </xs:annotation>
+</xs:schema>

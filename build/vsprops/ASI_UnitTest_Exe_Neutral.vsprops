@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="Windows-1252"?>
+<VisualStudioPropertySheet
+	ProjectType="Visual C++"
+	Version="8.00"
+	Name="ASI_UnitTest_Exe_Neutral"
+	InheritedPropertySheets=".\ASI_Exe_Neutral.vsprops"
+	>
+	<Tool
+		Name="VCCLCompilerTool"
+		PreprocessorDefinitions="CPPUNIT_TEST"
+		UsePrecompiledHeader="2"
+		PrecompiledHeaderThrough="StdAfxUnitTests.h"
+	/>
+</VisualStudioPropertySheet>

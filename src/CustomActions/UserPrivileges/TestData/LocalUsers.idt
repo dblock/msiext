@@ -1,0 +1,5 @@
+Id	ComponentId	Username	Password	Attributes
+s72	S72	s0	S0	I2
+LocalUsers	Id
+DemoLocalUser1		DemoLocalUser1	1$isTooLittle%	25
+DemoLocalUser2		DemoLocalUser2	1$isTooLittle%	25

@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
+    <?ifdef Debug ?>
+    <?define ConfigurationName=Debug ?>
+    <?else ?>
+    <?define ConfigurationName=Release ?>
+    <?endif ?>
+    <?define SolutionDir=$(sys.SOURCEFILEDIR)..\..\..\.. ?>
+    <?define BinDir=$(var.SolutionDir)\target\$(var.ConfigurationName)\bin ?>
+    <Fragment>
+        <Binary Id="AsiUI_SuccessIco" SourceFile="bitmaps\Success.ico" />
+        <Binary Id="AsiUI_ErrorIco" SourceFile="bitmaps\Error.ico" />
+
+        <UIRef Id="WixUI_Common" />
+
+        <UI>
+            <Property Id="DefaultUIFont" Value="WixUI_Font_Normal" />
+
+            <TextStyle Id="WixUI_Font_Normal" FaceName="Tahoma" Size="8" />
+            <TextStyle Id="WixUI_Font_Bigger" FaceName="Tahoma" Size="12" />
+            <TextStyle Id="WixUI_Font_Title" FaceName="Tahoma" Size="9" Bold="yes" />
+            <TextStyle Id="WixUI_Bold" FaceName="Tahoma" Size="8" Bold="yes" />
+            <TextStyle Id="WixUI_Italic" FaceName="Tahoma" Size="8" Italic="yes" />
+            <TextStyle Id="WixUI_Underlined" FaceName="Tahoma" Size="8" Underline="yes" />
+            <TextStyle Id="WixUI_ErrorStyle" FaceName="Tahoma" Size="8" Bold="yes" Red="180" />
+        </UI>
+
+        <!-- active directory -->
+        <CustomAction Id="AsiUI_DirectoryObjectPicker" BinaryKey="AsiUI_ADBin" DllEntry="DirectoryObjectPicker" Execute="immediate" Return="check" />
+        <Binary Id="AsiUI_ADBin" SourceFile="$(var.BinDir)\ActiveDirectory.dll" />
+
+        <!-- user/privileges -->
+        <CustomAction Id="AsiUI_CheckCredentials" BinaryKey="AsiUI_UserPrivBin" DllEntry="CheckCredentials" Execute="immediate" Return="check" />
+        <CustomAction Id="AsiUI_CheckCredentialsWithPrivilege" BinaryKey="AsiUI_UserPrivBin" DllEntry="CheckCredentials" Execute="immediate" Return="check" />
+        <CustomAction Id="AsiUI_CheckMembership" BinaryKey="AsiUI_UserPrivBin" DllEntry="CheckMembership" Execute="immediate" Return="check" />
+        <Binary Id="AsiUI_UserPrivBin" SourceFile="$(var.BinDir)\UserPrivileges.dll" />
+
+        <!-- string tools -->
+        <CustomAction Id="AsiUI_String_Replace" BinaryKey="AsiUI_StrToolsBin" DllEntry="String_Replace" Execute="immediate" Return="ignore" />
+        <CustomAction Id="AsiUI_Regex_Replace" BinaryKey="AsiUI_StrToolsBin" DllEntry="Regex_Replace" Execute="immediate" Return="ignore" />
+        <CustomAction Id="AsiUI_String_Trim" BinaryKey="AsiUI_StrToolsBin" DllEntry="String_Trim" Execute="immediate" Return="ignore" />
+        <CustomAction Id="AsiUI_Regex_Match" BinaryKey="AsiUI_StrToolsBin" DllEntry="Regex_Match" Execute="immediate" Return="ignore" />
+        <Binary Id="AsiUI_StrToolsBin" SourceFile="$(var.BinDir)\StringTools.dll" />
+
+        <!-- database connection -->
+        <CustomAction Id="AsiUI_ODBC_Connect" BinaryKey="AsiUI_DataSrcBin" DllEntry="ODBC_Connect" Execute="immediate" Return="ignore" />
+        <CustomAction Id="AsiUI_ODBC_GetString" BinaryKey="AsiUI_DataSrcBin" DllEntry="ODBC_GetString" Execute="immediate" Return="ignore" />
+        <CustomAction Id="AsiUI_SQLDMO_ListAvailableSQLServers" BinaryKey="AsiUI_DataSrcBin" DllEntry="SQLDMO_ListAvailableSQLServers" Return="ignore" />
+        <Binary Id="AsiUI_DataSrcBin" SourceFile="$(var.BinDir)\DataSource.dll" />
+
+        <!-- System Tools-->
+        <CustomAction Id="TcpIp_BindSocket" BinaryKey="AsiUI_SysToolsBin" DllEntry="TcpIp_BindSocket" Execute="immediate" Return="ignore" />
+        <Binary Id="AsiUI_SysToolsBin" SourceFile="$(var.BinDir)\SystemTools.dll" />
+    </Fragment>
+</Wix>

@@ -1,0 +1,6 @@
+Id	ConnectionString
+s72	s0
+DatabaseConnectionString	Id
+LocalSQLServerConnection	Driver={SQL Server};Server=tcp:localhost,1433;Trusted_Connection=Yes;
+LocalSQLServerConnectionDemoDatabase	Driver={SQL Server};Server=tcp:localhost,1433;Trusted_Connection=Yes;Database=[MSSQL_DATABASE_NAME];
+AccessConnection	Driver={Microsoft Access Driver (*.mdb)};DBQ=[ACCESS_DATABASE_DBQ];

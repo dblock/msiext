@@ -1,0 +1,77 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<tableDefinitions xmlns="http://schemas.microsoft.com/wix/2006/tables">
+  <tableDefinition name="Win32_CopyFiles">
+    <columnDefinition name="Id" type="string" length="72" primaryKey="yes" modularize="column" category="identifier" />
+    <columnDefinition name="Source" type="localized" length="0" modularize="property" category="formatted" />
+    <columnDefinition name="Target" type="localized" length="0" modularize="property" category="formatted" />
+    <columnDefinition name="Wildcard" type="string" length="0" modularize="property" nullable="yes" category="formatted" />
+    <columnDefinition name="Overwrite" type="string" length="0" modularize="property" nullable="yes" category="formatted" />
+    <columnDefinition name="Condition" type="string" length="0" modularize="property" nullable="yes" category="formatted" />
+    <columnDefinition name="Attributes" type="number" length="2" nullable="yes" minValue="0" maxValue="127" />
+  </tableDefinition>
+  <tableDefinition name="Win32_MoveFiles">
+    <columnDefinition name="Id" type="string" length="72" primaryKey="yes" modularize="column" category="identifier" />
+    <columnDefinition name="Source" type="localized" length="0" modularize="property" category="formatted" />
+    <columnDefinition name="Target" type="localized" length="0" modularize="property" category="formatted" />
+    <columnDefinition name="Wildcard" type="string" length="0" modularize="property" nullable="yes" category="formatted" />
+    <columnDefinition name="Overwrite" type="string" length="0" modularize="property" nullable="yes" category="formatted" />
+    <columnDefinition name="Condition" type="string" length="0" modularize="property" nullable="yes" category="formatted" />
+    <columnDefinition name="Attributes" type="number" length="2" nullable="yes" minValue="0" maxValue="127" />
+  </tableDefinition>
+  <tableDefinition name="Win32_DeleteFiles">
+    <columnDefinition name="Id" type="string" length="72" primaryKey="yes" modularize="column" category="identifier" />
+    <columnDefinition name="File" type="localized" length="0" modularize="property" category="formatted" />
+    <columnDefinition name="Wildcard" type="string" length="0" modularize="property" nullable="yes" category="formatted" />
+    <columnDefinition name="Condition" type="string" length="0" modularize="property" nullable="yes" category="formatted" />
+    <columnDefinition name="Attributes" type="number" length="2" nullable="yes" minValue="0" maxValue="127" />
+  </tableDefinition>
+  <tableDefinition name="CompareVersions">
+    <columnDefinition name="Id" type="string" length="72" primaryKey="yes" modularize="column" category="identifier" />
+    <columnDefinition name="InstalledVersion" type="localized" length="0"  nullable="no" modularize="property" category="formatted" />
+    <columnDefinition name="MinimumVersion" type="localized" length="0" nullable="no" modularize="property" category="formatted" />
+    <columnDefinition name="MaximumVersion" type="localized" length="0" nullable="yes" modularize="property" category="formatted" />
+    <columnDefinition name="Property" type="string" length="72" nullable="no" modularize="column" category="identifier" />
+  </tableDefinition>
+  <tableDefinition name="Win32_Execute">
+    <columnDefinition name="Id" type="string" length="72" primaryKey="yes" modularize="column" category="identifier" />
+    <columnDefinition name="ComponentId" type="string" length="72" modularize="column" category="identifier" nullable="yes" />
+    <columnDefinition name="Condition" type="string" length="0" modularize="property" nullable="yes" category="formatted" />
+    <columnDefinition name="Directory" type="string" length="0" modularize="column" category="formatted" nullable="yes" />
+    <columnDefinition name="CommandLine" type="string" length="0" modularize="column" category="formatted" nullable="no" />
+    <columnDefinition name="ErrorMessage" type="string" length="255" modularize="column" category="formatted" nullable="yes" />
+    <columnDefinition name="ReturnCode" type="number" length="0" nullable="yes" />
+    <columnDefinition name="Attributes" type="number" length="2" nullable="yes" minValue="0" maxValue="127" description="1 == continue on error, etc." />
+  </tableDefinition>
+  <tableDefinition name="TemplateFiles">
+    <columnDefinition name="Id" type="string" length="72" primaryKey="yes" modularize="column" category="identifier" />
+    <columnDefinition name="ComponentId" type="string" length="72" modularize="column" category="identifier" nullable="yes" />
+    <columnDefinition name="Condition" type="string" length="0" modularize="property" nullable="yes" category="formatted" />
+    <columnDefinition name="Source" type="localized" length="0" modularize="property" category="formatted" />
+    <columnDefinition name="Target" type="localized" length="0" modularize="property" category="formatted" />
+    <columnDefinition name="Attributes" type="number" length="2" nullable="yes" minValue="0" maxValue="127" />
+  </tableDefinition>
+  <tableDefinition name="TemplateFileProperties">
+    <columnDefinition name="Id" type="string" length="72" primaryKey="yes" modularize="column" category="identifier" />
+    <columnDefinition name="TemplateFileId" type="string" length="72" modularize="column" category="identifier" keyTable="TemplateFiles" keyColumn="1" />
+    <columnDefinition name="Name" type="string" length="0" modularize="property" category="formatted" />
+    <columnDefinition name="Value" type="string" length="0" modularize="property" category="formatted" nullable="yes" />
+  </tableDefinition>
+  <tableDefinition name="RegistryCopy">
+    <columnDefinition name="Id" type="string" length="72" primaryKey="yes" modularize="column" category="identifier" />
+    <columnDefinition name="RegistryId" type="string" length="72" modularize="column" category="identifier" />
+    <columnDefinition name="TargetRoot" type="localized" length="0" modularize="property" category="formatted" />
+    <columnDefinition name="TargetPath" type="localized" length="0" modularize="property" category="formatted" />
+    <columnDefinition name="Condition" type="string" length="0" modularize="property" nullable="yes" category="formatted" />
+    <columnDefinition name="Attributes" type="number" length="2" nullable="yes" minValue="0" maxValue="127" />
+  </tableDefinition>
+  <!-- reserved for future use
+  <tableDefinition name="Win32_RegistryValues">
+    <columnDefinition name="Id" type="string" length="72" primaryKey="yes" modularize="column" category="identifier" />
+    <columnDefinition name="RegistryKeyId" type="string" length="72" modularize="column" category="identifier" />
+    <columnDefinition name="Name" type="localized" length="0" modularize="property" nullable="yes" category="formatted" />
+    <columnDefinition name="Value" type="localized" length="0" modularize="property" nullable="yes" category="formatted" />
+    <columnDefinition name="Condition" type="string" length="0" modularize="property" nullable="yes" category="formatted" />
+    <columnDefinition name="Attributes" type="number" length="2" nullable="yes" minValue="0" maxValue="127" />
+  </tableDefinition>
+  -->
+</tableDefinitions>

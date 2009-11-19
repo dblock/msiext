@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
+  <Fragment xmlns="http://schemas.microsoft.com/wix/2006/wi">
+
+    <Property Id="ODBC_CONNECTION_STRING" Hidden="yes" />
+
+    <UI>
+      <!--
+			Prompts for database creation credentials. 
+
+			\param CREATE_DATABASE_LOGON_TYPE one of WinAuthCurrentUser or SqlAuth
+      \param CHECK_CREATE_DATABASE_PERMS yes/no to check permission to create database 
+			\return CREATE_DATABASE_USERNAME database username (with SqlAuth)
+			\return CREATE_DATABASE_PASSWORD detabase password (with SqlAuth)   
+		-->
+      <Dialog Id="DbCreateCredDlg" Width="370" Height="270" Title="!(loc.DbCreateCredDlg_Header)">
+
+        <Control Id="Next" Type="PushButton" X="236" Y="243" Width="56" Height="17" Default="yes" Text="!(loc.WixUINext)">
+          <Publish Property="CREATE_DATABASE_LOGON_TYPE" Value="[CREATE_DATABASE_LOGON_TYPE]">1</Publish>
+          <Publish Property="CREATE_DATABASE_USERNAME" Value="[CREATE_DATABASE_USERNAME]">CREATE_DATABASE_LOGON_TYPE = "SqlAuth"</Publish>
+          <Publish Property="CREATE_DATABASE_PASSWORD" Value="[CREATE_DATABASE_PASSWORD]">CREATE_DATABASE_LOGON_TYPE = "SqlAuth"</Publish>
+
+          <Publish Property="CREATE_DATABASE_USERNAME">NOT CREATE_DATABASE_LOGON_TYPE = "SqlAuth"</Publish>
+          <Publish Property="CREATE_DATABASE_PASSWORD">NOT CREATE_DATABASE_LOGON_TYPE = "SqlAuth"</Publish>
+
+          <Condition Action="enable">LOGON_VALID = "1" </Condition>
+          <Condition Action="disable">LOGON_VALID = "0" </Condition>
+        </Control>
+
+        <Control Id="Back" Type="PushButton" X="180" Y="243" Width="56" Height="17" Text="!(loc.WixUIBack)" />
+        <Control Id="Cancel" Type="PushButton" X="304" Y="243" Width="56" Height="17" Cancel="yes" Text="!(loc.WixUICancel)">
+          <Publish Event="SpawnDialog" Value="CancelDlg">1</Publish>
+        </Control>
+
+        <Control Id="Title" Type="Text" X="15" Y="6" Width="200" Height="15" Transparent="yes" NoPrefix="yes" Text="!(loc.DbCreateCredDlg_Title)" />
+        <Control Id="SubTitle" Type="Text" X="25" Y="21" Width="220" Height="20" Transparent="yes" NoPrefix="yes" Text="!(loc.DbCreateCredDlg_SubTitle)" />
+        <Control Id="BannerBitmap" Type="Bitmap" X="0" Y="0" Width="370" Height="44" TabSkip="no" Text="!(loc.DbCreateCredDlg_BannerBitmap)" />
+        <Control Id="BannerLine" Type="Line" X="0" Y="44" Width="370" Height="0" />
+        <Control Id="BottomLine" Type="Line" X="0" Y="234" Width="370" Height="0" />
+
+        <Control Id="Description1" Type="Text" X="20" Y="55" Width="320" Height="30" Transparent="yes" Text="!(loc.DbCreateCredDlg_Description1)" />
+        <Control Id="Description" Type="Text" X="20" Y="85" Width="320" Height="30" Transparent="yes" Text="!(loc.DbCreateCredDlg_Description)" />
+
+        <Control Id="DatabaseLogonType" Type="RadioButtonGroup" X="20" Y="120" Width="330" Height="30" 
+                 Property="CREATE_DATABASE_LOGON_TYPE">
+          <RadioButtonGroup Property="CREATE_DATABASE_LOGON_TYPE">
+            <RadioButton Value="WinAuthCurrentUser" X="0" Y="0" Width="310" Height="15" Text="!(loc.DbCreateCredDlg_IntegratedAuth_CurrentUser)" />
+            <RadioButton Value="SqlAuth" X="0" Y="15" Width="330" Height="15" Text="!(loc.DbCreateCredDlg_PasswordAuth)" />
+          </RadioButtonGroup>
+          <Publish Property="LOGON_VALID" Value="0">1</Publish>
+
+        </Control>
+
+        <Control Id="UsernameLabel" Type="Text" X="50" Y="152" Width="50" Height="15" Text="!(loc.DbCreateCredDlg_UsernameLabel)">
+          <Publish Property="LOGON_VALID" Value="0">1</Publish>
+          <Condition Action="disable">NOT CREATE_DATABASE_LOGON_TYPE = "SqlAuth"</Condition>
+          <Condition Action="enable">CREATE_DATABASE_LOGON_TYPE = "SqlAuth"</Condition>
+        </Control>
+
+        <Control Id="Username" Type="Edit" X="110" Y="152" Width="150" Height="15" Property="CREATE_DATABASE_USERNAME" Text="{64}">
+          <Publish Property="LOGON_VALID" Value="0">1</Publish>
+          <Condition Action="disable">NOT CREATE_DATABASE_LOGON_TYPE = "SqlAuth"</Condition>
+          <Condition Action="enable">CREATE_DATABASE_LOGON_TYPE = "SqlAuth"</Condition>
+        </Control>
+
+        <Control Id="PasswordLabel" Type="Text" X="50" Y="170" Width="50" Height="15" Text="!(loc.DbCreateCredDlg_PasswordLabel)">
+          <Condition Action="disable">NOT CREATE_DATABASE_LOGON_TYPE = "SqlAuth"</Condition>
+          <Condition Action="enable">CREATE_DATABASE_LOGON_TYPE = "SqlAuth"</Condition>
+        </Control>
+        <Control Id="Password" Password="yes" Type="Edit" X="110" Y="170" Width="150" Height="15" Property="CREATE_DATABASE_PASSWORD">
+          <Publish Property="LOGON_VALID" Value="0">1</Publish>
+          <Condition Action="disable">NOT CREATE_DATABASE_LOGON_TYPE = "SqlAuth"</Condition>
+          <Condition Action="enable">CREATE_DATABASE_LOGON_TYPE = "SqlAuth"</Condition>
+        </Control>
+
+        <Control Id="TestButton" Type="PushButton" X="50" Y="200" Width="100" Height="15" Text="!(loc.DbCreateCredDlg_TestConnectionLabel)">
+          <!-- Clean up conditional properties -->
+          <Publish Property="ERROR_MESSAGE">1</Publish>
+          <Publish Property="ODBC_CONNECTION_ESTABLISHED">1</Publish>
+          <Publish Property="ODBC_SQL_RESULT" />
+
+          <Publish Property="ERROR_TITLE" Value="!(loc.InvalidLoginError_Title)">1</Publish>
+
+          <!-- for sql auth user should be not empty-->
+          <Publish Property="ERROR_MESSAGE" Value="Sql user cannot be empty">CREATE_DATABASE_LOGON_TYPE = "SqlAuth" AND NOT CREATE_DATABASE_USERNAME</Publish>
+
+          <!-- First check that connection can be established. 
+				     Use sql user/password for SqlAuth; impersonate as service user for WinAuthServiceUser. -->
+          <Publish Property="ODBC_CONNECTION_STRING" Value="Driver=SQL Server;Server=[ODBC_SERVER];Uid=[CREATE_DATABASE_USERNAME];Pwd=[CREATE_DATABASE_PASSWORD];DATABASE=master">NOT ERROR_MESSAGE AND CREATE_DATABASE_LOGON_TYPE = "SqlAuth"</Publish>
+          <Publish Property="ODBC_CONNECTION_STRING" Value="Driver=SQL Server;Server=[ODBC_SERVER];Trusted_Connection=Yes;DATABASE=master">NOT ERROR_MESSAGE AND NOT CREATE_DATABASE_LOGON_TYPE = "SqlAuth"</Publish>
+          <Publish Event="DoAction" Value="AsiUI_ODBC_Connect">NOT ERROR_MESSAGE</Publish>
+          <Publish Property="ERROR_MESSAGE" Value="[ODBC_ERROR]">NOT ERROR_MESSAGE AND NOT ODBC_CONNECTION_ESTABLISHED</Publish>
+          <Publish Property="ERROR_MESSAGE" Value="Cannot connect to database [ODBC_SERVER]">NOT ERROR_MESSAGE AND NOT ODBC_CONNECTION_ESTABLISHED</Publish>
+
+          <!-- check that we have the CREATE DATABASE permission 
+	                 (CREATE DATABASE=0x01) -->
+          <Publish Property="ODBC_SQL_FLAGS" Value="ODBC_SQL_FLAG_NO_ROWS_RETURN_EMPTY">NOT ERROR_MESSAGE AND CHECK_CREATE_DATABASE_PERMS = "yes"</Publish>
+          <Publish Property="ODBC_SQL_QUERY" Value="SELECT 'OK' WHERE (PERMISSIONS() &amp; 0x01) = 0x01">NOT ERROR_MESSAGE AND CHECK_CREATE_DATABASE_PERMS = "yes"</Publish>
+          <Publish Event="DoAction" Value="AsiUI_ODBC_GetString">NOT ERROR_MESSAGE AND CHECK_CREATE_DATABASE_PERMS = "yes"</Publish>
+          <Publish Property="ERROR_MESSAGE" Value="!(loc.DbCreateCredDlg_NoCREATE_DATABASEPermissions)">NOT ERROR_MESSAGE AND NOT ODBC_SQL_RESULT = "OK" AND CHECK_CREATE_DATABASE_PERMS = "yes"</Publish>
+
+          <Publish Event="SpawnDialog" Value="GenericErrorDlg">ERROR_MESSAGE</Publish>
+          <Publish Property="LOGON_VALID" Value="1">NOT ERROR_MESSAGE</Publish>
+
+        </Control>
+
+        <Control Id="TestResult_Success" Type="Icon" IconSize="16" X="165" Y="200" Width="12" Height="12" Text="AsiUI_SuccessIco">
+          <Condition Action="hide">LOGON_VALID = "0"</Condition>
+          <Condition Action="show">LOGON_VALID = "1"</Condition>
+        </Control>
+
+        <Control Id="TestResult_Failure" Type="Icon" IconSize="16" X="165" Y="200" Width="12" Height="12" Text="AsiUI_ErrorIco">
+          <Condition Action="hide">LOGON_VALID = "1"</Condition>
+          <Condition Action="show">LOGON_VALID = "0"</Condition>
+        </Control>
+
+        <Control Id="TestPrompt" Type="Text" X="185" Y="203" Width="187" Height="10" Text="!(loc.DbCreateCredDlg_TestPrompt)">
+          <Condition Action="hide">LOGON_VALID = "1"</Condition>
+          <Condition Action="show">LOGON_VALID = "0"</Condition>
+        </Control>
+
+      </Dialog>
+    </UI>
+  </Fragment>
+</Wix>

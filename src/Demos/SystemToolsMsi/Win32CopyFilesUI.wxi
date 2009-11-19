@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Include xmlns="http://schemas.microsoft.com/wix/2006/wi">
+    <Fragment>
+        <UI>
+            <Dialog Id="Win32CopyFilesDlg" Width="370" Height="270" Title="Copy Files">
+                <Control Id="Title" Type="Text" X="15" Y="5" Width="200" Height="15" Transparent="yes" NoPrefix="yes" Text="Copy Files" />
+                <Control Id="SubTitle" Type="Text" X="25" Y="21" Width="220" Height="20" Transparent="yes" NoPrefix="yes" Text="Please specify copy file options" />
+                <Control Id="BannerBitmap" Type="Bitmap" X="0" Y="0" Width="370" Height="44" TabSkip="no" Text="WixUI_Bmp_Banner" />
+                <Control Id="BannerLine" Type="Line" X="0" Y="44" Width="370" Height="0" />
+                <Control Id="BottomLine" Type="Line" X="0" Y="234" Width="370" Height="0" />
+                <Control Id="Back" Type="PushButton" X="180" Y="243" Width="56" Height="17" Text="Back" />
+                <Control Id="CopyConditionalCheckbox" Type="CheckBox" X="30" Y="100" Text="Copy conditional files" Height="17" Width="100" Property="COPY_CONDITIONAL" CheckBoxValue="1" />
+                <Control Id="Cancel" Type="PushButton" X="304" Y="243" Width="56" Height="17" Cancel="yes" Text="Cancel">
+                    <Publish Event="SpawnDialog" Value="CancelDlg">1</Publish>
+                </Control>
+                <Control Type="Text" Width="200" Height="17" X="30" Y="65" Id="LabelFileSize" Text="shell32.dll size: [SHELL32FILE_SIZE]" />
+                <Control Id="Next" Type="PushButton" X="236" Y="243" Width="56" Height="17" Default="yes" Text="!(loc.WixUINext)" />
+            </Dialog>
+        </UI>
+        <CustomAction Id="Win32_GetFileSize_SetFilename" Property="WIN32_FILENAME" Value="[SystemFolder]\shell32.dll" />
+        <CustomAction Id="Win32_GetFileSize_SetFormat" Property="WIN32_FILESIZE_FORMAT" Value="MB" />
+        <CustomAction Id="Win32_GetFileSize_SetPrecision" Property="WIN32_FILESIZE_PRECISION" Value="2" />
+        <CustomAction Id="Win32_FileSize" Property="SHELL32FILE_SIZE" Value="[WIN32_FILESIZE_FORMATTED]" />
+        <InstallUISequence>
+            <Custom Action="Win32_GetFileSize_SetFilename" After="AppSearch">1</Custom>
+            <Custom Action="Win32_GetFileSize_SetFormat" After="Win32_GetFileSize_SetFilename">1</Custom>
+            <Custom Action="Win32_GetFileSize_SetPrecision" After="Win32_GetFileSize_SetFormat">1</Custom>
+            <Custom Action="Win32_GetFileSize" After="Win32_GetFileSize_SetPrecision">1</Custom>
+            <Custom Action="Win32_FileSize" After="Win32_GetFileSize" />
+        </InstallUISequence>
+    </Fragment>
+</Include>

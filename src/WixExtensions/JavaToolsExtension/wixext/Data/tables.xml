@@ -1,0 +1,19 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<tableDefinitions xmlns="http://schemas.microsoft.com/wix/2006/tables">
+  <tableDefinition name="JavaArchive">
+    <columnDefinition name="Id" type="string" length="72" primaryKey="yes" modularize="column" category="identifier" />
+    <columnDefinition name="Operation" type="string" length="6" modularize="property" category="formatted" />
+    <columnDefinition name="ToolPath" type="string" length="255" modularize="property" category="formatted" nullable="yes" />
+    <columnDefinition name="Directory" type="string" length="255" modularize="property" category="formatted" />
+    <columnDefinition name="JarFile" type="string" length="255" modularize="property" category="formatted" />
+    <columnDefinition name="ManifestFile" type="string" length="255" modularize="property" category="formatted" nullable="yes" />
+    <columnDefinition name="Condition" type="string" length="0" modularize="property" nullable="yes" category="formatted" />
+  </tableDefinition>
+  <tableDefinition name="JavaArchiveFile">
+    <columnDefinition name="Id" type="string" length="72" primaryKey="yes" modularize="column" category="identifier" />
+    <columnDefinition name="JavaArchiveId" type="string" length="72" modularize="column" category="identifier" />
+    <columnDefinition name="Name" type="string" length="255" modularize="property" category="formatted" />
+    <columnDefinition name="Directory" type="string" length="255" modularize="property" category="formatted" nullable="yes" />
+    <columnDefinition name="Condition" type="string" length="0" modularize="property" nullable="yes" category="formatted" />
+  </tableDefinition>
+</tableDefinitions>

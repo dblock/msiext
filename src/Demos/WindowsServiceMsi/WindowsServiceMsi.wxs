@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?include ..\..\..\src\Version\Version.wxi ?>
+<?define BinDir=$(var.MSBuildProjectDirectory)\target\$(var.Configuration)\bin ?>
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi" xmlns:AppSecInc="http://schemas.appsecinc.com/wix/SystemToolsExtension">
+    <Product Id="2C32C77F-AAC1-4244-94A1-DF664C1CFC75" Name="Delete Windows Service MSI" Language="1033" Version="$(var.ProductVersion)" Manufacturer="$(var.CompanyName)" UpgradeCode="6894B3FD-3AA9-4149-B303-D3EBA00818D8">
+        <Package InstallerVersion="200" Compressed="yes" />
+        <Media Id="1" Cabinet="SystemToolsMsi.cab" EmbedCab="yes" />
+        <Binary Id="SystemTools" SourceFile="$(var.BinDir)\SystemTools.dll" />
+        <CustomAction Id="SetServiceName" Property="SERVICE_NAME" Value="AppSecInc Console" />
+        <CustomAction Id="SetServiceControlStop" Property="SERVICE_CONTROL" Value="SERVICE_CONTROL_STOP" />
+        <CustomAction Id="ControlService" BinaryKey="SystemTools" DllEntry="Service_Control" Execute="immediate" Return="check" />
+        <CustomAction Id="DeleteService" BinaryKey="SystemTools" DllEntry="Service_Delete" Execute="immediate" Return="check" />
+        <Directory Id="TARGETDIR" Name="SourceDir">
+            <Directory Id="INSTALLLOCATION" Name="WindowsServiceDemo">
+                <Component Id="WindowsServiceDemoComponent" Guid="756C58F3-013E-4b92-ABF7-093BD9175A18">
+                    <File Id="WindowsServiceMsi_wxs" Name="WindowsServiceMsi.wxs" Source="WindowsServiceMsi.wxs" />
+                </Component>
+            </Directory>
+        </Directory>
+        <Feature Id="ProductFeature" Title="Demo Feature" Level="1">
+            <ComponentRef Id="WindowsServiceDemoComponent" />
+        </Feature>
+        <InstallExecuteSequence>
+            <Custom Action="SetServiceName" After="InstallFiles">NOT Installed</Custom>
+            <Custom Action="SetServiceControlStop" After="SetServiceName">NOT Installed</Custom>
+            <Custom Action="ControlService" After="SetServiceControlStop">NOT Installed</Custom>
+            <Custom Action="DeleteService" After="ControlService">NOT Installed</Custom>
+        </InstallExecuteSequence>
+    </Product>
+</Wix>

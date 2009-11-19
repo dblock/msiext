@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?include ..\..\..\src\Version\Version.wxi ?>
+<?define BinDir=$(var.MSBuildProjectDirectory)\target\$(var.Configuration)\bin ?>
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi" xmlns:AppSecInc="http://schemas.appsecinc.com/wix/DataSourceExtension">
+    <Product Id="E502B9BE-ACDA-4e39-945D-D79251DBCA69" Name="Access Database Demo MSI" Language="1033" Version="$(var.ProductVersion)" Manufacturer="$(var.CompanyName)" UpgradeCode="FE80C0FC-4FD8-49e1-882F-7630E95FB068">
+        <Package InstallerVersion="200" Compressed="yes" />
+        <Media Id="1" Cabinet="AccessDatabaseMsi.cab" EmbedCab="yes" />
+        <Binary Id="DataSource" SourceFile="$(var.BinDir)\DataSource.dll" />
+        <!-- the local database connection -->
+        <AppSecInc:AccessDatabaseConnection Id="AccessConnection" DBQ="[ACCESS_DATABASE_DBQ]" />
+        <!-- the name of the database being created -->
+        <Property Id="ACCESS_DATABASE_DBQ" Value="AccessDemoDatabase.mdf">
+            <RegistrySearch Id="AccessDatabaseDBQSearch" Root="HKLM" Type="raw" Key="SOFTWARE\AppSecInc\AccessDatabaseMsi" Name="ACCESS_DATABASE_DBQ" />
+        </Property>
+        <Binary Id="Access_CreateTable_NotEncoded_sql" SourceFile="CreateTable_NotEncoded.sql" />
+        <Binary Id="Access_ExecuteManyGoStatements_sql" SourceFile="ExecuteManyGoStatements.sql" />
+        <Directory Id="TARGETDIR" Name="SourceDir">
+            <Directory Id="ProgramFilesFolder">
+                <Directory Id="INSTALLLOCATION" Name="AccessDatabaseDemo">
+                    <Component Id="AccessDatabaseMsiComponent" Guid="D2CF0414-4650-4192-8A6F-41F1FB31C290">
+                        <File Id="AccessDatabaseMsi_wxs" Name="AccessDatabaseMsi.wxs" Source="AccessDatabaseMsi.wxs" />
+                        <!-- a demo database -->
+                        <AppSecInc:AccessDatabase Id="AccessDemoDatabase" DBQ="[ACCESS_DATABASE_DBQ]" ConnectionId="AccessConnection" CreateOnInstall="yes" DropOnUnInstall="yes">
+                            <AppSecInc:ODBCExecute Id="AccessDemoDatabase_CreateTable1" Sql="CREATE TABLE Table1 ( Table1_Id INTEGER NOT NULL )" ExecuteOnInstall="yes" OutputFilename="[INSTALLLOCATION]CreateTable1.xml" />
+                            <AppSecInc:ODBCExecute Id="AccessDemoDatabase_DropTable1" Sql="DROP TABLE Table1" ExecuteOnUnInstall="yes" />
+                            <!-- a binary sql that has properties and is evaluated -->
+                            <AppSecInc:ODBCExecuteBinary Id="AccessDemoDatabase_CreateTable_Encoded" ExecuteOnInstall="yes" EvaluateProperties="yes" BinaryId="Access_CreateTable_NotEncoded_sql" />
+                        </AppSecInc:AccessDatabase>
+                        <!-- a binary sql that is split and evaluated statement by statement -->
+                        <AppSecInc:ODBCExecuteBinary Id="AccessDemoDatabase_ExecuteManyGOStatements" ConnectionId="AccessConnection" BinaryId="Access_ExecuteManyGoStatements_sql" EvaluateProperties="no" Delimiter="GO" ExecuteOnInstall="yes" />
+                        <!-- a data source for this database -->
+                        <AppSecInc:AccessDataSource Id="AccessDemoDatabase_DataSource" CreateOnInstall="yes" DBQ="[ACCESS_DATABASE_DBQ]" Name="AccessDemoDatabase" Type="system" Description="Access Demo DSN" DeleteOnUnInstall="yes" />
+                    </Component>
+                    <Component Id="AccessDatabaseMsiRegistry" Guid="9B3E538F-8C30-4c68-8C00-97B1FA14522A">
+                        <RegistryKey Id="AccessDatabaseMsiRegistryKey" Root="HKLM" Key="Software\AppSecInc\AccessDatabaseMsi" Action="createAndRemoveOnUninstall">
+                            <RegistryValue Id="AccessDatabaseMsiRegistryKey_Access_DATABASE_DBQ" Name="ACCESS_DATABASE_DBQ" Value="[ACCESS_DATABASE_DBQ]" Type="string" />
+                        </RegistryKey>
+                    </Component>
+                </Directory>
+            </Directory>
+        </Directory>
+        <Feature Id="ProductFeature" Title="Demo Feature" Level="1">
+            <ComponentRef Id="AccessDatabaseMsiComponent" />
+            <ComponentRef Id="AccessDatabaseMsiRegistry" />
+        </Feature>
+        <UIRef Id="AccessDatabaseUI" />
+        <UI Id="AccessDatabaseUI">
+            <TextStyle Id="WixUI_Font_Normal" FaceName="Tahoma" Size="8" />
+            <TextStyle Id="WixUI_Font_Bigger" FaceName="Tahoma" Size="12" />
+            <TextStyle Id="WixUI_Font_Title" FaceName="Tahoma" Size="9" Bold="yes" />
+            <Property Id="DefaultUIFont" Value="WixUI_Font_Normal" />
+            <Property Id="WixUI_Mode" Value="InstallDir" />
+            <Property Id="ARPNOMODIFY" Value="1" />
+            <DialogRef Id="ErrorDlg" />
+            <DialogRef Id="FatalError" />
+            <DialogRef Id="FilesInUse" />
+            <DialogRef Id="MsiRMFilesInUse" />
+            <DialogRef Id="PrepareDlg" />
+            <DialogRef Id="ProgressDlg" />
+            <DialogRef Id="ResumeDlg" />
+            <DialogRef Id="UserExit" />
+            <DialogRef Id="AccessDatabaseDlg" />
+            <Publish Dialog="ExitDialog" Control="Finish" Event="EndDialog" Value="Return" Order="999">1</Publish>
+            <Publish Dialog="WelcomeDlg" Control="Next" Event="NewDialog" Value="AccessDatabaseDlg">1</Publish>
+            <Publish Dialog="AccessDatabaseDlg" Control="Back" Event="NewDialog" Value="MaintenanceTypeDlg" Order="1">Installed</Publish>
+            <Publish Dialog="AccessDatabaseDlg" Control="Back" Event="NewDialog" Value="WelcomeDlg" Order="2">NOT Installed</Publish>
+            <Publish Dialog="AccessDatabaseDlg" Control="Next" Event="NewDialog" Value="VerifyReadyDlg" Order="2">1</Publish>
+            <Publish Dialog="VerifyReadyDlg" Control="Back" Event="NewDialog" Value="AccessDatabaseDlg" Order="1">NOT Installed OR WixUI_InstallMode="Change"</Publish>
+            <Publish Dialog="MaintenanceTypeDlg" Control="Back" Event="NewDialog" Value="MaintenanceWelcomeDlg">1</Publish>
+        </UI>
+        <UIRef Id="WixUI_Common" />
+    </Product>
+    <?include AccessDatabaseUI.wxi ?>
+</Wix>

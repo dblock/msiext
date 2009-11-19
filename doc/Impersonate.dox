@@ -1,0 +1,16 @@
+/*! \page impersonate Impersonation in Immediate Custom Actions
+
+Several immediate custom actions support impersonation. A user context may be impersonated before the custom action 
+is executed. Impersonation will happen if the following properties are set.
+
+\li \b IMPERSONATE_USERNAME: username to impersonate (may include domain name, domainname\\username or username@domain)
+\li \b IMPERSONATE_PASSWORD: password
+\li \b IMPERSONATE_LOGON_TYPE: impersonate logon type, default is LOGON32_LOGON_INTERACTIVE
+\li \b IMPERSONATE_LOGON_PROVIDER: impersonate logon provider, default is LOGON32_PROVIDER_DEFAULT
+
+Impersonation performs a logon and calls the impersonate API. Once the custom action has completed, with or without error,
+the context is reverted. If impersonation fails, the CA_ERROR property is set.
+
+For a list of valid logon types and logon providers, refer to http://msdn.microsoft.com/en-us/library/aa378184(VS.85).aspx
+
+*/

@@ -1,0 +1,17 @@
+LIBRARY	UserPrivileges
+
+;DESCRIPTION "Application Security Inc. Custom Action Library - Users and Privileges"
+
+EXPORTS
+	
+	CheckCredentials
+	CheckPrivilege
+	CheckMembership
+	GetUserInfo
+	GetUserNameFormatted
+	LocalUsers_Immediate
+	LocalGroups_Immediate
+	LocalGroupMembers_Immediate
+	LocalUsers_Deferred
+	LocalGroups_Deferred
+	LocalGroupMembers_Deferred

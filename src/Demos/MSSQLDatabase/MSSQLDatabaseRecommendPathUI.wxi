@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Include xmlns="http://schemas.microsoft.com/wix/2006/wi">
+    <Fragment>
+        <UI>
+            <Dialog Id="CaErrorDlg" Width="260" Height="85" Title="Error">
+                <Control Id="Return" Type="PushButton" X="102" Y="57" Width="56" Height="17" Default="yes" Cancel="yes" Text="OK">
+                    <Publish Event="EndDialog" Value="Return">1</Publish>
+                </Control>
+                <Control Id="Text" Type="Text" X="48" Y="15" Width="194" Height="30" Text="[CA_ERROR]" />
+                <Control Id="Icon" Type="Icon" X="15" Y="15" Width="24" Height="24" FixedSize="yes" IconSize="32" Text="WixUI_Ico_Exclam" />
+            </Dialog>
+            <Dialog Id="MSSQLDatabaseRecommendPathDlg" Width="370" Height="270" Title="Database Path Options">
+                <Control Id="Title" Type="Text" X="15" Y="5" Width="200" Height="15" Transparent="yes" NoPrefix="yes" Text="Database Options" />
+                <Control Id="SubTitle" Type="Text" X="25" Y="21" Width="220" Height="20" Transparent="yes" NoPrefix="yes" Text="Please specify database creation options" />
+                <Control Id="BannerBitmap" Type="Bitmap" X="0" Y="0" Width="370" Height="44" TabSkip="no" Text="WixUI_Bmp_Banner" />
+                <Control Id="BannerLine" Type="Line" X="0" Y="44" Width="370" Height="0" />
+                <Control Id="BottomLine" Type="Line" X="0" Y="234" Width="370" Height="0" />
+                <Control Id="Back" Type="PushButton" X="180" Y="243" Width="56" Height="17" Text="Back" />
+                <Control Id="DatabaseMDFPathLabel" Type="Text" X="20" Y="85" Height="15" Width="150" Text="Database data file path:" />
+                <Control Id="DatabaseMDFPath" Type="Edit" X="30" Y="100" Height="17" Width="320" Property="MSSQL_DATABASE_MDF_PATH" />
+                <Control Id="DatabaseLDFPathLabel" Type="Text" X="20" Y="120" Height="15" Width="150" Text="Database log file path:" />
+                <Control Id="DatabaseLDFPath" Type="Edit" X="30" Y="135" Height="17" Width="320" Property="MSSQL_DATABASE_LDF_PATH" />
+                <Control Id="RecommendPath" Type="PushButton" X="40" Y="155" Width="100" Height="17" Text="Recommend Path">
+                    <Publish Property="ODBC_CONNECTION_STRING" Value="Driver=SQL Server;Server=.;Trusted_Connection=yes;" Order="1">1</Publish>
+                    <Publish Property="ODBC_SQL_QUERY" Value="DECLARE @data_dir varchar(500); EXECUTE master.dbo.xp_instance_regread 'HKEY_LOCAL_MACHINE', 'SOFTWARE\Microsoft\MSSQLServer\Setup', 'SQLDataRoot', @param = @data_dir OUTPUT; SELECT @data_dir" Order="1">1</Publish>
+                    <Publish Event="DoAction" Value="ODBC_GetString" Order="3">1</Publish>
+                    <Publish Property="MSSQL_DATABASE_MDF_PATH" Value="[ODBC_SQL_RESULT]\[MSSQL_DATABASE_NAME].mdf" Order="4">1</Publish>
+                    <Publish Property="MSSQL_DATABASE_LDF_PATH" Value="[ODBC_SQL_RESULT]\[MSSQL_DATABASE_NAME].ldf" Order="4">1</Publish>
+                    <Publish Event="SpawnDialog" Value="CaErrorDlg" Order="5"><![CDATA[CA_ERROR]]></Publish>
+                </Control>
+                <Control Id="Cancel" Type="PushButton" X="304" Y="243" Width="56" Height="17" Cancel="yes" Text="Cancel">
+                    <Publish Event="SpawnDialog" Value="CancelDlg">1</Publish>
+                </Control>
+                <Control Id="Next" Type="PushButton" X="236" Y="243" Width="56" Height="17" Default="yes" Text="!(loc.WixUINext)" />
+            </Dialog>
+        </UI>
+        <CustomAction Id="SetDefaultMDFPath" Property="MSSQL_DATABASE_MDF_PATH" Value="[INSTALLLOCATION]\[MSSQL_DATABASE_NAME].mdf" Execute="immediate" />
+        <CustomAction Id="SetDefaultLDFPath" Property="MSSQL_DATABASE_LDF_PATH" Value="[INSTALLLOCATION]\[MSSQL_DATABASE_NAME].ldf" Execute="immediate" />
+        <InstallExecuteSequence>
+            <Custom Action="SetDefaultMDFPath" After="CostFinalize">NOT MSSQL_DATABASE_MDF_PATH</Custom>
+            <Custom Action="SetDefaultLDFPath" After="SetDefaultMDFPath">NOT MSSQL_DATABASE_LDF_PATH</Custom>
+        </InstallExecuteSequence>
+    </Fragment>
+</Include>

@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Table>
+  <Row>
+    <!-- InstalledVersion = MinimumVersion (3.8.0 =? 3.8.0) -->
+    <Data Column="Id">TestVersionCompare_380</Data>
+    <Data Column="InstalledVersion">3.8.0</Data>
+    <Data Column="MinimumVersion">3.8.0</Data>
+    <Data Column="Property">VERSIONPROPERTY_380_380</Data>
+  </Row>
+  <Row>
+    <!-- InstalledVersion > MinimumVersion (3.8.1 >? 3.8.0) -->
+    <Data Column="Id">TestVersionCompare</Data>
+    <Data Column="InstalledVersion">3.8.1</Data>
+    <Data Column="MinimumVersion">3.8.0</Data>
+    <Data Column="Property">VERSIONPROPERTY_381_380</Data>
+  </Row>
+  <!-- InstalledVersion > MinimumVersion (3.9.0 >? 3.8.0) -->
+  <Row>
+    <Data Column="Id">TestVersionCompare</Data>
+    <Data Column="InstalledVersion">3.9.0</Data>
+    <Data Column="MinimumVersion">3.8.0</Data>
+    <Data Column="Property">VERSIONPROPERTY_390_380</Data>
+  </Row>
+  <!-- InstalledVersion > MinimumVersion (4.0.0 >? 3.8.0) -->
+  <Row>
+    <Data Column="Id">TestVersionCompare</Data>
+    <Data Column="InstalledVersion">4.0.0</Data>
+    <Data Column="MinimumVersion">3.8.0</Data>
+    <Data Column="Property">VERSIONPROPERTY_400_380</Data>
+  </Row>
+  <!-- InstalledVersion > MinimumVersion (3.8.0 >? 4.8.0) -->
+  <Row>
+    <Data Column="Id">TestVersionCompare</Data>
+    <Data Column="InstalledVersion">3.8.0</Data>
+    <Data Column="MinimumVersion">4.8.0</Data>
+    <Data Column="Property">VERSIONPROPERTY_380_480</Data>
+  </Row>
+  <!-- InstalledVersion > MinimumVersion (3.8.18 >? 3.8) -->
+  <Row>
+    <Data Column="Id">TestVersionCompare</Data>
+    <Data Column="InstalledVersion">3.8.18</Data>
+    <Data Column="MinimumVersion">3.8</Data>
+    <Data Column="Property">VERSIONPROPERTY_3818_38</Data>
+  </Row>
+  <!-- MinimumVersion <= InstalledVersion <= MaximumVersion (3.8.0 <= 3.8.0 <= 3.8.0) -->
+  <Row>
+    <Data Column="Id">TestVersionCompare</Data>
+    <Data Column="InstalledVersion">3.8.0</Data>
+    <Data Column="MinimumVersion">3.8.0</Data>
+    <Data Column="MaximumVersion">3.8.0</Data>
+    <Data Column="Property">VERSIONPROPERTY_380_380_380</Data>
+  </Row>
+  <!-- MinimumVersion <= InstalledVersion <= MaximumVersion (3.8.0 <= 3.8.1 <= 3.8.2) -->
+  <Row>
+    <Data Column="Id">TestVersionCompare</Data>
+    <Data Column="InstalledVersion">3.8.1</Data>
+    <Data Column="MinimumVersion">3.8.0</Data>
+    <Data Column="MaximumVersion">3.8.2</Data>
+    <Data Column="Property">VERSIONPROPERTY_381_380_382</Data>
+  </Row>
+  <!-- MinimumVersion <= InstalledVersion <= MaximumVersion (3.8.0 <= 3.8.3 <= 3.8.2) -->
+  <Row>
+    <Data Column="Id">TestVersionCompare</Data>
+    <Data Column="InstalledVersion">3.8.3</Data>
+    <Data Column="MinimumVersion">3.8.0</Data>
+    <Data Column="MaximumVersion">3.8.2</Data>
+    <Data Column="Property">VERSIONPROPERTY_380_383_382</Data>
+  </Row>
+</Table>
