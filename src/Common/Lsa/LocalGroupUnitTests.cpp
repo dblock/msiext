@@ -6,6 +6,9 @@
 using namespace AppSecInc::LSA;
 using namespace AppSecInc::UnitTests::LSA;
 
+#define UnitTest_DomainUser_Netbios _T("NYCAPT35K\\buildapp")
+#define UnitTest_DomainUser_Dns _T("nycapt35k.com\\buildapp")
+
 CPPUNIT_TEST_SUITE_REGISTRATION(GroupUnitTests);
 
 void GroupUnitTests::testCreate()
@@ -105,8 +108,8 @@ void GroupUnitTests::testDomainMember()
 {
 	CPPUNIT_IGNORE(NetSetupDomainName != AppSecInc::Net::DirectoryServices::GetJoinStatus().join_status);
 
-	std::wstring username = L"NETBIOSDOMAIN\\Administrator";
-	std::wstring dns_username = L"dnsdomain.com\\Administrator";
+	std::wstring username = UnitTest_DomainUser_Netbios;
+	std::wstring dns_username = UnitTest_DomainUser_Dns;
 	std::wstring groupname = AppSecInc::Com::GenerateGUIDStringW();
     LocalGroup::Create(groupname);
     CPPUNIT_ASSERT(! LocalGroup::IsMember(groupname, username));

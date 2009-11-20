@@ -6,7 +6,7 @@ using namespace AppSecInc::LSA;
 using namespace AppSecInc::UnitTests::LSA;
 
 #define UnitTest_User _T("AccountUnitTest_User")
-#define UnitTest_DomainUser _T("domain\\user")
+#define UnitTest_DomainUser _T("nycapt35k.com\\buildapp")
 #define UnitTest_Password _T("Password123!%")
 
 CPPUNIT_TEST_SUITE_REGISTRATION(AccountUnitTests);
