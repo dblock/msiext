@@ -40,6 +40,9 @@ class CPPUNIT_API Message
 public:
   Message();
 
+  // Ensure thread-safe copy by detaching the string.
+  Message( const Message &other );
+
   explicit Message( const std::string &shortDescription );
 
   Message( const std::string &shortDescription,
@@ -53,6 +56,8 @@ public:
            const std::string &detail1,
            const std::string &detail2,
            const std::string &detail3 );
+
+  Message &operator =( const Message &other );
 
   /*! \brief Returns the short description.
    * \return Short description.
@@ -126,7 +131,6 @@ public:
    * \return \c true if the two message are identical, \c false otherwise.
    */
   bool operator ==( const Message &other ) const;
-
 
   /*! \brief Tests if a message is different from another one.
    * \param other Message this message is compared to.

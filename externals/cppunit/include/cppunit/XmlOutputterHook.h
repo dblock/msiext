@@ -129,7 +129,7 @@ public:
 
   /*! Called after adding a fail test element.
    * \param document XML Document being created.
-   * \param testElement <FailedTest> element.
+   * \param testElement \<FailedTest\> element.
    * \param test Test that failed.
    * \param failure Test failure data.
    */
@@ -140,7 +140,7 @@ public:
 
   /*! Called after adding a successful test element.
    * \param document XML Document being created.
-   * \param testElement <Test> element.
+   * \param testElement \<Test\> element.
    * \param test Test that was successful.
    */
   virtual void successfulTestAdded( XmlDocument *document,
@@ -149,10 +149,12 @@ public:
 
   /*! Called after adding the statistic element.
    * \param document XML Document being created.
-   * \param statisticsElement <Statistics> element.
+   * \param statisticsElement \<Statistics\> element.
    */
   virtual void statisticsAdded( XmlDocument *document,
                                 XmlElement *statisticsElement );
+
+  virtual ~XmlOutputterHook() {}
 };
 
 

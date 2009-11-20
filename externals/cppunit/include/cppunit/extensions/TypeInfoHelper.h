@@ -6,6 +6,7 @@
 #if CPPUNIT_HAVE_RTTI
 
 #include <typeinfo>
+#include <string>
 
 CPPUNIT_NS_BEGIN
 

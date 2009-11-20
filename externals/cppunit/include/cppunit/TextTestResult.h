@@ -3,7 +3,7 @@
 
 #include <cppunit/TestResult.h>
 #include <cppunit/TestResultCollector.h>
-#include <iostream>
+#include <cppunit/portability/Stream.h>
 
 CPPUNIT_NS_BEGIN
 
@@ -25,12 +25,12 @@ public:
 
   virtual void addFailure( const TestFailure &failure );
   virtual void startTest( Test *test );
-  virtual void print( std::ostream &stream );
+  virtual void print( OStream &stream );
 };
 
 /** insertion operator for easy output */
-CPPUNIT_API std::ostream &operator <<( std::ostream &stream, 
-                                       TextTestResult &result );
+CPPUNIT_API OStream &operator <<( OStream &stream, 
+                                  TextTestResult &result );
 
 CPPUNIT_NS_END
 

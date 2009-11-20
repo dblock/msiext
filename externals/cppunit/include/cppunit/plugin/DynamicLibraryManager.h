@@ -2,6 +2,7 @@
 #define CPPUNIT_PLUGIN_DYNAMICLIBRARYMANAGER_H
 
 #include <cppunit/Portability.h>
+#include <string>
 
 #if !defined(CPPUNIT_NO_TESTPLUGIN)
 

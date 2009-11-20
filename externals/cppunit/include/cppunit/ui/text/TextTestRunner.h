@@ -78,6 +78,10 @@ public:
 
   TestResult &eventManager() const;
 
+public: // overridden from TestRunner (to avoid hidden virtual function warning)
+  virtual void run( TestResult &controller,
+                    const std::string &testPath = "" );
+
 protected:
   virtual void wait( bool doWait );
   virtual void printResult( bool doPrintResult );

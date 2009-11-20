@@ -3,7 +3,7 @@
 
 #include <cppunit/Portability.h>
 #include <cppunit/Outputter.h>
-#include <iostream>
+#include <cppunit/portability/Stream.h>
 
 CPPUNIT_NS_BEGIN
 
@@ -64,7 +64,7 @@ public:
    * \see setLocationFormat().
    */
   CompilerOutputter( TestResultCollector *result,
-                     std::ostream &stream,
+                     OStream &stream,
                      const std::string &locationFormat = CPPUNIT_COMPILER_LOCATION_FORMAT );
 
   /// Destructor.
@@ -85,12 +85,12 @@ public:
    * Some examples:
    *
    * - VC++ error location format: "%p(%l):" => produce "G:\prg\MyTest.cpp(43):"
-   * - GCC error location format: "%f:%l:" => produce "MyTest.cpp(43):"
+   * - GCC error location format: "%f:%l:" => produce "MyTest.cpp:43:"
    * 
    * Thoses are the two compilers currently <em>supported</em> (gcc format is used if
    * VC++ is not detected). If you want your compiler to be automatically supported by
    * CppUnit, send a mail to the mailing list (preferred), or submit a feature request
-   * that indicates how to detect your compiler with the preprocessor (#ifdef...) and
+   * that indicates how to detect your compiler with the preprocessor (\#ifdef...) and
    * your compiler location format.
    */
   void setLocationFormat( const std::string &locationFormat );
@@ -100,7 +100,7 @@ public:
    *             Use CompilerOutputter::CompilerOutputter instead.
    */
   static CompilerOutputter *defaultOutputter( TestResultCollector *result,
-                                              std::ostream &stream );
+                                              OStream &stream );
 
   void write();
 
@@ -134,7 +134,7 @@ private:
 
 private:
   TestResultCollector *m_result;
-  std::ostream &m_stream;
+  OStream &m_stream;
   std::string m_locationFormat;
   int m_wrapColumn;
 };

@@ -10,6 +10,7 @@
 
 #include <cppunit/SynchronizedObject.h>
 #include <cppunit/portability/CppUnitDeque.h>
+#include <string>
 
 CPPUNIT_NS_BEGIN
 

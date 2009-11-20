@@ -7,16 +7,20 @@
 
 /* include platform specific config */
 #if defined(__BORLANDC__)
-#    include <cppunit/config/config-bcb5.h>
+#  include <cppunit/config/config-bcb5.h>
 #elif defined (_MSC_VER)
+#  if _MSC_VER == 1200 && defined(_WIN32_WCE) //evc4
+#    include <cppunit/config/config-evc4.h>
+#  else
 #    include <cppunit/config/config-msvc6.h>
+#  endif
 #else
 #    include <cppunit/config-auto.h>
 #endif
 
 // Version number of package
 #ifndef CPPUNIT_VERSION 
-#define CPPUNIT_VERSION  "1.10.2"
+#define CPPUNIT_VERSION  "1.12.0"
 #endif
  
 #include <cppunit/config/CppUnitApi.h>    // define CPPUNIT_API & CPPUNIT_NEED_DLL_DECL
@@ -75,7 +79,12 @@
 // If not define, assumes that it's gcc
 // See class CompilerOutputter for format.
 #if !defined(CPPUNIT_COMPILER_LOCATION_FORMAT)
+#if defined(__GNUC__) && ( defined(__APPLE_CPP__) || defined(__APPLE_CC__) )
+// gcc/Xcode integration on Mac OS X
+# define CPPUNIT_COMPILER_LOCATION_FORMAT "%p:%l: " 
+#else
 # define CPPUNIT_COMPILER_LOCATION_FORMAT "%f:%l:"
+#endif
 #endif
 
 // If CPPUNIT_HAVE_CPP_CAST is defined, then c++ style cast will be used,
@@ -164,50 +173,5 @@
 #if !defined(CPPUNIT_WRAP_COLUMN)
 # define CPPUNIT_WRAP_COLUMN 79
 #endif
-
-
-/* perform portability hacks */
-
-
-/* Define CPPUNIT_SSTREAM as a stream with a "std::string str()"
- * method.
- */
-#if CPPUNIT_HAVE_SSTREAM
-# include <sstream>
-    CPPUNIT_NS_BEGIN
-
-    typedef std::ostringstream OStringStream;
-
-    CPPUNIT_NS_END
-#elif CPPUNIT_HAVE_CLASS_STRSTREAM
-# include <string>
-# if CPPUNIT_HAVE_STRSTREAM
-#   include <strstream>
-# else // CPPUNIT_HAVE_STRSTREAM
-#  include <strstream.h>
-# endif // CPPUNIT_HAVE_CLASS_STRSTREAM
-
-    CPPUNIT_NS_BEGIN
-
-      class OStringStream : public std::ostrstream 
-      {
-      public:
-          std::string str()
-          {
-//            (*this) << '\0';
-//            std::string msg(std::ostrstream::str());
-//            std::ostrstream::freeze(false);
-//            return msg;
-// Alternative implementation that don't rely on freeze which is not
-// available on some platforms:
-            return std::string( std::ostrstream::str(), pcount() );
-          }
-      };
-
-    CPPUNIT_NS_END
-#else // CPPUNIT_HAVE_CLASS_STRSTREAM
-#   error Cannot define CppUnit::OStringStream.
-#endif // CPPUNIT_HAVE_SSTREAM
-
 
 #endif // CPPUNIT_PORTABILITY_H

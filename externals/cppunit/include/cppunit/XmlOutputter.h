@@ -11,7 +11,7 @@
 #include <cppunit/Outputter.h>
 #include <cppunit/portability/CppUnitDeque.h>
 #include <cppunit/portability/CppUnitMap.h>
-#include <iostream>
+#include <cppunit/portability/Stream.h>
 
 
 CPPUNIT_NS_BEGIN
@@ -45,7 +45,7 @@ public:
    * \param encoding Encoding used in the XML file (default is Latin-1). 
    */
   XmlOutputter( TestResultCollector *result,
-                std::ostream &stream,
+                OStream &stream,
                 std::string encoding = std::string("ISO-8859-1") );
 
   /// Destructor.
@@ -75,6 +75,15 @@ public:
    */
   virtual void setStyleSheet( const std::string &styleSheet );
 
+  /*! \brief set the output document as standalone or not.
+   *
+   *  For the output document, specify wether it's a standalone XML
+   *  document, or not.
+   *
+   *  \param standalone if true, the output will be specified as standalone.
+   *         if false, it will be not.
+   */
+  virtual void setStandalone( bool standalone );
 
   typedef CppUnitMap<Test *,TestFailure*, std::less<Test*> > FailedTests;
 
@@ -131,7 +140,7 @@ protected:
   typedef CppUnitDeque<XmlOutputterHook *> Hooks;
 
   TestResultCollector *m_result;
-  std::ostream &m_stream;
+  OStream &m_stream;
   std::string m_encoding;
   std::string m_styleSheet;
   XmlDocument *m_xml;

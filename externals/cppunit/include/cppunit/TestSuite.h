@@ -30,7 +30,7 @@ CPPUNIT_NS_BEGIN
  * suite->addTest(new CppUnit::TestCaller<MathTest> (
  *                  "testDivideByZero", testDivideByZero));
  * \endcode
- * Note that \link TestSuite TestSuites assume lifetime
+ * Note that \link TestSuite TestSuites \endlink assume lifetime
  * control for any tests added to them.
  *
  * TestSuites do not register themselves in the TestRegistry.

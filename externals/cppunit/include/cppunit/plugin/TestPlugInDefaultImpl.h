@@ -18,7 +18,7 @@ class TestSuite;
  *
  * Override getSuiteName() to specify the suite name. Default is "All Tests".
  *
- * CppUnitTestPlugIn::::getTestSuite() returns a suite that contains
+ * CppUnitTestPlugIn::getTestSuite() returns a suite that contains
  * all the test registered to the default test factory registry 
  * ( TestFactoryRegistry::getRegistry() ).
  *

@@ -3,7 +3,7 @@
 
 #include <cppunit/Portability.h>
 #include <cppunit/Outputter.h>
-#include <iostream>
+#include <cppunit/portability/Stream.h>
 
 CPPUNIT_NS_BEGIN
 
@@ -21,7 +21,7 @@ class CPPUNIT_API TextOutputter : public Outputter
 {
 public:
   TextOutputter( TestResultCollector *result,
-                 std::ostream &stream );
+                 OStream &stream );
 
   /// Destructor.
   virtual ~TextOutputter();
@@ -42,7 +42,7 @@ public:
 
 protected:
   TestResultCollector *m_result;
-  std::ostream &m_stream;
+  OStream &m_stream;
 
 private:
   /// Prevents the use of the copy constructor.

@@ -21,6 +21,8 @@ class XmlElement;
  *
  * A XmlDocument represents a XML file. It holds a pointer on the root XmlElement
  * of the document. It also holds the encoding and style sheet used.
+ *
+ * By default, the XML document is stand-alone and tagged with enconding "ISO-8859-1".
  */
 class CPPUNIT_API XmlDocument
 {
@@ -42,6 +44,18 @@ public:
   std::string styleSheet() const;
   void setStyleSheet( const std::string &styleSheet = "" );
 
+  bool standalone() const;
+
+  /*! \brief set the output document as standalone or not.
+   *
+   *  For the output document, specify wether it's a standalone XML
+   *  document, or not.
+   *
+   *  \param standalone if true, the output will be specified as standalone.
+   *         if false, it will be not.
+   */
+  void setStandalone( bool standalone );
+ 
   void setRootElement( XmlElement *rootElement );
   XmlElement &rootElement() const;
 
@@ -58,6 +72,7 @@ protected:
   std::string m_encoding;
   std::string m_styleSheet;
   XmlElement *m_rootElement;
+  bool m_standalone;
 };
 
 

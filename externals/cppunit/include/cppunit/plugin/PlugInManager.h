@@ -41,7 +41,7 @@ public:
    * \param parameters List of string passed to the plug-in.
    * \return Pointer on the DynamicLibraryManager associated to the library.
    *         Valid until the library is unloaded. Never \c NULL.
-   * \exception DynamicLibraryManager is thrown if an error occurs during loading.
+   * \exception DynamicLibraryManagerException is thrown if an error occurs during loading.
    */
   void load( const std::string &libraryFileName,
              const PlugInParameters &parameters = PlugInParameters() );

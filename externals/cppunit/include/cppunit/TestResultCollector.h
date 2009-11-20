@@ -61,6 +61,8 @@ public:
   virtual const Tests &tests() const;
 
 protected:
+  void freeFailures();
+
   Tests m_tests;
   TestFailures m_failures;
   int m_testErrors;

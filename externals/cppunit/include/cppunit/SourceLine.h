@@ -32,8 +32,13 @@ class CPPUNIT_API SourceLine
 public:
   SourceLine();
 
+  // Ensure thread-safe copy by detaching the string buffer.
+  SourceLine( const SourceLine &other );
+
   SourceLine( const std::string &fileName,
               int lineNumber );
+
+  SourceLine &operator =( const SourceLine &other );
 
   /// Destructor.
   virtual ~SourceLine();
