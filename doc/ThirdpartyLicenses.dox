@@ -2,30 +2,27 @@
 
 \section thirdpartylicenses_intro Third-Party Licenses
 
-MSI Extensions use several 3rd party components used under the following licenses.
+MSI Extensions compile with several 3rd party components used under the following licenses.
 
 \subsection boost Boost
 
-\todo
+Boost provides free peer-reviewed portable C++ source libraries under the
+<a href="http://www.boost.org/users/license.html">Boost License</a>.
 
 \subsection cppunit CppUnit
 
-\todo
+CppUnit is the C++ port of JUnit framework that provides C++ unit testing under the
+<a href="http://www.gnu.org/copyleft/lesser.html">GNU Lesser General Public License</a>.
 
 \subsection cryptopp Crypto++
 
-\todo
-
-\subsection msi Windows Installer SDK
-
-\todo
-
-\subsection sql Microsoft SQL Server SDK
-
-\todo
+Crypto++ Library is a free C++ class library that provides cryptographic schemes under the
+<a href="http://www.cryptopp.com/License.txt">Crypto++ License</a>. 
 
 \subsection tclap Tclap Command-Line Parser
 
-\todo
+TCLAP is a small, flexible library that provides a simple interface for defining and accessing 
+command line arguments under the 
+<a href="http://opensource.org/licenses/mit-license.php">MIT License</a>.
 
 */
