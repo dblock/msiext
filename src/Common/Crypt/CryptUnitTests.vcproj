@@ -41,7 +41,7 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="&quot;$(SolutionDir)externals\cryptopp\Include&quot;"
+				AdditionalIncludeDirectories="&quot;$(SolutionDir)externals\cryptopp&quot;"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
@@ -113,7 +113,7 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="&quot;$(SolutionDir)externals\cryptopp\Include&quot;"
+				AdditionalIncludeDirectories="&quot;$(SolutionDir)externals\cryptopp&quot;"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"

@@ -38,7 +38,7 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="&quot;$(SolutionDir)externals\cryptopp\Include&quot;"
+				AdditionalIncludeDirectories="&quot;$(SolutionDir)externals\cryptopp&quot;"
 				PreprocessorDefinitions="CA_EXPORTS"
 			/>
 			<Tool
@@ -103,7 +103,7 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="&quot;$(SolutionDir)externals\cryptopp\Include&quot;"
+				AdditionalIncludeDirectories="&quot;$(SolutionDir)externals\cryptopp&quot;"
 				PreprocessorDefinitions="CA_EXPORTS"
 			/>
 			<Tool

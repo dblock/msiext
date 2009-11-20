@@ -41,7 +41,7 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="$(SolutionDir)externals\cryptopp\Include"
+				AdditionalIncludeDirectories="$(SolutionDir)externals\cryptopp"
 				PrecompiledHeaderThrough="StdAfxUnitTests.h"
 			/>
 			<Tool
@@ -112,7 +112,7 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="$(SolutionDir)externals\cryptopp\Include"
+				AdditionalIncludeDirectories="$(SolutionDir)externals\cryptopp"
 				PrecompiledHeaderThrough="StdAfxUnitTests.h"
 			/>
 			<Tool
