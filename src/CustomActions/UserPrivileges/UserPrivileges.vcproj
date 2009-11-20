@@ -40,6 +40,7 @@
 				Name="VCCLCompilerTool"
 				AdditionalIncludeDirectories=""
 				PreprocessorDefinitions="CA_EXPORTS"
+				RuntimeLibrary="1"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"

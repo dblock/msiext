@@ -2,7 +2,7 @@
 #ifndef BOOST_MPL_HAS_XXX_HPP_INCLUDED
 #define BOOST_MPL_HAS_XXX_HPP_INCLUDED
 
-// Copyright Aleksey Gurtovoy 2002-2004
+// Copyright Aleksey Gurtovoy 2002-2006
 // Copyright David Abrahams 2002-2003
 //
 // Distributed under the Boost Software License, Version 1.0. 
@@ -11,9 +11,9 @@
 //
 // See http://www.boost.org/libs/mpl for documentation.
 
-// $Source: /cvsroot/boost/boost/boost/mpl/has_xxx.hpp,v $
-// $Date: 2004/09/03 15:56:55 $
-// $Revision: 1.3 $
+// $Id: has_xxx.hpp 49273 2008-10-11 06:54:06Z agurtovoy $
+// $Date: 2008-10-11 02:54:06 -0400 (Sat, 11 Oct 2008) $
+// $Revision: 49273 $
 
 #include <boost/mpl/bool.hpp>
 #include <boost/mpl/aux_/type_wrapper.hpp>
@@ -25,6 +25,10 @@
 #include <boost/mpl/aux_/config/workaround.hpp>
 
 #include <boost/preprocessor/cat.hpp>
+
+#if BOOST_WORKAROUND( __BORLANDC__, BOOST_TESTED_AT(0x590) )
+# include <boost/type_traits/is_class.hpp>
+#endif
 
 #if !defined(BOOST_MPL_CFG_NO_HAS_XXX)
 
@@ -144,30 +148,79 @@ template<> struct trait<T> \
 // SFINAE-based implementations below are derived from a USENET newsgroup's 
 // posting by Rani Sharoni (comp.lang.c++.moderated, 2002-03-17 07:45:09 PST)
 
-#   elif BOOST_WORKAROUND(BOOST_MSVC, BOOST_TESTED_AT(1400))
+#   elif BOOST_WORKAROUND(BOOST_MSVC, BOOST_TESTED_AT(1400)) \
+      || BOOST_WORKAROUND(__IBMCPP__, <= 700)
 
-// MSVC 7.1+
+// MSVC 7.1+ & VACPP
+
+// agurt, 15/jun/05: replace overload-based SFINAE implementation with SFINAE
+// applied to partial specialization to fix some apparently random failures 
+// (thanks to Daniel Wallin for researching this!)
 
 #   define BOOST_MPL_HAS_XXX_TRAIT_NAMED_DEF(trait, name, default_) \
-template< typename T > struct BOOST_PP_CAT(trait,_wrapper_); \
 template< typename T > \
-boost::mpl::aux::yes_tag BOOST_PP_CAT(trait,_helper_)( \
-      BOOST_PP_CAT(trait,_wrapper_)<T> const volatile* \
-    , BOOST_PP_CAT(trait,_wrapper_)<BOOST_MSVC_TYPENAME T::name>* = 0 \
-    ); \
+struct BOOST_PP_CAT(trait, _msvc_sfinae_helper) \
+{ \
+    typedef void type; \
+};\
 \
-boost::mpl::aux::no_tag BOOST_PP_CAT(trait,_helper_)(...); \
+template< typename T, typename U = void > \
+struct BOOST_PP_CAT(trait,_impl_) \
+{ \
+    BOOST_STATIC_CONSTANT(bool, value = false); \
+    typedef boost::mpl::bool_<value> type; \
+}; \
+\
+template< typename T > \
+struct BOOST_PP_CAT(trait,_impl_)< \
+      T \
+    , typename BOOST_PP_CAT(trait, _msvc_sfinae_helper)< typename T::name >::type \
+    > \
+{ \
+    BOOST_STATIC_CONSTANT(bool, value = true); \
+    typedef boost::mpl::bool_<value> type; \
+}; \
 \
 template< typename T, typename fallback_ = boost::mpl::bool_<default_> > \
 struct trait \
+    : BOOST_PP_CAT(trait,_impl_)<T> \
 { \
-    typedef BOOST_PP_CAT(trait,_wrapper_)<T> t_; \
-    BOOST_STATIC_CONSTANT(bool, value = \
-          sizeof((BOOST_PP_CAT(trait,_helper_))(static_cast<t_*>(0))) \
-            == sizeof(boost::mpl::aux::yes_tag) \
-        ); \
-    typedef boost::mpl::bool_<value> type; \
 }; \
+/**/
+
+#   elif BOOST_WORKAROUND( __BORLANDC__, BOOST_TESTED_AT(0x590) )
+
+#   define BOOST_MPL_HAS_XXX_TRAIT_NAMED_BCB_DEF(trait, trait_tester, name, default_) \
+template< typename T, bool IS_CLASS > \
+struct trait_tester \
+{ \
+    BOOST_STATIC_CONSTANT( bool,  value = false ); \
+}; \
+template< typename T > \
+struct trait_tester< T, true > \
+{ \
+    struct trait_tester_impl \
+    { \
+        template < class U > \
+        static int  resolve( boost::mpl::aux::type_wrapper<U> const volatile * \
+                           , boost::mpl::aux::type_wrapper<typename U::name >* = 0 ); \
+        static char resolve( ... ); \
+    }; \
+    typedef boost::mpl::aux::type_wrapper<T> t_; \
+    BOOST_STATIC_CONSTANT( bool, value = ( sizeof( trait_tester_impl::resolve( static_cast< t_ * >(0) ) ) == sizeof(int) ) ); \
+}; \
+template< typename T, typename fallback_ = boost::mpl::bool_<default_> > \
+struct trait           \
+{                      \
+    BOOST_STATIC_CONSTANT( bool, value = (trait_tester< T, boost::is_class< T >::value >::value) );     \
+    typedef boost::mpl::bool_< trait< T, fallback_ >::value > type; \
+};
+
+#   define BOOST_MPL_HAS_XXX_TRAIT_NAMED_DEF(trait, name, default_) \
+    BOOST_MPL_HAS_XXX_TRAIT_NAMED_BCB_DEF( trait \
+                                         , BOOST_PP_CAT(trait,_tester)      \
+                                         , name       \
+                                         , default_ ) \
 /**/
 
 #   else // other SFINAE-capable compilers

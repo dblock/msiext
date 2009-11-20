@@ -42,9 +42,10 @@ namespace boost {
 
       struct populate_index_ranges {
         multi_array_types::index_range
+        // RG: underscore on extent_ to stifle strange MSVC warning.
         operator()(multi_array_types::index base,
-                   multi_array_types::size_type extent) {
-          return multi_array_types::index_range(base,base+extent);
+                   multi_array_types::size_type extent_) {
+          return multi_array_types::index_range(base,base+extent_);
         }
       };
 
@@ -207,7 +208,7 @@ public:
   multi_array(const multi_array& rhs) :
   super_type(rhs), allocator_(rhs.allocator_) {
     allocate_space();
-    boost::copy_n(rhs.base_,rhs.num_elements(),base_);
+    boost::detail::multi_array::copy_n(rhs.base_,rhs.num_elements(),base_);
   }
 
 
@@ -379,12 +380,30 @@ public:
   }
 
 
+  template <typename ExtentList>
+  multi_array& resize(const ExtentList& extents) {
+    boost::function_requires<
+      detail::multi_array::CollectionConcept<ExtentList> >();
+
+    typedef detail::multi_array::extent_gen<NumDims> gen_type;
+    gen_type ranges;
+
+    for (int i=0; i != NumDims; ++i) {
+      typedef typename gen_type::range range_type;
+      ranges.ranges_[i] = range_type(0,extents[i]);
+    }
+    
+    return this->resize(ranges);
+  }
+
+
+
   multi_array& resize(const detail::multi_array
                       ::extent_gen<NumDims>& ranges) {
 
 
     // build a multi_array with the specs given
-    multi_array new_array(ranges);
+    multi_array new_array(ranges,this->storage_order());
 
 
     // build a view of tmp with the minimum extents
@@ -410,12 +429,12 @@ public:
 
     std::transform(new_array.index_base_list_.begin(),
                    new_array.index_base_list_.end(),
-                   min_extents.begin(),old_idxes.ranges_.begin(),
+                   min_extents.begin(),new_idxes.ranges_.begin(),
                    detail::multi_array::populate_index_ranges());
 
     std::transform(this->index_base_list_.begin(),
                    this->index_base_list_.end(),
-                   min_extents.begin(),new_idxes.ranges_.begin(),
+                   min_extents.begin(),old_idxes.ranges_.begin(),
                    detail::multi_array::populate_index_ranges());
 
     // Build same-shape views of the two arrays

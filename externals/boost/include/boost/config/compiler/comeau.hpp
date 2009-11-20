@@ -16,8 +16,6 @@
 
 #if (__COMO_VERSION__ <= 4245)
 
-#  define BOOST_FUNCTION_SCOPE_USING_DECLARATION_BREAKS_ADL
-
 #  if defined(_MSC_VER) && _MSC_VER <= 1300
 #     if _MSC_VER > 100
          // only set this in non-strict mode:
@@ -26,8 +24,8 @@
 #  endif
 
 // Void returns don't work when emulating VC 6 (Peter Dimov)
-
-#  if defined(_MSC_VER) && (_MSC_VER == 1200)
+// TODO: look up if this doesn't apply to the whole 12xx range
+#  if defined(_MSC_VER) && (_MSC_VER < 1300)
 #     define BOOST_NO_VOID_RETURNS
 #  endif
 

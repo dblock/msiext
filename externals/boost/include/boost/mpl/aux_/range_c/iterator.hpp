@@ -10,9 +10,9 @@
 //
 // See http://www.boost.org/libs/mpl for documentation.
 
-// $Source: /cvsroot/boost/boost/boost/mpl/aux_/range_c/iterator.hpp,v $
-// $Date: 2004/11/10 23:38:09 $
-// $Revision: 1.6.2.1 $
+// $Id: iterator.hpp 49267 2008-10-11 06:19:02Z agurtovoy $
+// $Date: 2008-10-11 02:19:02 -0400 (Sat, 11 Oct 2008) $
+// $Revision: 49267 $
 
 #include <boost/mpl/iterator_tags.hpp>
 #include <boost/mpl/advance_fwd.hpp>
@@ -64,9 +64,13 @@ template<> struct advance_impl<aux::r_iter_tag>
 {
     template< typename Iter, typename Dist > struct apply
     {
-        typedef typename Iter::type n_;
+        typedef typename deref<Iter>::type n_;
+#if BOOST_WORKAROUND(BOOST_MSVC, <= 1300)
+        typedef typename plus_impl<integral_c_tag,integral_c_tag>
+            ::template apply<n_,Dist>::type m_;
+#else
         typedef typename plus<n_,Dist>::type m_;
-        
+#endif
         // agurt, 10/nov/04: to be generic, the code have to do something along
         // the lines below...
         //
@@ -78,7 +82,7 @@ template<> struct advance_impl<aux::r_iter_tag>
         // ... meanwhile:
         
         typedef integral_c< 
-              typename n_::value_type
+              typename aux::value_type_wknd<n_>::type
             , BOOST_MPL_AUX_VALUE_WKND(m_)::value 
             > result_;
         

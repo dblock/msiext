@@ -1,7 +1,7 @@
 /*
  *
  * Copyright (c) 2002
- * Dr John Maddock
+ * John Maddock
  *
  * Use, modification and distribution are subject to the
  * Boost Software License, Version 1.0. (See accompanying file
@@ -20,8 +20,15 @@
 #ifndef BOOST_REGEX_V4_CHAR_REGEX_TRAITS_HPP
 #define BOOST_REGEX_V4_CHAR_REGEX_TRAITS_HPP
 
+#ifdef BOOST_MSVC
+#pragma warning(push)
+#pragma warning(disable: 4103)
+#endif
 #ifdef BOOST_HAS_ABI_HEADERS
 #  include BOOST_ABI_PREFIX
+#endif
+#ifdef BOOST_MSVC
+#pragma warning(pop)
 #endif
 
 namespace boost{
@@ -42,10 +49,6 @@ public:
    typedef unsigned int size_type;
    typedef regex_traits<char> base_type;
 
-   char BOOST_REGEX_CALL translate(char c, bool)const
-   {
-      return static_cast<const regex_traits<char>*>(this)->translate(c, true);
-   }
 };
 
 #ifndef BOOST_NO_WREGEX
@@ -58,24 +61,20 @@ public:
    typedef unsigned int size_type;
    typedef regex_traits<wchar_t> base_type;
 
-   wchar_t BOOST_REGEX_CALL translate(wchar_t c, bool)const
-   {
-      return static_cast<const regex_traits<wchar_t>*>(this)->translate(c, true);
-   }
-   boost::uint_fast32_t BOOST_REGEX_CALL lookup_classname(const wchar_t* first, const wchar_t* last)const
-   {
-      boost::uint_fast32_t result = static_cast<const regex_traits<wchar_t>*>(this)->lookup_classname(first, last);
-      if((result & base_type::char_class_upper) == base_type::char_class_upper)
-         result |= base_type::char_class_alpha;
-      return result;
-   }
 };
 #endif
 } // namespace deprecated
 } // namespace boost
 
+#ifdef BOOST_MSVC
+#pragma warning(push)
+#pragma warning(disable: 4103)
+#endif
 #ifdef BOOST_HAS_ABI_HEADERS
 #  include BOOST_ABI_SUFFIX
+#endif
+#ifdef BOOST_MSVC
+#pragma warning(pop)
 #endif
 
 #endif // include

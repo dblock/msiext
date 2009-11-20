@@ -10,9 +10,9 @@
 //
 // See http://www.boost.org/libs/mpl for documentation.
 
-// $Source: /cvsroot/boost/boost/boost/mpl/vector/aux_/item.hpp,v $
-// $Date: 2004/09/10 11:18:48 $
-// $Revision: 1.7 $
+// $Id: item.hpp 49267 2008-10-11 06:19:02Z agurtovoy $
+// $Date: 2008-10-11 02:19:02 -0400 (Sat, 11 Oct 2008) $
+// $Revision: 49267 $
 
 #include <boost/mpl/long.hpp>
 #include <boost/mpl/void.hpp>
@@ -37,6 +37,7 @@ struct v_item
     typedef typename next<index_>::type upper_bound_;
     typedef typename next<typename Base::size>::type size;
     typedef Base base;
+    typedef v_item type;
 
     // agurt 10/sep/04: MWCW <= 9.3 workaround here and below; the compiler
     // breaks if using declaration comes _before_ the new overload
@@ -55,6 +56,7 @@ struct v_item<T,Base,1>
     typedef index_ lower_bound_;
     typedef typename next<typename Base::size>::type size;
     typedef Base base;
+    typedef v_item type;
 
     static aux::type_wrapper<T> item_(index_);
     using Base::item_;
@@ -72,6 +74,7 @@ struct v_mask
     typedef index_ upper_bound_;
     typedef typename prior<typename Base::size>::type size;
     typedef Base base;
+    typedef v_mask type;
 
     static aux::type_wrapper<void_> item_(index_);
     using Base::item_;
@@ -87,6 +90,7 @@ struct v_mask<Base,1>
     typedef typename next<index_>::type lower_bound_;
     typedef typename prior<typename Base::size>::type size;
     typedef Base base;
+    typedef v_mask type;
 
     static aux::type_wrapper<void_> item_(index_);
     using Base::item_;

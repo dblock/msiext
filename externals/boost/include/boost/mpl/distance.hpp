@@ -10,9 +10,9 @@
 //
 // See http://www.boost.org/libs/mpl for documentation.
 
-// $Source: /cvsroot/boost/boost/boost/mpl/distance.hpp,v $
-// $Date: 2004/09/02 15:40:41 $
-// $Revision: 1.9 $
+// $Id: distance.hpp 49267 2008-10-11 06:19:02Z agurtovoy $
+// $Date: 2008-10-11 02:19:02 -0400 (Sat, 11 Oct 2008) $
+// $Revision: 49267 $
 
 #include <boost/mpl/distance_fwd.hpp>
 #include <boost/mpl/iter_fold.hpp>
@@ -37,7 +37,7 @@ template< typename Tag > struct distance_impl
 #if !defined(BOOST_MPL_CFG_NO_NESTED_FORWARDING)
         : aux::msvc_eti_base< typename iter_fold<
               iterator_range<First,Last>
-            , long_<0>
+            , mpl::long_<0>
             , next<>
             >::type >
     {
@@ -45,14 +45,14 @@ template< typename Tag > struct distance_impl
     {
         typedef typename iter_fold<
               iterator_range<First,Last>
-            , long_<0>
+            , mpl::long_<0>
             , next<>
             >::type type;
         
         BOOST_STATIC_CONSTANT(long, value =
               (iter_fold<
                   iterator_range<First,Last>
-                , long_<0>
+                , mpl::long_<0>
                 , next<>
                 >::type::value)
             );

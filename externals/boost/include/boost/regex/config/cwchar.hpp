@@ -1,7 +1,7 @@
 /*
  *
  * Copyright (c) 1998-2002
- * Dr John Maddock
+ * John Maddock
  *
  * Use, modification and distribution are subject to the 
  * Boost Software License, Version 1.0. (See accompanying file 
@@ -168,7 +168,7 @@ using ::wcscmp;
 inline int (wcscoll)(const wchar_t *p1, const wchar_t *p2)
 { return wcscoll(p1,p2); }
 #undef wcscoll
-#elif defined(BOOST_NO_STDC_NAMESPACE)
+#elif defined(BOOST_NO_STDC_NAMESPACE) && !defined(UNDER_CE)
 using ::wcscoll;
 #endif
 

@@ -15,7 +15,7 @@
 		MinimalRebuild="true"
 		BasicRuntimeChecks="0"
 		SmallerTypeCheck="false"
-		RuntimeLibrary="2"
+		RuntimeLibrary="0"
 		DisableLanguageExtensions="false"
 		DebugInformationFormat="3"
 	/>

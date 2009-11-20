@@ -39,6 +39,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				PreprocessorDefinitions="CA_EXPORTS"
+				RuntimeLibrary="1"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"

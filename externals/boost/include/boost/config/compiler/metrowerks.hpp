@@ -37,8 +37,11 @@
 #     define BOOST_NO_SFINAE
 #    endif
 
-#   if(__MWERKS__ <= 0x3204)  // 9.3
+// the "|| !defined(BOOST_STRICT_CONFIG)" part should apply to the last
+// tested version *only*:
+#   if(__MWERKS__ <= 0x3207) || !defined(BOOST_STRICT_CONFIG) // 9.6
 #     define BOOST_NO_MEMBER_TEMPLATE_FRIENDS
+#     define BOOST_NO_IS_ABSTRACT
 #    endif
 
 #if !__option(wchar_type)
@@ -66,12 +69,51 @@
 #     define BOOST_COMPILER_VERSION 9.2
 #   elif __MWERKS__ == 0x3204
 #     define BOOST_COMPILER_VERSION 9.3
+#   elif __MWERKS__ == 0x3205
+#     define BOOST_COMPILER_VERSION 9.4
+#   elif __MWERKS__ == 0x3206
+#     define BOOST_COMPILER_VERSION 9.5
+#   elif __MWERKS__ == 0x3207
+#     define BOOST_COMPILER_VERSION 9.6
 #   else
 #     define BOOST_COMPILER_VERSION __MWERKS__
 #   endif
 #else
 #  define BOOST_COMPILER_VERSION __MWERKS__
 #endif
+
+//
+// C++0x features
+//
+//   See boost\config\suffix.hpp for BOOST_NO_LONG_LONG
+//
+#if __MWERKS__ > 0x3206 && __option(rvalue_refs)
+#  define BOOST_HAS_RVALUE_REFS
+#else
+#  define BOOST_NO_RVALUE_REFERENCES              
+#endif
+#define BOOST_NO_AUTO_DECLARATIONS
+#define BOOST_NO_AUTO_MULTIDECLARATIONS
+#define BOOST_NO_CHAR16_T
+#define BOOST_NO_CHAR32_T
+#define BOOST_NO_CONCEPTS
+#define BOOST_NO_CONSTEXPR
+#define BOOST_NO_DECLTYPE
+#define BOOST_NO_DEFAULTED_FUNCTIONS
+#define BOOST_NO_DELETED_FUNCTIONS
+#define BOOST_NO_EXPLICIT_CONVERSION_OPERATORS
+#define BOOST_NO_EXTERN_TEMPLATE
+#define BOOST_NO_FUNCTION_TEMPLATE_DEFAULT_ARGS
+#define BOOST_NO_INITIALIZER_LISTS
+#define BOOST_NO_LAMBDAS
+#define BOOST_NO_NULLPTR
+#define BOOST_NO_RAW_LITERALS
+#define BOOST_NO_SCOPED_ENUMS
+#define BOOST_NO_SFINAE_EXPR
+#define BOOST_NO_STATIC_ASSERT
+#define BOOST_NO_TEMPLATE_ALIASES
+#define BOOST_NO_UNICODE_LITERALS
+#define BOOST_NO_VARIADIC_TEMPLATES
 
 #define BOOST_COMPILER "Metrowerks CodeWarrior C++ version " BOOST_STRINGIZE(BOOST_COMPILER_VERSION)
 
@@ -83,7 +125,7 @@
 #endif
 //
 // last known and checked version:
-#if (__MWERKS__ > 0x3204)
+#if (__MWERKS__ > 0x3205)
 #  if defined(BOOST_ASSERT_CONFIG)
 #     error "Unknown compiler version - please run the configure tests and report the results"
 #  endif

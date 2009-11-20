@@ -13,9 +13,9 @@
 //
 // See http://www.boost.org/libs/mpl for documentation.
 
-// $Source: /cvsroot/boost/boost/boost/mpl/aux_/numeric_op.hpp,v $
-// $Date: 2004/11/10 23:38:09 $
-// $Revision: 1.4.2.3 $
+// $Id: numeric_op.hpp 49267 2008-10-11 06:19:02Z agurtovoy $
+// $Date: 2008-10-11 02:19:02 -0400 (Sat, 11 Oct 2008) $
+// $Revision: 49267 $
 
 #if !defined(BOOST_MPL_PREPROCESSING_MODE)
 #   include <boost/mpl/numeric_cast.hpp>
@@ -41,6 +41,7 @@
 #   include <boost/mpl/aux_/preprocessor/partial_spec_params.hpp>
 #   include <boost/mpl/aux_/preprocessor/def_params_tail.hpp>
 #   include <boost/mpl/aux_/preprocessor/repeat.hpp>
+#   include <boost/mpl/aux_/preprocessor/ext_params.hpp>
 #   include <boost/mpl/aux_/preprocessor/params.hpp>
 #   include <boost/mpl/aux_/preprocessor/enum.hpp>
 #   include <boost/mpl/aux_/preprocessor/add.hpp>
@@ -51,16 +52,13 @@
 #   include <boost/mpl/aux_/config/workaround.hpp>
 
 #   include <boost/preprocessor/dec.hpp>
+#   include <boost/preprocessor/inc.hpp>
 #   include <boost/preprocessor/iterate.hpp>
 #   include <boost/preprocessor/cat.hpp>
 
 
 #if !defined(AUX778076_OP_ARITY)
-#   if !defined(BOOST_NO_TEMPLATE_PARTIAL_SPECIALIZATION)
-#       define AUX778076_OP_ARITY BOOST_MPL_LIMIT_METAFUNCTION_ARITY
-#   else
-#       define AUX778076_OP_ARITY 2
-#   endif
+#   define AUX778076_OP_ARITY BOOST_MPL_LIMIT_METAFUNCTION_ARITY
 #endif
 
 #if !defined(AUX778076_OP_IMPL_NAME)
@@ -147,7 +145,7 @@ template<> struct AUX778076_OP_IMPL_NAME<integral_c_tag,na>
 
 
 #if defined(BOOST_NO_TEMPLATE_PARTIAL_SPECIALIZATION) \
-    && BOOST_WORKAROUND(BOOST_MSVC, != 1200)
+    && BOOST_WORKAROUND(BOOST_MSVC, >= 1300)
 template< typename T > struct AUX778076_OP_TAG_NAME
     : tag<T,na>
 {
@@ -160,13 +158,9 @@ template< typename T > struct AUX778076_OP_TAG_NAME
 #endif
 
 
-#if AUX778076_OP_ARITY == 2
-template< 
-      typename BOOST_MPL_AUX_NA_PARAM(N1)
-    , typename BOOST_MPL_AUX_NA_PARAM(N2)
-    >
-struct AUX778076_OP_NAME
-#else
+#if AUX778076_OP_ARITY != 2
+
+#   if !defined(BOOST_NO_TEMPLATE_PARTIAL_SPECIALIZATION)
 
 #   define AUX778076_OP_RIGHT_OPERAND(unused, i, N) , BOOST_PP_CAT(N, BOOST_MPL_PP_ADD(i, 2))>
 #   define AUX778076_OP_N_CALLS(i, N) \
@@ -196,7 +190,61 @@ struct AUX778076_OP_NAME
 #   undef AUX778076_OP_N_CALLS
 #   undef AUX778076_OP_RIGHT_OPERAND
 
-#endif // AUX778076_OP_ARITY == 2
+#   else // BOOST_NO_TEMPLATE_PARTIAL_SPECIALIZATION
+
+/// forward declaration
+template< 
+      typename BOOST_MPL_AUX_NA_PARAM(N1)
+    , typename BOOST_MPL_AUX_NA_PARAM(N2)
+    >
+struct BOOST_PP_CAT(AUX778076_OP_NAME,2);
+
+template<
+      typename BOOST_MPL_AUX_NA_PARAM(N1)
+    , typename BOOST_MPL_AUX_NA_PARAM(N2)
+    BOOST_MPL_PP_DEF_PARAMS_TAIL(2, typename N, na)
+    >
+struct AUX778076_OP_NAME
+#if BOOST_WORKAROUND(BOOST_MSVC, == 1300)
+    : aux::msvc_eti_base< typename if_<
+#else
+    : if_<
+#endif
+          is_na<N3>
+        , BOOST_PP_CAT(AUX778076_OP_NAME,2)<N1,N2>
+        , AUX778076_OP_NAME<
+              BOOST_PP_CAT(AUX778076_OP_NAME,2)<N1,N2>
+            , BOOST_MPL_PP_EXT_PARAMS(3, BOOST_PP_INC(AUX778076_OP_ARITY), N)
+            >
+        >::type
+#if BOOST_WORKAROUND(BOOST_MSVC, == 1300)
+    >
+#endif
+{
+    BOOST_MPL_AUX_LAMBDA_SUPPORT(
+          AUX778076_OP_ARITY
+        , AUX778076_OP_NAME
+        , ( BOOST_MPL_PP_PARAMS(AUX778076_OP_ARITY, N) )
+        )
+};
+
+template< 
+      typename N1
+    , typename N2
+    >
+struct BOOST_PP_CAT(AUX778076_OP_NAME,2)
+
+#endif
+
+#else // AUX778076_OP_ARITY == 2
+
+template< 
+      typename BOOST_MPL_AUX_NA_PARAM(N1)
+    , typename BOOST_MPL_AUX_NA_PARAM(N2)
+    >
+struct AUX778076_OP_NAME
+
+#endif
 
 #if !defined(BOOST_MPL_CFG_MSVC_ETI_BUG)
     : AUX778076_OP_IMPL_NAME<
@@ -214,14 +262,20 @@ struct AUX778076_OP_NAME
         >::type >::type
 #endif
 {
-#if AUX778076_OP_ARITY == 2
-    BOOST_MPL_AUX_LAMBDA_SUPPORT(2, AUX778076_OP_NAME, (N1, N2))
-#else
+#if AUX778076_OP_ARITY != 2
+
+#   if !defined(BOOST_NO_TEMPLATE_PARTIAL_SPECIALIZATION)
     BOOST_MPL_AUX_LAMBDA_SUPPORT_SPEC(
           AUX778076_OP_ARITY
         , AUX778076_OP_NAME
         , ( BOOST_MPL_PP_PARTIAL_SPEC_PARAMS(2, N, na) )
         )
+#   else
+    BOOST_MPL_AUX_LAMBDA_SUPPORT(2, BOOST_PP_CAT(AUX778076_OP_NAME,2), (N1, N2))
+#   endif
+
+#else
+    BOOST_MPL_AUX_LAMBDA_SUPPORT(2, AUX778076_OP_NAME, (N1, N2))
 #endif
 };
 
@@ -233,7 +287,10 @@ BOOST_MPL_AUX_NA_SPEC2(2, AUX778076_OP_ARITY, AUX778076_OP_NAME)
 
 ///// iteration, depth == 1
 
-#elif BOOST_PP_ITERATION_DEPTH() == 1
+// For gcc 4.4 compatability, we must include the
+// BOOST_PP_ITERATION_DEPTH test inside an #else clause.
+#else // BOOST_PP_IS_ITERATING
+#if BOOST_PP_ITERATION_DEPTH() == 1
 
 #   define i_ BOOST_PP_FRAME_ITERATION(1)
 
@@ -254,4 +311,5 @@ struct AUX778076_OP_NAME<BOOST_MPL_PP_PARTIAL_SPEC_PARAMS(i_, N, na)>
 
 #   undef i_
 
+#endif // BOOST_PP_ITERATION_DEPTH()
 #endif // BOOST_PP_IS_ITERATING

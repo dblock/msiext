@@ -1,4 +1,4 @@
-/* Copyright 2003-2004 Joaquín M López Muñoz.
+/* Copyright 2003-2009 Joaquin M Lopez Munoz.
  * Distributed under the Boost Software License, Version 1.0.
  * (See accompanying file LICENSE_1_0.txt or copy at
  * http://www.boost.org/LICENSE_1_0.txt)
@@ -30,17 +30,30 @@ namespace detail{
 namespace allocator{
 
 /* partial_std_allocator_wrapper inherits the functionality of a std
- * allocator while providing a templatized ctor.
+ * allocator while providing a templatized ctor and other bits missing
+ * in some stdlib implementation or another.
  */
 
 template<typename Type>
 class partial_std_allocator_wrapper:public std::allocator<Type>
 {
 public:
+  /* Oddly enough, STLport does not define std::allocator<void>::value_type
+   * when configured to work without partial template specialization.
+   * No harm in supplying the definition here unconditionally.
+   */
+
+  typedef Type value_type;
+
   partial_std_allocator_wrapper(){};
 
   template<typename Other>
   partial_std_allocator_wrapper(const partial_std_allocator_wrapper<Other>&){}
+
+  partial_std_allocator_wrapper(const std::allocator<Type>& x):
+    std::allocator<Type>(x)
+  {
+  };
 
 #if defined(BOOST_DINKUMWARE_STDLIB)
   /* Dinkumware guys didn't provide a means to call allocate() without
@@ -130,8 +143,10 @@ template<typename Allocator>
 struct rebinder
 {
   template<typename Type>
-  struct result:Allocator::BOOST_NESTED_TEMPLATE rebind<Type>
+  struct result
   {
+      typedef typename Allocator::BOOST_NESTED_TEMPLATE 
+          rebind<Type>::other other;
   };
 };
 #endif
@@ -163,11 +178,30 @@ void construct(void* p,const Type& t)
   new (p) Type(t);
 }
 
+#if BOOST_WORKAROUND(BOOST_MSVC,BOOST_TESTED_AT(1500))
+/* MSVC++ issues spurious warnings about unreferencend formal parameters
+ * in destroy<Type> when Type is a class with trivial dtor.
+ */
+
+#pragma warning(push)
+#pragma warning(disable:4100)  
+#endif
+
 template<typename Type>
 void destroy(const Type* p)
 {
+
+#if BOOST_WORKAROUND(__SUNPRO_CC,BOOST_TESTED_AT(0x590))
+  const_cast<Type*>(p)->~Type();
+#else
   p->~Type();
+#endif
+
 }
+
+#if BOOST_WORKAROUND(BOOST_MSVC,BOOST_TESTED_AT(1500))
+#pragma warning(pop)
+#endif
 
 } /* namespace boost::detail::allocator */
 

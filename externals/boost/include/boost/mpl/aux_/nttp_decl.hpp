@@ -10,16 +10,18 @@
 //
 // See http://www.boost.org/libs/mpl for documentation.
 
-// $Source: /cvsroot/boost/boost/boost/mpl/aux_/nttp_decl.hpp,v $
-// $Date: 2004/09/02 15:40:44 $
-// $Revision: 1.1 $
+// $Id: nttp_decl.hpp 49267 2008-10-11 06:19:02Z agurtovoy $
+// $Date: 2008-10-11 02:19:02 -0400 (Sat, 11 Oct 2008) $
+// $Revision: 49267 $
 
 #include <boost/mpl/aux_/config/nttp.hpp>
 
 #if defined(BOOST_MPL_CFG_NTTP_BUG)
 
-typedef int     _mpl_nttp_int;
-typedef long    _mpl_nttp_long;
+typedef bool        _mpl_nttp_bool;
+typedef int         _mpl_nttp_int;
+typedef unsigned    _mpl_nttp_unsigned;
+typedef long        _mpl_nttp_long;
 
 #   include <boost/preprocessor/cat.hpp>
 #   define BOOST_MPL_AUX_NTTP_DECL(T, x) BOOST_PP_CAT(_mpl_nttp_,T) x /**/

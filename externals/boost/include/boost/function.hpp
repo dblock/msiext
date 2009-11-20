@@ -10,6 +10,8 @@
 // William Kempf, Jesse Jones and Karl Nelson were all very helpful in the
 // design of this library.
 
+#include <functional> // unary_function, binary_function
+
 #include <boost/preprocessor/iterate.hpp>
 #include <boost/detail/workaround.hpp>
 
@@ -22,7 +24,7 @@
 #include <boost/function/detail/prologue.hpp>
 
 // Visual Age C++ doesn't handle the file iteration well
-#if BOOST_WORKAROUND(__IBMCPP__, <= 600)
+#if BOOST_WORKAROUND(__IBMCPP__, >= 500)
 #  if BOOST_FUNCTION_MAX_ARGS >= 0
 #    include <boost/function/function0.hpp>
 #  endif

@@ -1,7 +1,7 @@
 /*
  *
  * Copyright (c) 1998-2002
- * Dr John Maddock
+ * John Maddock
  *
  * Use, modification and distribution are subject to the 
  * Boost Software License, Version 1.0. (See accompanying file 
@@ -19,8 +19,15 @@
 #ifndef BOOST_REGEX_V4_ITERATOR_TRAITS_HPP
 #define BOOST_REGEX_V4_ITERATOR_TRAITS_HPP
 
+#ifdef BOOST_MSVC
+#pragma warning(push)
+#pragma warning(disable: 4103)
+#endif
 #ifdef BOOST_HAS_ABI_HEADERS
 #  include BOOST_ABI_PREFIX
+#endif
+#ifdef BOOST_MSVC
+#pragma warning(pop)
 #endif
 
 namespace boost{
@@ -71,6 +78,24 @@ template<>
 struct regex_iterator_traits<wchar_t*> : pointer_iterator_traits<wchar_t>{};
 template<>
 struct regex_iterator_traits<const wchar_t*> : const_pointer_iterator_traits<wchar_t>{};
+//
+// the follwoing are needed for ICU support:
+//
+template<>
+struct regex_iterator_traits<unsigned char*> : pointer_iterator_traits<char>{};
+template<>
+struct regex_iterator_traits<const unsigned char*> : const_pointer_iterator_traits<char>{};
+template<>
+struct regex_iterator_traits<int*> : pointer_iterator_traits<int>{};
+template<>
+struct regex_iterator_traits<const int*> : const_pointer_iterator_traits<int>{};
+
+#ifdef BOOST_REGEX_HAS_OTHER_WCHAR_T
+template<>
+struct regex_iterator_traits<unsigned short*> : pointer_iterator_traits<unsigned short>{};
+template<>
+struct regex_iterator_traits<const unsigned short*> : const_pointer_iterator_traits<unsigned short>{};
+#endif
 
 #if defined(__SGI_STL_PORT) && defined(__STL_DEBUG)
 template<>
@@ -95,8 +120,15 @@ struct regex_iterator_traits : public std::iterator_traits<T> {};
 } // namespace re_detail
 } // namespace boost
 
+#ifdef BOOST_MSVC
+#pragma warning(push)
+#pragma warning(disable: 4103)
+#endif
 #ifdef BOOST_HAS_ABI_HEADERS
 #  include BOOST_ABI_SUFFIX
+#endif
+#ifdef BOOST_MSVC
+#pragma warning(pop)
 #endif
 
 #endif

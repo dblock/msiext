@@ -1,6 +1,6 @@
 
-#ifndef BOOST_MPL_SET_AUX_AT_IMPL_HPP_INCLUDED
-#define BOOST_MPL_SET_AUX_AT_IMPL_HPP_INCLUDED
+#ifndef BOOST_MPL_MAP_AUX_AT_IMPL_HPP_INCLUDED
+#define BOOST_MPL_MAP_AUX_AT_IMPL_HPP_INCLUDED
 
 // Copyright Aleksey Gurtovoy 2003-2004
 // Copyright David Abrahams 2003-2004
@@ -11,9 +11,9 @@
 //
 // See http://www.boost.org/libs/mpl for documentation.
 
-// $Source: /cvsroot/boost/boost/boost/mpl/map/aux_/at_impl.hpp,v $
-// $Date: 2004/10/13 18:23:36 $
-// $Revision: 1.5 $
+// $Id: at_impl.hpp 49267 2008-10-11 06:19:02Z agurtovoy $
+// $Date: 2008-10-11 02:19:02 -0400 (Sat, 11 Oct 2008) $
+// $Revision: 49267 $
 
 #include <boost/mpl/at_fwd.hpp>
 #include <boost/mpl/long.hpp>
@@ -24,6 +24,7 @@
 #include <boost/mpl/aux_/ptr_to_ref.hpp>
 #include <boost/mpl/aux_/static_cast.hpp>
 #include <boost/mpl/aux_/config/typeof.hpp>
+#include <boost/mpl/aux_/config/ctps.hpp>
 
 #if !defined(BOOST_MPL_CFG_TYPEOF_BASED_SEQUENCES)
 #   include <boost/mpl/eval_if.hpp>
@@ -78,10 +79,30 @@ struct item_by_order
 
 #else // BOOST_MPL_CFG_TYPEOF_BASED_SEQUENCES
 
+#   if !defined(BOOST_NO_TEMPLATE_PARTIAL_SPECIALIZATION)
+
 template< typename Map, long n > struct m_at
 {
     typedef void_ type;
 };
+
+#   else
+
+template< long n > struct m_at_impl
+{
+    template< typename Map > struct result_
+    {
+        typedef void_ type;
+    };
+};
+
+template< typename Map, long n > struct m_at
+{
+    typedef typename m_at_impl<n>::result_<Map>::type type;
+};
+
+#   endif
+
 
 template<>
 struct at_impl< aux::map_tag >

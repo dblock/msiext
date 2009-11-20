@@ -1,7 +1,7 @@
 /*
  *
  * Copyright (c) 2003
- * Dr John Maddock
+ * John Maddock
  *
  * Use, modification and distribution are subject to the 
  * Boost Software License, Version 1.0. (See accompanying file 
@@ -23,8 +23,7 @@
 #include <boost/detail/workaround.hpp>
 #if (BOOST_WORKAROUND(__BORLANDC__, >= 0x560) && BOOST_WORKAROUND(__BORLANDC__, BOOST_TESTED_AT(0x570)))\
       || BOOST_WORKAROUND(BOOST_MSVC, < 1300) \
-      || BOOST_WORKAROUND(__MWERKS__, BOOST_TESTED_AT(0x3003)) \
-      || BOOST_WORKAROUND(__HP_aCC, BOOST_TESTED_AT(55500))
+      || BOOST_WORKAROUND(__MWERKS__, BOOST_TESTED_AT(0x3003))
 //
 // Borland C++ Builder 6, and Visual C++ 6,
 // can't cope with the array template constructor
@@ -37,8 +36,15 @@
 
 namespace boost{
 
+#ifdef BOOST_MSVC
+#pragma warning(push)
+#pragma warning(disable: 4103)
+#endif
 #ifdef BOOST_HAS_ABI_HEADERS
 #  include BOOST_ABI_PREFIX
+#endif
+#ifdef BOOST_MSVC
+#pragma warning(pop)
 #endif
 #if BOOST_WORKAROUND(BOOST_MSVC, > 1300)
 #  pragma warning(push)
@@ -47,16 +53,16 @@ namespace boost{
 
 template <class BidirectionalIterator,
           class charT,
-          class traits,
-          class Allocator>
+          class traits>
 class regex_token_iterator_implementation 
 {
-   typedef basic_regex<charT, traits, Allocator> regex_type;
+   typedef basic_regex<charT, traits> regex_type;
    typedef sub_match<BidirectionalIterator>      value_type;
 
    match_results<BidirectionalIterator> what;   // current match
+   BidirectionalIterator                base;    // start of search area
    BidirectionalIterator                end;    // end of search area
-   const regex_type*                    pre;    // the expression
+   const regex_type                     re;    // the expression
    match_flag_type                      flags;  // match flags
    value_type                           result; // the current string result
    int                                  N;      // the current sub-expression being enumerated
@@ -64,16 +70,17 @@ class regex_token_iterator_implementation
 
 public:
    regex_token_iterator_implementation(const regex_type* p, BidirectionalIterator last, int sub, match_flag_type f)
-      : end(last), pre(p), flags(f){ subs.push_back(sub); }
+      : end(last), re(*p), flags(f){ subs.push_back(sub); }
    regex_token_iterator_implementation(const regex_type* p, BidirectionalIterator last, const std::vector<int>& v, match_flag_type f)
-      : end(last), pre(p), flags(f), subs(v){}
+      : end(last), re(*p), flags(f), subs(v){}
+#if !BOOST_WORKAROUND(__HP_aCC, < 60700)
 #if (BOOST_WORKAROUND(__BORLANDC__, >= 0x560) && BOOST_WORKAROUND(__BORLANDC__, BOOST_TESTED_AT(0x570)))\
       || BOOST_WORKAROUND(BOOST_MSVC, < 1300) \
       || BOOST_WORKAROUND(__MWERKS__, BOOST_TESTED_AT(0x3003)) \
-      || BOOST_WORKAROUND(__HP_aCC, BOOST_TESTED_AT(55500))
+      || BOOST_WORKAROUND(__HP_aCC, < 60700)
    template <class T>
    regex_token_iterator_implementation(const regex_type* p, BidirectionalIterator last, const T& submatches, match_flag_type f)
-      : end(last), pre(p), flags(f)
+      : end(last), re(*p), flags(f)
    {
       // assert that T really is an array:
       BOOST_STATIC_ASSERT(::boost::is_array<T>::value);
@@ -86,7 +93,7 @@ public:
 #else
    template <std::size_t CN>
    regex_token_iterator_implementation(const regex_type* p, BidirectionalIterator last, const int (&submatches)[CN], match_flag_type f)
-      : end(last), pre(p), flags(f)
+      : end(last), re(*p), flags(f)
    {
       for(std::size_t i = 0; i < CN; ++i)
       {
@@ -94,11 +101,12 @@ public:
       }
    }
 #endif
-
+#endif
    bool init(BidirectionalIterator first)
    {
       N = 0;
-      if(regex_search(first, end, what, *pre, flags) == true)
+      base = first;
+      if(regex_search(first, end, what, re, flags, base) == true)
       {
          N = 0;
          result = ((subs[N] == -1) ? what.prefix() : what[(int)subs[N]]);
@@ -109,6 +117,7 @@ public:
          result.first = first;
          result.second = end;
          result.matched = (first != end);
+         N = -1;
          return true;
       }
       return false;
@@ -116,7 +125,7 @@ public:
    bool compare(const regex_token_iterator_implementation& that)
    {
       if(this == &that) return true;
-      return (pre == that.pre) 
+      return (&re.get_data() == &that.re.get_data()) 
          && (end == that.end) 
          && (flags == that.flags) 
          && (N == that.N) 
@@ -135,10 +144,10 @@ public:
          result =((subs[N] == -1) ? what.prefix() : what[subs[N]]);
          return true;
       }
-      if(what.prefix().first != what[0].second)
-         flags |= match_prev_avail;
+      //if(what.prefix().first != what[0].second)
+      //   flags |= /*match_prev_avail |*/ regex_constants::match_not_bob;
       BidirectionalIterator last_end(what[0].second);
-      if(regex_search(last_end, end, what, *pre, ((what[0].first == what[0].second) ? flags | regex_constants::match_not_initial_null : flags)))
+      if(regex_search(last_end, end, what, re, ((what[0].first == what[0].second) ? flags | regex_constants::match_not_initial_null : flags), base))
       {
          N =0;
          result =((subs[N] == -1) ? what.prefix() : what[subs[N]]);
@@ -154,12 +163,13 @@ public:
       }
       return false;
    }
+private:
+   regex_token_iterator_implementation& operator=(const regex_token_iterator_implementation&);
 };
 
 template <class BidirectionalIterator, 
           class charT = BOOST_DEDUCED_TYPENAME re_detail::regex_iterator_traits<BidirectionalIterator>::value_type,
-          class traits = regex_traits<charT>,
-          class Allocator = BOOST_DEFAULT_ALLOCATOR(charT) >
+          class traits = regex_traits<charT> >
 class regex_token_iterator 
 #ifndef BOOST_NO_STD_ITERATOR
    : public std::iterator<
@@ -171,10 +181,10 @@ class regex_token_iterator
 #endif
 {
 private:
-   typedef regex_token_iterator_implementation<BidirectionalIterator, charT, traits, Allocator> impl;
+   typedef regex_token_iterator_implementation<BidirectionalIterator, charT, traits> impl;
    typedef shared_ptr<impl> pimpl;
 public:
-   typedef          basic_regex<charT, traits, Allocator>                   regex_type;
+   typedef          basic_regex<charT, traits>                   regex_type;
    typedef          sub_match<BidirectionalIterator>                        value_type;
    typedef typename re_detail::regex_iterator_traits<BidirectionalIterator>::difference_type 
                                                                             difference_type;
@@ -197,10 +207,11 @@ public:
       if(!pdata->init(a))
          pdata.reset();
    }
+#if !BOOST_WORKAROUND(__HP_aCC, < 60700)
 #if (BOOST_WORKAROUND(__BORLANDC__, >= 0x560) && BOOST_WORKAROUND(__BORLANDC__, BOOST_TESTED_AT(0x570)))\
       || BOOST_WORKAROUND(BOOST_MSVC, < 1300) \
       || BOOST_WORKAROUND(__MWERKS__, BOOST_TESTED_AT(0x3003)) \
-      || BOOST_WORKAROUND(__HP_aCC, BOOST_TESTED_AT(55500))
+      || BOOST_WORKAROUND(__HP_aCC, < 60700)
    template <class T>
    regex_token_iterator(BidirectionalIterator a, BidirectionalIterator b, const regex_type& re,
                         const T& submatches, match_flag_type m = match_default)
@@ -218,6 +229,7 @@ public:
       if(!pdata->init(a))
          pdata.reset();
    }
+#endif
 #endif
    regex_token_iterator(const regex_token_iterator& that)
       : pdata(that.pdata) {}
@@ -274,11 +286,51 @@ typedef regex_token_iterator<const wchar_t*> wcregex_token_iterator;
 typedef regex_token_iterator<std::wstring::const_iterator> wsregex_token_iterator;
 #endif
 
-#if BOOST_WORKAROUND(BOOST_MSVC, == 1310)
+template <class charT, class traits>
+inline regex_token_iterator<const charT*, charT, traits> make_regex_token_iterator(const charT* p, const basic_regex<charT, traits>& e, int submatch = 0, regex_constants::match_flag_type m = regex_constants::match_default)
+{
+   return regex_token_iterator<const charT*, charT, traits>(p, p+traits::length(p), e, submatch, m);
+}
+template <class charT, class traits, class ST, class SA>
+inline regex_token_iterator<typename std::basic_string<charT, ST, SA>::const_iterator, charT, traits> make_regex_token_iterator(const std::basic_string<charT, ST, SA>& p, const basic_regex<charT, traits>& e, int submatch = 0, regex_constants::match_flag_type m = regex_constants::match_default)
+{
+   return regex_token_iterator<typename std::basic_string<charT, ST, SA>::const_iterator, charT, traits>(p.begin(), p.end(), e, submatch, m);
+}
+#if !BOOST_WORKAROUND(BOOST_MSVC, < 1300)
+template <class charT, class traits, std::size_t N>
+inline regex_token_iterator<const charT*, charT, traits> make_regex_token_iterator(const charT* p, const basic_regex<charT, traits>& e, const int (&submatch)[N], regex_constants::match_flag_type m = regex_constants::match_default)
+{
+   return regex_token_iterator<const charT*, charT, traits>(p, p+traits::length(p), e, submatch, m);
+}
+template <class charT, class traits, class ST, class SA, std::size_t N>
+inline regex_token_iterator<typename std::basic_string<charT, ST, SA>::const_iterator, charT, traits> make_regex_token_iterator(const std::basic_string<charT, ST, SA>& p, const basic_regex<charT, traits>& e, const int (&submatch)[N], regex_constants::match_flag_type m = regex_constants::match_default)
+{
+   return regex_token_iterator<typename std::basic_string<charT, ST, SA>::const_iterator, charT, traits>(p.begin(), p.end(), e, submatch, m);
+}
+#endif
+template <class charT, class traits>
+inline regex_token_iterator<const charT*, charT, traits> make_regex_token_iterator(const charT* p, const basic_regex<charT, traits>& e, const std::vector<int>& submatch, regex_constants::match_flag_type m = regex_constants::match_default)
+{
+   return regex_token_iterator<const charT*, charT, traits>(p, p+traits::length(p), e, submatch, m);
+}
+template <class charT, class traits, class ST, class SA>
+inline regex_token_iterator<typename std::basic_string<charT, ST, SA>::const_iterator, charT, traits> make_regex_token_iterator(const std::basic_string<charT, ST, SA>& p, const basic_regex<charT, traits>& e, const std::vector<int>& submatch, regex_constants::match_flag_type m = regex_constants::match_default)
+{
+   return regex_token_iterator<typename std::basic_string<charT, ST, SA>::const_iterator, charT, traits>(p.begin(), p.end(), e, submatch, m);
+}
+
+#if BOOST_WORKAROUND(BOOST_MSVC, > 1300)
 #  pragma warning(pop)
+#endif
+#ifdef BOOST_MSVC
+#pragma warning(push)
+#pragma warning(disable: 4103)
 #endif
 #ifdef BOOST_HAS_ABI_HEADERS
 #  include BOOST_ABI_SUFFIX
+#endif
+#ifdef BOOST_MSVC
+#pragma warning(pop)
 #endif
 
 } // namespace boost

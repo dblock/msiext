@@ -7,26 +7,49 @@
 // (See accompanying file LICENSE_1_0.txt or copy at 
 // http://www.boost.org/LICENSE_1_0.txt)
 
-// $Source: /cvsroot/boost/boost/boost/type_traits/detail/bool_trait_def.hpp,v $
-// $Date: 2004/09/02 15:41:27 $
-// $Revision: 1.16 $
+// $Source$
+// $Date: 2006-07-12 07:10:22 -0400 (Wed, 12 Jul 2006) $
+// $Revision: 34511 $
 
 #include <boost/type_traits/detail/template_arity_spec.hpp>
+#include <boost/type_traits/integral_constant.hpp>
 #include <boost/mpl/bool.hpp>
 #include <boost/mpl/aux_/lambda_support.hpp>
 #include <boost/config.hpp>
 
-#if defined(__SUNPRO_CC)
+//
+// Unfortunately some libraries have started using this header without
+// cleaning up afterwards: so we'd better undef the macros just in case 
+// they've been defined already....
+//
+#ifdef BOOST_TT_AUX_BOOL_TRAIT_VALUE_DECL
+#undef BOOST_TT_AUX_BOOL_TRAIT_VALUE_DECL
+#undef BOOST_TT_AUX_BOOL_C_BASE
+#undef BOOST_TT_AUX_BOOL_TRAIT_DEF1
+#undef BOOST_TT_AUX_BOOL_TRAIT_DEF2
+#undef BOOST_TT_AUX_BOOL_TRAIT_SPEC1
+#undef BOOST_TT_AUX_BOOL_TRAIT_SPEC2
+#undef BOOST_TT_AUX_BOOL_TRAIT_IMPL_SPEC1
+#undef BOOST_TT_AUX_BOOL_TRAIT_IMPL_SPEC2
+#undef BOOST_TT_AUX_BOOL_TRAIT_PARTIAL_SPEC1_1
+#undef BOOST_TT_AUX_BOOL_TRAIT_PARTIAL_SPEC1_2
+#undef BOOST_TT_AUX_BOOL_TRAIT_PARTIAL_SPEC2_1
+#undef BOOST_TT_AUX_BOOL_TRAIT_PARTIAL_SPEC2_2
+#undef BOOST_TT_AUX_BOOL_TRAIT_IMPL_PARTIAL_SPEC2_1
+#undef BOOST_TT_AUX_BOOL_TRAIT_CV_SPEC1
+#endif
+
+#if defined(__SUNPRO_CC) && (__SUNPRO_CC < 0x570)
 #   define BOOST_TT_AUX_BOOL_TRAIT_VALUE_DECL(C) \
-    typedef BOOST_MPL_AUX_ADL_BARRIER_NAMESPACE::bool_< C > type; \
+    typedef ::boost::integral_constant<bool,C> type; \
     enum { value = type::value }; \
     /**/
 #   define BOOST_TT_AUX_BOOL_C_BASE(C)
 
-#elif defined(BOOST_MSVC) && BOOST_MSVC <= 1200
+#elif defined(BOOST_MSVC) && BOOST_MSVC < 1300
 
 #   define BOOST_TT_AUX_BOOL_TRAIT_VALUE_DECL(C) \
-    typedef BOOST_MPL_AUX_ADL_BARRIER_NAMESPACE::bool_< C > base_; \
+    typedef ::boost::integral_constant<bool,C> base_; \
     using base_::value; \
     /**/
 
@@ -37,7 +60,7 @@
 #endif
 
 #ifndef BOOST_TT_AUX_BOOL_C_BASE
-#   define BOOST_TT_AUX_BOOL_C_BASE(C) : BOOST_MPL_AUX_ADL_BARRIER_NAMESPACE::bool_< C >
+#   define BOOST_TT_AUX_BOOL_C_BASE(C) : ::boost::integral_constant<bool,C>
 #endif 
 
 
@@ -147,47 +170,4 @@ template< param > struct trait##_impl< sp1,sp2 > \
 #   define BOOST_TT_AUX_BOOL_TRAIT_CV_SPEC1(trait,sp,value) \
     BOOST_TT_AUX_BOOL_TRAIT_SPEC1(trait,sp,value) \
     /**/
-#endif
-
-#if 0  // there are true_type and false_type already in boost::
-       // This also induces dependencies which may be undesirable
-       // Let's wait until sometime not just before a release and clean
-       // the whole ct_if mess up.
-# ifndef BOOST_TT_INTEGRAL_CONSTANT
-#  define BOOST_TT_INTEGRAL_CONSTANT
-#  include <boost/mpl/integral_c.hpp>
-
-//
-// this is not a TR1 conforming integral_constant,
-// but it is a first start:
-//
-
-namespace boost{
-
-template <class T, T val>
-struct integral_constant
-: public BOOST_MPL_AUX_ADL_BARRIER_NAMESPACE::integral_c<T,val> {};
-
-
-template<> struct integral_constant< bool, true > \
-    BOOST_TT_AUX_BOOL_C_BASE(true) \
-{ \
-    BOOST_TT_AUX_BOOL_TRAIT_VALUE_DECL(true) \
-    BOOST_MPL_AUX_LAMBDA_SUPPORT_SPEC(1,integral_constant,(bool)) \
-};
-template<> struct integral_constant< bool, false > \
-    BOOST_TT_AUX_BOOL_C_BASE(false) \
-{ \
-    BOOST_TT_AUX_BOOL_TRAIT_VALUE_DECL(false) \
-    BOOST_MPL_AUX_LAMBDA_SUPPORT_SPEC(1,integral_constant,(bool)) \
-};
-
-namespace pending {
-typedef BOOST_MPL_AUX_ADL_BARRIER_NAMESPACE::true_ true_type;
-typedef BOOST_MPL_AUX_ADL_BARRIER_NAMESPACE::false_ false_type;
-}
-
-}
-
-# endif
 #endif
