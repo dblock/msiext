@@ -19,6 +19,7 @@
     <CallTarget Targets="build" />
     <CallTarget Targets="doc" />
     <CallTarget Targets="drop" />
+    <CallTarget Targets="zip" />
     <CallTarget Targets="test" />
   </Target>
   <Target Name="version">
@@ -30,6 +31,9 @@
     <SvnVersion LocalPath=".">
       <Output TaskParameter="Revision" PropertyName="Build" />
     </SvnVersion>
+    <Subtract Numbers="$(Build);40000" Condition="$(Build)&gt;40000">
+      <Output TaskParameter="Result" PropertyName="Build" />
+    </Subtract>
     <CreateItem Include="Major" AdditionalMetadata="ReplacementValue=$(Major)">
       <Output TaskParameter="Include" ItemName="AssemblyInfoTokens"/>
     </CreateItem>
@@ -99,23 +103,29 @@
     <CreateItem Include="$(BinDir)\*.exe" Exclude="$(BinDir)\*UnitTests.exe">
       <Output TaskParameter="Include" ItemName="ToolBinaries" />
     </CreateItem>
-    <MakeDir Directories="$(DropDir)\CustomActions" />
-    <Copy DestinationFolder="$(DropDir)\CustomActions" SourceFiles="@(CustomActionBinaries)" />
-    <MakeDir Directories="$(DropDir)\Symbols" />
-    <Copy DestinationFolder="$(DropDir)\Symbols" SourceFiles="$(BinDir)\%(CustomActionBinaries.Filename).pdb" />
-    <MakeDir Directories="$(DropDir)\WixExtensions" />
-    <Copy DestinationFolder="$(DropDir)\WixExtensions" SourceFiles="@(WixExtensionBinaries)" />
-    <MakeDir Directories="$(DropDir)\Demos" />
-    <Copy DestinationFolder="$(DropDir)\Demos" SourceFiles="@(DemoMsis)" />
-    <MakeDir Directories="$(DropDir)\Tools" />
-    <Copy DestinationFolder="$(DropDir)\Tools" SourceFiles="@(ToolBinaries)" />
-    <Copy DestinationFiles="$(DropDir)\License.html" SourceFiles="License\epl-v10.html" />
+    <MakeDir Directories="$(DropDir)\msiext-$(Major).$(Minor)\CustomActions" />
+    <Copy DestinationFolder="$(DropDir)\msiext-$(Major).$(Minor)\CustomActions" SourceFiles="@(CustomActionBinaries)" />
+    <MakeDir Directories="$(DropDir)\msiext-$(Major).$(Minor)\Symbols" />
+    <Copy DestinationFolder="$(DropDir)\msiext-$(Major).$(Minor)\Symbols" SourceFiles="$(BinDir)\%(CustomActionBinaries.Filename).pdb" />
+    <MakeDir Directories="$(DropDir)\msiext-$(Major).$(Minor)\WixExtensions" />
+    <Copy DestinationFolder="$(DropDir)\msiext-$(Major).$(Minor)\WixExtensions" SourceFiles="@(WixExtensionBinaries)" />
+    <MakeDir Directories="$(DropDir)\msiext-$(Major).$(Minor)\Demos" />
+    <Copy DestinationFolder="$(DropDir)\msiext-$(Major).$(Minor)\Demos" SourceFiles="@(DemoMsis)" />
+    <MakeDir Directories="$(DropDir)\msiext-$(Major).$(Minor)\Tools" />
+    <Copy DestinationFolder="$(DropDir)\msiext-$(Major).$(Minor)\Tools" SourceFiles="@(ToolBinaries)" />
+    <Copy DestinationFiles="$(DropDir)\msiext-$(Major).$(Minor)\License.html" SourceFiles="License\epl-v10.html" />
   </Target>
   <Target Name="doc" DependsOnTargets="version">
     <Message Text="Building Documentation ..." />
     <MakeDir Directories="$(DropDir)\Docs" />
     <TemplateFile Template="doc\Doxyfile.template" OutputFilename="Doxyfile" Tokens="@(AssemblyInfoTokens)"/>
     <Exec WorkingDirectory="doc" Command="doxygen.exe Doxyfile" />
+    <CreateItem Include="$(DropDir)\Docs\**">
+      <Output TaskParameter="Include" ItemName="DocFiles" />
+    </CreateItem>
+    <MakeDir Directories="$(DropDir)\msiext-$(Major).$(Minor)\Docs" />
+    <Move SourceFiles="@(DocFiles)" DestinationFolder="$(DropDir)\msiext-$(Major).$(Minor)\Docs\%(RecursiveDir)" />
+    <RemoveDir Directories="$(DropDir)\Docs" />    
   </Target>
   <Target Name="test" DependsOnTargets="version">
     <CreateItem Include="$(BinDir)\**\*UnitTests.exe">
@@ -127,5 +137,11 @@
   <Target Name="slnfix">
     <Copy SourceFiles="msi.sln" DestinationFiles="msi.bak" />
     <Exec Command="build\tools\SlnDependencyReorder.exe msi.bak > msi.sln" />
+  </Target>
+  <Target Name="zip" DependsOnTargets="version">
+    <CreateItem Include="$(DropDir)\**\*" Exclude="$(DropDir)\*.zip">
+      <Output TaskParameter="Include" ItemName="PackageFiles" />
+    </CreateItem>
+    <Zip WorkingDirectory="$(DropDir)" ZipFileName="$(DropDir)\msiext-$(Major).$(Minor).zip" Files="@(PackageFiles)" />
   </Target>
 </Project>
