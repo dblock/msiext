@@ -104,17 +104,9 @@ void ODBQCmdEngine::ExecuteSql(const std::wstring& sql)
 {
 	AppSecInc::Databases::ODBC::OdbcParser parser;
 	parser.setInput(sql);
-	
-	if (_delimiter.isSet())
-	{
-		std::vector<const std::wstring> delims;
-		delims.push_back(_delimiter.getValue());
-		parser.setDelimiters(delims);
-	}
-	else if (!_type.getValue().empty()) 
-	{
-		parser.setSqlFlavour(_type.getValue());
-	}
+	// since type has a default, we need to empty it if delimiter was set:
+	std::wstring type = (_type.isSet() || !_delimiter.isSet()? _type.getValue(): L"");
+	parser.setSqlTypeOrDelimiter(type, _delimiter.getValue());
 	Execute(parser);
 }
 

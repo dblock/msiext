@@ -18,6 +18,9 @@ namespace AppSecInc
                 CPPUNIT_TEST( Test_SQLODBC_GetXml );
                 CPPUNIT_TEST( Test_Execute_ODBC );
                 CPPUNIT_TEST( Test_DataSource_ODBC );
+                CPPUNIT_TEST( Test_BinaryIdPathResolver_pathToId );
+                CPPUNIT_TEST( Test_BinaryIdPathResolver_readContent );
+                CPPUNIT_TEST( Test_BinaryIdPathResolver_processInserts );
 				CPPUNIT_TEST( Test_EntryPoints );
                 CPPUNIT_TEST_SUITE_END();
 			public:
@@ -31,6 +34,9 @@ namespace AppSecInc
 				void Test_EntryPoints();
                 void Test_Execute_ODBC();
                 void Test_DataSource_ODBC();
+                void Test_BinaryIdPathResolver_pathToId();
+                void Test_BinaryIdPathResolver_readContent();
+                void Test_BinaryIdPathResolver_processInserts();
 			};
         }
 	}

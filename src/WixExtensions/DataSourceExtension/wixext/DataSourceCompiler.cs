@@ -848,6 +848,8 @@ namespace AppSecInc.Wix.Extensions
             int attributes = 0;
             string condition = null;
             string delimiter = null;
+            string type = null;
+            string basepath = null;
             YesNoType evaluateproperties = YesNoType.NotSet;
 
             SourceLineNumberCollection sourceLineNumbers = Preprocessor.GetSourceLineNumbers(node);
@@ -878,6 +880,12 @@ namespace AppSecInc.Wix.Extensions
                             break;
                         case "Delimiter":
                             delimiter = this.Core.GetAttributeValue(sourceLineNumbers, attrib);
+                            break;
+                        case "Type":
+                            type = this.Core.GetAttributeValue(sourceLineNumbers, attrib);
+                            break;
+                        case "BasePath":
+                            basepath = this.Core.GetAttributeValue(sourceLineNumbers, attrib);
                             break;
                         case "ConnectionId":
                             if (string.IsNullOrEmpty(connectionstringid))
@@ -946,6 +954,11 @@ namespace AppSecInc.Wix.Extensions
                 this.Core.OnMessage(WixErrors.ExpectedAttribute(sourceLineNumbers, node.Name, "Sql"));
             }
 
+            if (type != null && delimiter != null)
+            {
+                this.Core.OnMessage(WixErrors.UnexpectedElement(sourceLineNumbers, node.Name, "Delimiter"));
+            }
+            
             if (null == connectionstringid)
             {
                 this.Core.OnMessage(WixErrors.ExpectedAttribute(sourceLineNumbers, node.Name, "ConnectionId"));
@@ -990,7 +1003,9 @@ namespace AppSecInc.Wix.Extensions
                 row[6] = binaryid;
                 row[7] = condition;
                 row[8] = delimiter;
-                row[9] = attributes;
+                row[9] = type;
+                row[10] = basepath;
+                row[11] = attributes;
             }
         }
 

@@ -62,6 +62,8 @@
     <columnDefinition name="BinaryId" type="string" category="identifier" nullable="yes" length="72" modularize="column" keyTable="Binary" keyColumn="1" />
     <columnDefinition name="Condition" type="string" length="0" modularize="property" nullable="yes" category="formatted" />
     <columnDefinition name="Delimiter" type="string" length="0" modularize="column" nullable="yes" category="formatted" />
+    <columnDefinition name="Type" type="string" length="15" modularize="column" nullable="yes" category="formatted" />
+    <columnDefinition name="BasePath" type="string" length="255" modularize="column" nullable="yes" category="formatted" />
     <columnDefinition name="Attributes" type="number" length="2" nullable="yes" minValue="0" maxValue="127" description="1 == execute on install, 2 == execute on uninstall (, 4 = execute on reinstall)"/>
   </tableDefinition>
   <tableDefinition name="ODBCDataSourceConfig">

@@ -1,17 +1,17 @@
-Id	ComponentId	ConnectionStringId	Sql	Filename	OutputFilename	BinaryId	Condition	Delimiter	Attributes
-s72	S72	s72	S0	S255	S255	S72	S0	S0	I2
+Id	ComponentId	ConnectionStringId	Sql	Filename	OutputFilename	BinaryId	Condition	Delimiter	Type	BasePath	Attributes
+s72	S72	s72	S0	S255	S255	S72	S0	S0	S15	S255	I2
 ODBCExecute	Id
-Master_SelectVersion		LocalSQLServerConnection	SELECT @@VERSION				EXECUTE_MSSQL_OPTIONAL_STATEMENTS		9
-Master_SelectVersion_File		LocalSQLServerConnection	SELECT name, usertype, id FROM [\[]master[\]].dbo.syscolumns ORDER BY [\[]name[\]] DESC		[INSTALLLOCATION]Columns.xml				9
-MSSQLDemoDatabase_Query_CreateTable		LocalSQLServerConnection	CREATE TABLE [\[][MSSQL_DATABASE_NAME][\]].[\[]dbo[\]].[\[]QueryTableEncoded[\]] ( [\[]QueryTableEncoded_Id[\]] [\[]int[\]] IDENTITY(1,1) NOT NULL )						9
-MSSQLDemoDatabase_Query_CreateTable_2		LocalSQLServerConnection	CREATE TABLE [\[][MSSQL_DATABASE_NAME]2[\]].[\[]dbo[\]].[\[]QueryTableEncoded[\]] ( [\[]QueryTableEncoded_Id[\]] [\[]int[\]] IDENTITY(1,1) NOT NULL )						9
-MSSQLDemoDatabase_Query_DropTable		LocalSQLServerConnection	DROP TABLE [\[][MSSQL_DATABASE_NAME][\]].[\[]dbo[\]].[\[]QueryTableNotEncoded[\]]						10
-MSSQLDemoDatabase_Query_DropTable_2		LocalSQLServerConnection	DROP TABLE [\[][MSSQL_DATABASE_NAME]2[\]].[\[]dbo[\]].[\[]QueryTableEncoded[\]]						10
-MSSQLDemoDatabase_CreateTable_File		LocalSQLServerConnectionDemoDatabase		[SOURCELOCATION]\MSSQL_CreateTable_NotEncoded.sql					9
-MSSQLDemoDatabase_Binary_CreateTable_NotEncoded		LocalSQLServerConnectionDemoDatabase				MSSQL_CreateTable_NotEncoded_sql			1
-MSSQLDemoDatabase_Binary_CreateTable_Encoded		LocalSQLServerConnectionDemoDatabase				MSSQL_CreateTable_Encoded_sql			9
-MSSQLDemoDatabase_Binary_ExecuteManyGoStatements		LocalSQLServerConnectionDemoDatabase				MSSQL_ExecuteManyGoStatements_sql		GO	9
-AccessDemoDatabase_CreateTable_Encoded		AccessConnection				Access_CreateTable_NotEncoded_sql			9
-AccessDemoDatabase_CreateTable1		AccessConnection	CREATE TABLE [\"]Table1[\"] ( [\"]Table1_Id[\"] INTEGER NOT NULL )		[INSTALLLOCATION]CreateTable1.xml				1
-AccessDemoDatabase_DropTable1		AccessConnection	DROP TABLE [\"]Table1[\"]						2
-AccessDemoDatabase_ExecuteManyGOStatements		AccessConnection				Access_ExecuteManyGoStatements_sql		GO	1
+Master_SelectVersion		LocalSQLServerConnection	SELECT @@VERSION				EXECUTE_MSSQL_OPTIONAL_STATEMENTS				9
+Master_SelectVersion_File		LocalSQLServerConnection	SELECT name, usertype, id FROM [\[]master[\]].dbo.syscolumns ORDER BY [\[]name[\]] DESC		[INSTALLLOCATION]Columns.xml						9
+MSSQLDemoDatabase_Query_CreateTable		LocalSQLServerConnection	CREATE TABLE [\[][MSSQL_DATABASE_NAME][\]].[\[]dbo[\]].[\[]QueryTableEncoded[\]] ( [\[]QueryTableEncoded_Id[\]] [\[]int[\]] IDENTITY(1,1) NOT NULL )								9
+MSSQLDemoDatabase_Query_CreateTable_2		LocalSQLServerConnection	CREATE TABLE [\[][MSSQL_DATABASE_NAME]2[\]].[\[]dbo[\]].[\[]QueryTableEncoded[\]] ( [\[]QueryTableEncoded_Id[\]] [\[]int[\]] IDENTITY(1,1) NOT NULL )								9
+MSSQLDemoDatabase_Query_DropTable		LocalSQLServerConnection	DROP TABLE [\[][MSSQL_DATABASE_NAME][\]].[\[]dbo[\]].[\[]QueryTableNotEncoded[\]]								10
+MSSQLDemoDatabase_Query_DropTable_2		LocalSQLServerConnection	DROP TABLE [\[][MSSQL_DATABASE_NAME]2[\]].[\[]dbo[\]].[\[]QueryTableEncoded[\]]								10
+MSSQLDemoDatabase_CreateTable_File		LocalSQLServerConnectionDemoDatabase		[SOURCELOCATION]\MSSQL_CreateTable_NotEncoded.sql					SqlServer		9
+MSSQLDemoDatabase_Binary_CreateTable_NotEncoded		LocalSQLServerConnectionDemoDatabase				MSSQL_CreateTable_NotEncoded_sql					1
+MSSQLDemoDatabase_Binary_CreateTable_Encoded		LocalSQLServerConnectionDemoDatabase				MSSQL_CreateTable_Encoded_sql					9
+MSSQLDemoDatabase_Binary_ExecuteManyGoStatements		LocalSQLServerConnectionDemoDatabase				MSSQL_ExecuteManyGoStatements_sql			SqlServer		9
+AccessDemoDatabase_CreateTable_Encoded		AccessConnection				Access_CreateTable_NotEncoded_sql					9
+AccessDemoDatabase_CreateTable1		AccessConnection	CREATE TABLE [\"]Table1[\"] ( [\"]Table1_Id[\"] INTEGER NOT NULL )		[INSTALLLOCATION]CreateTable1.xml						1
+AccessDemoDatabase_DropTable1		AccessConnection	DROP TABLE [\"]Table1[\"]								2
+AccessDemoDatabase_ExecuteManyGOStatements		AccessConnection				Access_ExecuteManyGoStatements_sql		GO			1

@@ -29,6 +29,7 @@ namespace AppSecInc
 				CPPUNIT_TEST( testGetFilesWithNoWildcard );
 				CPPUNIT_TEST( testGetParentDirectory );
 				CPPUNIT_TEST( testGetSpecialFolderPath );
+				CPPUNIT_TEST( testIsAbsolutePath );
 				CPPUNIT_TEST_SUITE_END();
 			public:
 				void testGetTemporaryFileName();
@@ -51,6 +52,7 @@ namespace AppSecInc
 				void testGetCurrentDirectory();
 				void testGetParentDirectory();
 				void testGetSpecialFolderPath();
+				void testIsAbsolutePath();
 			};
 		}
 	}

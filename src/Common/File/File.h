@@ -267,5 +267,8 @@ namespace AppSecInc
 		 \return special folder path
          */
 		std::wstring GetSpecialFolderPath(int csidl, SHGFP_TYPE flags = SHGFP_TYPE_CURRENT);
+		
+		//!returns true if provided path is absolute, false otherwise
+		bool IsAbsolutePath(const std::wstring& path);
 	}
 }

@@ -22,6 +22,11 @@ void OdbcParserImpl::setPathResolver(PathResolver* resolver)
 	pathResolver = resolver;
 }
 
+PathResolver* OdbcParserImpl::getPathResolver() const
+{
+	return pathResolver;
+}
+
 void OdbcParserImpl::setDelimiters(const std::vector<const std::wstring>& delimiters) 
 {
 	checkInitialState();

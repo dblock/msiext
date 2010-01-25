@@ -648,7 +648,17 @@ to support other database types in the near future.
           </xs:attribute>
           <xs:attribute name="Delimiter" type="xs:string" use="optional">
             <xs:annotation>
-              <xs:documentation>Line delimiter. The contents of the SQL file will be split and executed one-by-one.</xs:documentation>
+              <xs:documentation>Batch delimiter. The contents of the SQL file will be split and executed one-by-one. Delimiter is case-insensitive, recognized only at the beginning of line. Either Type or Delimiter may be specified, not both.</xs:documentation>
+            </xs:annotation>
+          </xs:attribute>
+          <xs:attribute name="Type" type="SqlType" use="optional">
+            <xs:annotation>
+              <xs:documentation>Type of the sql script (SqlServer, Oracle, ...). This will set appropriate delimiters for sql splitting, e.g. 'go' for SqlServer; also.will provide support for insertion commands, e.g. ':r' for SqlServer.</xs:documentation>
+            </xs:annotation>
+          </xs:attribute>
+          <xs:attribute name="BasePath" type="xs:string" use="optional">
+            <xs:annotation>
+              <xs:documentation>Base path for include commands with relative path in sql script.</xs:documentation>
             </xs:annotation>
           </xs:attribute>
         </xs:extension>
@@ -716,7 +726,17 @@ to support other database types in the near future.
           </xs:attribute>
           <xs:attribute name="Delimiter" type="xs:string" use="optional">
             <xs:annotation>
-              <xs:documentation>Line delimiter. The contents of the SQL file will be split and executed one-by-one.</xs:documentation>
+              <xs:documentation>Batch delimiter. The contents of the SQL file will be split and executed one-by-one. Delimiter is case-insensitive, recognized only at the beginning of line. Either Type or Delimiter may be specified, not both.</xs:documentation>
+            </xs:annotation>
+          </xs:attribute>
+          <xs:attribute name="Type" type="SqlType" use="optional">
+            <xs:annotation>
+              <xs:documentation>Type of the sql script (SqlServer, Oracle, ...). This will set appropriate delimiters for sql splitting, e.g. 'go' for SqlServer; also.will provide support for insertion commands, e.g. ':r' for SqlServer.</xs:documentation>
+            </xs:annotation>
+          </xs:attribute>
+          <xs:attribute name="BasePath" type="xs:string" use="optional">
+            <xs:annotation>
+              <xs:documentation>Base path for include commands with relative path in sql script. If not specified, base path is set to the directory part of the 'Filename' attribute.</xs:documentation>
             </xs:annotation>
           </xs:attribute>
         </xs:extension>
@@ -785,7 +805,12 @@ to support other database types in the near future.
           </xs:attribute>
           <xs:attribute name="Delimiter" type="xs:string" use="optional">
             <xs:annotation>
-              <xs:documentation>Line delimiter. The contents of the SQL file will be split and executed one-by-one.</xs:documentation>
+              <xs:documentation>Batch delimiter. The contents of the SQL file will be split and executed one-by-one. Delimiter is case-insensitive, recognized only at the beginning of line. Either Type or Delimiter may be specified, not both.</xs:documentation>
+            </xs:annotation>
+          </xs:attribute>
+          <xs:attribute name="Type" type="SqlType" use="optional">
+            <xs:annotation>
+              <xs:documentation>Type of the sql script (SqlServer, Oracle, ...). This will set appropriate delimiters for sql splitting, e.g. 'go' for SqlServer; also.will provide support for insertion commands, e.g. ':r' for SqlServer.</xs:documentation>
             </xs:annotation>
           </xs:attribute>
         </xs:extension>
@@ -1073,4 +1098,13 @@ to support other database types in the near future.
     </xs:restriction>
   </xs:simpleType>
 
+	<xs:simpleType name="SqlType">
+		<xs:annotation>
+			<xs:documentation>Possible SQL types for OdbcParser</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:NMTOKEN">
+			<xs:enumeration value="SqlServer" />
+			<xs:enumeration value="Oracle" />
+		</xs:restriction>
+	</xs:simpleType>
 </xs:schema>

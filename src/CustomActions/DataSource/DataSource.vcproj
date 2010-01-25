@@ -160,6 +160,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\BinaryIdPathResolver.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\ConfigDataSource.cpp"
 				>
 			</File>
@@ -223,6 +227,10 @@
 			>
 			<File
 				RelativePath=".\Access.h"
+				>
+			</File>
+			<File
+				RelativePath=".\BinaryIdPathResolver.h"
 				>
 			</File>
 			<File

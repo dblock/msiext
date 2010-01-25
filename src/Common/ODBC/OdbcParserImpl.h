@@ -30,6 +30,7 @@ namespace AppSecInc
 				void setPathResolver(PathResolver* resolver);
 				void setDelimiters(const std::vector<const std::wstring>& delimiters);
 				void setSqlFlavour(const std::wstring& sqlFlavour);
+				PathResolver* getPathResolver() const;
 				
 				// insert additional input from the specified source
 				// (e.g. file) in the current point

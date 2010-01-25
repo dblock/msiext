@@ -1,5 +1,7 @@
 #pragma once
 
+#include "PathResolver.h"
+
 namespace AppSecInc
 {
 	namespace Databases
@@ -7,7 +9,6 @@ namespace AppSecInc
 		namespace ODBC
 		{
 			class OdbcParserImpl;
-			class PathResolver;
 			
 			/*! Class provides parsing of sql scripts that emulates parsing
 			  in vendor-specific command-line tools (sqlplus, osql, etc.),
@@ -29,7 +30,7 @@ namespace AppSecInc
 			  without  insertion support.
 			  
 			  Parser may be used both with files and other sources, e.g. with
-			  MSI binary streams, see PathResolver below.
+			  MSI binary streams, see PathResolver for details.
 			  
 			  Parser input is provided either with setSourcePath() or with
 			  setInput() method.
@@ -47,12 +48,16 @@ namespace AppSecInc
 				void setSqlFlavour(const std::wstring& sqlFlavour);
 				//! set arbitrary delimiters (insert commands not supported)
 				void setDelimiters(const std::vector<const std::wstring>& delimiters);
+				//! convenience method that sets either sql flavour or delimiter - whichever not empty.
+				void setSqlTypeOrDelimiter(const std::wstring& type, const std::wstring& delimiter);
 				//! set path resolver (default - file system path resolver)
 				void setPathResolver(PathResolver* pathResolver);
 				//! set input source path (e.g. file name or MSI binary ID)
 				void setSourcePath(const std::wstring& sourceName);
 				//! set input string to process
 				void setInput(const std::wstring& input);
+				//! get path resolver used
+				PathResolver* getPathResolver() const;
 				
 				//! check if there are more batches in the input
 				bool hasMore();
@@ -66,28 +71,6 @@ namespace AppSecInc
 				OdbcParser(const OdbcParser& other);
 				OdbcParser& operator=(const OdbcParser& other);
 				OdbcParserImpl* pimpl;
-			};
-
-			/*! This interface abstracts resolving inserted paths and reading
-			  corresponding content. It allows to support insertion both from
-			  a file system and e.g. MSI binary streams where inserted paths
-			  may be mapped to the corresponding binary stream IDs.
-			*/
-			class PathResolver {
-			  public:
-				//! Locate the path and read its content
-				virtual std::wstring readContent(const std::wstring& path) = 0;
-				/*! These two method are reserved for supporting paths relative to
-				    the current file (@@ command in Oracle, not supported now):
-				*/
-				virtual void setBasePath(const std::wstring& path) {}
-				virtual std::wstring getFolderPath(const std::wstring& path) {return L"";}
-			};
-			
-			//! default implementation of PathResolver
-			class FilesystemPathResolver: public PathResolver {
-			  public:
-				virtual std::wstring readContent(const std::wstring& path);
 			};
 		}
 	}

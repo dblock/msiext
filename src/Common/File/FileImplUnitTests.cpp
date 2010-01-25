@@ -440,3 +440,14 @@ void FileUnitTests::testGetSpecialFolderPath()
 		CPPUNIT_ASSERT(path_current.length() > 0);
 	}
 }
+
+void FileUnitTests::testIsAbsolutePath()
+{
+	CPPUNIT_ASSERT(AppSecInc::File::IsAbsolutePath(L"C:\\Program Files"));
+	CPPUNIT_ASSERT(AppSecInc::File::IsAbsolutePath(L"\\\\Shared"));
+	
+	CPPUNIT_ASSERT(! AppSecInc::File::IsAbsolutePath(L""));
+	CPPUNIT_ASSERT(! AppSecInc::File::IsAbsolutePath(L"file.txt"));
+	CPPUNIT_ASSERT(! AppSecInc::File::IsAbsolutePath(L"\\file.txt"));
+	CPPUNIT_ASSERT(! AppSecInc::File::IsAbsolutePath(L"1:not-a-file"));
+}

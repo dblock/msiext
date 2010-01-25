@@ -1,0 +1,3 @@
+DECLARE @a INT
+:r v1.0\other.sql
+GO

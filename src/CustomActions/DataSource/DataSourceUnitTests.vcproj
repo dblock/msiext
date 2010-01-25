@@ -163,6 +163,26 @@
 			Filter="cpp;c;cxx;rc;def;r;odl;idl;hpj;bat"
 			>
 			<File
+				RelativePath=".\BinaryIdPathResolver.cpp"
+				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						UsePrecompiledHeader="0"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						UsePrecompiledHeader="0"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
 				RelativePath=".\ConfigDataSourceUnitTests.cpp"
 				>
 			</File>
@@ -222,6 +242,10 @@
 			Filter="h;hpp;hxx;hm;inl"
 			>
 			<File
+				RelativePath=".\BinaryIdPathResolver.h"
+				>
+			</File>
+			<File
 				RelativePath=".\ConfigDataSourceUnitTests.h"
 				>
 			</File>
@@ -270,6 +294,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\TestData\MSSQL_CreateTable_Another.sql"
+				>
+			</File>
+			<File
 				RelativePath=".\TestData\MSSQL_CreateTable_NotEncoded.sql"
 				>
 			</File>
@@ -314,6 +342,14 @@
 				</File>
 				<File
 					RelativePath=".\TestData\Binary\Access_ExecuteManyGoStatements.ibd"
+					>
+				</File>
+				<File
+					RelativePath=".\TestData\Binary\MSSQL_BinarySqlIncluded.ibd"
+					>
+				</File>
+				<File
+					RelativePath=".\TestData\Binary\MSSQL_BinarySqlWithInclude.ibd"
 					>
 				</File>
 				<File

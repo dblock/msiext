@@ -218,6 +218,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\PathResolver.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\RowSet.cpp"
 				>
 			</File>
@@ -324,6 +328,10 @@
 			</File>
 			<File
 				RelativePath=".\Parameters.h"
+				>
+			</File>
+			<File
+				RelativePath=".\PathResolver.h"
 				>
 			</File>
 			<File

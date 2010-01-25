@@ -88,6 +88,8 @@ class MockNameResolver: public PathResolver {
 	virtual std::wstring readContent(const std::wstring& path) {
 		return content;
 	}
+	virtual void setBasePath(const std::wstring& path) {}
+	virtual std::wstring getFolderPath(const std::wstring& path) const {return L"";}
 };
 
 void OdbcParserUnitTests::testOdbcParserInsert()

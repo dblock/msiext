@@ -23,9 +23,27 @@ void OdbcParser::setDelimiters(const std::vector<const std::wstring>& delimiters
 	pimpl->setDelimiters(delimiters);
 }
 
+void OdbcParser::setSqlTypeOrDelimiter(const std::wstring& sqltype, 
+                                       const std::wstring& delimiter)
+{
+	if (!sqltype.empty()) {
+		pimpl->setSqlFlavour(sqltype);
+	}
+	else if (!delimiter.empty()) {
+		std::vector<const std::wstring> delims;
+		delims.push_back(delimiter);
+		pimpl->setDelimiters(delims);
+	}
+}
+
 void OdbcParser::setPathResolver(PathResolver* resolver)
 {
 	pimpl->setPathResolver(resolver);
+}
+
+PathResolver* OdbcParser::getPathResolver() const
+{
+	return pimpl->getPathResolver();
 }
 
 void OdbcParser::setSourcePath(const std::wstring& path)
@@ -54,11 +72,3 @@ std::wstring OdbcParser::processInsertsOnly()
 {
 	return pimpl->processInsertsOnly();
 }
-
-//-----------------------------------------------------------------------------
-std::wstring FilesystemPathResolver::readContent(const std::wstring& path) {
-	std::wstring content;
-	AppSecInc::File::ReadToEnd(path, content);
-	return content;
-}
-

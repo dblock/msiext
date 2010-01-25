@@ -611,3 +611,11 @@ std::wstring AppSecInc::File::GetSpecialFolderPath(int csidl, SHGFP_TYPE flags)
 
 	return buffer;
 }
+
+bool AppSecInc::File::IsAbsolutePath(const std::wstring& path)
+{
+	return path.length() >= 2 &&
+	       (  (path[1] == ':' && iswalpha(path[0]))
+	       || (path[1] == '\\' && path[0] == '\\')
+	       );
+}

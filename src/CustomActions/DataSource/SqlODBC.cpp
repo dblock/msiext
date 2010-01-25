@@ -1,108 +1,109 @@
 #include "StdAfx.h"
 #include "SqlODBC.h"
+#include "BinaryIdPathResolver.h"
 #include "SqlHandle.h"
 #include "FlagMaps.h"
 
 CA_API UINT __stdcall ODBC_Connect(MSIHANDLE hInstall)
 {
-	MSI_EXCEPTION_HANDLER_PROLOG;
-	MsiImpersonatedInstall msiInstall(hInstall);
+    MSI_EXCEPTION_HANDLER_PROLOG;
+    MsiImpersonatedInstall msiInstall(hInstall);
 
-	// get connection string
-	std::wstring connection_string = msiInstall.GetProperty(L"ODBC_CONNECTION_STRING");
-	CHECK_BOOL(connection_string.length() > 0, L"Missing connection string");
+    // get connection string
+    std::wstring connection_string = msiInstall.GetProperty(L"ODBC_CONNECTION_STRING");
+    CHECK_BOOL(connection_string.length() > 0, L"Missing connection string");
 
-	AppSecInc::Databases::ODBC::ODBCConnectionStringInfo connection_info(connection_string);
-	AppSecInc::Databases::ODBC::ODBCConnection conn;
-	try
-	{
-		conn.Connect(connection_info);
-		msiInstall.SetProperty(L"ODBC_CONNECTION_ESTABLISHED", L"1");
-		msiInstall.SetProperty(L"ODBC_ERROR", L"");
-	}
-	catch(std::exception& ex)
-	{
-		msiInstall.SetProperty(L"ODBC_CONNECTION_ESTABLISHED", L"");
-		msiInstall.SetProperty("ODBC_ERROR", ex.what());
-		throw ex;
-	}
+    AppSecInc::Databases::ODBC::ODBCConnectionStringInfo connection_info(connection_string);
+    AppSecInc::Databases::ODBC::ODBCConnection conn;
+    try
+    {
+        conn.Connect(connection_info);
+        msiInstall.SetProperty(L"ODBC_CONNECTION_ESTABLISHED", L"1");
+        msiInstall.SetProperty(L"ODBC_ERROR", L"");
+    }
+    catch(std::exception& ex)
+    {
+        msiInstall.SetProperty(L"ODBC_CONNECTION_ESTABLISHED", L"");
+        msiInstall.SetProperty("ODBC_ERROR", ex.what());
+        throw ex;
+    }
 
-	MSI_EXCEPTION_HANDLER_EPILOG;
-	return ERROR_SUCCESS;
+    MSI_EXCEPTION_HANDLER_EPILOG;
+    return ERROR_SUCCESS;
 }
 
 CA_API UINT __stdcall ODBC_Execute(MSIHANDLE hInstall)
 {
-	MSI_EXCEPTION_HANDLER_PROLOG;
-	MsiImpersonatedInstall msiInstall(hInstall);
+    MSI_EXCEPTION_HANDLER_PROLOG;
+    MsiImpersonatedInstall msiInstall(hInstall);
 
-	AppSecInc::Databases::ODBC::ODBCConnectionStringInfo connection_info(
+    AppSecInc::Databases::ODBC::ODBCConnectionStringInfo connection_info(
         msiInstall.GetProperty(L"ODBC_CONNECTION_STRING"));
-	AppSecInc::Databases::ODBC::ODBCConnection conn;
+    AppSecInc::Databases::ODBC::ODBCConnection conn;
     conn.Connect(connection_info);
     conn.Execute(msiInstall.GetProperty(L"ODBC_SQL_QUERY"));
 
-	MSI_EXCEPTION_HANDLER_EPILOG;
-	return ERROR_SUCCESS;
+    MSI_EXCEPTION_HANDLER_EPILOG;
+    return ERROR_SUCCESS;
 }
 
 
 CA_API UINT __stdcall ODBC_GetString(MSIHANDLE hInstall)
 {
-	MSI_EXCEPTION_HANDLER_PROLOG;
-	MsiImpersonatedInstall msiInstall(hInstall);
+    MSI_EXCEPTION_HANDLER_PROLOG;
+    MsiImpersonatedInstall msiInstall(hInstall);
 
     msiInstall.SetProperty(L"ODBC_SQL_RESULT", L"");
-	AppSecInc::Databases::ODBC::ODBCConnectionStringInfo connection_info(
+    AppSecInc::Databases::ODBC::ODBCConnectionStringInfo connection_info(
         msiInstall.GetProperty(L"ODBC_CONNECTION_STRING"));
-	AppSecInc::Databases::ODBC::ODBCConnection conn;
+    AppSecInc::Databases::ODBC::ODBCConnection conn;
     conn.Connect(connection_info);
     WORD flags = GetPropertyValue<FlagMapEntry[ARRAYSIZE(s_OdbcSqlFlags)], WORD>(msiInstall, L"ODBC_SQL_FLAGS", s_OdbcSqlFlags);
     std::wstring result = conn.GetWString(msiInstall.GetProperty(L"ODBC_SQL_QUERY"), flags);
     msiInstall.SetProperty(L"ODBC_SQL_RESULT", result);
 
-	MSI_EXCEPTION_HANDLER_EPILOG;
-	return ERROR_SUCCESS;
+    MSI_EXCEPTION_HANDLER_EPILOG;
+    return ERROR_SUCCESS;
 }
 
 CA_API UINT __stdcall ODBC_GetScalar(MSIHANDLE hInstall)
 {
-	MSI_EXCEPTION_HANDLER_PROLOG;
-	MsiImpersonatedInstall msiInstall(hInstall);
+    MSI_EXCEPTION_HANDLER_PROLOG;
+    MsiImpersonatedInstall msiInstall(hInstall);
 
-	AppSecInc::Databases::ODBC::ODBCConnectionStringInfo connection_info(
+    AppSecInc::Databases::ODBC::ODBCConnectionStringInfo connection_info(
         msiInstall.GetProperty(L"ODBC_CONNECTION_STRING"));
-	AppSecInc::Databases::ODBC::ODBCConnection conn;
+    AppSecInc::Databases::ODBC::ODBCConnection conn;
     conn.Connect(connection_info);
     long result = conn.GetScalar(msiInstall.GetProperty(L"ODBC_SQL_QUERY"));
     msiInstall.SetProperty(L"ODBC_SQL_RESULT", AppSecInc::StringUtils::toWString(result));
 
-	MSI_EXCEPTION_HANDLER_EPILOG;
-	return ERROR_SUCCESS;
+    MSI_EXCEPTION_HANDLER_EPILOG;
+    return ERROR_SUCCESS;
 }
 
 CA_API UINT __stdcall ODBC_GetXml(MSIHANDLE hInstall)
 {
-	MSI_EXCEPTION_HANDLER_PROLOG;
-	MsiImpersonatedInstall msiInstall(hInstall);
+    MSI_EXCEPTION_HANDLER_PROLOG;
+    MsiImpersonatedInstall msiInstall(hInstall);
 
-	AppSecInc::Databases::ODBC::ODBCConnectionStringInfo connection_info(
+    AppSecInc::Databases::ODBC::ODBCConnectionStringInfo connection_info(
         msiInstall.GetProperty(L"ODBC_CONNECTION_STRING"));
-	AppSecInc::Databases::ODBC::ODBCConnection conn;
+    AppSecInc::Databases::ODBC::ODBCConnection conn;
     conn.Connect(connection_info);
     std::wstring xml = conn.GetXml(msiInstall.GetProperty(L"ODBC_SQL_QUERY"));
     msiInstall.SetProperty(L"ODBC_SQL_RESULT", xml);
 
-	MSI_EXCEPTION_HANDLER_EPILOG;
-	return ERROR_SUCCESS;
+    MSI_EXCEPTION_HANDLER_EPILOG;
+    return ERROR_SUCCESS;
 }
 
 CA_API UINT __stdcall Execute_ODBC_Deferred(MSIHANDLE hInstall)
 {
-	MSI_EXCEPTION_HANDLER_PROLOG;
+    MSI_EXCEPTION_HANDLER_PROLOG;
     MsiInstall msiInstall(hInstall);
 
-	// process ODBC statements
+    // process ODBC statements
     AppSecInc::Xml::XmlDocument xmlDocument;
     xmlDocument.LoadXml(msiInstall.GetActionData());
 
@@ -116,6 +117,8 @@ CA_API UINT __stdcall Execute_ODBC_Deferred(MSIHANDLE hInstall)
         std::wstring filename = xmlDocument.SelectNodeValue(L"Filename", row, L"");
         std::wstring outputfilename = xmlDocument.SelectNodeValue(L"OutputFilename", row, L"");
         std::wstring delimiter = xmlDocument.SelectNodeValue(L"Delimiter", row, L"");
+        std::wstring sqltype = xmlDocument.SelectNodeValue(L"Type", row, L"");
+        std::wstring basepath = xmlDocument.SelectNodeValue(L"BasePath", row, L"");
 
         CHECK_BOOL(! (sql.empty() && filename.empty()),
             L"Missing SQL/Filename");
@@ -133,23 +136,16 @@ CA_API UINT __stdcall Execute_ODBC_Deferred(MSIHANDLE hInstall)
         AppSecInc::Databases::ODBC::ODBCConnection conn;
         conn.Connect(ci);
 
-        std::vector<std::wstring> sql_statements;
-        if (delimiter.empty())
-        {
-            sql_statements.push_back(sql);
-        }
-        else
-        {
-            AppSecInc::StringUtils::tokenize(sql, sql_statements, delimiter);
-        }
+        AppSecInc::Databases::ODBC::OdbcParser parser;
+        parser.setInput(sql);
+        parser.setSqlTypeOrDelimiter(sqltype, delimiter);
+        parser.getPathResolver()->setBasePath(basepath);
         
         AppSecInc::Xml::XmlDocument xmlresults;
         xmlresults.Create();
         MSXML2::IXMLDOMNodePtr xmlresults_rootnode = xmlresults.AppendChild(L"Data");
-        for each(const std::wstring& statement in sql_statements)
-        {
-            std::wstring trimmed_statement = statement;
-            AppSecInc::StringUtils::lrtrimcrlf(trimmed_statement);
+        while (parser.hasMore()) {
+            std::wstring trimmed_statement = parser.getNextBatch();
             if (trimmed_statement.empty()) continue;
             std::wstringstream status;
             status << L"Executing \"" << trimmed_statement << "\" on \"" << connectionstring << L"\" (" << id << L")";
@@ -165,13 +161,13 @@ CA_API UINT __stdcall Execute_ODBC_Deferred(MSIHANDLE hInstall)
         }
     }
 
-	MSI_EXCEPTION_HANDLER_EPILOG;
+    MSI_EXCEPTION_HANDLER_EPILOG;
     return ERROR_SUCCESS;
 }
 
 CA_API UINT __stdcall Execute_ODBC_Immediate(MSIHANDLE hInstall)
 {
-	MSI_EXCEPTION_HANDLER_PROLOG;
+    MSI_EXCEPTION_HANDLER_PROLOG;
     MsiInstall msiInstall(hInstall);
 
     typedef enum ODBCExecuteAttributes
@@ -184,26 +180,26 @@ CA_API UINT __stdcall Execute_ODBC_Immediate(MSIHANDLE hInstall)
 
     // immediate custom action, evaluate conditions and update the custom action table data
 
-	/* 
-		This produces an xml like this:
+    /* 
+        This produces an xml like this:
 
-		 <ODBCExecutes>
-		  <ODBCExecute>
-		   <Sql />
+         <ODBCExecutes>
+          <ODBCExecute>
+           <Sql />
            <Attributes />
            <ConnectionString />
            ...
-		  </ODBCExecute>
+          </ODBCExecute>
          </ODBCExecute>
 
-	*/
+    */
 
-	// combined xml document
-	AppSecInc::Xml::XmlDocument combined_xml_document;
-	combined_xml_document.Create();
-	MSXML2::IXMLDOMNodePtr combined_xml_root = combined_xml_document.AppendChild(L"ODBCExecutes");
+    // combined xml document
+    AppSecInc::Xml::XmlDocument combined_xml_document;
+    combined_xml_document.Create();
+    MSXML2::IXMLDOMNodePtr combined_xml_root = combined_xml_document.AppendChild(L"ODBCExecutes");
 
-	// connection strings
+    // connection strings
     AppSecInc::Xml::XmlDocument connectionstring_xml_document;
     connectionstring_xml_document.LoadXml(msiInstall.GetViewData(L"SELECT * FROM `DatabaseConnectionString`"));
     std::map<std::wstring, std::wstring> connectionstring_map;
@@ -211,25 +207,27 @@ CA_API UINT __stdcall Execute_ODBC_Immediate(MSIHANDLE hInstall)
     MSXML2::IXMLDOMNodePtr connectionstring_row = NULL;
     while (NULL != (connectionstring_row = connectionstring_rows->nextNode()))
     {
-		std::wstring connectionstring_id = connectionstring_xml_document.SelectNodeValue(L"Data[@Column=\"Id\"]", connectionstring_row);
+        std::wstring connectionstring_id = connectionstring_xml_document.SelectNodeValue(L"Data[@Column=\"Id\"]", connectionstring_row);
         std::wstring connectionstring = connectionstring_xml_document.SelectNodeValue(L"Data[@Column=\"ConnectionString\"]", connectionstring_row);
         connectionstring_map.insert(std::pair<std::wstring, std::wstring>(connectionstring_id, connectionstring));
     }
 
-	// ODBC execute statements
+    // ODBC execute statements
     AppSecInc::Xml::XmlDocument odbcexecute_xml_document;
     odbcexecute_xml_document.LoadXml(msiInstall.GetViewData(L"SELECT * FROM `ODBCExecute`"));
     MSXML2::IXMLDOMNodeListPtr odbcexecute_rows = odbcexecute_xml_document.SelectNodes(L"//Row");
     MSXML2::IXMLDOMNodePtr odbcexecute_row = NULL;
     while (NULL != (odbcexecute_row = odbcexecute_rows->nextNode()))
     {
-		std::wstring odbcexecute_id = odbcexecute_xml_document.SelectNodeValue(L"Data[@Column=\"Id\"]", odbcexecute_row);
-		std::wstring odbcexecutecomponent_id = odbcexecute_xml_document.SelectNodeValue(L"Data[@Column=\"ComponentId\"]", odbcexecute_row, L"");
+        std::wstring odbcexecute_id = odbcexecute_xml_document.SelectNodeValue(L"Data[@Column=\"Id\"]", odbcexecute_row);
+        std::wstring odbcexecutecomponent_id = odbcexecute_xml_document.SelectNodeValue(L"Data[@Column=\"ComponentId\"]", odbcexecute_row, L"");
         std::wstring sql = odbcexecute_xml_document.SelectNodeValue(L"Data[@Column=\"Sql\"]", odbcexecute_row, L"");
         std::wstring filename = odbcexecute_xml_document.SelectNodeValue(L"Data[@Column=\"Filename\"]", odbcexecute_row, L"");
         std::wstring outputfilename = odbcexecute_xml_document.SelectNodeValue(L"Data[@Column=\"OutputFilename\"]", odbcexecute_row, L"");
         std::wstring binaryid = odbcexecute_xml_document.SelectNodeValue(L"Data[@Column=\"BinaryId\"]", odbcexecute_row, L"");
         std::wstring delimiter = odbcexecute_xml_document.SelectNodeValue(L"Data[@Column=\"Delimiter\"]", odbcexecute_row, L"");
+        std::wstring sqltype = odbcexecute_xml_document.SelectNodeValue(L"Data[@Column=\"Type\"]", odbcexecute_row, L"");
+        std::wstring basepath = odbcexecute_xml_document.SelectNodeValue(L"Data[@Column=\"BasePath\"]", odbcexecute_row, L"");
         std::wstring condition = odbcexecute_xml_document.SelectNodeValue(L"Data[@Column=\"Condition\"]", odbcexecute_row);
         // connection string
         std::wstring connectionstring = odbcexecute_xml_document.SelectNodeValue(L"Data[@Column=\"ConnectionStringId\"]", odbcexecute_row);
@@ -253,14 +251,16 @@ CA_API UINT __stdcall Execute_ODBC_Immediate(MSIHANDLE hInstall)
         MSXML2::IXMLDOMNodePtr combined_xml_odbcexecute_root = combined_xml_document.AppendChild(L"ODBCExecute", combined_xml_root);
         combined_xml_document.SetAttribute(L"execute", execute ? L"true" : L"false", combined_xml_odbcexecute_root);
         combined_xml_document.SetAttribute(L"id", odbcexecute_id, combined_xml_odbcexecute_root);
-        
-        // fetch the contents of the binary as SQL
+
+        // fetch the contents of the binary as SQL, substitute all inserts
         if (! binaryid.empty())
         {
-            std::vector<char> data;
-            msiInstall.GetBinaryData(binaryid, data);
-            std::string char_data(& * data.begin(), data.size());
-            sql = AppSecInc::StringUtils::mb2wc(char_data);
+            BinaryIdPathResolver resolver(&msiInstall);
+            AppSecInc::Databases::ODBC::OdbcParser parser;
+            parser.setPathResolver(&resolver);
+            parser.setSqlTypeOrDelimiter(sqltype, delimiter);
+            parser.setSourcePath(binaryid);
+            sql = parser.processInsertsOnly();
 
             if (attributes & EvaluateProperties)
             {
@@ -270,6 +270,10 @@ CA_API UINT __stdcall Execute_ODBC_Immediate(MSIHANDLE hInstall)
 
         if (! filename.empty())
         {
+            if (basepath.empty())
+            {
+                basepath = AppSecInc::File::GetFileDirectoryW(filename);
+            }
             combined_xml_document.AppendChild(L"Filename", combined_xml_odbcexecute_root)->text = _bstr_t(filename.c_str());
         }
 
@@ -285,19 +289,21 @@ CA_API UINT __stdcall Execute_ODBC_Immediate(MSIHANDLE hInstall)
 
         combined_xml_document.AppendChild(L"ConnectionString", combined_xml_odbcexecute_root)->text = _bstr_t(connectionstring.c_str());
         combined_xml_document.AppendChild(L"Delimiter", combined_xml_odbcexecute_root)->text = _bstr_t(delimiter.c_str());
+        combined_xml_document.AppendChild(L"Type", combined_xml_odbcexecute_root)->text = _bstr_t(sqltype.c_str());
+        combined_xml_document.AppendChild(L"BasePath", combined_xml_odbcexecute_root)->text = _bstr_t(basepath.c_str());
     }
 
     std::wstring action = L"Execute_ODBC_Deferred_";
     action.append(msiInstall.IsInstalling() ? L"Install" : L"UnInstall");
     msiInstall.SetActionData(action, combined_xml_document.GetXml());
 
-	MSI_EXCEPTION_HANDLER_EPILOG;
+    MSI_EXCEPTION_HANDLER_EPILOG;
     return ERROR_SUCCESS;
 }
 
 CA_API UINT __stdcall DataSource_ODBC_Immediate(MSIHANDLE hInstall)
 {
-	MSI_EXCEPTION_HANDLER_PROLOG;
+    MSI_EXCEPTION_HANDLER_PROLOG;
     MsiInstall msiInstall(hInstall);
 
     typedef enum ODBCDataSourceAttributes
@@ -319,9 +325,9 @@ CA_API UINT __stdcall DataSource_ODBC_Immediate(MSIHANDLE hInstall)
     while (NULL != (row = rows->nextNode()))
     {
         // id
-		std::wstring id = xmlDocument.SelectNodeValue(L"Data[@Column=\"Id\"]", row, L"");
+        std::wstring id = xmlDocument.SelectNodeValue(L"Data[@Column=\"Id\"]", row, L"");
         // component id
-		std::wstring component_id = xmlDocument.SelectNodeValue(L"Data[@Column=\"ComponentId\"]", row, L"");
+        std::wstring component_id = xmlDocument.SelectNodeValue(L"Data[@Column=\"ComponentId\"]", row, L"");
         // node condition
         std::wstring condition = xmlDocument.SelectNodeValue(L"Data[@Column=\"Condition\"]", row);
         // operational attributes
@@ -357,16 +363,16 @@ CA_API UINT __stdcall DataSource_ODBC_Immediate(MSIHANDLE hInstall)
     action.append(msiInstall.IsInstalling() ? L"Install" : L"UnInstall");
     msiInstall.SetActionData(action, xmlDocument.GetXml());
 
-	MSI_EXCEPTION_HANDLER_EPILOG;
+    MSI_EXCEPTION_HANDLER_EPILOG;
     return ERROR_SUCCESS;
 }
 
 CA_API UINT __stdcall DataSource_ODBC_Deferred(MSIHANDLE hInstall)
 {
-	MSI_EXCEPTION_HANDLER_PROLOG;
+    MSI_EXCEPTION_HANDLER_PROLOG;
     MsiInstall msiInstall(hInstall);
 
-	// process ODBC statements
+    // process ODBC statements
     AppSecInc::Xml::XmlDocument xmlDocument;
     xmlDocument.LoadXml(msiInstall.GetActionData());
 
@@ -406,6 +412,6 @@ CA_API UINT __stdcall DataSource_ODBC_Deferred(MSIHANDLE hInstall)
             request, driver, value);
     }
 
-	MSI_EXCEPTION_HANDLER_EPILOG;
+    MSI_EXCEPTION_HANDLER_EPILOG;
     return ERROR_SUCCESS;
 }

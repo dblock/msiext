@@ -1,5 +1,6 @@
 #include "StdAfxUnitTests.h"
 #include "SqlODBCUnitTests.h"
+#include "BinaryIdPathResolver.h"
 
 CPPUNIT_TEST_SUITE_REGISTRATION(AppSecInc::UnitTests::DataSource::SQLODBCUnitTests);
 
@@ -218,7 +219,7 @@ void SQLODBCUnitTests::Test_Execute_ODBC()
     mssql_connection.Connect(mssql_connection_info);
     int tables = mssql_connection.GetScalar(L"SELECT COUNT(*) FROM [" + databasename + L"].sys.tables");
     std::wcout << std::endl << L" " << databasename << L": " << tables << L" table(s)";
-    CPPUNIT_ASSERT(tables == 4);
+    CPPUNIT_ASSERT(tables == 5);
 
     // check MSSQL columns.xml
     std::wcout << std::endl << columnsxml;
@@ -294,4 +295,45 @@ void SQLODBCUnitTests::Test_DataSource_ODBC()
         std::wcout << std::endl << L"Removing " << driver << L" DSN: " << name;
         AppSecInc::Databases::ODBC::ODBCDataSource::Configure(ODBC_REMOVE_DSN, driver, L"DSN=" + name);
     }
+}
+
+
+void SQLODBCUnitTests::Test_BinaryIdPathResolver_pathToId()
+{
+	AppSecInc::Databases::ODBC::BinaryIdPathResolver r(0);
+	
+	CPPUNIT_ASSERT(L"Binary_Id"     == r.pathToId(L"Binary_Id"));
+	CPPUNIT_ASSERT(L"dir_file1_sql" == r.pathToId(L"..\\\\dir\\.\\file1.sql"));
+}
+
+void SQLODBCUnitTests::Test_BinaryIdPathResolver_readContent()
+{
+    AppSecInc::Msi::MsiShim hInstall;
+    std::wstring testdatapath = AppSecInc::File::GetModuleDirectoryW() + L"\\TestData_DataSourceUnitTests";
+    hInstall.Import(testdatapath, L"Binary.idt");
+    AppSecInc::Msi::MsiInstall msiInstall(hInstall);
+
+	AppSecInc::Databases::ODBC::BinaryIdPathResolver r( &msiInstall );
+	std::wstring result = r.readContent(L"v1_0_main_sql");
+	CPPUNIT_ASSERT(L"DECLARE @a INT\r\n:r v1.0\\other.sql\r\nGO\r\n" == result);
+	
+	result = r.readContent(L"v1.0\\other.sql");
+	CPPUNIT_ASSERT(L"DECLARE @b INT\r\n" == result);
+}
+
+void SQLODBCUnitTests::Test_BinaryIdPathResolver_processInserts()
+{
+    AppSecInc::Msi::MsiShim hInstall;
+    std::wstring testdatapath = AppSecInc::File::GetModuleDirectoryW() + L"\\TestData_DataSourceUnitTests";
+    hInstall.Import(testdatapath, L"Binary.idt");
+    AppSecInc::Msi::MsiInstall msiInstall(hInstall);
+
+	AppSecInc::Databases::ODBC::BinaryIdPathResolver r( &msiInstall );
+	AppSecInc::Databases::ODBC::OdbcParser parser;
+	parser.setPathResolver(&r);
+	parser.setSqlFlavour(L"mssql");
+	parser.setSourcePath(L"v1_0_main_sql");
+	
+	std::wstring result = parser.processInsertsOnly();
+	CPPUNIT_ASSERT(L"DECLARE @a INT\r\nDECLARE @b INT\r\nGO\r" == result);
 }
