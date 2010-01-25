@@ -22,7 +22,7 @@ CA_API UINT __stdcall TcpIp_BindSocket(MSIHANDLE hInstall);
 Attempts to connect to a remote server, useful for checking whether there's a listening server.
 See http://msdn.microsoft.com/en-us/library/ms742212(VS.85).aspx for parameter details.
 
-\param TCP_IPADDRESS remove TCP/IP address to connect to
+\param TCP_IPADDRESS remote TCP/IP address to connect to
 \param TCP_PORT remote TCP port to connect to
 \param TCP_SOCKET_TYPE socket type, one of SOCK_STREAM, SOCK_DGRAM or SOCK_RAW
 \param TCP_PROTOCOL, one of IPPROTO_TCP or IPPROTO_UDP
