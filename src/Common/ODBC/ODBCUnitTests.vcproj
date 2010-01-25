@@ -212,6 +212,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\OdbcParserTests.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\ODBCUnitTests.cpp"
 				>
 			</File>
@@ -298,6 +302,10 @@
 			</File>
 			<File
 				RelativePath=".\MSSQLDataFileUnitTests.h"
+				>
+			</File>
+			<File
+				RelativePath=".\OdbcParserTests.h"
 				>
 			</File>
 			<File

@@ -12,7 +12,7 @@ Wix::Extensions::DataSource::ODBCExecuteFile MSI extensions to the command line.
 USAGE:
 
    ODBQ.exe  {--sql <string> ... |--file <file> ... |--datafile <datafile>
-             ... } [--outputfile <file>] [--delimiter <string>]
+             ... } [--outputfile <file>] [--type <string>|--delimiter <string>]
              [--connectionstring <string>] [--noresults] [--nosql]
              [--nologo] [--] [--version] [-h]
 
@@ -32,8 +32,17 @@ Where:
    --outputfile
      Xml output file for messages and dataset results.
 
+   --type, -t
+     type of emulated command-line tool. May be on of (case-incensitive):
+         SqlServer, MSSQL, osql, sqlcmd, tsql  - for MS SQL Server
+         Oracle, sqlplus, sql*plus - for Oracle.
+     Delimiter for splitting SQL are selected according to type,
+     insert commands are supported.
+     Default is SqlServer.
+         -- OR --
    --delimiter
-     Delimiter for splitting SQL statements, eg. "GO".
+     Delimiter for splitting SQL statements, eg. "GO". 
+     Note: delimiter is case-nsensitive, recognized only at the beginning of line
 
    --connectionstring
      Driver-specific connection string to use to connect to the server,

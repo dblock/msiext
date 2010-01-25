@@ -6,9 +6,10 @@ ODBQCmdEngine::ODBQCmdEngine(int argc, wchar_t * argv[])
 	, _nologo(L"", L"nologo", L"Suppress logo and messages, raw output only.", _cmd)
 	, _nosql(L"", L"nosql", L"Suppress SQL statements output to console.", _cmd)
 	, _noresults(L"", L"noresults", L"Suppress results output to console.", _cmd)
-    , _connectionstring(L"", L"connectionstring", L"Driver-specific connection string to use to connect to the server,  eg. \"Driver=SQL Server;Server=.;Trusted_Connection=yes\"", false, L"Driver=SQL Server;Server=.;Trusted_Connection=yes;\"", L"string", _cmd)
+    , _connectionstring(L"", L"connectionstring", L"Driver-specific connection string to use to connect to the server,  eg. \"Driver=SQL Server;Server=.;Trusted_Connection=yes\"", false, L"Driver=SQL Server;Server=.;Trusted_Connection=yes;", L"string", _cmd)
     , _sql(L"", L"sql", L"SQL query to execute, eg. \"SELECT @@VERSION\".", true, L"string")
     , _file(L"", L"file", L"File(s) containing SQL statements, may be a wildcard.", true, L"file")
+    , _type(L"t", L"type", L"Type of sql script: mssql (default), oracle.", false, L"SqlServer", L"string", _cmd)
     , _delimiter(L"", L"delimiter", L"Delimiter for splitting SQL statements, eg. \"GO\".", false, L"", L"string", _cmd)
     , _outputfile(L"", L"outputfile", L"Xml output file for messages and dataset results.", false, L"", L"file", _cmd)
     , _datafile(L"", L"datafile", L"XML file containing data sets to insert.", true, L"datafile")
@@ -29,6 +30,10 @@ void ODBQCmdEngine::Execute()
 	if (! _nologo.getValue())
 	{
 		std::wcout << std::endl << L"- Connecting with \"" << _connectionstring.getValue() << L"\"";
+		if (!_type.getValue().empty()) 
+		{
+			std::wcout << std::endl << L"- Using \"" << _type.getValue() << L"\" parser";
+		}
 	}
 
     if (_file.isSet())
@@ -97,22 +102,31 @@ void ODBQCmdEngine::ExecuteFile(const std::wstring& file)
 
 void ODBQCmdEngine::ExecuteSql(const std::wstring& sql)
 {
+	AppSecInc::Databases::ODBC::OdbcParser parser;
+	parser.setInput(sql);
+	
+	if (_delimiter.isSet())
+	{
+		std::vector<const std::wstring> delims;
+		delims.push_back(_delimiter.getValue());
+		parser.setDelimiters(delims);
+	}
+	else if (!_type.getValue().empty()) 
+	{
+		parser.setSqlFlavour(_type.getValue());
+	}
+	Execute(parser);
+}
+
+void ODBQCmdEngine::Execute(AppSecInc::Databases::ODBC::OdbcParser& parser)
+{
     AppSecInc::Databases::ODBC::ODBCConnectionStringInfo ci(_connectionstring.getValue());
     AppSecInc::Databases::ODBC::ODBCConnection conn;
     conn.Connect(ci);
 
-    std::vector<std::wstring> sql_statements;
-    if (! _delimiter.isSet())
+    while(parser.hasMore())
     {
-        sql_statements.push_back(sql);
-    }
-    else
-    {
-        AppSecInc::StringUtils::tokenize(sql, sql_statements, _delimiter.getValue());
-    }
-    
-    for each(const std::wstring& statement in sql_statements)
-    {
+		const std::wstring statement = parser.getNextBatch();
         long messages = 0;
 		std::wstring executed_statement = statement;
 		AppSecInc::StringUtils::lrtrimcrlf(executed_statement);

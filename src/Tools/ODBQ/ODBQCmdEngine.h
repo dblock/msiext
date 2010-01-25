@@ -22,6 +22,8 @@ public:
     TCLAP::MultiArg<std::wstring> _sql;
     //! sql file(s) to execute
     TCLAP::MultiArg<std::wstring> _file;
+    //! sql type, default - SqlServer
+    TCLAP::ValueArg<std::wstring> _type;
     //! optional delimiter
     TCLAP::ValueArg<std::wstring> _delimiter;
     //! optional output filename
@@ -37,6 +39,8 @@ private:
     void ExecuteSql(const std::wstring& query);
     //! execute a single file
     void ExecuteFile(const std::wstring& file);
+    //! execute input from parser
+    void Execute(AppSecInc::Databases::ODBC::OdbcParser& parser);
     //! insert a data file
     void InsertDataFile(const std::wstring& file);
 };

@@ -158,6 +158,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\CommandSet.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\Connection.cpp"
 				>
 			</File>
@@ -195,6 +199,14 @@
 			</File>
 			<File
 				RelativePath=".\MSSQLDataFile.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\OdbcParser.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\OdbcParserImpl.cpp"
 				>
 			</File>
 			<File
@@ -296,6 +308,14 @@
 			</File>
 			<File
 				RelativePath=".\ODBC.h"
+				>
+			</File>
+			<File
+				RelativePath=".\OdbcParser.h"
+				>
+			</File>
+			<File
+				RelativePath=".\OdbcParserImpl.h"
 				>
 			</File>
 			<File
