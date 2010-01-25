@@ -11,10 +11,13 @@ Wix::Extensions::DataSource::ODBCExecuteFile MSI extensions to the command line.
 \code
 USAGE:
 
-   ODBQ.exe  {--sql <string> ... |--file <file> ... |--datafile <datafile>
-             ... } [--outputfile <file>] [--type <string>|--delimiter <string>]
-             [--connectionstring <string>] [--noresults] [--nosql]
-             [--nologo] [--] [--version] [-h]
+   ODBQ.exe  {--sql <string> ... |--file <file> ... |--datafile <datafile> ...}
+             [--outputfile <file>] 
+             [--type <string>|--delimiter <string>]
+             [--connectionstring <string>]
+             [--flattenonly]
+             [--noresults] [--nosql] [--nologo] [--rawoutput]
+             [--] [--version] [-h]
 
 
 Where:
@@ -22,14 +25,14 @@ Where:
    --sql  (accepted multiple times)
      (OR required)  SQL query to execute, eg. "SELECT @@VERSION".
          -- OR --
-   --file  (accepted multiple times)
+   --file, -f  (accepted multiple times)
      (OR required)  File(s) containing SQL statements, may be a wildcard.
          -- OR --
    --datafile  (accepted multiple times)
      (OR required)  XML file containing data sets to insert.
 
 
-   --outputfile
+   --outputfile, -o
      Xml output file for messages and dataset results.
 
    --type, -t
@@ -48,6 +51,11 @@ Where:
      Driver-specific connection string to use to connect to the server,
      eg. "Driver=SQL Server;Server=.;Trusted_Connection=yes"
 
+   --flattenonly
+     Don't execute sql, only substitute all included files
+     and print resulting flattened sql file either to standard output
+     or to the <outputfile> if specified
+
    --noresults
      Suppress results output to console.
 
@@ -56,6 +64,11 @@ Where:
 
    --nologo
      Suppress logo and messages, raw output only.
+     
+   --rawoutput
+     Output results into file in 'raw' format (rows \n-separated, 
+     columns \t-separated) rather then in xml format.
+     Also switches off output of column headers and row/column counts.
 
    --,  --ignore_rest
      Ignores the rest of the labeled arguments following this flag.

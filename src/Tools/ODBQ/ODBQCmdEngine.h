@@ -7,6 +7,8 @@ private:
     AppSecInc::Xml::XmlDocument _xmlresults;
     //! root node of xml results
     MSXML2::IXMLDOMNodePtr _xmlresults_rootnode;
+    //! output buffer
+    std::wstring output;
 public:
     //! command line parameters
     TCLAP::CmdLine _cmd;
@@ -30,6 +32,10 @@ public:
     TCLAP::ValueArg<std::wstring> _outputfile;
     //! xml data files to insert
     TCLAP::MultiArg<std::wstring> _datafile;
+    //! flatten-only flag, don't execute sql
+    TCLAP::SwitchArg _flatten;
+    //! raw output flag
+    TCLAP::SwitchArg _rawoutput;
 public:
     ODBQCmdEngine(int argc, wchar_t * argv[]);
     //! execute per command line args

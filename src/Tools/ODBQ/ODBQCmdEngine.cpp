@@ -8,11 +8,13 @@ ODBQCmdEngine::ODBQCmdEngine(int argc, wchar_t * argv[])
 	, _noresults(L"", L"noresults", L"Suppress results output to console.", _cmd)
     , _connectionstring(L"", L"connectionstring", L"Driver-specific connection string to use to connect to the server,  eg. \"Driver=SQL Server;Server=.;Trusted_Connection=yes\"", false, L"Driver=SQL Server;Server=.;Trusted_Connection=yes;", L"string", _cmd)
     , _sql(L"", L"sql", L"SQL query to execute, eg. \"SELECT @@VERSION\".", true, L"string")
-    , _file(L"", L"file", L"File(s) containing SQL statements, may be a wildcard.", true, L"file")
+    , _file(L"f", L"file", L"File(s) containing SQL statements, may be a wildcard.", true, L"file")
     , _type(L"t", L"type", L"Type of sql script: mssql (default), oracle.", false, L"SqlServer", L"string", _cmd)
     , _delimiter(L"", L"delimiter", L"Delimiter for splitting SQL statements, eg. \"GO\".", false, L"", L"string", _cmd)
-    , _outputfile(L"", L"outputfile", L"Xml output file for messages and dataset results.", false, L"", L"file", _cmd)
+    , _outputfile(L"o", L"outputfile", L"Xml output file for messages and dataset results.", false, L"", L"file", _cmd)
     , _datafile(L"", L"datafile", L"XML file containing data sets to insert.", true, L"datafile")
+    , _flatten(L"", L"flattenonly", L"Substitute included files only.", _cmd)
+    , _rawoutput(L"", L"rawoutput", L"Output results in raw format.", _cmd)
 {
     std::vector<TCLAP::Arg *> file_args;
     file_args.push_back(& _sql);
@@ -79,10 +81,25 @@ void ODBQCmdEngine::Execute()
 		{
 			std::wcout << std::endl << L"- Writing \"" + outputfile_full + L"\"";
 		}
-
-        CHECK_HR(_xmlresults->save(CComVariant(outputfile_full.c_str())),
-            L"Error saving \"" << _outputfile.getValue() << L"\"");
+		
+		if (output.empty()) 
+		{
+            CHECK_HR(_xmlresults->save(CComVariant(outputfile_full.c_str())),
+                L"Error saving \"" << _outputfile.getValue() << L"\"");
+        }
+        else 
+        {
+			std::string out = AppSecInc::StringUtils::wc2mb(output);
+			std::vector<char> vout(out.begin(), out.end());
+			AppSecInc::File::FileWrite(outputfile_full, vout);
+        }
     }
+    else 
+	{
+		if (!output.empty()) {
+			std::wcout << output << std::endl;
+		}
+	}
 }
 
 void ODBQCmdEngine::ExecuteFile(const std::wstring& file)
@@ -107,7 +124,13 @@ void ODBQCmdEngine::ExecuteSql(const std::wstring& sql)
 	// since type has a default, we need to empty it if delimiter was set:
 	std::wstring type = (_type.isSet() || !_delimiter.isSet()? _type.getValue(): L"");
 	parser.setSqlTypeOrDelimiter(type, _delimiter.getValue());
-	Execute(parser);
+	
+	if (_flatten.isSet()) {
+		output = parser.processInsertsOnly();
+	}
+	else {
+		Execute(parser);
+	}
 }
 
 void ODBQCmdEngine::Execute(AppSecInc::Databases::ODBC::OdbcParser& parser)
@@ -144,7 +167,7 @@ void ODBQCmdEngine::Execute(AppSecInc::Databases::ODBC::OdbcParser& parser)
 
 		if (! _noresults.getValue())
 		{
-			if (rows != 0)
+			if (rows != 0 && !_rawoutput.getValue())
 			{
 				std::wcout << std::endl << L"< " << rows << L"x" << cols;
 				messages++;
@@ -171,7 +194,7 @@ void ODBQCmdEngine::Execute(AppSecInc::Databases::ODBC::OdbcParser& parser)
 			while (NULL != (result_row = result_rows->nextNode()))
 			{
                 // column header
-                if (row == 0)
+                if (row == 0 && !_rawoutput.getValue())
                 {
                     if (! _nologo.getValue() || messages > 0) std::wcout << std::endl;
                     int col = 0;
@@ -185,7 +208,7 @@ void ODBQCmdEngine::Execute(AppSecInc::Databases::ODBC::OdbcParser& parser)
                 }
 
                 // column divider
-                if (row == 0)
+                if (row == 0 && !_rawoutput.getValue())
                 {
                     std::wcout << std::endl;
                     int col = 0;
@@ -200,15 +223,24 @@ void ODBQCmdEngine::Execute(AppSecInc::Databases::ODBC::OdbcParser& parser)
 
                 // column values
                 {
-				    std::wcout << std::endl;
+					if (!_rawoutput.getValue())
+						std::wcout << std::endl;
                     int col = 0;
 				    MSXML2::IXMLDOMNodeListPtr result_columns = result_row->childNodes;
 				    MSXML2::IXMLDOMNodePtr result_column = NULL;
 				    while (NULL != (result_column = result_columns->nextNode()))
 				    {
-					    if (col++ > 0) std::wcout << L"\t";
-                        std::wcout << result_column->text;
+						if (_rawoutput.getValue()) {
+							if (col++ > 0) output += L"\t";
+							output += result_column->text;
+						}
+						else {
+							if (col++ > 0) std::wcout << L"\t";
+							std::wcout << result_column->text;
+						}
 				    }
+					if (_rawoutput.getValue())
+						output += L"\n";
                 }
 
                 row++;
