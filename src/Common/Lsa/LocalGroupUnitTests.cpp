@@ -123,6 +123,6 @@ void GroupUnitTests::testDomainMember()
         std::wcout << std::endl << L" " << member.GetFQN();
     }
     CPPUNIT_ASSERT(members.size() == 1);
-    CPPUNIT_ASSERT(members[0].GetFQN() == username);
+	CPPUNIT_ASSERT(AppSecInc::StringUtils::comparei(members[0].GetFQN(), username));
     LocalGroup::Delete(groupname);
 }
