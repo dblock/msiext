@@ -19,8 +19,10 @@ void FilesystemPathResolver::setBasePath(const std::wstring& path)
 std::wstring FilesystemPathResolver::readContent(const std::wstring& path)
 {
 	std::wstring content;
-	CHECK_BOOL(AppSecInc::File::FileExists(path), L"File does not exist: " << path);
-	AppSecInc::File::ReadToEnd(getFullPath(path), content);
+	std::wstring fullpath = getFullPath(path);
+	CHECK_BOOL(AppSecInc::File::FileExists(fullpath), 
+		L"File does not exist: " << fullpath);
+	AppSecInc::File::ReadToEnd(fullpath, content);
 	return content;
 }
 
