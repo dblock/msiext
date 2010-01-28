@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "OdbcParserImpl.h"
+#include "CommandSet.h"
 
 using namespace AppSecInc::Databases::ODBC;
 
@@ -8,7 +9,8 @@ static CommandSet emptySet;
 
 
 OdbcParserImpl::OdbcParserImpl()
-: commandSet(&emptySet),pathResolver(&defaultPathResolver), currPos(0)
+: commandSet(&emptySet),pathResolver(&defaultPathResolver), currPos(0),
+  exitOnError(true)
 {
 }
 
@@ -101,5 +103,15 @@ void OdbcParserImpl::checkInitialState()
 	if (currPos >0) {
 		throw std::exception("Illegal operation - allowed only in initial state");
 	}
+}
+
+bool OdbcParserImpl::exitOnErrorFlag()
+{
+	return exitOnError;
+}
+
+void OdbcParserImpl::setExitOnErrorFlag( bool on )
+{
+	exitOnError = on;
 }
 

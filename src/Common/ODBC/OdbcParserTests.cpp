@@ -1,6 +1,7 @@
 #include "StdAfxUnitTests.h"
 #include "OdbcParserTests.h"
 #include "OdbcParserImpl.h"
+#include "CommandSet.h"
 
 using namespace AppSecInc::Databases::ODBC;
 using namespace AppSecInc::UnitTests::Databases::ODBC;
@@ -129,4 +130,25 @@ void OdbcParserUnitTests::testOdbcParserNoDelims()
 	parser.setInput( input );
 	CPPUNIT_ASSERT(input == parser.getNextBatch());
 	CPPUNIT_ASSERT(!parser.hasMore());
+}
+
+
+void OdbcParserUnitTests::testOdbcParserExitOnErrorFlag()
+{
+	OdbcParser parser;
+	// exit on error is on by default:
+	CPPUNIT_ASSERT_EQUAL( true, parser.exitOnErrorFlag() );
+	
+	std::wstring input = L":ON Error ignore\r\n"
+	                     L"Line 1\r\ngo\r\n"
+	                     L":ON Error EXIT\r\n"
+	                     L"LINE 2\r\n";
+	parser.setInput( input );
+	parser.setSqlFlavour(L"SqlServer");
+	
+	parser.getNextBatch();
+	CPPUNIT_ASSERT_EQUAL( false, parser.exitOnErrorFlag() );
+	
+	parser.getNextBatch();
+	CPPUNIT_ASSERT_EQUAL( true, parser.exitOnErrorFlag() );
 }

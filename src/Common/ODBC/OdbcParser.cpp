@@ -68,6 +68,11 @@ std::wstring OdbcParser::getNextBatch()
 	return pimpl->getNextBatch();
 }
 
+bool OdbcParser::exitOnErrorFlag()
+{
+	return pimpl->exitOnErrorFlag();
+}
+
 std::wstring OdbcParser::processInsertsOnly()
 {
 	return pimpl->processInsertsOnly();

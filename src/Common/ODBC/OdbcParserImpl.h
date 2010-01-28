@@ -1,5 +1,6 @@
+#pragma once
+
 #include "OdbcParser.h"
-#include <boost/shared_ptr.hpp>
 
 namespace AppSecInc 
 {
@@ -7,20 +8,7 @@ namespace AppSecInc
 	{
 		namespace ODBC 
 		{
-			class Command;
-			typedef boost::shared_ptr<Command> CommandPtr;
-
-			class CommandSet {
-			  public:
-				CommandSet();
-				virtual ~CommandSet();
-				virtual Command* findCommand(const std::wstring& line) const;
-				
-				static CommandSet* getForFlavour(const std::wstring& flavour);
-				static CommandSet* getForDelimiters(const std::vector<const std::wstring>& delimiters);
-			  protected:
-				std::vector<CommandPtr> commands;
-			};
+			class CommandSet;
 
 			class OdbcParserImpl {
 			public:
@@ -41,6 +29,9 @@ namespace AppSecInc
 				bool hasMore() const;
 				std::wstring getNextBatch();
 				
+				bool exitOnErrorFlag();
+				void setExitOnErrorFlag( bool on );
+				
 				std::wstring processInsertsOnly();
 				
 				void checkInitialState();
@@ -52,22 +43,7 @@ namespace AppSecInc
 				PathResolver*             pathResolver;
 				unsigned int              currPos;
 				std::vector<std::wstring> lines;
-			};
-
-			class Command {
-			public:
-				Command(const std::wstring& name, bool params, bool insert, bool terminator);
-				virtual ~Command();
-				std::wstring getName() const   { return name; }
-				bool hasParams() const         { return params; }
-				bool isInsert() const          { return insert; }
-				bool isBatchTerminator() const { return batchTerminator; }
-				virtual void process(const std::wstring& line, OdbcParserImpl& parser);
-			protected:
-				std::wstring name;
-				bool params;
-				bool insert;
-				bool batchTerminator;
+				bool                      exitOnError;
 			};
 		}
 	}

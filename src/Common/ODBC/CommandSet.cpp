@@ -1,32 +1,7 @@
 #include "stdafx.h"
-#include "OdbcParserImpl.h"
+#include "CommandSet.h"
 
 using namespace AppSecInc::Databases::ODBC;
-
-Command::Command(const std::wstring& name, bool params, bool insert, bool terminator)
-: name(name), params(params), insert(insert), batchTerminator(terminator) {
-}
-
-Command::~Command()
-{
-}
-
-void Command::process(const std::wstring& line, OdbcParserImpl& parser) {
-    // default - do nothing
-}
-
-class InsertCommand: public Command 
-{
-public:
-	InsertCommand(const std::wstring& name)
-	: Command(name,true,true,false) {
-	}
-	virtual void process(const std::wstring& line, OdbcParserImpl& parser) {
-		std::wstring sourceName = line.substr( name.size() );
-		AppSecInc::StringUtils::lrtrim( sourceName, L" \t\r" );
-		parser.insertSource( sourceName );
-	}
-};
 
 CommandSet::CommandSet() {
 }
@@ -57,6 +32,8 @@ public:
 	SqlcmdCommandSet() {
 		commands.push_back( CommandPtr(new Command(L"go", false, false, true)) );
 		commands.push_back( CommandPtr(new InsertCommand(L":r ")) );
+		commands.push_back( CommandPtr(
+			new OnErrorCommand(L":on error ", L"exit", L"ignore")) );
 	}
 };
 
@@ -68,6 +45,10 @@ public:
 		commands.push_back( CommandPtr(new InsertCommand(L"@")) );
 		commands.push_back( CommandPtr(new Command(L"set ", true, false, false)) );
 		commands.push_back( CommandPtr(new Command(L"spool ", true, false, false)) );
+		commands.push_back( CommandPtr(
+			new OnErrorCommand(L"whenever sqlerror ", L"exit", L"continue")) );
+		commands.push_back( CommandPtr(
+			new OnErrorCommand(L"whenever oserror ",  L"exit", L"continue")) );
 	}
 };
 
@@ -92,6 +73,7 @@ CommandSet* CommandSet::getForFlavour(const std::wstring& flavour)
 	}
 	throw std::logic_error("Unsupported flavour");
 }
+
 
 typedef boost::shared_ptr<CommandSet> CommandSetPtr;
 typedef std::pair<std::vector<const std::wstring>,CommandSetPtr> DelimsCsPair;

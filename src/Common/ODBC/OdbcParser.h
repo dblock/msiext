@@ -63,6 +63,8 @@ namespace AppSecInc
 				bool hasMore();
 				//! get next batch to execute
 				std::wstring getNextBatch();
+				//! returns current state of error processing in the script
+				bool exitOnErrorFlag();
 
 				// return input with all files inserted (flatten input)
 				std::wstring processInsertsOnly();

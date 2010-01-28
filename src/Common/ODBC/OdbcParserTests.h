@@ -19,6 +19,7 @@ namespace AppSecInc
 					CPPUNIT_TEST(testOdbcParserInsert);
 					CPPUNIT_TEST(testOdbcParserInsertNotTerminating);
 					CPPUNIT_TEST(testOdbcParserNoDelims);
+					CPPUNIT_TEST(testOdbcParserExitOnErrorFlag);
 					CPPUNIT_TEST_SUITE_END();
 				public:
 					void testCommandSetSqlServer();
@@ -29,6 +30,7 @@ namespace AppSecInc
 					void testOdbcParserInsert();
 					void testOdbcParserInsertNotTerminating();
 					void testOdbcParserNoDelims();
+					void testOdbcParserExitOnErrorFlag();
 				};
 			}
 		}
