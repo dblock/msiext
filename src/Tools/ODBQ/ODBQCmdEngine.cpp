@@ -31,10 +31,10 @@ void ODBQCmdEngine::Execute()
 
 	if (! _nologo.getValue())
 	{
-		std::wcout << std::endl << L"- Connecting with \"" << _connectionstring.getValue() << L"\"";
+		std::wcout << L"- Connecting with \"" << _connectionstring.getValue() << L"\"" << std::endl;
 		if (!_type.getValue().empty()) 
 		{
-			std::wcout << std::endl << L"- Using \"" << _type.getValue() << L"\" parser";
+			std::wcout << L"- Using \"" << _type.getValue() << L"\" parser" << std::endl;
 		}
 	}
 
@@ -79,7 +79,7 @@ void ODBQCmdEngine::Execute()
 
 		if (! _nologo.getValue())
 		{
-			std::wcout << std::endl << L"- Writing \"" + outputfile_full + L"\"";
+			std::wcout << L"- Writing \"" + outputfile_full + L"\"" << std::endl;
 		}
 		
 		if (output.empty()) 
@@ -108,7 +108,7 @@ void ODBQCmdEngine::ExecuteFile(const std::wstring& file)
 	
 	if (! _nologo.getValue())
 	{
-		std::wcout << std::endl << L"- Loading \"" + file + L"\"";
+		std::wcout << L"- Loading \"" + file + L"\"" << std::endl;
 	}
 
     AppSecInc::File::ReadToEnd(file, query);
@@ -143,36 +143,35 @@ void ODBQCmdEngine::Execute(AppSecInc::Databases::ODBC::OdbcParser& parser)
     {
 		const std::wstring statement = parser.getNextBatch();
         long messages = 0;
-		std::wstring executed_statement = statement;
-		AppSecInc::StringUtils::lrtrimcrlf(executed_statement);
 
-		if (executed_statement.empty())
+		if (statement.empty())
 			continue;
 
 		if (! _nosql.getValue())
 		{
-			std::wcout << std::endl;
 			if (! _nologo.getValue()) std::wcout << L"> ";
-			std::wcout << executed_statement;
+			std::wcout << statement;
+			std::wcout << std::endl;
 			messages++;
 		}
 
-        MSXML2::IXMLDOMNodePtr result = conn.GetXml(executed_statement, _xmlresults, _xmlresults_rootnode);
+		MSXML2::IXMLDOMNodePtr result;
+        try {
+            result = conn.GetXml(statement, _xmlresults, _xmlresults_rootnode);
+        }
+        catch (std::exception& ex) 
+        {
+            std::wstringstream error;
+            error << AppSecInc::StringUtils::mb2wc(ex.what())
+                  << (parser.exitOnErrorFlag()? L"": L" - IGNORED");
+            std::wcout << error.str() << std::endl;
+            if (parser.exitOnErrorFlag()) {
+                throw std::exception("Error executing sql statement, terminated");
+            }
+        }
 
         if (_noresults.getValue())
             continue;
-
-        long cols = AppSecInc::StringUtils::stringToLong(_xmlresults.SelectAttributeValue(L"columns", result));
-        long rows = AppSecInc::StringUtils::stringToLong(_xmlresults.SelectAttributeValue(L"rows", result));
-
-		if (! _noresults.getValue())
-		{
-			if (rows != 0 && !_rawoutput.getValue())
-			{
-				std::wcout << std::endl << L"< " << rows << L"x" << cols;
-				messages++;
-			}
-		}
 
         // output messages
 		{
@@ -180,10 +179,23 @@ void ODBQCmdEngine::Execute(AppSecInc::Databases::ODBC::OdbcParser& parser)
 			MSXML2::IXMLDOMNodePtr message_row = NULL;	
 			while (NULL != (message_row = message_rows->nextNode()))
 			{
-				if (messages++ > 0) std::wcout << std::endl;
 				if (! _nologo.getValue()) std::wcout << L"< ";
-				std::wcout << message_row->text;
+				std::wcout << message_row->text << std::endl;
 			}
+		}
+
+        long cols = 0;
+        long rows = 0;
+        if (result != NULL)
+        {
+            cols = AppSecInc::StringUtils::stringToLong(_xmlresults.SelectAttributeValue(L"columns", result));
+            rows = AppSecInc::StringUtils::stringToLong(_xmlresults.SelectAttributeValue(L"rows", result));
+        }
+
+		if (rows != 0 && !_rawoutput.getValue())
+		{
+			std::wcout << L"< " << rows << L"x" << cols << std::endl;
+			messages++;
 		}
 
         // output results
@@ -196,7 +208,6 @@ void ODBQCmdEngine::Execute(AppSecInc::Databases::ODBC::OdbcParser& parser)
                 // column header
                 if (row == 0 && !_rawoutput.getValue())
                 {
-                    if (! _nologo.getValue() || messages > 0) std::wcout << std::endl;
                     int col = 0;
 				    MSXML2::IXMLDOMNodeListPtr result_columns = result_row->childNodes;
 				    MSXML2::IXMLDOMNodePtr result_column = NULL;
@@ -205,26 +216,26 @@ void ODBQCmdEngine::Execute(AppSecInc::Databases::ODBC::OdbcParser& parser)
 					    if (col++ > 0) std::wcout << L"\t";
                         std::wcout << result_column->nodeName;
 				    }
+				    std::wcout << std::endl;
                 }
 
                 // column divider
                 if (row == 0 && !_rawoutput.getValue())
                 {
-                    std::wcout << std::endl;
                     int col = 0;
 				    MSXML2::IXMLDOMNodeListPtr result_columns = result_row->childNodes;
 				    MSXML2::IXMLDOMNodePtr result_column = NULL;
 				    while (NULL != (result_column = result_columns->nextNode()))
 				    {
 					    if (col++ > 0) std::wcout << L"\t";
-                        for (unsigned int c = 0; c < result_column->nodeName.length(); c++) std::wcout << "-";
+                        for (unsigned int c = 0; c < result_column->nodeName.length(); c++)
+                             std::wcout << "-";
 				    }
+                    std::wcout << std::endl;
                 }
 
                 // column values
                 {
-					if (!_rawoutput.getValue())
-						std::wcout << std::endl;
                     int col = 0;
 				    MSXML2::IXMLDOMNodeListPtr result_columns = result_row->childNodes;
 				    MSXML2::IXMLDOMNodePtr result_column = NULL;
@@ -241,6 +252,8 @@ void ODBQCmdEngine::Execute(AppSecInc::Databases::ODBC::OdbcParser& parser)
 				    }
 					if (_rawoutput.getValue())
 						output += L"\n";
+					else
+						std::wcout << std::endl;
                 }
 
                 row++;
@@ -253,7 +266,7 @@ void ODBQCmdEngine::InsertDataFile(const std::wstring& file)
 {
 	if (! _nologo.getValue())
 	{
-		std::wcout << std::endl << L"- Importing \"" + file + L"\"";
+		std::wcout << L"- Importing \"" + file + L"\"" << std::endl;
 	}
 
     AppSecInc::Xml::XmlDocument xmldoc;

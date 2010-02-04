@@ -369,6 +369,10 @@
 					>
 				</File>
 				<File
+					RelativePath=".\TestData\Binary\MSSQL_ExecuteIgnoreErrors.ibd"
+					>
+				</File>
+				<File
 					RelativePath=".\TestData\Binary\MSSQL_ExecuteManyGoStatements.ibd"
 					>
 				</File>

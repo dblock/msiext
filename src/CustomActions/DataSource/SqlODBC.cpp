@@ -144,13 +144,26 @@ CA_API UINT __stdcall Execute_ODBC_Deferred(MSIHANDLE hInstall)
         AppSecInc::Xml::XmlDocument xmlresults;
         xmlresults.Create();
         MSXML2::IXMLDOMNodePtr xmlresults_rootnode = xmlresults.AppendChild(L"Data");
+        
         while (parser.hasMore()) {
             std::wstring trimmed_statement = parser.getNextBatch();
             if (trimmed_statement.empty()) continue;
             std::wstringstream status;
             status << L"Executing \"" << trimmed_statement << "\" on \"" << connectionstring << L"\" (" << id << L")";
             msiInstall.LogInfo(_T(__FUNCTION__), status.str());
-            conn.GetXml(trimmed_statement, xmlresults, xmlresults_rootnode);
+            try {
+                conn.GetXml(trimmed_statement, xmlresults, xmlresults_rootnode);
+            }
+            catch (std::exception& ex) 
+            {
+                std::wstringstream error;
+                error << AppSecInc::StringUtils::mb2wc(ex.what())
+                      << (parser.exitOnErrorFlag()? L"": L" - IGNORED");
+                msiInstall.LogError(error.str());
+                if (parser.exitOnErrorFlag()) {
+                    throw std::exception("Error executing sql statement, terminated");
+                }
+            }
         }
 
         if (! outputfilename.empty())

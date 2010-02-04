@@ -1,0 +1,3 @@
+:ON ERROR IGNORE
+DROP TABLE some_non_existing_table
+GO
