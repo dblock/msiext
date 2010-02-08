@@ -96,7 +96,8 @@ void ODBQCmdEngine::Execute()
     }
     else 
 	{
-		if (!output.empty()) {
+		if (!output.empty()) 
+		{
 			std::wcout << output << std::endl;
 		}
 	}
@@ -125,10 +126,12 @@ void ODBQCmdEngine::ExecuteSql(const std::wstring& sql)
 	std::wstring type = (_type.isSet() || !_delimiter.isSet()? _type.getValue(): L"");
 	parser.setSqlTypeOrDelimiter(type, _delimiter.getValue());
 	
-	if (_flatten.isSet()) {
+	if (_flatten.isSet()) 
+	{
 		output = parser.processInsertsOnly();
 	}
-	else {
+	else 
+	{
 		Execute(parser);
 	}
 }

@@ -37,11 +37,27 @@ CA_API UINT __stdcall ODBC_Execute(MSIHANDLE hInstall)
     MSI_EXCEPTION_HANDLER_PROLOG;
     MsiImpersonatedInstall msiInstall(hInstall);
 
-    AppSecInc::Databases::ODBC::ODBCConnectionStringInfo connection_info(
+	std::wstring sql = msiInstall.GetProperty(L"ODBC_SQL_QUERY");
+	std::wstring sqltype = msiInstall.GetProperty(L"ODBC_SQL_TYPE");
+	std::wstring delimiter = msiInstall.GetProperty(L"ODBC_SQL_DELIMITER");
+
+	AppSecInc::Databases::ODBC::ODBCConnectionStringInfo connection_info(
         msiInstall.GetProperty(L"ODBC_CONNECTION_STRING"));
-    AppSecInc::Databases::ODBC::ODBCConnection conn;
+	AppSecInc::Databases::ODBC::ODBCConnection conn;
     conn.Connect(connection_info);
-    conn.Execute(msiInstall.GetProperty(L"ODBC_SQL_QUERY"));
+	
+	AppSecInc::Databases::ODBC::OdbcParser parser;
+    parser.setInput(sql);
+    parser.setSqlTypeOrDelimiter(sqltype, delimiter);
+    
+	while (parser.hasMore()) 
+	{
+        std::wstring trimmed_statement = parser.getNextBatch();
+        if (trimmed_statement.empty()) 
+			continue;
+		
+		conn.Execute(trimmed_statement);
+    }
 
     MSI_EXCEPTION_HANDLER_EPILOG;
     return ERROR_SUCCESS;
@@ -145,13 +161,15 @@ CA_API UINT __stdcall Execute_ODBC_Deferred(MSIHANDLE hInstall)
         xmlresults.Create();
         MSXML2::IXMLDOMNodePtr xmlresults_rootnode = xmlresults.AppendChild(L"Data");
         
-        while (parser.hasMore()) {
+        while (parser.hasMore()) 
+		{
             std::wstring trimmed_statement = parser.getNextBatch();
             if (trimmed_statement.empty()) continue;
             std::wstringstream status;
             status << L"Executing \"" << trimmed_statement << "\" on \"" << connectionstring << L"\" (" << id << L")";
             msiInstall.LogInfo(_T(__FUNCTION__), status.str());
-            try {
+            try 
+			{
                 conn.GetXml(trimmed_statement, xmlresults, xmlresults_rootnode);
             }
             catch (std::exception& ex) 
@@ -159,8 +177,9 @@ CA_API UINT __stdcall Execute_ODBC_Deferred(MSIHANDLE hInstall)
                 std::wstringstream error;
                 error << AppSecInc::StringUtils::mb2wc(ex.what())
                       << (parser.exitOnErrorFlag()? L"": L" - IGNORED");
-                msiInstall.LogError(error.str());
-                if (parser.exitOnErrorFlag()) {
+                msiInstall.LogError(error.str());                
+				if (parser.exitOnErrorFlag()) 
+				{
                     throw std::exception("Error executing sql statement, terminated");
                 }
             }

@@ -11,6 +11,7 @@ namespace AppSecInc
 				CPPUNIT_TEST_SUITE( SQLODBCUnitTests );
 				CPPUNIT_TEST( Test_SQLODBC_Connect );
                 CPPUNIT_TEST( Test_SQLODBC_Execute );
+                CPPUNIT_TEST( Test_SQLODBC_Execute_SqlServer );
                 CPPUNIT_TEST( Test_SQLODBC_GetString );
 				CPPUNIT_TEST( Test_SQLODBC_GetString_Empty );
 				CPPUNIT_TEST( Test_SQLODBC_GetString_Empty_Error );
@@ -26,6 +27,7 @@ namespace AppSecInc
 			public:
                 void Test_SQLODBC_Connect();
                 void Test_SQLODBC_Execute();
+				void Test_SQLODBC_Execute_SqlServer();
                 void Test_SQLODBC_GetString();
                 void Test_SQLODBC_GetString_Empty();
                 void Test_SQLODBC_GetString_Empty_Error();

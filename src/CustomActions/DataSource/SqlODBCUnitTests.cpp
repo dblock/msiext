@@ -38,6 +38,23 @@ void SQLODBCUnitTests::Test_SQLODBC_Execute()
 	CPPUNIT_ASSERT(ERROR_SUCCESS == hInstall.ExecuteCA(L"DataSource.dll", L"ODBC_Execute"));
 }
 
+void SQLODBCUnitTests::Test_SQLODBC_Execute_SqlServer()
+{
+	AppSecInc::Msi::MsiShim hInstall;
+	MsiInstall msiInstall(hInstall);
+
+	AppSecInc::Databases::MSSQL::MSSQLConnectionInfo info(L"localhost");
+	std::wstring connection_string = info.GetConnectionString();
+	std::wcout << std::endl << connection_string;
+
+	msiInstall.SetProperty(L"ODBC_CONNECTION_STRING", connection_string);
+	msiInstall.SetProperty(L"ODBC_SQL_QUERY", L"SELECT @@VERSION\r\nGO\r\nSELECT @@VERSION");
+	msiInstall.SetProperty(L"ODBC_SQL_TYPE", L"SqlServer");
+	// msiInstall.SetProperty(L"ODBC_SQL_DELIMITER", L"");
+
+	CPPUNIT_ASSERT(ERROR_SUCCESS == hInstall.ExecuteCA(L"DataSource.dll", L"ODBC_Execute"));
+}
+
 void SQLODBCUnitTests::Test_SQLODBC_GetString()
 {
 	AppSecInc::Msi::MsiShim hInstall;

@@ -42,6 +42,8 @@ CA_API UINT __stdcall ODBC_Connect(MSIHANDLE hInstall);
 
 \param ODBC_CONNECTION_STRING Connection string.
 \param ODBC_SQL_QUERY Query to execute.
+\param ODBC_SQL_DELIMITER Batch delimiter. The contents of the SQL file will be split and executed one-by-one. Delimiter is case-insensitive, recognized only at the beginning of line. Either Type or Delimiter may be specified, not both.
+\param ODBC_SQL_TYPE Type of the sql script (SqlServer, Oracle, ...). This will set appropriate delimiters for sql splitting, e.g. 'go' for SqlServer; also.will provide support for insertion commands, e.g. ':r' for SqlServer.
 
 This custom action supports impersonation, see \ref impersonate.
 
