@@ -4,6 +4,7 @@
 MsiShim::MsiShim()
 {
     _filename = AppSecInc::File::GetTemporaryFileNameW();
+	AppSecInc::StringUtils::replace(_filename, L".tmp", L".msi");
     _database.Create(_filename);
 
     MsiDatabaseSummaryEntry summary_entries[] = 
@@ -17,8 +18,14 @@ MsiShim::MsiShim()
         { PID_WORDCOUNT, VT_I4, 100 },
     };
 
+	// A valid MSI must have a summary for MsiOpenPackage to succeed
     _database.SetSummary(summary_entries, ARRAYSIZE(summary_entries));
-    _database.Commit();
+	
+	// Windows 7 requires a property table with a ProductCode value
+	_database.Execute(L"CREATE TABLE `Property` (`Property` CHAR(72) NOT NULL, `Value` CHAR(0) NOT NULL LOCALIZABLE PRIMARY KEY `Property`)");
+	_database.Execute(L"INSERT INTO `Property` (`Property`, `Value`) VALUES ('ProductCode', '{07F7FB1B-992E-4a2d-805C-C803C98CFC42}')");
+    
+	_database.Commit();
     _database.Close();
 
     Open(_filename);

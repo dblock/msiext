@@ -275,6 +275,10 @@
 				RelativePath=".\TestData\ComboBox.idt"
 				>
 			</File>
+			<File
+				RelativePath=".\TestData\Property.idt"
+				>
+			</File>
 		</Filter>
 	</Files>
 	<Globals>

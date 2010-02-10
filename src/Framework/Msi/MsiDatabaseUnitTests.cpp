@@ -56,6 +56,7 @@ void MsiDatabaseUnitTests::testImport()
     std::wcout << std::endl << L"Database handle " << std::hex << (MSIHANDLE) database;
 
     std::wstring path = File::GetModuleDirectoryW() + L"\\TestData_MsiUnitTests";
+	database.Import(path, L"Property.idt"); 
     database.Import(path, L"ComboBox.idt"); 
     database.Commit();
     database.Close();
@@ -68,6 +69,33 @@ void MsiDatabaseUnitTests::testImport()
     std::wstring value = xmlDoc.SelectNodeValue(L"/Table/Row/Data[@Column=\"Property\"]");
     std::wcout << std::endl << L"Data: " << value;
     CPPUNIT_ASSERT(value == L"DATABASE_SERVER");
+    package.Close();
+    
+    AppSecInc::File::FileDelete(filename);
+}
+
+void MsiDatabaseUnitTests::testExecute()
+{
+    std::wstring filename = AppSecInc::File::GetTemporaryFileNameW();
+    std::wcout << std::endl << L"Creating " << filename;
+    MsiDatabase database;
+    database.Create(filename);
+    std::wcout << std::endl << L"Database handle " << std::hex << (MSIHANDLE) database;
+
+    std::wstring path = File::GetModuleDirectoryW() + L"\\TestData_MsiUnitTests";
+	database.Execute(L"CREATE TABLE `Property` (`Property` CHAR(72) NOT NULL, `Value` CHAR(0) NOT NULL LOCALIZABLE PRIMARY KEY `Property`)");
+	database.Execute(L"INSERT INTO `Property` (`Property`, `Value`) VALUES ('ProductCode', '{GUID}')");
+    database.Commit();
+    database.Close();
+
+    MsiPackage package(filename);
+    MsiInstall install(package);
+
+    AppSecInc::Xml::XmlDocument xmlDoc;
+    xmlDoc.LoadXml(install.GetViewData(L"SELECT `Value` FROM `Property` WHERE `Property`='ProductCode'"));
+    std::wstring value = xmlDoc.SelectNodeValue(L"/Table/Row/Data[@Column=\"Value\"]");
+    std::wcout << std::endl << L"Data: " << value;
+    CPPUNIT_ASSERT(value == L"{GUID}");
     package.Close();
     
     AppSecInc::File::FileDelete(filename);

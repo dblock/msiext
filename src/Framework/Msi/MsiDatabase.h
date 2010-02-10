@@ -34,6 +34,8 @@ public:
     void SetSummary(const MsiDatabaseSummaryEntry summary[], int size);
     //! import a previously exported database file
     void Import(const std::wstring& path, const std::wstring& file);
+	//! execute an MSI query
+	void Execute(const std::wstring& query);
 };
 
 }}

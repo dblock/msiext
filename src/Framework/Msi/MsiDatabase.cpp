@@ -97,3 +97,15 @@ void MsiDatabase::Import(const std::wstring& path, const std::wstring& file)
     CHECK_WIN32_DWORD(::MsiDatabaseImport(m_h, path.c_str(), file.c_str()),
         L"Error importing " << path << L"\\" << file);
 }
+
+void MsiDatabase::Execute(const std::wstring& query)
+{
+	MsiView msiView;
+
+    CHECK_WIN32_DWORD(::MsiDatabaseOpenView(m_h, query.c_str(), & msiView),
+        L"Error executing " << query);
+
+    // fetch the record from the view
+    CHECK_WIN32_DWORD(::MsiViewExecute(msiView, NULL),
+        L"Error executing binary view.");
+}

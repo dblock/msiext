@@ -10,10 +10,12 @@ namespace Msi
         CPPUNIT_TEST(testConstructorDestructor);
         CPPUNIT_TEST(testCreateDatabase);
         CPPUNIT_TEST(testImport);
+		CPPUNIT_TEST(testExecute);
 	    CPPUNIT_TEST_SUITE_END();
     public:
         void testConstructorDestructor();
         void testCreateDatabase();
         void testImport();
+		void testExecute();
     };
 }}}

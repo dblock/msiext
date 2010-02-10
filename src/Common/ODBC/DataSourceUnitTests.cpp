@@ -54,7 +54,7 @@ void ODBCDataSourceUnitTests::testConfigureDataSourceError()
         LPCWSTR driver;
         LPCWSTR name;
         LPCWSTR attributes;
-        LPCSTR error;
+        LPCWSTR error;
     };
 
     TestData testdata[] = 
@@ -63,13 +63,13 @@ void ODBCDataSourceUnitTests::testConfigureDataSourceError()
             L"SQL Server", 
             L"", 
             L"SERVER=localhost,1433;Description=local host dsn;Trusted_Connection=yes;", 
-            "Error configuring \"SQL Server\" data source: Native error: 11, Message: Driver's ConfigDSN, ConfigDriver, or ConfigTranslator failed" 
+            L"Error configuring \"SQL Server\" data source:" 
         },
         { 
             L"BogusDriver", 
             L"LocalBogusDriverDSN", 
             L"SERVER=localhost,1433;Description=local host dsn;Trusted_Connection=yes;", 
-            "Error configuring \"BogusDriver\" data source: Native error: 6, Message: Component not found in the registry" 
+            L"Error configuring \"BogusDriver\" data source:" 
         },
     };
 
@@ -86,7 +86,8 @@ void ODBCDataSourceUnitTests::testConfigureDataSourceError()
         catch(std::exception& ex)
         {
             std::cout << std::endl << ex.what();
-            CPPUNIT_ASSERT(0 == strcmp(ex.what(), testdata[i].error));
+			CPPUNIT_ASSERT(AppSecInc::StringUtils::startsWith(
+				AppSecInc::StringUtils::mb2wc(ex.what()), testdata[i].error));
         }
     }
 }
