@@ -63,6 +63,41 @@ CA_API UINT __stdcall ODBC_Execute(MSIHANDLE hInstall)
     return ERROR_SUCCESS;
 }
 
+CA_API UINT __stdcall ODBC_Execute_Binary(MSIHANDLE hInstall)
+{
+    MSI_EXCEPTION_HANDLER_PROLOG;
+    MsiImpersonatedInstall msiInstall(hInstall);
+
+	std::wstring propertyname = msiInstall.GetProperty(L"ODBC_SQL_PROPERTYNAME");
+    CHECK_BOOL(propertyname.length() > 0, L"Missing ODBC_SQL_PROPERTYNAME.");
+
+	std::wstring sqltype = msiInstall.GetProperty(L"ODBC_SQL_TYPE");
+	std::wstring delimiter = msiInstall.GetProperty(L"ODBC_SQL_DELIMITER");
+
+    std::vector<char> sql;
+    msiInstall.GetBinaryData(propertyname, sql);
+
+	AppSecInc::Databases::ODBC::ODBCConnectionStringInfo connection_info(
+        msiInstall.GetProperty(L"ODBC_CONNECTION_STRING"));
+	AppSecInc::Databases::ODBC::ODBCConnection conn;
+    conn.Connect(connection_info);
+	
+	AppSecInc::Databases::ODBC::OdbcParser parser;
+	parser.setInput(AppSecInc::StringUtils::mb2wc(& * sql.begin(), sql.size()));
+    parser.setSqlTypeOrDelimiter(sqltype, delimiter);
+    
+	while (parser.hasMore()) 
+	{
+        std::wstring trimmed_statement = parser.getNextBatch();
+        if (trimmed_statement.empty()) 
+			continue;
+		
+		conn.Execute(trimmed_statement);
+    }
+
+    MSI_EXCEPTION_HANDLER_EPILOG;
+    return ERROR_SUCCESS;
+}
 
 CA_API UINT __stdcall ODBC_GetString(MSIHANDLE hInstall)
 {

@@ -11,6 +11,7 @@ EXPORTS
     SQLDMO_ListAvailableSQLServers
     ODBC_Connect
     ODBC_Execute
+    ODBC_Execute_Binary
     ODBC_GetScalar
     ODBC_GetString
     ODBC_GetXml

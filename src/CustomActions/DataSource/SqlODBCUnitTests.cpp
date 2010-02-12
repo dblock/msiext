@@ -23,6 +23,24 @@ void SQLODBCUnitTests::Test_SQLODBC_Connect()
 	CPPUNIT_ASSERT_MESSAGE(StringUtils::wc2mb(connection_error).c_str(), L"1" == connection_established);
 }
 
+void SQLODBCUnitTests::Test_SQLODBC_Execute_Binary()
+{
+	AppSecInc::Msi::MsiShim hInstall;
+    std::wstring testdatapath = AppSecInc::File::GetModuleDirectoryW() + L"\\TestData_DataSourceUnitTests";
+    hInstall.Import(testdatapath, L"Binary.idt");
+	MsiInstall msiInstall(hInstall);
+
+	AppSecInc::Databases::MSSQL::MSSQLConnectionInfo info(L"localhost");
+	std::wstring connection_string = info.GetConnectionString();
+	std::wcout << std::endl << connection_string;
+	
+	msiInstall.SetProperty(L"ODBC_SQL_PROPERTYNAME", L"MSSQL_Select_sql");
+	msiInstall.SetProperty(L"ODBC_SQL_TYPE", L"SqlServer");
+	msiInstall.SetProperty(L"ODBC_CONNECTION_STRING", connection_string);
+
+	CPPUNIT_ASSERT(ERROR_SUCCESS == hInstall.ExecuteCA(L"DataSource.dll", L"ODBC_Execute_Binary"));
+}
+
 void SQLODBCUnitTests::Test_SQLODBC_Execute()
 {
 	AppSecInc::Msi::MsiShim hInstall;
@@ -164,6 +182,7 @@ void SQLODBCUnitTests::Test_EntryPoints()
     // immedate custom actions
 	CPPUNIT_ASSERT(NULL != GetProcAddress(h, "ODBC_Connect"));
 	CPPUNIT_ASSERT(NULL != GetProcAddress(h, "ODBC_Execute"));
+	CPPUNIT_ASSERT(NULL != GetProcAddress(h, "ODBC_Execute_Binary"));
 	CPPUNIT_ASSERT(NULL != GetProcAddress(h, "ODBC_GetScalar"));
 	CPPUNIT_ASSERT(NULL != GetProcAddress(h, "ODBC_GetString"));
 	CPPUNIT_ASSERT(NULL != GetProcAddress(h, "ODBC_GetXml"));

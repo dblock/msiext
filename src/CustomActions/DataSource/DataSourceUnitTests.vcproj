@@ -376,6 +376,10 @@
 					RelativePath=".\TestData\Binary\MSSQL_ExecuteManyGoStatements.ibd"
 					>
 				</File>
+				<File
+					RelativePath=".\TestData\Binary\MSSQL_Select.ibd"
+					>
+				</File>
 			</Filter>
 		</Filter>
 	</Files>
