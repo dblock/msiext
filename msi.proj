@@ -1,9 +1,12 @@
 <Project DefaultTargets="all" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" >
   <Import Project="$(MSBuildExtensionsPath)\MSBuildCommunityTasks\MSBuild.Community.Tasks.Targets"/>
+  <Import Project="version.proj"/>
   <PropertyGroup Condition="'$(Configuration)'==''">
     <Configuration>Debug</Configuration>
   </PropertyGroup>
   <PropertyGroup>
+    <MajorVersion>1</MajorVersion>
+    <MinorVersion>2</MinorVersion>
     <ObjDir>target\$(Configuration)\obj</ObjDir>
     <BinDir>target\$(Configuration)\bin</BinDir>
     <DropDir>target\$(Configuration)\drop</DropDir>
@@ -21,62 +24,6 @@
     <CallTarget Targets="drop" />
     <CallTarget Targets="zip" />
     <CallTarget Targets="test" />
-  </Target>
-  <Target Name="version">
-    <Version Major="1" Minor="2">
-      <Output TaskParameter="Major" PropertyName="Major" />
-      <Output TaskParameter="Minor" PropertyName="Minor" />
-      <Output TaskParameter="Revision" PropertyName="Revision" />
-    </Version>
-    <SvnVersion LocalPath=".">
-      <Output TaskParameter="Revision" PropertyName="Build" />
-    </SvnVersion>
-    <Subtract Numbers="$(Build);50000" Condition="$(Build)&gt;50000">
-      <Output TaskParameter="Result" PropertyName="Build" />
-    </Subtract>
-    <CreateItem Include="Major" AdditionalMetadata="ReplacementValue=$(Major)">
-      <Output TaskParameter="Include" ItemName="AssemblyInfoTokens"/>
-    </CreateItem>
-    <CreateItem Include="Minor" AdditionalMetadata="ReplacementValue=$(Minor)">
-      <Output TaskParameter="Include" ItemName="AssemblyInfoTokens"/>
-    </CreateItem>
-    <CreateItem Include="Build" AdditionalMetadata="ReplacementValue=$(Build)">
-      <Output TaskParameter="Include" ItemName="AssemblyInfoTokens"/>
-    </CreateItem>
-    <CreateItem Include="Revision" AdditionalMetadata="ReplacementValue=$(Revision)">
-      <Output TaskParameter="Include" ItemName="AssemblyInfoTokens"/>
-    </CreateItem>
-    <CreateItem Include="Configuration" AdditionalMetadata="ReplacementValue=$(Configuration)">
-      <Output TaskParameter="Include" ItemName="AssemblyInfoTokens"/>
-    </CreateItem>
-    <CreateItem Include="ProductName" AdditionalMetadata="ReplacementValue=$(ProductName)">
-      <Output TaskParameter="Include" ItemName="AssemblyInfoTokens"/>
-    </CreateItem>
-    <CreateItem Include="CompanyName" AdditionalMetadata="ReplacementValue=$(CompanyName)">
-      <Output TaskParameter="Include" ItemName="AssemblyInfoTokens"/>
-    </CreateItem>
-    <CreateItem Include="Copyright" AdditionalMetadata="ReplacementValue=$(Copyright)">
-      <Output TaskParameter="Include" ItemName="AssemblyInfoTokens"/>
-    </CreateItem>
-    <CreateItem Include="Trademark" AdditionalMetadata="ReplacementValue=$(Trademark)">
-      <Output TaskParameter="Include" ItemName="AssemblyInfoTokens"/>
-    </CreateItem>
-    <CreateItem Include="ProductId" AdditionalMetadata="ReplacementValue=$(ProductId)">
-      <Output TaskParameter="Include" ItemName="AssemblyInfoTokens"/>
-    </CreateItem>
-    <CreateItem Include="MSBuildProjectDirectory" AdditionalMetadata="ReplacementValue=$(MSBuildProjectDirectory)">
-      <Output TaskParameter="Include" ItemName="AssemblyInfoTokens"/>
-    </CreateItem>
-    <Message Text="Version: $(Major).$(Minor).$(Build).$(Revision)"/>
-    <MakeDir Directories="src\Version" />
-    <AssemblyInfo CodeLanguage="CS" OutputFile="src\Version\GlobalAssemblyInfo.cs"
-       AssemblyCompany="$(CompanyName)" AssemblyProduct="$(ProductName)"
-       AssemblyCopyright="$(Copyright)" AssemblyTrademark="$(Trademark)"
-       CLSCompliant="true" AssemblyDelaySign="false" AssemblyKeyName="" AssemblyCulture=""
-       AssemblyVersion="$(Major).$(Minor).$(Build).$(Revision)"
-       AssemblyFileVersion="$(Major).$(Minor).$(Build).$(Revision)" />
-    <TemplateFile Template="src\Version\Version.h.template" OutputFilename="Version.h" Tokens="@(AssemblyInfoTokens)"/>
-    <TemplateFile Template="src\Version\Version.wxi.template" OutputFilename="Version.wxi" Tokens="@(AssemblyInfoTokens)"/>
   </Target>
   <Target Name="clean">
     <MSBuild Projects="Msi.sln" Targets="Clean" />
@@ -114,6 +61,7 @@
     <MakeDir Directories="$(DropDir)\msiext-$(Major).$(Minor)\Tools" />
     <Copy DestinationFolder="$(DropDir)\msiext-$(Major).$(Minor)\Tools" SourceFiles="@(ToolBinaries)" />
     <Copy DestinationFiles="$(DropDir)\msiext-$(Major).$(Minor)\License.html" SourceFiles="License\epl-v10.html" />
+    <TemplateFile Template="doc\WhatsNew.html" OutputFilename="..\$(DropDir)\msiext-$(Major).$(Minor)\WhatsNew.html" Tokens="@(AssemblyInfoTokens)" />
   </Target>
   <Target Name="doc" DependsOnTargets="version">
     <Message Text="Building Documentation ..." />

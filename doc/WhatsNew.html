@@ -1,0 +1,60 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>What's New</title>
+    <style type="text/css">
+        body
+        {
+            color: #000000;
+            font-family: Arial;
+            font-size: 75%;
+        }
+        a
+        {
+            font-family: Arial;
+            text-decoration: none;
+        }
+        code
+        {
+            color: #b22222;
+            font-family: Courier New;
+        }
+    </style>
+</head>
+<body>
+    <h3>
+        1.2 (${Date})</h3>
+    <ul>
+        <li><strong>Features</strong>:
+            <ul>
+                <li><code>ODBCExecute</code> and <code>ODBCExecuteFile</code> data source extension
+                    supports parsed SQL, error commands (<code>:On Error</code>) and file inclusions
+                    with new <code>Type</code> (SqlServer, Oracle) and <code>BasePath</code> options.</li>
+                <li><code>ODBC_Execute</code> immediate custom action supports <code>ODBC_SQL_DELIMITER</code>
+                    and <code>ODBC_SQL_TYPE</code>.</li>
+                <li>Added <code>ODBC_Execute_Binary</code> immediate custom action.</li>
+                <li><code>ODBC_Execute</code> and <code>ODBC_Execute_Binary</code> custom actions return
+                    <code>ODBC_SQL_MESSAGES</code>, out-of-band SQL status messages.</li>
+                <li>ODBQ: added <code>--flattenonly</code>, <code>--rawoutput</code> and short versions
+                    <code>-f (--file)</code> and <code>-o (--outputfile)</code>.</li>
+            </ul>
+        </li>
+        <li><strong>Misc</strong>:
+            <ul>
+                <li>Build and unit tests run on Windows 7, <code>MSIShim</code> adds a dummy <code>Property</code>
+                    table with a value for <code>ProductCode</code>.</li>
+            </ul>
+        </li>
+        <li><strong>Bugs</strong>:
+            <ul>
+                <li></li>
+            </ul>
+        </li>
+    </ul>
+    <h3>
+        1.1 (11/20/2009)</h3>
+    <ul>
+        <li>First open-source public release.</li>
+    </ul>
+</body>
+</html>
