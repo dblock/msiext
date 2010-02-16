@@ -49,6 +49,8 @@ CA_API UINT __stdcall ODBC_Execute(MSIHANDLE hInstall)
 	AppSecInc::Databases::ODBC::OdbcParser parser;
     parser.setInput(sql);
     parser.setSqlTypeOrDelimiter(sqltype, delimiter);
+
+	std::vector<std::wstring> messages;
     
 	while (parser.hasMore()) 
 	{
@@ -56,8 +58,16 @@ CA_API UINT __stdcall ODBC_Execute(MSIHANDLE hInstall)
         if (trimmed_statement.empty()) 
 			continue;
 		
-		conn.Execute(trimmed_statement);
+		ODBCRowSet rowset;
+		conn.Execute(trimmed_statement, rowset);
+
+		for each(const ODBCDiagnosticsMessage& message in rowset.GetMessages())
+		{
+			messages.push_back(message.text);
+		}
     }
+
+	msiInstall.SetProperty(L"ODBC_SQL_MESSAGES", AppSecInc::StringUtils::join(messages, L"\r\n"));
 
     MSI_EXCEPTION_HANDLER_EPILOG;
     return ERROR_SUCCESS;
@@ -85,17 +95,26 @@ CA_API UINT __stdcall ODBC_Execute_Binary(MSIHANDLE hInstall)
 	AppSecInc::Databases::ODBC::OdbcParser parser;
 	parser.setInput(AppSecInc::StringUtils::mb2wc(& * sql.begin(), sql.size()));
     parser.setSqlTypeOrDelimiter(sqltype, delimiter);
-    
+
+	std::vector<std::wstring> messages;
 	while (parser.hasMore()) 
 	{
         std::wstring trimmed_statement = parser.getNextBatch();
         if (trimmed_statement.empty()) 
 			continue;
-		
-		conn.Execute(trimmed_statement);
+
+		ODBCRowSet rowset;
+		conn.Execute(trimmed_statement, rowset);
+
+		for each(const ODBCDiagnosticsMessage& message in rowset.GetMessages())
+		{
+			messages.push_back(message.text);
+		}
     }
 
-    MSI_EXCEPTION_HANDLER_EPILOG;
+	msiInstall.SetProperty(L"ODBC_SQL_MESSAGES", AppSecInc::StringUtils::join(messages, L"\r\n"));
+
+	MSI_EXCEPTION_HANDLER_EPILOG;
     return ERROR_SUCCESS;
 }
 

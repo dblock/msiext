@@ -39,6 +39,10 @@ void SQLODBCUnitTests::Test_SQLODBC_Execute_Binary()
 	msiInstall.SetProperty(L"ODBC_CONNECTION_STRING", connection_string);
 
 	CPPUNIT_ASSERT(ERROR_SUCCESS == hInstall.ExecuteCA(L"DataSource.dll", L"ODBC_Execute_Binary"));
+
+	std::wstring messages = msiInstall.GetProperty(L"ODBC_SQL_MESSAGES");
+	std::wcout << std::endl << messages;
+	CPPUNIT_ASSERT(messages == L"HELLO WORLD");
 }
 
 void SQLODBCUnitTests::Test_SQLODBC_Execute()
@@ -51,9 +55,14 @@ void SQLODBCUnitTests::Test_SQLODBC_Execute()
 	std::wcout << std::endl << connection_string;
 
 	msiInstall.SetProperty(L"ODBC_CONNECTION_STRING", connection_string);
-	msiInstall.SetProperty(L"ODBC_SQL_QUERY", L"SELECT @@VERSION");
+	msiInstall.SetProperty(L"ODBC_SQL_TYPE", L"SqlServer");
+	msiInstall.SetProperty(L"ODBC_SQL_QUERY", L"PRINT 'HELLO WORLD'\r\nGO\r\nSELECT @@VERSION\r\nGO");
 
 	CPPUNIT_ASSERT(ERROR_SUCCESS == hInstall.ExecuteCA(L"DataSource.dll", L"ODBC_Execute"));
+
+	std::wstring messages = msiInstall.GetProperty(L"ODBC_SQL_MESSAGES");
+	std::wcout << std::endl << messages;
+	CPPUNIT_ASSERT(messages == L"HELLO WORLD");
 }
 
 void SQLODBCUnitTests::Test_SQLODBC_Execute_SqlServer()
