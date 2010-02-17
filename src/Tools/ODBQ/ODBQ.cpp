@@ -15,6 +15,7 @@ USAGE:
              [--outputfile <file>] 
              [--type <string>|--delimiter <string>]
              [--connectionstring <string>]
+             [--database <string>] 
              [--flattenonly]
              [--noresults] [--nosql] [--nologo] [--rawoutput]
              [--] [--version] [-h]
@@ -30,7 +31,6 @@ Where:
          -- OR --
    --datafile  (accepted multiple times)
      (OR required)  XML file containing data sets to insert.
-
 
    --outputfile, -o
      Xml output file for messages and dataset results.
@@ -50,6 +50,9 @@ Where:
    --connectionstring
      Driver-specific connection string to use to connect to the server,
      eg. "Driver=SQL Server;Server=.;Trusted_Connection=yes"
+
+   --database
+     Default database name, added to the connection string.
 
    --flattenonly
      Don't execute sql, only substitute all included files

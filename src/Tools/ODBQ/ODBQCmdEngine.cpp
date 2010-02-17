@@ -7,6 +7,7 @@ ODBQCmdEngine::ODBQCmdEngine(int argc, wchar_t * argv[])
 	, _nosql(L"", L"nosql", L"Suppress SQL statements output to console.", _cmd)
 	, _noresults(L"", L"noresults", L"Suppress results output to console.", _cmd)
     , _connectionstring(L"", L"connectionstring", L"Driver-specific connection string to use to connect to the server,  eg. \"Driver=SQL Server;Server=.;Trusted_Connection=yes\"", false, L"Driver=SQL Server;Server=.;Trusted_Connection=yes;", L"string", _cmd)
+    , _database(L"d", L"database", L"Default database name.", false, L"", L"string", _cmd)
     , _sql(L"", L"sql", L"SQL query to execute, eg. \"SELECT @@VERSION\".", true, L"string")
     , _file(L"f", L"file", L"File(s) containing SQL statements, may be a wildcard.", true, L"file")
     , _type(L"t", L"type", L"Type of sql script: mssql (default), oracle.", false, L"SqlServer", L"string", _cmd)
@@ -24,6 +25,17 @@ ODBQCmdEngine::ODBQCmdEngine(int argc, wchar_t * argv[])
     _cmd.parse(argc, argv, true);
 }
 
+std::wstring ODBQCmdEngine::GetConnectionString()
+{
+	std::wstringstream result;
+	result << _connectionstring.getValue();
+	if (_database.isSet()) 
+	{
+		result << L"database=" << _database.getValue() << L";";
+	}
+	return result.str();
+}
+
 void ODBQCmdEngine::Execute()
 {
     _xmlresults.Create();
@@ -31,7 +43,7 @@ void ODBQCmdEngine::Execute()
 
 	if (! _nologo.getValue())
 	{
-		std::wcout << L"- Connecting with \"" << _connectionstring.getValue() << L"\"" << std::endl;
+		std::wcout << L"- Connecting with \"" << GetConnectionString() << L"\"" << std::endl;
 		if (!_type.getValue().empty()) 
 		{
 			std::wcout << L"- Using \"" << _type.getValue() << L"\" parser" << std::endl;
@@ -138,7 +150,7 @@ void ODBQCmdEngine::ExecuteSql(const std::wstring& sql)
 
 void ODBQCmdEngine::Execute(AppSecInc::Databases::ODBC::OdbcParser& parser)
 {
-    AppSecInc::Databases::ODBC::ODBCConnectionStringInfo ci(_connectionstring.getValue());
+    AppSecInc::Databases::ODBC::ODBCConnectionStringInfo ci(GetConnectionString());
     AppSecInc::Databases::ODBC::ODBCConnection conn;
     conn.Connect(ci);
 
@@ -275,7 +287,7 @@ void ODBQCmdEngine::InsertDataFile(const std::wstring& file)
     AppSecInc::Xml::XmlDocument xmldoc;
     xmldoc.Load(file);
 
-    AppSecInc::Databases::ODBC::ODBCConnectionStringInfo ci(_connectionstring.getValue());
+    AppSecInc::Databases::ODBC::ODBCConnectionStringInfo ci(GetConnectionString());
     AppSecInc::Databases::ODBC::ODBCConnection conn;
     conn.Connect(ci);
     conn.InsertXml(xmldoc, _xmlresults, _xmlresults_rootnode);

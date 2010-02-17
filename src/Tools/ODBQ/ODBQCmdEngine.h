@@ -20,6 +20,8 @@ public:
 	TCLAP::SwitchArg _noresults;
     //! connection string
     TCLAP::ValueArg<std::wstring> _connectionstring;
+    //! optional database name
+    TCLAP::ValueArg<std::wstring> _database;
     //! sql queries
     TCLAP::MultiArg<std::wstring> _sql;
     //! sql file(s) to execute
@@ -41,6 +43,8 @@ public:
     //! execute per command line args
     void Execute();
 private:
+	//! get connection string
+	std::wstring GetConnectionString();
     //! execute a single query
     void ExecuteSql(const std::wstring& query);
     //! execute a single file

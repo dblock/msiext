@@ -27,16 +27,27 @@
     <ul>
         <li><strong>Features</strong>:
             <ul>
-                <li><code>ODBCExecute</code> and <code>ODBCExecuteFile</code> data source extension
-                    supports parsed SQL, error commands (<code>:On Error</code>) and file inclusions
-                    with new <code>Type</code> (SqlServer, Oracle) and <code>BasePath</code> options.</li>
-                <li><code>ODBC_Execute</code> immediate custom action supports <code>ODBC_SQL_DELIMITER</code>
-                    and <code>ODBC_SQL_TYPE</code>.</li>
+                <li>Added <code>Type</code> option to <code>ODBCExecute</code> and <code>ODBCExecuteFile</code>
+                    Wix extensions. Specify <code>SqlServer</code> or <code>Oracle</code> to invoke
+                    a database-specific SQL parser.</li>
+                <li>Added support for SQL error commands (<code>:On Error</code>) to <code>ODBCExecute</code>
+                    and <code>ODBCExecuteFile</code> Wix extensions and <code>ODBC_Execute</code> immediate
+                    custom action.</li>
+                <li>Added <code>BasePath</code> option and support for SQL file inclusions (<code>:r</code>)
+                    to <code>ODBCExecute</code> and <code>ODBCExecuteFile</code> Wix extensions.</li>
+                <li>Added <code>ODBC_SQL_DELIMITER</code> and <code>ODBC_SQL_TYPE</code> to input parameters
+                    of <code>ODBC_Execute</code> immediate custom action.</li>
                 <li>Added <code>ODBC_Execute_Binary</code> immediate custom action.</li>
-                <li><code>ODBC_Execute</code> and <code>ODBC_Execute_Binary</code> custom actions return
-                    <code>ODBC_SQL_MESSAGES</code>, out-of-band SQL status messages.</li>
-                <li>ODBQ: added <code>--flattenonly</code>, <code>--rawoutput</code> and short versions
-                    <code>-f (--file)</code> and <code>-o (--outputfile)</code>.</li>
+                <li>Added <code>ODBC_SQL_MESSAGES</code> containing out-of-band SQL status messages
+                    to output parameters of <code>ODBC_Execute</code> and <code>ODBC_Execute_Binary</code>
+                    immediate custom actions.</li>
+                <li>Added <code>--flattenonly</code> to <code>ODBQ.exe</code>, process input without
+                    executing.</li>
+                <li>Added <code>--rawoutput</code> to <code>ODBQ.exe</code>, output results in 'raw'
+                    format.</li>
+                <li>Added <code>--database</code> to <code>ODBQ.exe</code>, default database name.</li>
+                <li>Added short versions of <code>-f (--file)</code> and <code>-o (--outputfile)</code>
+                    to <code>ODBQ.exe</code>.</li>
             </ul>
         </li>
         <li><strong>Misc</strong>:
