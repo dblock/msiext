@@ -59,6 +59,7 @@
     <columnDefinition name="Sql" type="string" category="formatted" nullable="yes" length="0" />
     <columnDefinition name="Filename" type="string" category="formatted" nullable="yes" length="255" modularize="column" />
     <columnDefinition name="OutputFilename" type="string" category="formatted" nullable="yes" length="255" modularize="column" />
+    <columnDefinition name="XsltFilename" type="string" category="formatted" nullable="yes" length="255" modularize="column" />
     <columnDefinition name="BinaryId" type="string" category="identifier" nullable="yes" length="72" modularize="column" keyTable="Binary" keyColumn="1" />
     <columnDefinition name="Condition" type="string" length="0" modularize="property" nullable="yes" category="formatted" />
     <columnDefinition name="Delimiter" type="string" length="0" modularize="column" nullable="yes" category="formatted" />

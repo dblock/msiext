@@ -844,6 +844,7 @@ namespace AppSecInc.Wix.Extensions
             string sql = null;
             string filename = null;
             string outputfilename = null;
+            string xsltfilename = null;
             string binaryid = null;
             int attributes = 0;
             string condition = null;
@@ -871,6 +872,9 @@ namespace AppSecInc.Wix.Extensions
                             break;
                         case "OutputFilename":
                             outputfilename = this.Core.GetAttributeValue(sourceLineNumbers, attrib);
+                            break;
+                        case "XsltFilename":
+                            xsltfilename = this.Core.GetAttributeValue(sourceLineNumbers, attrib);
                             break;
                         case "BinaryId":
                             binaryid = this.Core.GetAttributeValue(sourceLineNumbers, attrib);
@@ -1000,12 +1004,13 @@ namespace AppSecInc.Wix.Extensions
                 row[3] = sql;
                 row[4] = filename;
                 row[5] = outputfilename;
-                row[6] = binaryid;
-                row[7] = condition;
-                row[8] = delimiter;
-                row[9] = type;
-                row[10] = basepath;
-                row[11] = attributes;
+                row[6] = xsltfilename;
+                row[7] = binaryid;
+                row[8] = condition;
+                row[9] = delimiter;
+                row[10] = type;
+                row[11] = basepath;
+                row[12] = attributes;
             }
         }
 

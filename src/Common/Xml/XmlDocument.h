@@ -54,10 +54,12 @@ namespace AppSecInc
 	        std::wstring SelectAttributeValue(const std::wstring& name, MSXML2::IXMLDOMNode *) const;
 	        //! select an attribute and return its value with a default
             std::wstring SelectAttributeValue(const std::wstring& name, MSXML2::IXMLDOMNode *, const std::wstring& defaultvalue) const;
-	        //! transform an xml with xslt
-            void XslTransform(const std::wstring& xslt_filename, const std::wstring& target_filename);
+			//! transform an xml with xslt
+			std::wstring XslTransform(const std::wstring xslt_filename);
             //! IXMLDOMDocument
             MSXML2::IXMLDOMDocument * operator->() const throw() { return _document.operator->(); }
+			//! error
+			std::wstring GetParseError() const;
         };
     }
 }

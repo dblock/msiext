@@ -189,6 +189,7 @@ CA_API UINT __stdcall Execute_ODBC_Deferred(MSIHANDLE hInstall)
         std::wstring delimiter = xmlDocument.SelectNodeValue(L"Delimiter", row, L"");
         std::wstring sqltype = xmlDocument.SelectNodeValue(L"Type", row, L"");
         std::wstring basepath = xmlDocument.SelectNodeValue(L"BasePath", row, L"");
+		std::wstring xsltfilename = xmlDocument.SelectNodeValue(L"XsltFilename", row, L"");
 
         CHECK_BOOL(! (sql.empty() && filename.empty()),
             L"Missing SQL/Filename");
@@ -242,8 +243,22 @@ CA_API UINT __stdcall Execute_ODBC_Deferred(MSIHANDLE hInstall)
         if (! outputfilename.empty())
         {
             msiInstall.LogInfo(_T(__FUNCTION__), L"Writing \"" + outputfilename + L"\"");
-            CHECK_HR(xmlresults->save(CComVariant(outputfilename.c_str())),
-                L"Error saving \"" << outputfilename << L"\"");
+
+			if (! xsltfilename.empty())
+			{
+				msiInstall.LogInfo(_T(__FUNCTION__), L"XSLT using \"" + xsltfilename + L"\"");
+				std::wstring transformedData = xmlresults.XslTransform(xsltfilename);
+
+				std::string char_data = AppSecInc::StringUtils::wc2mb(transformedData);
+				std::vector<char> binary_data;
+				binary_data.assign(char_data.begin(), char_data.end());
+				AppSecInc::File::FileWrite(outputfilename, binary_data);
+			}
+			else 
+			{
+				CHECK_HR(xmlresults->save(CComVariant(outputfilename.c_str())),
+					L"Error saving \"" << outputfilename << L"\"");
+			}
         }
     }
 
@@ -310,6 +325,7 @@ CA_API UINT __stdcall Execute_ODBC_Immediate(MSIHANDLE hInstall)
         std::wstring sql = odbcexecute_xml_document.SelectNodeValue(L"Data[@Column=\"Sql\"]", odbcexecute_row, L"");
         std::wstring filename = odbcexecute_xml_document.SelectNodeValue(L"Data[@Column=\"Filename\"]", odbcexecute_row, L"");
         std::wstring outputfilename = odbcexecute_xml_document.SelectNodeValue(L"Data[@Column=\"OutputFilename\"]", odbcexecute_row, L"");
+		std::wstring xsltfilename = odbcexecute_xml_document.SelectNodeValue(L"Data[@Column=\"XsltFilename\"]", odbcexecute_row, L"");
         std::wstring binaryid = odbcexecute_xml_document.SelectNodeValue(L"Data[@Column=\"BinaryId\"]", odbcexecute_row, L"");
         std::wstring delimiter = odbcexecute_xml_document.SelectNodeValue(L"Data[@Column=\"Delimiter\"]", odbcexecute_row, L"");
         std::wstring sqltype = odbcexecute_xml_document.SelectNodeValue(L"Data[@Column=\"Type\"]", odbcexecute_row, L"");
@@ -366,6 +382,11 @@ CA_API UINT __stdcall Execute_ODBC_Immediate(MSIHANDLE hInstall)
         if (! outputfilename.empty())
         {
             combined_xml_document.AppendChild(L"OutputFilename", combined_xml_odbcexecute_root)->text = _bstr_t(outputfilename.c_str());
+        }
+
+        if (! xsltfilename.empty())
+        {
+            combined_xml_document.AppendChild(L"XsltFilename", combined_xml_odbcexecute_root)->text = _bstr_t(xsltfilename.c_str());
         }
 
         if (! sql.empty())

@@ -626,6 +626,11 @@ to support other database types in the near future.
               <xs:documentation>Save structured output to an XML file.</xs:documentation>
             </xs:annotation>
           </xs:attribute>
+          <xs:attribute name="XsltFilename" type="xs:string" use="optional">
+            <xs:annotation>
+              <xs:documentation>Transform structured output during save using an XSLT transform.</xs:documentation>
+            </xs:annotation>
+          </xs:attribute>
           <xs:attribute name="EvaluateProperties" type="YesNoType" use="optional" default="yes">
             <xs:annotation>
               <xs:documentation>Set to yes to evaluate MSI properties within the SQL query, no to automatically encode all [ ] characters.</xs:documentation>
@@ -702,6 +707,11 @@ to support other database types in the near future.
           <xs:attribute name="OutputFilename" type="xs:string" use="optional">
             <xs:annotation>
               <xs:documentation>Save output to a file.</xs:documentation>
+            </xs:annotation>
+          </xs:attribute>
+          <xs:attribute name="XsltFilename" type="xs:string" use="optional">
+            <xs:annotation>
+              <xs:documentation>Transform output using an XSLT transform.</xs:documentation>
             </xs:annotation>
           </xs:attribute>
           <xs:attribute name="EvaluateProperties" type="YesNoType" use="optional" default="yes">
@@ -781,6 +791,11 @@ to support other database types in the near future.
           <xs:attribute name="OutputFilename" type="xs:string" use="optional">
             <xs:annotation>
               <xs:documentation>Save output to a file.</xs:documentation>
+            </xs:annotation>
+          </xs:attribute>
+          <xs:attribute name="XsltFilename" type="xs:string" use="optional">
+            <xs:annotation>
+              <xs:documentation>Transform output using an XSLT transform.</xs:documentation>
             </xs:annotation>
           </xs:attribute>
           <xs:attribute name="EvaluateProperties" type="YesNoType" use="optional" default="yes">

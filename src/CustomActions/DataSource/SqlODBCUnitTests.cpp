@@ -235,9 +235,9 @@ void SQLODBCUnitTests::Test_Execute_ODBC()
     AppSecInc::Xml::XmlDocument xml;
     xml.LoadXml(msiInstall.GetProperty(L"Execute_ODBC_Deferred_Install"));
 
-    CPPUNIT_ASSERT(15 == xml.SelectNodes(L"/ODBCExecutes/ODBCExecute")->length);
-    CPPUNIT_ASSERT(14 == xml.SelectNodes(L"/ODBCExecutes/ODBCExecute/Sql/text()")->length);
-    CPPUNIT_ASSERT(15 == xml.SelectNodes(L"/ODBCExecutes/ODBCExecute/ConnectionString/text()")->length);
+    CPPUNIT_ASSERT(16 == xml.SelectNodes(L"/ODBCExecutes/ODBCExecute")->length);
+    CPPUNIT_ASSERT(15 == xml.SelectNodes(L"/ODBCExecutes/ODBCExecute/Sql/text()")->length);
+    CPPUNIT_ASSERT(16 == xml.SelectNodes(L"/ODBCExecutes/ODBCExecute/ConnectionString/text()")->length);
 
     // Access database
     CPPUNIT_ASSERT(ERROR_SUCCESS == hInstall.ExecuteCA(L"DataSource.dll", L"CreateDatabases_Access_Immediate"));
@@ -252,6 +252,9 @@ void SQLODBCUnitTests::Test_Execute_ODBC()
     // one of the queries produces a Columns.xml file, delete it from a previous run
     std::wstring columnsxml = AppSecInc::File::DirectoryCombine(msiInstall.GetProperty(L"INSTALLLOCATION"), L"Columns.xml");
     if (AppSecInc::File::FileExists(columnsxml)) AppSecInc::File::FileDelete(columnsxml);
+    // one of the queries produces a RawOutput.txt file, delete it from a previous run
+    std::wstring rawoutputtxt = AppSecInc::File::DirectoryCombine(msiInstall.GetProperty(L"INSTALLLOCATION"), L"RawOutput.txt");
+    if (AppSecInc::File::FileExists(rawoutputtxt)) AppSecInc::File::FileDelete(rawoutputtxt);
 
     // execute SQL
     msiInstall.SetProperty(L"CustomActionData", msiInstall.GetProperty(L"Execute_ODBC_Deferred_Install"));

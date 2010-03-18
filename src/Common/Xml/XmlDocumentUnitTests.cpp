@@ -88,7 +88,7 @@ void XmlDocumentUnitTests::testSelectNodeBoolValue()
     }
 }
 
-void XmlDocumentUnitTests::testXslTranform()
+void XmlDocumentUnitTests::testXslTransform()
 {
     // check test xml file
 	std::wstring xmlfile = GetLocalFileLocation(L"simple.xml");
@@ -98,24 +98,14 @@ void XmlDocumentUnitTests::testXslTranform()
 	std::wstring xslfile = GetLocalFileLocation(L"simple.xsl");
 	std::wcout << std::endl << L"Xsl: " << xslfile;
     CPPUNIT_ASSERT(File::FileExists(xslfile));
-    // check target filename, delete
-	std::wstring xmlresult = GetLocalFileLocation(L"result.htm");
-	std::wcout << std::endl << L"Result: " << xmlresult;
-	::DeleteFile(xmlresult.c_str());
-	CPPUNIT_ASSERT(! AppSecInc::File::FileExists(xmlresult));
     // transform
 	AppSecInc::Xml::XmlDocument xml;
 	xml.Load(xmlfile);
-	xml.XslTransform(xslfile, xmlresult);
+	AppSecInc::Xml::XmlDocument transformedXml;
+	std::wstring transformResult = xml.XslTransform(xslfile);
+	transformedXml.LoadXml(transformResult);
     // load the result
-    CComPtr<MSXML2::IXMLDOMDocument> xmldoc;
-    CPPUNIT_ASSERT(S_OK == xmldoc.CoCreateInstance(CLSID_DOMDocument));
-    CPPUNIT_ASSERT(VARIANT_TRUE == xmldoc->load(CComVariant(xmlresult.c_str())));
-    CComBSTR bstrXml;
-    CPPUNIT_ASSERT(S_OK == xmldoc->get_xml(& bstrXml));
-    int len = SysStringLen(bstrXml);
-	std::wcout << std::endl << L"Result: " << len;
-    CPPUNIT_ASSERT(len > 0);
+	CPPUNIT_ASSERT(transformResult.length() > 0);
 }
 
 void XmlDocumentUnitTests::testSelectNodeAttributeValue()

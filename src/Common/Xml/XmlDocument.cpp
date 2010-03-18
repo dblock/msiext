@@ -8,6 +8,28 @@ XmlDocument::XmlDocument()
 	
 }
 
+std::wstring XmlDocument::GetParseError() const
+{
+    MSXML2::IXMLDOMParseErrorPtr error;        
+    _document->get_parseError(& error);
+	std::wstringstream error_s;
+    if (error != NULL)
+    {
+        CComBSTR bstrReason;
+        long errorCode = 0;
+        long lineNumber = 0;
+        long linePosition = 0;
+        error->get_errorCode(& errorCode);
+        error->get_reason(& bstrReason);
+        error->get_line(& lineNumber);
+        error->get_linepos(& linePosition);
+        error_s << L"error " << errorCode << L" at " << lineNumber << L":" << linePosition 
+			<< L" - " << (bstrReason == NULL ? L"unknown error" : static_cast<LPCWSTR>(bstrReason));            
+    }
+
+	return error_s.str();
+}
+
 void XmlDocument::Create(const CLSID clsid)
 {
     if (NULL != _document)
@@ -52,24 +74,8 @@ void XmlDocument::Load(const std::wstring& filename, const CLSID clsid)
     
     if (xmldoc_loaded == VARIANT_FALSE)
     {
-        MSXML2::IXMLDOMParseErrorPtr error;        
-        _document->get_parseError(& error);
 		std::wstringstream error_s;
-		error_s << L"Error loading " << filename;
-        if (error != NULL)
-        {
-            CComBSTR bstrReason;
-            long errorCode = 0;
-            long lineNumber = 0;
-            long linePosition = 0;
-            error->get_errorCode(& errorCode);
-            error->get_reason(& bstrReason);
-            error->get_line(& lineNumber);
-            error->get_linepos(& linePosition);
-            error_s << L", error " << errorCode << L" at " << lineNumber << L":" << linePosition 
-                << L" - " << static_cast<LPCWSTR>(bstrReason);            
-        }
-
+		error_s << L"Error loading " << filename << L": " << GetParseError();
         THROW(error_s.str());
     }
 
@@ -283,34 +289,17 @@ std::wstring XmlDocument::SelectNodeAttributeValue(const std::wstring& xpath, co
 	return result != NULL ? static_cast<LPCWSTR>(result) : L"";
 }
 
-void XmlDocument::XslTransform(const std::wstring& xslt_filename, const std::wstring& target_filename)
+std::wstring XmlDocument::XslTransform(const std::wstring xslt_filename)
 {
-    CHECK_BOOL(! xslt_filename.empty(),
-        L"Missing xslt filename");
-
-    CHECK_BOOL(! target_filename.empty(),
-        L"Missing target filename");
-
     XmlDocument xslt;
     xslt.Load(xslt_filename, MSXML2::CLSID_FreeThreadedDOMDocument);
 
-    MSXML2::IXMLDOMDocumentPtr output;
-    CHECK_HR(output.CreateInstance(MSXML2::CLSID_DOMDocument),
-        L"Error creating output document");
+	CComBSTR bstrOut;
 
-    CComPtr<IDispatch> pdispatch;
-    CHECK_HR(output->QueryInterface(IID_IDispatch, (void **) & pdispatch),
-        L"Error getting IDispatch interface from output document");
+	CHECK_HR(_document->raw_transformNode(xslt._document, & bstrOut),
+		L"Error transforming document: " << xslt.GetParseError());
 
-    VARIANT var;
-    var.vt = VT_DISPATCH;
-    var.pdispVal = pdispatch;
-
-    CHECK_HR(_document->transformNodeToObject(xslt._document, var),
-        L"Error transforming document");
-
-    CHECK_HR(output->save(CComVariant(target_filename.c_str())),
-        L"Error saving " << target_filename);
+	return (LPCWSTR) bstrOut;
 }
 
 MSXML2::IXMLDOMNodePtr XmlDocument::AppendChild(const std::wstring& name, MSXML2::IXMLDOMNode * parent, const _variant_t & type, const LPCWSTR pszNamespaceUri)

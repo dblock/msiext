@@ -48,6 +48,9 @@
                 <li>Added <code>--database</code> to <code>ODBQ.exe</code>, default database name.</li>
                 <li>Added short versions of <code>-f (--file)</code> and <code>-o (--outputfile)</code>
                     to <code>ODBQ.exe</code>.</li>
+                <li>Added <code>XsltFilename</code> to <code>ODBCExecute</code>, <code>ODBCExecuteFile</code>
+                    and <code>ODBCExecuteBinary</code> that specifies an optional XSLT transform for
+                    the data.</li>
             </ul>
         </li>
         <li><strong>Misc</strong>:
@@ -58,7 +61,7 @@
         </li>
         <li><strong>Bugs</strong>:
             <ul>
-                <li></li>
+                <li>Bug: XmlTools_XslTransform broken for output of type text.</li>
             </ul>
         </li>
     </ul>

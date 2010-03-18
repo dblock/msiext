@@ -68,7 +68,12 @@ CA_API UINT __stdcall Xml_XslTransform(MSIHANDLE hInstall)
 	std::wstring xslt_filename = msiInstall.GetProperty(L"XSLT_FILENAME");
 	std::wstring xslt_result_filename = msiInstall.GetProperty(L"XSLT_RESULT_FILENAME");
 
-	doc.XslTransform(xslt_filename, xslt_result_filename);
+	std::wstring transformedData = doc.XslTransform(xslt_filename);
+
+    std::string char_data = AppSecInc::StringUtils::wc2mb(transformedData);
+    std::vector<char> binary_data;
+    binary_data.assign(char_data.begin(), char_data.end());
+	AppSecInc::File::FileWrite(xslt_result_filename, binary_data);
 
 	MSI_EXCEPTION_HANDLER_EPILOG;
 	return ERROR_SUCCESS;

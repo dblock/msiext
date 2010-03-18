@@ -78,15 +78,7 @@ void XmlToolsGetUnitTests::Test_XslTranform()
     msiInstall.SetProperty(L"XSLT_FILENAME", xslfile);
     msiInstall.SetProperty(L"XSLT_RESULT_FILENAME", xmlresult);
     CPPUNIT_ASSERT(ERROR_SUCCESS == hInstall.ExecuteCA(L"XmlTools.dll", L"Xml_XslTransform"));
-    // load the result
-    CComPtr<MSXML2::IXMLDOMDocument> xmldoc;
-    CPPUNIT_ASSERT(S_OK == xmldoc.CoCreateInstance(CLSID_DOMDocument));
-    CPPUNIT_ASSERT(VARIANT_TRUE == xmldoc->load(CComVariant(xmlresult.c_str())));
-    CComBSTR bstrXml;
-    CPPUNIT_ASSERT(S_OK == xmldoc->get_xml(& bstrXml));
-    int len = SysStringLen(bstrXml);
-    std::wcout << std::endl << L"Result: " << len;
-    CPPUNIT_ASSERT(len > 0);
+	CPPUNIT_ASSERT(AppSecInc::File::FileExists(xmlresult));
 }
 
 void XmlToolsGetUnitTests::Test_SelectNodeAttributeValue()

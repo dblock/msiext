@@ -26,6 +26,7 @@
                         <File Id="MSSQLDatabaseMsi_wxs" Name="MSSQLDatabaseMsi.wxs" Source="MSSQLDatabaseMsi.wxs" />
                         <File Id="CreateFileTable_NotEncoded_sql" Name="CreateFileTable_NotEncoded.sql" Source="CreateFileTable_NotEncoded.sql" />
                         <File Id="BinaryTable_csv" Name="BinaryTable.csv" Source="BinaryTable.csv" />
+                        <File Id="RawOutputXslt" Name="RawOutput.xslt" Source="RawOutput.xslt" />
                         <!-- a demo database -->
                         <AppSecInc:MSSQLDatabase Id="MSSQLDemoDatabase" Name="[MSSQL_DATABASE_NAME]" ConnectionId="LocalSQLServerConnection" CreateOnInstall="yes" DropOnUnInstall="yes">
                             <AppSecInc:MSSQLDatabaseOption Id="MSSQLDemoDatabase_TrustWorthyOn" Value="TRUSTWORTHY ON" />
@@ -33,6 +34,7 @@
                             <AppSecInc:MSSQLDatabaseFileSpec Id="MSSQLDemoDatabase_LOG" Name="Demo_ldf" Filename="[MSSQL_DATABASE_LDF_PATH]" Size="12MB" Type="LOG ON" />
                             <AppSecInc:ODBCExecute Id="MSSQLDemoDatabase_CreateTable1" Sql="CREATE TABLE [\[][MSSQL_DATABASE_NAME][\]].[\[]dbo[\]].[\[]Table1[\]] ( [\[]Table1_Id[\]] [\[]int[\]] IDENTITY(1,1) NOT NULL )" ExecuteOnInstall="yes" OutputFilename="[INSTALLLOCATION]CreateTable1.xml" />
                             <AppSecInc:ODBCExecute Id="MSSQLDemoDatabase_DropTable1" Sql="DROP TABLE [\[][MSSQL_DATABASE_NAME][\]].[\[]dbo[\]].[\[]Table1[\]]" ExecuteOnUnInstall="yes" />
+                            <AppSecInc:ODBCExecute Id="MSSQLDemoDatabase_SelectVersion" Sql="PRINT @@VERSION" ExecuteOnUnInstall="yes" OutputFilename="[INSTALLLOCATION]SqlVersion.txt" XsltFilename="[#RawOutputXslt]" />
                             <!-- a binary sql that has properties and is evaluated -->
                             <AppSecInc:ODBCExecuteBinary Id="MSSQLDemoDatabase_CreateBinaryTable_Encoded" ExecuteOnInstall="yes" EvaluateProperties="yes" BinaryId="CreateBinaryTable_Encoded_sql" />
                             <!-- a csv bulk insert -->

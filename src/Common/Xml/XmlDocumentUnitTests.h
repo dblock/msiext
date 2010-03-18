@@ -12,7 +12,7 @@ namespace AppSecInc
 				CPPUNIT_TEST( testConstructorDestructor );
 				CPPUNIT_TEST( testSelectNodeValue );
 				CPPUNIT_TEST( testSelectNodeBoolValue );
-				CPPUNIT_TEST( testXslTranform );
+				CPPUNIT_TEST( testXslTransform );
 				CPPUNIT_TEST( testSelectNodeAttributeValue );
                 CPPUNIT_TEST( testGetXml );
 				CPPUNIT_TEST( testSelectNodes );
@@ -26,7 +26,7 @@ namespace AppSecInc
 				void testConstructorDestructor();
 				void testSelectNodeValue();
 				void testSelectNodeBoolValue();
-				void testXslTranform();
+				void testXslTransform();
 				void testSelectNodeAttributeValue();
                 void testGetXml();
                 void testSelectNodes();

@@ -330,6 +330,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\TestData\RawOutput.xslt"
+				>
+			</File>
+			<File
 				RelativePath=".\TestData\Test.mdb"
 				>
 			</File>
