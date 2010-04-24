@@ -14,9 +14,9 @@ namespace AppSecInc
                 CPPUNIT_TEST( testSHA1 );
 				CPPUNIT_TEST_SUITE_END();
 			public:
-				void testHexEncoder(void);
-                void testScramble41(void);
-                void testSHA1(void);
+				void testHexEncoder();
+                void testScramble41();
+                void testSHA1();
 			};
 		}
 	}

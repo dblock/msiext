@@ -17,17 +17,19 @@ namespace AppSecInc
 				CPPUNIT_TEST( testDESEDE3EncryptDecryptWithBase64 );
 				CPPUNIT_TEST( testDESEDE3EncryptDecryptWithHex );
 				CPPUNIT_TEST( testDESEDE3GenerateKey );
+				CPPUNIT_TEST( testGenerateRandom );
 				CPPUNIT_TEST_SUITE_END();
 
 			public:
-				void testPad(void);
-				void testPadEmpty(void);
-				void testBase64EncodeDecode(void);
-				void testHexEncodeDecode(void);
-				void testDESEDE3GenerateKey(void);
-				void testDESEDE3EncryptDecrypt(void);
-				void testDESEDE3EncryptDecryptWithBase64(void);
-				void testDESEDE3EncryptDecryptWithHex(void);
+				void testPad();
+				void testPadEmpty();
+				void testBase64EncodeDecode();
+				void testHexEncodeDecode();
+				void testDESEDE3GenerateKey();
+				void testDESEDE3EncryptDecrypt();
+				void testDESEDE3EncryptDecryptWithBase64();
+				void testDESEDE3EncryptDecryptWithHex();
+				void testGenerateRandom();
 			};
 		}
 	}

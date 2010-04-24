@@ -15,3 +15,6 @@ EXPORTS
     DESEDE3_GenerateKey
     DESEDE3_Encrypt
     DESEDE3_Decrypt
+    
+    GenerateRandomString
+    

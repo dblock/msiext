@@ -8,6 +8,7 @@
 #include <shlobj.h>
 #include <File/File.h>
 #include <AtlCom/CoInitialize.h>
+#include <AtlCom/ComUtils.h>
 #include <Xml/Xml.h>
 #include <TcpIp/WSAStartup.h>
 #include <TcpIp/Socket.h>

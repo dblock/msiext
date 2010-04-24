@@ -20,6 +20,11 @@ namespace AppSecInc
 	        void UnInitialize();
 	        MicrosoftCryptProvider();
 	        ~MicrosoftCryptProvider();
+	        /*! 
+		        \fn GenerateRandom
+		        \brief Generate a random vector of bytes.
+	        */
+			std::vector<BYTE> GenerateRandom(DWORD dwLen);
         };
     }
 }

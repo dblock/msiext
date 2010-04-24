@@ -59,6 +59,13 @@ namespace AppSecInc
 		    \brief Generates and converts a globally unique identifier (GUID) into a std::string of printable characters.
 	    */
         std::string GenerateGUIDStringA();
-        std::wstring GenerateGUIDStringW();    	
+        std::wstring GenerateGUIDStringW();
+
+	    /*! 
+		    \fn IsValidGUID
+		    \brief Checks whether a GUID is valid.
+	    */
+		bool IsValidGUID(const std::wstring& guid);
+		bool IsValidGUID(const std::string& guid);
     }
 }

@@ -31,6 +31,7 @@
 \li \ref CompareVersion
 \li \ref Service_Control, \ref Service_Delete, \ref Service_RenameRegistryEntry, \ref Service_ChangeBinaryPathName, \ref Service_ChangeDisplayName, \ref Service_ChangeDescription
 \li \ref Registry_CopyBranch, \ref Registry_DeleteBranch, \ref Registry_MoveBranch
+\li \ref Win32_IsValidGuid, \ref Win32_GenerateGuidString
 
 \par Strings (StringTools.dll)
 
@@ -64,6 +65,7 @@
 \li \ref HexEncodeA & \ref HexEncodeW
 \li \ref HexDecodeA & \ref HexDecodeW
 \li \ref DESEDE3_GenerateKey, \ref DESEDE3_Encrypt & \ref DESEDE3_Decrypt
+\li \ref GenerateRandomString
 
 \par Xml (XmlTools.dll)
 

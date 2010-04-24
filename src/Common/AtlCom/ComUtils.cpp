@@ -135,3 +135,24 @@ std::wstring AppSecInc::Com::GenerateGUIDStringW()
 
 	return StringFromGUID2W(pguid);
 }
+
+bool AppSecInc::Com::IsValidGUID(const std::wstring& guid)
+{
+    IID iid;
+	HRESULT hr = ::IIDFromString(const_cast<LPOLESTR>(guid.c_str()), & iid);
+
+	if (SUCCEEDED(hr)) return true;
+	else if (hr == E_INVALIDARG) return false;
+	else
+	{
+		CHECK_HR(hr,
+			_T("Error in ::IIDFromString"));
+	}
+
+	return false;
+}
+
+bool AppSecInc::Com::IsValidGUID(const std::string& guid)
+{
+	return IsValidGUID(AppSecInc::StringUtils::mb2wc(guid));
+}

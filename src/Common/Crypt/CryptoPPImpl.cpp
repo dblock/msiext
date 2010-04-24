@@ -175,3 +175,12 @@ void CryptoPPImpl::Pad(const std::string& input, int size, std::string& output, 
 	memcpy(reinterpret_cast<LPBYTE>(& * output.begin()), 
 		reinterpret_cast<const byte *>(input.c_str()), input.size());	
 }
+
+std::vector<BYTE> CryptoPPImpl::GenerateRandom(long size)
+{
+	RandomPool pool;
+	std::vector<BYTE> data;
+	data.resize(size);
+	pool.GenerateBlock(reinterpret_cast<LPBYTE>(& * data.begin()), data.size());
+    return data;
+}

@@ -42,3 +42,7 @@ EXPORTS
 	Registry_KeyExists
 	Win32_RegistryCopy_Immediate
 	Win32_RegistryCopy_Deferred
+	Win32_GenerateGuidString
+	Win32_IsValidGuid
+	
+	

@@ -176,6 +176,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\GenerateRandom.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\stdafx.cpp"
 				>
 				<FileConfiguration
@@ -215,6 +219,10 @@
 			</File>
 			<File
 				RelativePath=".\FlagMaps.h"
+				>
+			</File>
+			<File
+				RelativePath=".\GenerateRandom.h"
 				>
 			</File>
 			<File

@@ -10,9 +10,11 @@ namespace AppSecInc
 			{
 				CPPUNIT_TEST_SUITE(ComUtilsUnitTest);
 				CPPUNIT_TEST(testCLSIDFrom);
+				CPPUNIT_TEST(testIsValidGUID);
 				CPPUNIT_TEST_SUITE_END();
 			public:
 				void testCLSIDFrom();
+				void testIsValidGUID();
 			};
 		}
 	}

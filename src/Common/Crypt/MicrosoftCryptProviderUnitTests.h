@@ -10,9 +10,11 @@ namespace AppSecInc
 			{
 				CPPUNIT_TEST_SUITE( MicrosoftCryptProviderUnitTests );
 				CPPUNIT_TEST( testInitialize );
+				CPPUNIT_TEST( testGenerateRandom );
 				CPPUNIT_TEST_SUITE_END();
 			public:
-				void testInitialize();				
+				void testInitialize();
+				void testGenerateRandom();
 			};
 		}
 	}

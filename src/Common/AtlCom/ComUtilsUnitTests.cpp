@@ -64,3 +64,26 @@ void ComUtilsUnitTest::testCLSIDFrom()
 		CPPUNIT_ASSERT(string_fromiid == data[i].pszGuid);
 	}
 }
+
+void ComUtilsUnitTest::testIsValidGUID()
+{
+	typedef struct
+	{
+		LPCSTR guid;
+		bool expected_result;
+	} TestData;
+
+	TestData data[] = 
+	{
+		{ "", false },
+		{ "a", false },
+		{ "Some.Nonsense", false },
+		{ "{13709620-C279-11CE-A49E-444553540000}", true },
+		{ "EAB22AC3-30C1-11CF-A7EB-0000C05BAE0B", false }
+	};
+
+	for(int i = 0; i < ARRAYSIZE(data); i++)
+	{
+		CPPUNIT_ASSERT(data[i].expected_result == AppSecInc::Com::IsValidGUID(data[i].guid));
+	}
+}

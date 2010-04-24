@@ -5,7 +5,7 @@ CPPUNIT_TEST_SUITE_REGISTRATION(AppSecInc::UnitTests::Crypt::CryptoPPImplUnitTes
 
 using namespace AppSecInc::UnitTests::Crypt;
 			
-void CryptoPPImplUnitTests::testPadEmpty(void)
+void CryptoPPImplUnitTests::testPadEmpty()
 {
     std::string input, output;
     int nBlocks = 0;
@@ -13,7 +13,7 @@ void CryptoPPImplUnitTests::testPadEmpty(void)
 	CPPUNIT_ASSERT(output.length() == 8);
 }
 
-void CryptoPPImplUnitTests::testPad(void)
+void CryptoPPImplUnitTests::testPad()
 {	
 	int block = 8;
 	for (int i = 0; i < 10; i++)
@@ -28,7 +28,7 @@ void CryptoPPImplUnitTests::testPad(void)
 	}
 }
 
-void CryptoPPImplUnitTests::testDESEDE3GenerateKey(void)
+void CryptoPPImplUnitTests::testDESEDE3GenerateKey()
 {
     std::string key = AppSecInc::Crypt::CryptoPPImpl::DESEDE3GenerateKey();
 	CPPUNIT_ASSERT(key.size() == 24);
@@ -36,7 +36,7 @@ void CryptoPPImplUnitTests::testDESEDE3GenerateKey(void)
 	CPPUNIT_ASSERT(key_hex.size() == 48);
 }
 
-void CryptoPPImplUnitTests::testBase64EncodeDecode(void)
+void CryptoPPImplUnitTests::testBase64EncodeDecode()
 {
 	char * testdata[] = 
 	{
@@ -54,7 +54,7 @@ void CryptoPPImplUnitTests::testBase64EncodeDecode(void)
 	}
 }
 
-void CryptoPPImplUnitTests::testHexEncodeDecode(void)
+void CryptoPPImplUnitTests::testHexEncodeDecode()
 {
 	char * testdata[] = 
 	{
@@ -73,7 +73,7 @@ void CryptoPPImplUnitTests::testHexEncodeDecode(void)
 	}
 }
 
-void CryptoPPImplUnitTests::testDESEDE3EncryptDecrypt(void)
+void CryptoPPImplUnitTests::testDESEDE3EncryptDecrypt()
 {
 	char * testdata[] = 
 	{
@@ -93,7 +93,7 @@ void CryptoPPImplUnitTests::testDESEDE3EncryptDecrypt(void)
 	}
 }
 
-void CryptoPPImplUnitTests::testDESEDE3EncryptDecryptWithBase64(void)
+void CryptoPPImplUnitTests::testDESEDE3EncryptDecryptWithBase64()
 {
 	char * testdata[] = 
 	{
@@ -120,7 +120,7 @@ void CryptoPPImplUnitTests::testDESEDE3EncryptDecryptWithBase64(void)
 	}
 }
 
-void CryptoPPImplUnitTests::testDESEDE3EncryptDecryptWithHex(void)
+void CryptoPPImplUnitTests::testDESEDE3EncryptDecryptWithHex()
 {
 	char * testdata[] = 
 	{
@@ -145,4 +145,16 @@ void CryptoPPImplUnitTests::testDESEDE3EncryptDecryptWithHex(void)
 		// CPPUNIT_ASSERT(strlen(testdata[i]) == decrypted.length());
 		CPPUNIT_ASSERT(strcmp(testdata[i], decrypted.c_str()) == 0);
 	}
+}
+
+void CryptoPPImplUnitTests::testGenerateRandom()
+{
+	int size = 10;
+	std::vector<BYTE> data = AppSecInc::Crypt::CryptoPPImpl::GenerateRandom(size);
+	CPPUNIT_ASSERT(size == data.size());
+	long total = 0;
+	for(int i = 0; i < size - 1; i++) total += data[i];
+	std::cout << std::endl << AppSecInc::Crypt::CryptoPPImpl::HexEncode(
+		std::string(data.begin(), data.end()));
+	CPPUNIT_ASSERT(total != 0);
 }

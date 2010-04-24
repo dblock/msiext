@@ -185,6 +185,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\GenerateRandomUnitTests.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\StdAfxUnitTests.cpp"
 				>
 				<FileConfiguration
@@ -221,6 +225,10 @@
 			</File>
 			<File
 				RelativePath=".\EncodeDecodeUnitTests.h"
+				>
+			</File>
+			<File
+				RelativePath=".\GenerateRandomUnitTests.h"
 				>
 			</File>
 			<File

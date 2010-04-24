@@ -62,6 +62,12 @@ namespace AppSecInc
             static void Pad(const std::string& input, int size, std::string& output, int& nBlocks);
             static std::string Pad(const std::string& input, int size);
 
+	        /*! 
+		        \fn GenerateRandom
+		        \brief Generate a random block of bytes.
+	        */
+			static std::vector<BYTE> GenerateRandom(long size);
+
         private:	
 	        CryptoPPImpl(); // making this private as this class only exposes static objects
         };

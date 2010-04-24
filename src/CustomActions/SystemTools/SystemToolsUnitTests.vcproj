@@ -163,6 +163,10 @@
 			Filter="cpp;c;cxx;rc;def;r;odl;idl;hpj;bat"
 			>
 			<File
+				RelativePath=".\ComImplUnitTests.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\CompareVersionImplUnitTests.cpp"
 				>
 			</File>
@@ -221,6 +225,10 @@
 			Name="Header Files"
 			Filter="h;hpp;hxx;hm;inl"
 			>
+			<File
+				RelativePath=".\ComImplUnitTests.h"
+				>
+			</File>
 			<File
 				RelativePath=".\CompareVersionImplUnitTests.h"
 				>

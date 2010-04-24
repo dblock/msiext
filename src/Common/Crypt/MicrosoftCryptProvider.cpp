@@ -35,3 +35,16 @@ void MicrosoftCryptProvider::UnInitialize()
 
 	_hprov = NULL;
 }
+
+std::vector<BYTE> MicrosoftCryptProvider::GenerateRandom(DWORD dwLen)
+{
+	CHECK_BOOL(_hprov != NULL, "Provider not initialized.");
+
+	std::vector<BYTE> data;
+	data.resize(dwLen);
+	
+	CHECK_WIN32_BOOL(::CryptGenRandom(_hprov, dwLen, & * data.begin()),
+		L"CryptGenRandom");
+
+	return data;
+}
