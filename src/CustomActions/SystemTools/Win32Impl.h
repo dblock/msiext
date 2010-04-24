@@ -177,3 +177,17 @@ If the directory is blank, a blank value is returned.
 
 */
 CA_API UINT __stdcall Win32_GetParentDirectory(MSIHANDLE hInstall);
+
+/*!
+\brief Read contents of an ANSI file into a property.
+\param WIN32_FILE_NAME Fully qualified path to the target file.
+\return WIN32_FILE_DATA Data in the file.
+*/
+CA_API UINT __stdcall Win32_ReadFile(MSIHANDLE hInstall);
+
+/*!
+\brief Write to an ANSI text file.
+\param WIN32_FILE_DATA Data to write to a file.
+\param WIN32_FILE_NAME Fully qualified path to the target file.
+*/
+CA_API UINT __stdcall Win32_WriteFile(MSIHANDLE hInstall);

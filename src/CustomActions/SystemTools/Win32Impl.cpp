@@ -777,3 +777,29 @@ CA_API UINT __stdcall Win32_GetParentDirectory(MSIHANDLE hInstall)
     MSI_EXCEPTION_HANDLER_EPILOG;
     return ERROR_SUCCESS;
 }
+
+CA_API UINT __stdcall Win32_WriteFile(MSIHANDLE hInstall)
+{
+    MSI_EXCEPTION_HANDLER_PROLOG;
+    MsiInstall msiInstall(hInstall);
+    std::wstring data = msiInstall.GetProperty(L"WIN32_FILE_DATA");
+	std::wstring filename = msiInstall.GetProperty(L"WIN32_FILE_NAME");
+	std::string char_data = AppSecInc::StringUtils::wc2mb(data);
+	std::vector<char> binary_data;
+	binary_data.assign(char_data.begin(), char_data.end());
+	AppSecInc::File::FileWrite(filename, binary_data);
+    MSI_EXCEPTION_HANDLER_EPILOG;
+    return ERROR_SUCCESS;
+}
+
+CA_API UINT __stdcall Win32_ReadFile(MSIHANDLE hInstall)
+{
+    MSI_EXCEPTION_HANDLER_PROLOG;
+    MsiInstall msiInstall(hInstall);
+	std::wstring filename = msiInstall.GetProperty(L"WIN32_FILE_NAME");
+	std::string data;
+	AppSecInc::File::ReadToEnd(filename, data);
+	msiInstall.SetProperty("WIN32_FILE_DATA", data);
+	MSI_EXCEPTION_HANDLER_EPILOG;
+    return ERROR_SUCCESS;
+}

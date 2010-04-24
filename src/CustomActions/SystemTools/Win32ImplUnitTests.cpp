@@ -93,6 +93,8 @@ void Win32ImplUnitTests::Test_EntryPoints()
     CPPUNIT_ASSERT(NULL != GetProcAddress(h, "Win32_DeleteDirectory"));
 	CPPUNIT_ASSERT(NULL != GetProcAddress(h, "Win32_GetParentDirectory"));
     CPPUNIT_ASSERT(NULL != GetProcAddress(h, "Win32_FileExists"));
+	CPPUNIT_ASSERT(NULL != GetProcAddress(h, "Win32_ReadFile"));
+	CPPUNIT_ASSERT(NULL != GetProcAddress(h, "Win32_WriteFile"));
 	::FreeLibrary(h);
 }
 
@@ -651,4 +653,58 @@ void Win32ImplUnitTests::Test_Win32_GetParentDirectory()
 		CPPUNIT_ASSERT(ERROR_SUCCESS == hInstall.ExecuteCA(L"SystemTools.dll", L"Win32_GetParentDirectory"));
         CPPUNIT_ASSERT(testdata[i].expected_parent_path == msiInstall.GetProperty(L"WIN32_PARENT_DIRECTORY"));
     }
+}
+
+void Win32ImplUnitTests::Test_Win32_ReadFile()
+{
+    AppSecInc::Msi::MsiShim hInstall;
+	MsiInstall msiInstall(hInstall);
+	std::wstring tmpfile = AppSecInc::File::GetTemporaryFileNameW();
+	std::wcout << std::endl << L"Temporary filename: " << tmpfile;
+	CPPUNIT_ASSERT(AppSecInc::File::FileExists(tmpfile));
+	msiInstall.SetProperty(L"WIN32_FILE_NAME", tmpfile);
+	CPPUNIT_ASSERT(ERROR_SUCCESS == hInstall.ExecuteCA(L"SystemTools.dll", L"Win32_ReadFile"));
+	// temporary files are created empty
+	CPPUNIT_ASSERT(msiInstall.GetProperty("WIN32_FILE_DATA").length() == 0);
+    // ansi data
+    std::string guid = AppSecInc::Com::GenerateGUIDStringA();
+    std::ofstream f(AppSecInc::StringUtils::wc2mb(tmpfile).c_str());
+    f << guid.c_str();
+    f.close();
+    // read as byte data
+	CPPUNIT_ASSERT(ERROR_SUCCESS == hInstall.ExecuteCA(L"SystemTools.dll", L"Win32_ReadFile"));
+	CPPUNIT_ASSERT(msiInstall.GetProperty("WIN32_FILE_DATA").length() == AppSecInc::File::GetFileSize(tmpfile));
+    // delete temp file
+    AppSecInc::File::FileDelete(tmpfile);
+}
+
+void Win32ImplUnitTests::Test_Win32_WriteFile()
+{
+    AppSecInc::Msi::MsiShim hInstall;
+	MsiInstall msiInstall(hInstall);
+    std::wstring tmpfile = AppSecInc::File::DirectoryCombine(
+        AppSecInc::File::GetTemporaryDirectoryW(), AppSecInc::Com::GenerateGUIDStringW());
+	std::wcout << std::endl << L"Temporary filename: " << tmpfile;
+    // empty data
+	msiInstall.SetProperty(L"WIN32_FILE_NAME", tmpfile);
+	msiInstall.SetProperty(L"WIN32_FILE_DATA", L"");
+	CPPUNIT_ASSERT(ERROR_SUCCESS == hInstall.ExecuteCA(L"SystemTools.dll", L"Win32_WriteFile"));
+    std::vector<char> read_data;
+    AppSecInc::File::ReadToEnd(tmpfile, read_data);
+    CPPUNIT_ASSERT(read_data.size() == 0); // temporary files are created empty
+    // some data
+    std::string write_guid = AppSecInc::Com::GenerateGUIDStringA();
+    std::cout << std::endl << "Write GUID: " << write_guid;
+	msiInstall.SetProperty("WIN32_FILE_DATA", write_guid);
+	CPPUNIT_ASSERT(ERROR_SUCCESS == hInstall.ExecuteCA(L"SystemTools.dll", L"Win32_WriteFile"));
+    std::vector<char> read_guid;
+    AppSecInc::File::ReadToEnd(tmpfile, read_guid);
+	std::wcout << std::endl << L"Size: " << read_guid.size();    
+    CPPUNIT_ASSERT(read_guid.size() > 0);
+    CPPUNIT_ASSERT(read_guid.size() == AppSecInc::File::GetFileSize(tmpfile));
+    std::string read_guid_string(read_guid.begin(), read_guid.end());
+    std::cout << std::endl << "Read GUID: " << read_guid_string;
+    CPPUNIT_ASSERT(write_guid == read_guid_string);
+    // delete temp file
+    AppSecInc::File::FileDelete(tmpfile);
 }
