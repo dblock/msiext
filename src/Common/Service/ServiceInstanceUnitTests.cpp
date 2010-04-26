@@ -82,18 +82,21 @@ void ServiceInstanceUnitTests::testGetDescription()
 
 void ServiceInstanceUnitTests::testCreateDelete()
 {
-	// \todo: create a test service rather than dup-ing an existing one (ClipBook doesn't exist on Vista)
-	CPPUNIT_IGNORE(! AppSecInc::Registry::KeyExists(HKEY_LOCAL_MACHINE, L"SYSTEM\\CurrentControlSet\\Services\\ClipSrv"));
-
     ServiceManager scm;
     scm.Open();
     ServiceInstance instance;
-	// dup the ClipBook service, C:\WINDOWS\system32\clipsrv.exe
-	// HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\ClipSrv
 	AppSecInc::Service::ServiceCreateInfo create_info;
-	create_info.name = AppSecInc::Com::GenerateGUIDStringW();
-	create_info.binary_path_name = AppSecInc::Registry::GetStringValue(HKEY_LOCAL_MACHINE, L"SYSTEM\\CurrentControlSet\\Services\\ClipSrv", L"ImagePath");
-	std::wcout << std::endl << L"Copying ClipSrv (" << create_info.binary_path_name << L") to " << create_info.name;
+	create_info.name = L"MsiExtDemoService";
+
+	if (scm.ServiceExists(create_info.name))
+	{
+		ServiceInstance deleteinstance;
+		deleteinstance.Open(scm, create_info.name);
+		deleteinstance.Delete();
+	}
+
+	create_info.binary_path_name = AppSecInc::File::DirectoryCombine(AppSecInc::File::GetModuleDirectoryW(), L"DemoService.exe");
+	CPPUNIT_ASSERT(AppSecInc::File::FileExists(create_info.binary_path_name));	
     instance.Create(scm, create_info);
 
 	try
@@ -108,17 +111,10 @@ void ServiceInstanceUnitTests::testCreateDelete()
 		CPPUNIT_ASSERT(instance.IsStarted());
 		instance.Stop();
 		instance.Delete();
-
-		try
-		{
-			ServiceInstance instance2;
-			instance2.Open(scm, create_info.name);
-			throw "expected std::exception";
-		}
-		catch(std::exception&) { }
 	}
-	catch(std::exception&)
+	catch(std::exception& ex)
 	{
+		std::wcout << std::endl << L"Unexpected exception: " << AppSecInc::StringUtils::mb2wc(ex.what());
 		instance.Delete();
 		throw;
 	}

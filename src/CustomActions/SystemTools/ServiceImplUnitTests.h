@@ -17,6 +17,7 @@ namespace AppSecInc
                 CPPUNIT_TEST( Test_Service_Control );
 				CPPUNIT_TEST( Test_Service_Delete );
 				CPPUNIT_TEST( Test_Service_GetConfig );
+				CPPUNIT_TEST( Test_Service_Exists );
 				CPPUNIT_TEST_SUITE_END();
 			private:
 				std::wstring service_name;
@@ -31,6 +32,7 @@ namespace AppSecInc
 				void Test_Service_Delete();
                 void Test_Service_Control();
 				void Test_Service_GetConfig();
+				void Test_Service_Exists();
 			};
 		}
 	}

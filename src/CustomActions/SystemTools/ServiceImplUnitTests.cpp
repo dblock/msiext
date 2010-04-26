@@ -20,6 +20,7 @@ void ServiceImplUnitTests::Test_EntryPoints()
 	CPPUNIT_ASSERT(NULL != GetProcAddress(h, "Service_Control"));
 	CPPUNIT_ASSERT(NULL != GetProcAddress(h, "Service_Delete"));
 	CPPUNIT_ASSERT(NULL != GetProcAddress(h, "Service_GetConfig"));
+	CPPUNIT_ASSERT(NULL != GetProcAddress(h, "Service_Exists"));
 	::FreeLibrary(h);
 }
 
@@ -151,6 +152,11 @@ void ServiceImplUnitTests::Test_Service_Control()
     AppSecInc::Service::ServiceInstance instance;
     instance.Open(scm, L"W32Time");    
     msiInstall.SetProperty(L"SERVICE_NAME", L"W32Time");
+	if (! instance.IsStarted())
+	{
+		instance.Start();
+		::Sleep(2000);
+	}
     CPPUNIT_ASSERT(instance.IsStarted());
     msiInstall.SetProperty(L"SERVICE_CONTROL", L"SERVICE_CONTROL_STOP");
 	CPPUNIT_ASSERT(ERROR_SUCCESS == hInstall.ExecuteCA(L"SystemTools.dll", L"Service_Control"));
@@ -199,4 +205,16 @@ void ServiceImplUnitTests::Test_Service_GetConfig()
 	CPPUNIT_ASSERT(L"SERVICE_DEMAND_START" == msiInstall.GetProperty(L"SERVICE_START_TYPE"));
 	CPPUNIT_ASSERT(L"0" == msiInstall.GetProperty(L"SERVICE_TAG_ID"));
 	CPPUNIT_ASSERT(L"" == msiInstall.GetProperty(L"SERVICE_DEPENDENCIES"));
+}
+
+void ServiceImplUnitTests::Test_Service_Exists()
+{
+    AppSecInc::Msi::MsiShim hInstall;
+    MsiInstall msiInstall(hInstall);
+    msiInstall.SetProperty(L"SERVICE_NAME", service_name);
+	CPPUNIT_ASSERT(ERROR_SUCCESS == hInstall.ExecuteCA(L"SystemTools.dll", L"Service_Exists"));
+	CPPUNIT_ASSERT(L"1" == msiInstall.GetProperty(L"SERVICE_EXISTS"));
+	msiInstall.SetProperty(L"SERVICE_NAME", AppSecInc::Com::GenerateGUIDStringW());
+	CPPUNIT_ASSERT(ERROR_SUCCESS == hInstall.ExecuteCA(L"SystemTools.dll", L"Service_Exists"));
+	CPPUNIT_ASSERT(L"0" == msiInstall.GetProperty(L"SERVICE_EXISTS"));
 }

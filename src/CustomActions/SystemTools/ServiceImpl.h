@@ -92,3 +92,11 @@ CA_API UINT __stdcall Service_Delete(MSIHANDLE hInstall);
 \return SERVICE_DEPENDENCIES comma-separated list of dependencies
 */
 CA_API UINT __stdcall Service_GetConfig(MSIHANDLE hInstall);
+
+/*! 
+
+\brief Check whether a service exists
+\param SERVICE_NAME service name
+\return SERVICE_EXISTS set to "1" if service exists, "0" otherwise
+*/
+CA_API UINT __stdcall Service_Exists(MSIHANDLE hInstall);

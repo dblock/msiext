@@ -27,6 +27,8 @@ namespace AppSecInc
 				DWORD service_type = SERVICE_WIN32, 
 				DWORD service_state = SERVICE_STATE_ALL,
 				LPCTSTR service_group_name = NULL) const;
+			//! return true if the service exists
+			bool ServiceExists(const std::wstring& name);
         };
     }
 }

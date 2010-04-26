@@ -2,9 +2,9 @@
 <VisualStudioProject
 	ProjectType="Visual C++"
 	Version="8.00"
-	Name="Service"
-	ProjectGUID="{E2A2ABE0-F889-4EC4-9550-1991E94F9476}"
-	RootNamespace="Service"
+	Name="DemoService"
+	ProjectGUID="{CDC3533D-98A6-40D5-901C-44447171FF72}"
+	RootNamespace="DemoService"
 	>
 	<Platforms>
 		<Platform
@@ -16,8 +16,8 @@
 	<Configurations>
 		<Configuration
 			Name="Debug|Win32"
-			ConfigurationType="4"
-			InheritedPropertySheets="$(SolutionDir)build\vsprops\ASI_Static_Lib_$(ConfigurationName).vsprops"
+			ConfigurationType="1"
+			InheritedPropertySheets="$(SolutionDir)build\vsprops\ASI_Exe_$(ConfigurationName).vsprops"
 			UseOfMFC="0"
 			ATLMinimizesCRunTimeLibraryUsage="false"
 			CharacterSet="1"
@@ -76,8 +76,8 @@
 		</Configuration>
 		<Configuration
 			Name="Release|Win32"
-			ConfigurationType="4"
-			InheritedPropertySheets="$(SolutionDir)build\vsprops\ASI_Static_Lib_$(ConfigurationName).vsprops"
+			ConfigurationType="1"
+			InheritedPropertySheets="$(SolutionDir)build\vsprops\ASI_Exe_$(ConfigurationName).vsprops"
 			UseOfMFC="0"
 			ATLMinimizesCRunTimeLibraryUsage="false"
 			CharacterSet="1"
@@ -142,19 +142,11 @@
 			Filter="cpp;c;cxx;rc;def;r;odl;idl;hpj;bat"
 			>
 			<File
-				RelativePath=".\ServiceCreateInfo.cpp"
+				RelativePath=".\DemoService.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\ServiceImpl.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\ServiceInstance.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\ServiceManager.cpp"
+				RelativePath=".\ServiceMain.cpp"
 				>
 			</File>
 			<File
@@ -187,31 +179,7 @@
 			Filter="h;hpp;hxx;hm;inl"
 			>
 			<File
-				RelativePath=".\Service.h"
-				>
-			</File>
-			<File
-				RelativePath=".\ServiceConfig.h"
-				>
-			</File>
-			<File
-				RelativePath=".\ServiceCreateInfo.h"
-				>
-			</File>
-			<File
-				RelativePath=".\ServiceImpl.h"
-				>
-			</File>
-			<File
-				RelativePath=".\ServiceInstance.h"
-				>
-			</File>
-			<File
-				RelativePath=".\ServiceManager.h"
-				>
-			</File>
-			<File
-				RelativePath=".\ServiceStatusProcess.h"
+				RelativePath=".\DemoService.h"
 				>
 			</File>
 			<File

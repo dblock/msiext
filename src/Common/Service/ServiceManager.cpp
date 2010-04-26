@@ -94,3 +94,23 @@ std::list<ServiceStatusProcess> ServiceManager::GetServices(DWORD service_type, 
 
 	return services;
 }
+
+bool ServiceManager::ServiceExists(const std::wstring& name)
+{
+	CHECK_BOOL(IsOpen(), L"Service manager not open");
+	SC_HANDLE h = ::OpenService(m_h, name.c_str(), GENERIC_READ);
+	if (h == NULL)
+	{
+		DWORD dwError = ::GetLastError();
+		switch(dwError)
+		{
+		case ERROR_SERVICE_DOES_NOT_EXIST:
+			return false;
+		default:
+			CHECK_WIN32_DWORD(dwError, L"OpenService");
+		}
+	}
+
+	::CloseServiceHandle(h);
+	return true;
+}

@@ -29,7 +29,7 @@
 \li \ref Win32_CopyFile, \ref Win32_MoveFile, \ref Win32_DeleteFile, \ref Win32_GetFileSize, \ref Win32_FileExists, \ref Win32_ReadFile, \ref Win32_WriteFile
 \li \ref Win32_CreateDirectory, \ref Win32_DeleteDirectory
 \li \ref CompareVersion
-\li \ref Service_Control, \ref Service_Delete, \ref Service_RenameRegistryEntry, \ref Service_ChangeBinaryPathName, \ref Service_ChangeDisplayName, \ref Service_ChangeDescription
+\li \ref Service_Control, \ref Service_RenameRegistryEntry, \ref Service_Delete, \ref Service_ChangeBinaryPathName, \ref Service_ChangeDisplayName, \ref Service_ChangeDescription, \ref Service_GetConfig, \ref Service_Exists
 \li \ref Registry_CopyBranch, \ref Registry_DeleteBranch, \ref Registry_MoveBranch
 \li \ref Win32_IsValidGuid, \ref Win32_GenerateGuidString
 

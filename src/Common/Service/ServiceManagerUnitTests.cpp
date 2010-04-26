@@ -55,3 +55,11 @@ void ServiceManagerUnitTests::testGetServices()
 		}
 	}
 }
+
+void ServiceManagerUnitTests::testServiceExists()
+{
+	ServiceManager manager;
+	manager.Open();
+	CPPUNIT_ASSERT(! manager.ServiceExists(AppSecInc::Com::GenerateGUIDStringW()));
+	CPPUNIT_ASSERT(manager.ServiceExists(L"W32Time"));
+}

@@ -34,6 +34,7 @@ EXPORTS
 	Service_ChangeDisplayName
 	Service_ChangeDescription
 	Service_GetConfig
+	Service_Exists
 	TemplateFiles_Immediate
 	TemplateFiles_Deferred
 	Registry_CopyBranch

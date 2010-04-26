@@ -12,11 +12,13 @@ namespace AppSecInc
 				CPPUNIT_TEST( testConstructorDestructor );
                 CPPUNIT_TEST( testOpenClose );
 				CPPUNIT_TEST( testGetServices );
+				CPPUNIT_TEST( testServiceExists );
 				CPPUNIT_TEST_SUITE_END();
 			public:
 				void testConstructorDestructor();
                 void testOpenClose();
 				void testGetServices();
+				void testServiceExists();
 			};
 		}
 	}

@@ -5,3 +5,4 @@
 #include "ServiceStatusProcess.h"
 #include "ServiceManager.h"
 #include "ServiceInstance.h"
+#include "ServiceImpl.h"
