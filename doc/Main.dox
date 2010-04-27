@@ -35,7 +35,7 @@
 
 \par Strings (StringTools.dll)
 
-\li \ref String_Replace, \ref String_Trim
+\li \ref String_Replace, \ref String_Trim, \ref String_LTrim, \ref String_RTrim
 \li \ref Regex_Match, \ref Regex_Replace
 \li \ref String_ToLower, \ref String_ToUpper
 

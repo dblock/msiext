@@ -13,7 +13,10 @@ void StringToolsImplUnitTests::Test_EntryPoints()
 	CPPUNIT_ASSERT_MESSAGE("Missing StringTools.dll", h != NULL);
 	CPPUNIT_ASSERT(NULL != GetProcAddress(h, "String_Replace"));
 	CPPUNIT_ASSERT_MESSAGE("Missing String_ToLower", NULL != GetProcAddress(h, "String_ToLower"));
-	CPPUNIT_ASSERT_MESSAGE("Missing String_ToLower", NULL != GetProcAddress(h, "String_ToUpper"));
+	CPPUNIT_ASSERT_MESSAGE("Missing String_ToUpper", NULL != GetProcAddress(h, "String_ToUpper"));
+	CPPUNIT_ASSERT_MESSAGE("Missing String_Trim", NULL != GetProcAddress(h, "String_Trim"));
+	CPPUNIT_ASSERT_MESSAGE("Missing String_LTrim", NULL != GetProcAddress(h, "String_LTrim"));
+	CPPUNIT_ASSERT_MESSAGE("Missing String_RTrim", NULL != GetProcAddress(h, "String_RTrim"));
 	::FreeLibrary(h);
 }
 
@@ -108,6 +111,84 @@ void StringToolsImplUnitTests::Test_StringTrim()
 			"'. It was expected: '" << testData[i].testExpectedResult << "'";
 
 		CPPUNIT_ASSERT_MESSAGE(message.str().c_str(), testData[i].testExpectedResult == stringTrimResult);
+	}
+}
+
+void StringToolsImplUnitTests::Test_StringLTrim()
+{
+	AppSecInc::Msi::MsiShim hInstall;
+    MsiInstall msiInstall(hInstall);
+
+	typedef struct  
+	{
+		LPCSTR testInput;
+		LPCSTR testWhitespaces;
+		LPCSTR testExpectedResult;
+	} TestData;
+
+	TestData testData[] = 
+	{
+		{ "     this is a string whith whitespaces\t     ", "", "this is a string whith whitespaces\t     " },
+		{ "     this is a string whith whitespaces     ", " ", "this is a string whith whitespaces     " },
+		{ "this string doesn't have whitespaces", "", "this string doesn't have whitespaces" },
+		{ "%%test string%%", "%", "test string%%" },
+		{ " test string     ", "", "test string     " }
+	};
+
+	for( unsigned int i = 0; i < ARRAYSIZE(testData); i++ )
+	{		
+		msiInstall.SetProperty("STRING_LTRIM_INPUT", testData[i].testInput);
+		msiInstall.SetProperty("STRING_LTRIM_WHITESPACES", testData[i].testWhitespaces);
+
+		CPPUNIT_ASSERT(ERROR_SUCCESS == hInstall.ExecuteCA(L"StringTools.dll", L"String_LTrim"));
+
+		std::string stringLTrimResult = msiInstall.GetProperty("STRING_LTRIM_RESULT");
+		std::stringstream message;
+
+		message << "StringLTrim('" << testData[i].testInput <<
+			"', '" << testData[i].testWhitespaces << "') returned '" << stringLTrimResult <<
+			"'. It was expected: '" << testData[i].testExpectedResult << "'";
+
+		CPPUNIT_ASSERT_MESSAGE(message.str().c_str(), testData[i].testExpectedResult == stringLTrimResult);
+	}
+}
+
+void StringToolsImplUnitTests::Test_StringRTrim()
+{
+	AppSecInc::Msi::MsiShim hInstall;
+    MsiInstall msiInstall(hInstall);
+
+	typedef struct  
+	{
+		LPCSTR testInput;
+		LPCSTR testWhitespaces;
+		LPCSTR testExpectedResult;
+	} TestData;
+
+	TestData testData[] = 
+	{
+		{ "     this is a string whith whitespaces\t     ", "", "     this is a string whith whitespaces" },
+		{ "     this is a string whith whitespaces     ", " ", "     this is a string whith whitespaces" },
+		{ "this string doesn't have whitespaces", "", "this string doesn't have whitespaces" },
+		{ "%%test string%%", "%", "%%test string" },
+		{ " test string     ", "", " test string" }
+	};
+
+	for( unsigned int i = 0; i < ARRAYSIZE(testData); i++ )
+	{		
+		msiInstall.SetProperty("STRING_RTRIM_INPUT", testData[i].testInput);
+		msiInstall.SetProperty("STRING_RTRIM_WHITESPACES", testData[i].testWhitespaces);
+
+		CPPUNIT_ASSERT(ERROR_SUCCESS == hInstall.ExecuteCA(L"StringTools.dll", L"String_RTrim"));
+
+		std::string stringRTrimResult = msiInstall.GetProperty("STRING_RTRIM_RESULT");
+		std::stringstream message;
+
+		message << "StringRTrim('" << testData[i].testInput <<
+			"', '" << testData[i].testWhitespaces << "') returned '" << stringRTrimResult <<
+			"'. It was expected: '" << testData[i].testExpectedResult << "'";
+
+		CPPUNIT_ASSERT_MESSAGE(message.str().c_str(), testData[i].testExpectedResult == stringRTrimResult);
 	}
 }
 

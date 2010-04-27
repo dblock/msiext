@@ -33,6 +33,32 @@ CA_API UINT __stdcall String_Trim(MSIHANDLE hInstall);
 
 /*! 
 
+\brief Trim a string from left
+
+This performs left trim. For example leading zeros in a string.
+
+\param STRING_LTRIM_INPUT string to trim
+\param STRING_LTRIM_WHITESPACES the whitespace to trim. Defaults to " " and tab characters
+\param STRING_LTRIM_RESULT the resulting string
+
+*/
+CA_API UINT __stdcall String_LTrim(MSIHANDLE hInstall);
+
+/*! 
+
+\brief Trim a string from right
+
+This performs right trim. 
+
+\param STRING_RTRIM_INPUT string to trim
+\param STRING_RTRIM_WHITESPACES the whitespace to trim. Defaults to " " and tab characters
+\param STRING_RTRIM_RESULT the resulting string
+
+*/
+CA_API UINT __stdcall String_RTrim(MSIHANDLE hInstall);
+
+/*! 
+
 \brief Regex_Match
 
 Returns 1 if the specified regular expression REGEX_MATCH_EXPRESSION

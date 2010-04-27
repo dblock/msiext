@@ -5,6 +5,8 @@ LIBRARY StringTools
 EXPORTS
     String_Replace
     String_Trim
+	String_LTrim
+	String_RTrim
     Regex_Match
     Regex_Replace
     String_ToLower

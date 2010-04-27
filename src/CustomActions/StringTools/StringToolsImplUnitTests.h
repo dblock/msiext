@@ -11,6 +11,8 @@ namespace AppSecInc
 				CPPUNIT_TEST_SUITE( StringToolsImplUnitTests );
 				CPPUNIT_TEST( Test_StringReplace );
 				CPPUNIT_TEST( Test_StringTrim );
+				CPPUNIT_TEST( Test_StringLTrim );
+				CPPUNIT_TEST( Test_StringRTrim );
 				CPPUNIT_TEST( Test_RegexMatch );
 				CPPUNIT_TEST( Test_RegexReplace );
 				CPPUNIT_TEST( Test_StringToLower );
@@ -21,6 +23,8 @@ namespace AppSecInc
 				void Test_EntryPoints();
                 void Test_StringReplace();
                 void Test_StringTrim();
+				void Test_StringLTrim();
+				void Test_StringRTrim();
                 void Test_RegexMatch();
                 void Test_RegexReplace();
                 void Test_StringToLower();

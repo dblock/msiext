@@ -34,6 +34,38 @@ CA_API UINT __stdcall String_Trim(MSIHANDLE hInstall)
     return ERROR_SUCCESS;
 }
 
+CA_API UINT __stdcall String_LTrim(MSIHANDLE hInstall)
+{
+	MSI_EXCEPTION_HANDLER_PROLOG;
+    MsiInstall msiInstall(hInstall);
+
+    std::wstring input = msiInstall.GetProperty(L"STRING_LTRIM_INPUT");
+	std::wstring whitespaces = msiInstall.GetProperty(L"STRING_LTRIM_WHITESPACES");
+
+	if (whitespaces.empty()) whitespaces = L" \t";
+	AppSecInc::StringUtils::ltrim(input, whitespaces);
+	msiInstall.SetProperty(L"STRING_LTRIM_RESULT", input);
+
+	MSI_EXCEPTION_HANDLER_EPILOG;
+    return ERROR_SUCCESS;
+}
+
+CA_API UINT __stdcall String_RTrim(MSIHANDLE hInstall)
+{
+	MSI_EXCEPTION_HANDLER_PROLOG;
+    MsiInstall msiInstall(hInstall);
+
+    std::wstring input = msiInstall.GetProperty(L"STRING_RTRIM_INPUT");
+	std::wstring whitespaces = msiInstall.GetProperty(L"STRING_RTRIM_WHITESPACES");
+
+	if (whitespaces.empty()) whitespaces = L" \t";
+	AppSecInc::StringUtils::rtrim(input, whitespaces);
+	msiInstall.SetProperty(L"STRING_RTRIM_RESULT", input);
+
+	MSI_EXCEPTION_HANDLER_EPILOG;
+    return ERROR_SUCCESS;
+}
+
 CA_API UINT __stdcall Regex_Match(MSIHANDLE hInstall)
 {
 	MSI_EXCEPTION_HANDLER_PROLOG;
