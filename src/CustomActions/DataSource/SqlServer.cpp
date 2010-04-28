@@ -50,6 +50,12 @@ CA_API UINT __stdcall CreateDatabases_SQLServer_Deferred(MSIHANDLE hInstall)
         database.Load(xmlDocument, row);
 
         std::wstring actions_s = xmlDocument.SelectAttributeValue(L"actions", row); // actions
+		if (actions_s.empty())
+		{
+			msiInstall.LogInfo(L"CreateDatabases_SQLServer", L"Skipping " + database.GetName());
+			continue;
+		}
+
         bool checkIfExists = xmlDocument.SelectAttributeBoolValue(L"checkIfExists", row); // actions
         std::vector<std::wstring> actions; 
         AppSecInc::StringUtils::tokenize(actions_s, actions, L",");
@@ -57,6 +63,9 @@ CA_API UINT __stdcall CreateDatabases_SQLServer_Deferred(MSIHANDLE hInstall)
         msiInstall.LogInfo(L"CreateDatabases_SQLServer", database.GetName());
         for each (const std::wstring action in actions)
         {
+			if (action.empty())
+				continue;
+
             msiInstall.LogInfo(L"CreateDatabases_SQLServer", database.GetName() + L": " + action);
             database.Connect();
 
