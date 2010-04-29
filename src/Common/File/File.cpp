@@ -354,17 +354,17 @@ void AppSecInc::File::ReadToEnd(const std::wstring& filename, std::vector<char>&
     long size = GetFileSize(filename);
     if (size > 0)
     {
-        HANDLE h = ::CreateFile(filename.c_str(), GENERIC_READ, 0,  
+        HANDLE hFile = ::CreateFile(filename.c_str(), GENERIC_READ, 0,  
             NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
 
-        CHECK_WIN32_BOOL(h != NULL,
+        CHECK_WIN32_BOOL(hFile != INVALID_HANDLE_VALUE,
             L"Error opening " << filename);
 
-        boost::shared_ptr<void> hFile(h, ::CloseHandle);
+        boost::shared_ptr<void> file_ptr(hFile, ::CloseHandle);
         data.resize(size);
 
         DWORD dwRead = 0;
-        CHECK_WIN32_BOOL(::ReadFile(h, & * data.begin(), size, & dwRead, NULL),
+        CHECK_WIN32_BOOL(::ReadFile(hFile, & * data.begin(), size, & dwRead, NULL),
             L"Error reading " << filename);
 
         CHECK_BOOL(dwRead == size,
@@ -382,7 +382,7 @@ void AppSecInc::File::FileWrite(
     HANDLE hFile = ::CreateFile(filename.c_str(), dwShareMode, 0, 
         NULL, dwCreationDisposition, dwFlagsAndAttributes, NULL);
 
-    CHECK_WIN32_BOOL(hFile != NULL,
+    CHECK_WIN32_BOOL(hFile != INVALID_HANDLE_VALUE,
         L"Error opening " << filename);
 
     boost::shared_ptr<void> file_ptr(hFile, ::CloseHandle);
@@ -407,7 +407,7 @@ void AppSecInc::File::FileCreate(
     HANDLE hFile = ::CreateFile(filename.c_str(), dwShareMode, 0, 
         NULL, dwCreationDisposition, dwFlagsAndAttributes, NULL);
 
-    CHECK_WIN32_BOOL(hFile != NULL,
+    CHECK_WIN32_BOOL(hFile != INVALID_HANDLE_VALUE,
         L"Error opening " << filename);
 
     CHECK_WIN32_BOOL(::CloseHandle(hFile),
