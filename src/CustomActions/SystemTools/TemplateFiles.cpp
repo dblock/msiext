@@ -130,6 +130,8 @@ CA_API UINT __stdcall TemplateFiles_Deferred(MSIHANDLE hInstall)
         std::wstring source = xmlDocument.SelectNodeValue(L"Source", row);
         std::wstring target = xmlDocument.SelectNodeValue(L"Target", row, source);
 
+		msiInstall.LogInfo(L"TemplateFiles_Deferred", source + L" => " + target);
+
         std::map<std::wstring, std::wstring> properties;
 
         {
