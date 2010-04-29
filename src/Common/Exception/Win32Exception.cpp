@@ -20,7 +20,7 @@ std::string Win32Exception::GetErrorString(HRESULT hr, LPCTSTR error)
 
 std::string Win32Exception::GetErrorString(DWORD dwErr, LPCTSTR error)
 {
-    return GetErrorString(HRESULT_FROM_WIN32(dwErr));
+    return GetErrorString(HRESULT_FROM_WIN32(dwErr), error);
 }
 
 std::string Win32Exception::GetLastErrorString(LPCTSTR error)
