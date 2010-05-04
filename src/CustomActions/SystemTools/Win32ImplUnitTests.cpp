@@ -508,7 +508,7 @@ void Win32ImplUnitTests::Test_Win32_ScheduledExecute()
         // there's only 1 row
         CPPUNIT_ASSERT(1 == scheduledxml.SelectNodes(L"//Row")->length);
         // the one row is marked execute=true
-        CPPUNIT_ASSERT(scheduledxml.SelectAttributeBoolValue(L"execute", scheduledxml.SelectNode(L"/Row")));
+        CPPUNIT_ASSERT(scheduledxml.GetAttributeBoolValue(L"execute", scheduledxml.SelectNode(L"/Row")));
     }
 
     {
@@ -518,7 +518,7 @@ void Win32ImplUnitTests::Test_Win32_ScheduledExecute()
         // there's only 1 row
         CPPUNIT_ASSERT(1 == scheduledxml.SelectNodes(L"//Row")->length);
         // the one row is marked execute=false, this is an install sequence
-        CPPUNIT_ASSERT(! scheduledxml.SelectAttributeBoolValue(L"execute", scheduledxml.SelectNode(L"/Row")));
+        CPPUNIT_ASSERT(! scheduledxml.GetAttributeBoolValue(L"execute", scheduledxml.SelectNode(L"/Row")));
     }
 
     // execute the deferred CA

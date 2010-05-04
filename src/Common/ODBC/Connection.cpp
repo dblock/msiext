@@ -369,7 +369,7 @@ void ODBCConnection::InsertXml(const AppSecInc::Xml::XmlDocument& dataxmldoc, Ap
 void ODBCConnection::InsertXml(const AppSecInc::Xml::XmlDocument& dataxmldoc, MSXML2::IXMLDOMNodePtr dataset_node, AppSecInc::Xml::XmlDocument& xmldoc, MSXML2::IXMLDOMNodePtr parent_node)
 {
     MSXML2::IXMLDOMNodePtr table_node = dataxmldoc.SelectNode(L"RowSet", dataset_node);
-    std::wstring table_name = dataxmldoc.SelectAttributeValue(L"table", table_node, L"");
+    std::wstring table_name = dataxmldoc.GetAttributeValue(L"table", table_node, L"");
     CHECK_BOOL(table_name.length() > 0, L"Missing <RowSet table=\"table name\">");
     xmldoc.SetAttribute(L"table", table_name, parent_node);
     MSXML2::IXMLDOMNodePtr messages_node = xmldoc.AppendChild(L"Messages", parent_node);
@@ -396,7 +396,7 @@ void ODBCConnection::InsertXml(const AppSecInc::Xml::XmlDocument& dataxmldoc, MS
             columns.push_back(data_column_name);
             args.push_back(L"?");
             
-            std::wstring type = dataxmldoc.SelectAttributeValue(L"type", data_column, L"wchar");
+            std::wstring type = dataxmldoc.GetAttributeValue(L"type", data_column, L"wchar");
             int sqltype = ODBCBuffer::StringToSQLType(type);
             parameters.AddParameter(ODBCParameter::Create(static_cast<LPCWSTR>(data_column->nodeName), data_column_value, sqltype));
         }

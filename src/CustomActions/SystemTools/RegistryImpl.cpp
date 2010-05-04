@@ -156,10 +156,10 @@ CA_API UINT __stdcall Win32_RegistryCopy_Immediate(MSIHANDLE hInstall)
     while (NULL != (registry_row = registry_rows->nextNode()))
     {
 		RegistryEntry registry_key;
-		registry_key.id = registry_xml_document.SelectNodeValue(L"Data[@Column=\"Registry\"]", registry_row);
-		registry_key.root = AppSecInc::StringUtils::stringToLong(registry_xml_document.SelectNodeValue(L"Data[@Column=\"Root\"]", registry_row));
-		registry_key.key = registry_xml_document.SelectNodeValue(L"Data[@Column=\"Key\"]", registry_row);
-		registry_key.component = registry_xml_document.SelectNodeValue(L"Data[@Column=\"Component_\"]", registry_row);
+		registry_key.id = registry_xml_document.GetNodeValue(L"Data[@Column=\"Registry\"]", registry_row);
+		registry_key.root = AppSecInc::StringUtils::stringToLong(registry_xml_document.GetNodeValue(L"Data[@Column=\"Root\"]", registry_row));
+		registry_key.key = registry_xml_document.GetNodeValue(L"Data[@Column=\"Key\"]", registry_row);
+		registry_key.component = registry_xml_document.GetNodeValue(L"Data[@Column=\"Component_\"]", registry_row);
         registry_map.insert(std::pair<std::wstring, RegistryEntry>(registry_key.id, registry_key));
     }
 
@@ -172,15 +172,15 @@ CA_API UINT __stdcall Win32_RegistryCopy_Immediate(MSIHANDLE hInstall)
 		while (NULL != (row = rows->nextNode()))
 		{
             // id
-		    std::wstring id = registry_copy_xml_document.SelectNodeValue(L"Data[@Column=\"Id\"]", row, L"");
+		    std::wstring id = registry_copy_xml_document.GetNodeValue(L"Data[@Column=\"Id\"]", row, L"");
 			// registry id
-			std::wstring registry_id = registry_copy_xml_document.SelectNodeValue(L"Data[@Column=\"RegistryId\"]", row, L"");
+			std::wstring registry_id = registry_copy_xml_document.GetNodeValue(L"Data[@Column=\"RegistryId\"]", row, L"");
 			std::map<std::wstring, RegistryEntry>::iterator registry_entry = registry_map.find(registry_id);
 			if (registry_entry == registry_map.end()) THROW(L"Missing Registry \"" << registry_id << L"\"");
             // node condition
-            std::wstring condition = registry_copy_xml_document.SelectNodeValue(L"Data[@Column=\"Condition\"]", row);
+            std::wstring condition = registry_copy_xml_document.GetNodeValue(L"Data[@Column=\"Condition\"]", row);
             // operational attributes
-            long attributes = AppSecInc::StringUtils::stringToLong(registry_copy_xml_document.SelectNodeValue(L"Data[@Column=\"Attributes\"]", row));
+            long attributes = AppSecInc::StringUtils::stringToLong(registry_copy_xml_document.GetNodeValue(L"Data[@Column=\"Attributes\"]", row));
             // no condition (executes by default) or condition evaluates to true
             bool execute_per_condition = condition.empty() || msiInstall.EvaluateCondition(condition);
             if (! condition.empty())
@@ -201,8 +201,8 @@ CA_API UINT __stdcall Win32_RegistryCopy_Immediate(MSIHANDLE hInstall)
 		    MSXML2::IXMLDOMNodePtr registrykeycopy_node = combined_xml_document.AppendChild(L"RegistryKeyCopy", combined_xml_root);
 		    combined_xml_document.SetAttribute(L"id", id, registrykeycopy_node);
 
-            std::wstring target_path = registry_copy_xml_document.SelectNodeValue(L"Data[@Column=\"TargetPath\"]", row);
-            std::wstring target_root = registry_copy_xml_document.SelectNodeValue(L"Data[@Column=\"TargetRoot\"]", row);
+            std::wstring target_path = registry_copy_xml_document.GetNodeValue(L"Data[@Column=\"TargetPath\"]", row);
+            std::wstring target_root = registry_copy_xml_document.GetNodeValue(L"Data[@Column=\"TargetRoot\"]", row);
 			HKEY target_root_hkey = GetFlagValue<FlagMapEntryHKEY[ARRAYSIZE(s_RegistryRoot)], HKEY>(target_root, s_RegistryRoot);
 			int target_root_key = (reinterpret_cast<long>(target_root_hkey) - reinterpret_cast<long>(HKEY_CLASSES_ROOT));
 			combined_xml_document.AppendChild(L"SourceRoot", registrykeycopy_node)->text = _bstr_t(AppSecInc::StringUtils::toWString(registry_entry->second.root).c_str());
@@ -238,16 +238,16 @@ CA_API UINT __stdcall Win32_RegistryCopy_Deferred(MSIHANDLE hInstall)
     MSXML2::IXMLDOMNodePtr row = rows->nextNode();
     while (NULL != row)
     {
-		HKEY source_root = (HKEY) (reinterpret_cast<long>(HKEY_CLASSES_ROOT) + AppSecInc::StringUtils::stringToLong(xmlDocument.SelectNodeValue(L"SourceRoot", row)));
-		std::wstring source_path = xmlDocument.SelectNodeValue(L"SourcePath", row);
+		HKEY source_root = (HKEY) (reinterpret_cast<long>(HKEY_CLASSES_ROOT) + AppSecInc::StringUtils::stringToLong(xmlDocument.GetNodeValue(L"SourceRoot", row)));
+		std::wstring source_path = xmlDocument.GetNodeValue(L"SourcePath", row);
 		std::wstring source_s = GetFlagName<FlagMapEntryHKEY[ARRAYSIZE(s_RegistryRoot)], HKEY>(source_root, s_RegistryRoot) + L"\\" + source_path;
-		HKEY target_root = (HKEY) (reinterpret_cast<long>(HKEY_CLASSES_ROOT) + AppSecInc::StringUtils::stringToLong(xmlDocument.SelectNodeValue(L"TargetRoot", row)));
-		std::wstring target_path = xmlDocument.SelectNodeValue(L"TargetPath", row);
+		HKEY target_root = (HKEY) (reinterpret_cast<long>(HKEY_CLASSES_ROOT) + AppSecInc::StringUtils::stringToLong(xmlDocument.GetNodeValue(L"TargetRoot", row)));
+		std::wstring target_path = xmlDocument.GetNodeValue(L"TargetPath", row);
 		std::wstring target_s = GetFlagName<FlagMapEntryHKEY[ARRAYSIZE(s_RegistryRoot)], HKEY>(target_root, s_RegistryRoot) + L"\\" + target_path;
-		bool check_if_exists = xmlDocument.SelectAttributeBoolValue(L"checkifexists", row);
-		bool overwrite = xmlDocument.SelectAttributeBoolValue(L"overwrite", row);
-		bool removesource = xmlDocument.SelectAttributeBoolValue(L"removesource", row);
-		bool restoreonrollback = xmlDocument.SelectAttributeBoolValue(L"restoreonrollback", row);
+		bool check_if_exists = xmlDocument.GetAttributeBoolValue(L"checkifexists", row);
+		bool overwrite = xmlDocument.GetAttributeBoolValue(L"overwrite", row);
+		bool removesource = xmlDocument.GetAttributeBoolValue(L"removesource", row);
+		bool restoreonrollback = xmlDocument.GetAttributeBoolValue(L"restoreonrollback", row);
 
 		if (msiInstall.IsRollback() && restoreonrollback)
 		{

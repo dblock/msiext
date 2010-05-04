@@ -181,15 +181,15 @@ CA_API UINT __stdcall Execute_ODBC_Deferred(MSIHANDLE hInstall)
     MSXML2::IXMLDOMNodePtr row = NULL;
     while (NULL != (row = rows->nextNode()))
     {
-        std::wstring id = xmlDocument.SelectAttributeValue(L"id", row);
-        std::wstring connectionstring = xmlDocument.SelectNodeValue(L"ConnectionString", row);
-        std::wstring sql = xmlDocument.SelectNodeValue(L"Sql", row, L"");
-        std::wstring filename = xmlDocument.SelectNodeValue(L"Filename", row, L"");
-        std::wstring outputfilename = xmlDocument.SelectNodeValue(L"OutputFilename", row, L"");
-        std::wstring delimiter = xmlDocument.SelectNodeValue(L"Delimiter", row, L"");
-        std::wstring sqltype = xmlDocument.SelectNodeValue(L"Type", row, L"");
-        std::wstring basepath = xmlDocument.SelectNodeValue(L"BasePath", row, L"");
-		std::wstring xsltfilename = xmlDocument.SelectNodeValue(L"XsltFilename", row, L"");
+        std::wstring id = xmlDocument.GetAttributeValue(L"id", row);
+        std::wstring connectionstring = xmlDocument.GetNodeValue(L"ConnectionString", row);
+        std::wstring sql = xmlDocument.GetNodeValue(L"Sql", row, L"");
+        std::wstring filename = xmlDocument.GetNodeValue(L"Filename", row, L"");
+        std::wstring outputfilename = xmlDocument.GetNodeValue(L"OutputFilename", row, L"");
+        std::wstring delimiter = xmlDocument.GetNodeValue(L"Delimiter", row, L"");
+        std::wstring sqltype = xmlDocument.GetNodeValue(L"Type", row, L"");
+        std::wstring basepath = xmlDocument.GetNodeValue(L"BasePath", row, L"");
+		std::wstring xsltfilename = xmlDocument.GetNodeValue(L"XsltFilename", row, L"");
 
         CHECK_BOOL(! (sql.empty() && filename.empty()),
             L"Missing SQL/Filename");
@@ -308,8 +308,8 @@ CA_API UINT __stdcall Execute_ODBC_Immediate(MSIHANDLE hInstall)
     MSXML2::IXMLDOMNodePtr connectionstring_row = NULL;
     while (NULL != (connectionstring_row = connectionstring_rows->nextNode()))
     {
-        std::wstring connectionstring_id = connectionstring_xml_document.SelectNodeValue(L"Data[@Column=\"Id\"]", connectionstring_row);
-        std::wstring connectionstring = connectionstring_xml_document.SelectNodeValue(L"Data[@Column=\"ConnectionString\"]", connectionstring_row);
+        std::wstring connectionstring_id = connectionstring_xml_document.GetNodeValue(L"Data[@Column=\"Id\"]", connectionstring_row);
+        std::wstring connectionstring = connectionstring_xml_document.GetNodeValue(L"Data[@Column=\"ConnectionString\"]", connectionstring_row);
         connectionstring_map.insert(std::pair<std::wstring, std::wstring>(connectionstring_id, connectionstring));
     }
 
@@ -320,22 +320,22 @@ CA_API UINT __stdcall Execute_ODBC_Immediate(MSIHANDLE hInstall)
     MSXML2::IXMLDOMNodePtr odbcexecute_row = NULL;
     while (NULL != (odbcexecute_row = odbcexecute_rows->nextNode()))
     {
-        std::wstring odbcexecute_id = odbcexecute_xml_document.SelectNodeValue(L"Data[@Column=\"Id\"]", odbcexecute_row);
-        std::wstring odbcexecutecomponent_id = odbcexecute_xml_document.SelectNodeValue(L"Data[@Column=\"ComponentId\"]", odbcexecute_row, L"");
-        std::wstring sql = odbcexecute_xml_document.SelectNodeValue(L"Data[@Column=\"Sql\"]", odbcexecute_row, L"");
-        std::wstring filename = odbcexecute_xml_document.SelectNodeValue(L"Data[@Column=\"Filename\"]", odbcexecute_row, L"");
-        std::wstring outputfilename = odbcexecute_xml_document.SelectNodeValue(L"Data[@Column=\"OutputFilename\"]", odbcexecute_row, L"");
-		std::wstring xsltfilename = odbcexecute_xml_document.SelectNodeValue(L"Data[@Column=\"XsltFilename\"]", odbcexecute_row, L"");
-        std::wstring binaryid = odbcexecute_xml_document.SelectNodeValue(L"Data[@Column=\"BinaryId\"]", odbcexecute_row, L"");
-        std::wstring delimiter = odbcexecute_xml_document.SelectNodeValue(L"Data[@Column=\"Delimiter\"]", odbcexecute_row, L"");
-        std::wstring sqltype = odbcexecute_xml_document.SelectNodeValue(L"Data[@Column=\"Type\"]", odbcexecute_row, L"");
-        std::wstring basepath = odbcexecute_xml_document.SelectNodeValue(L"Data[@Column=\"BasePath\"]", odbcexecute_row, L"");
-        std::wstring condition = odbcexecute_xml_document.SelectNodeValue(L"Data[@Column=\"Condition\"]", odbcexecute_row);
+        std::wstring odbcexecute_id = odbcexecute_xml_document.GetNodeValue(L"Data[@Column=\"Id\"]", odbcexecute_row);
+        std::wstring odbcexecutecomponent_id = odbcexecute_xml_document.GetNodeValue(L"Data[@Column=\"ComponentId\"]", odbcexecute_row, L"");
+        std::wstring sql = odbcexecute_xml_document.GetNodeValue(L"Data[@Column=\"Sql\"]", odbcexecute_row, L"");
+        std::wstring filename = odbcexecute_xml_document.GetNodeValue(L"Data[@Column=\"Filename\"]", odbcexecute_row, L"");
+        std::wstring outputfilename = odbcexecute_xml_document.GetNodeValue(L"Data[@Column=\"OutputFilename\"]", odbcexecute_row, L"");
+		std::wstring xsltfilename = odbcexecute_xml_document.GetNodeValue(L"Data[@Column=\"XsltFilename\"]", odbcexecute_row, L"");
+        std::wstring binaryid = odbcexecute_xml_document.GetNodeValue(L"Data[@Column=\"BinaryId\"]", odbcexecute_row, L"");
+        std::wstring delimiter = odbcexecute_xml_document.GetNodeValue(L"Data[@Column=\"Delimiter\"]", odbcexecute_row, L"");
+        std::wstring sqltype = odbcexecute_xml_document.GetNodeValue(L"Data[@Column=\"Type\"]", odbcexecute_row, L"");
+        std::wstring basepath = odbcexecute_xml_document.GetNodeValue(L"Data[@Column=\"BasePath\"]", odbcexecute_row, L"");
+        std::wstring condition = odbcexecute_xml_document.GetNodeValue(L"Data[@Column=\"Condition\"]", odbcexecute_row);
         // connection string
-        std::wstring connectionstring = odbcexecute_xml_document.SelectNodeValue(L"Data[@Column=\"ConnectionStringId\"]", odbcexecute_row);
+        std::wstring connectionstring = odbcexecute_xml_document.GetNodeValue(L"Data[@Column=\"ConnectionStringId\"]", odbcexecute_row);
         connectionstring = connectionstring_map[connectionstring];
         // operational attributes
-        long attributes = AppSecInc::StringUtils::stringToLong(odbcexecute_xml_document.SelectNodeValue(L"Data[@Column=\"Attributes\"]", odbcexecute_row));
+        long attributes = AppSecInc::StringUtils::stringToLong(odbcexecute_xml_document.GetNodeValue(L"Data[@Column=\"Attributes\"]", odbcexecute_row));
 
         // no condition (executes by default) or condition evaluates to true
         bool execute_per_condition = condition.empty() || msiInstall.EvaluateCondition(condition);
@@ -432,13 +432,13 @@ CA_API UINT __stdcall DataSource_ODBC_Immediate(MSIHANDLE hInstall)
     while (NULL != (row = rows->nextNode()))
     {
         // id
-        std::wstring id = xmlDocument.SelectNodeValue(L"Data[@Column=\"Id\"]", row, L"");
+        std::wstring id = xmlDocument.GetNodeValue(L"Data[@Column=\"Id\"]", row, L"");
         // component id
-        std::wstring component_id = xmlDocument.SelectNodeValue(L"Data[@Column=\"ComponentId\"]", row, L"");
+        std::wstring component_id = xmlDocument.GetNodeValue(L"Data[@Column=\"ComponentId\"]", row, L"");
         // node condition
-        std::wstring condition = xmlDocument.SelectNodeValue(L"Data[@Column=\"Condition\"]", row);
+        std::wstring condition = xmlDocument.GetNodeValue(L"Data[@Column=\"Condition\"]", row);
         // operational attributes
-        long attributes = AppSecInc::StringUtils::stringToLong(xmlDocument.SelectNodeValue(L"Data[@Column=\"Attributes\"]", row));
+        long attributes = AppSecInc::StringUtils::stringToLong(xmlDocument.GetNodeValue(L"Data[@Column=\"Attributes\"]", row));
         // no condition (configures by default) or condition evaluates to true
         bool configure_per_condition = condition.empty() || msiInstall.EvaluateCondition(condition);
         // configure on install
@@ -487,12 +487,12 @@ CA_API UINT __stdcall DataSource_ODBC_Deferred(MSIHANDLE hInstall)
     MSXML2::IXMLDOMNodePtr row = NULL;
     while (NULL != (row = rows->nextNode()))
     {
-        std::wstring id = xmlDocument.SelectNodeValue(L"Data[@Column=\"Id\"]", row);
-        std::wstring name = xmlDocument.SelectNodeValue(L"Data[@Column=\"Name\"]", row);
-        std::wstring driver = xmlDocument.SelectNodeValue(L"Data[@Column=\"Driver\"]", row);
-        std::wstring value = xmlDocument.SelectNodeValue(L"Data[@Column=\"Value\"]", row, L"");
-        std::wstring type = xmlDocument.SelectNodeValue(L"Data[@Column=\"Type\"]", row, L"");
-        std::wstring operation = xmlDocument.SelectAttributeValue(L"operation", row);
+        std::wstring id = xmlDocument.GetNodeValue(L"Data[@Column=\"Id\"]", row);
+        std::wstring name = xmlDocument.GetNodeValue(L"Data[@Column=\"Name\"]", row);
+        std::wstring driver = xmlDocument.GetNodeValue(L"Data[@Column=\"Driver\"]", row);
+        std::wstring value = xmlDocument.GetNodeValue(L"Data[@Column=\"Value\"]", row, L"");
+        std::wstring type = xmlDocument.GetNodeValue(L"Data[@Column=\"Type\"]", row, L"");
+        std::wstring operation = xmlDocument.GetAttributeValue(L"operation", row);
 
         // insert DSN name
         value.insert(0, L"DSN=" + name + L";");

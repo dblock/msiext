@@ -29,13 +29,13 @@ CA_API UINT __stdcall TemplateFiles_Immediate(MSIHANDLE hInstall)
         while (NULL != (row = rows->nextNode()))
         {
             // id
-		    std::wstring templatefile_id = xmlDocument.SelectNodeValue(L"Data[@Column=\"Id\"]", row, L"");
+		    std::wstring templatefile_id = xmlDocument.GetNodeValue(L"Data[@Column=\"Id\"]", row, L"");
             // component id
-		    std::wstring component_id = xmlDocument.SelectNodeValue(L"Data[@Column=\"ComponentId\"]", row, L"");
+		    std::wstring component_id = xmlDocument.GetNodeValue(L"Data[@Column=\"ComponentId\"]", row, L"");
             // node condition
-            std::wstring condition = xmlDocument.SelectNodeValue(L"Data[@Column=\"Condition\"]", row);
+            std::wstring condition = xmlDocument.GetNodeValue(L"Data[@Column=\"Condition\"]", row);
             // operational attributes
-            long attributes = AppSecInc::StringUtils::stringToLong(xmlDocument.SelectNodeValue(L"Data[@Column=\"Attributes\"]", row));
+            long attributes = AppSecInc::StringUtils::stringToLong(xmlDocument.GetNodeValue(L"Data[@Column=\"Attributes\"]", row));
             // no condition (executes by default) or condition evaluates to true
             bool execute_per_condition = condition.empty() || msiInstall.EvaluateCondition(condition);
             if (! condition.empty())
@@ -55,8 +55,8 @@ CA_API UINT __stdcall TemplateFiles_Immediate(MSIHANDLE hInstall)
 
 		    MSXML2::IXMLDOMNodePtr templatefile_node = combined_xml_document.AppendChild(L"TemplateFile", combined_xml_root);
 		    combined_xml_document.SetAttribute(L"id", templatefile_id, templatefile_node);
-            std::wstring source = xmlDocument.SelectNodeValue(L"Data[@Column=\"Source\"]", row);
-            std::wstring target = xmlDocument.SelectNodeValue(L"Data[@Column=\"Target\"]", row, source);
+            std::wstring source = xmlDocument.GetNodeValue(L"Data[@Column=\"Source\"]", row);
+            std::wstring target = xmlDocument.GetNodeValue(L"Data[@Column=\"Target\"]", row, source);
 		    combined_xml_document.AppendChild(L"Source", templatefile_node)->text = _bstr_t(source.c_str());
 		    combined_xml_document.AppendChild(L"Target", templatefile_node)->text = _bstr_t(target.c_str());
             combined_xml_document.SetAttribute(L"execute", execute ? L"true" : L"false", templatefile_node);
@@ -71,8 +71,8 @@ CA_API UINT __stdcall TemplateFiles_Immediate(MSIHANDLE hInstall)
                 MSXML2::IXMLDOMNodePtr property_row = NULL;
                 while (NULL != (property_row = property_rows->nextNode()))
                 {
-		            std::wstring name = xmlPropertiesDocument.SelectNodeValue(L"Data[@Column=\"Property\"]", property_row);
-		            std::wstring value = xmlPropertiesDocument.SelectNodeValue(L"Data[@Column=\"Value\"]", property_row);
+		            std::wstring name = xmlPropertiesDocument.GetNodeValue(L"Data[@Column=\"Property\"]", property_row);
+		            std::wstring value = xmlPropertiesDocument.GetNodeValue(L"Data[@Column=\"Value\"]", property_row);
                     MSXML2::IXMLDOMNodePtr property_node = combined_xml_document.AppendChild(L"Property", properties_node);
                     combined_xml_document.SetAttribute(L"name", name, property_node);
                     combined_xml_document.SetAttribute(L"value", value, property_node);
@@ -88,12 +88,12 @@ CA_API UINT __stdcall TemplateFiles_Immediate(MSIHANDLE hInstall)
                 while (NULL != (property_row = property_rows->nextNode()))
                 {
 			        // \todo Change XPATH to fetch only rows that match ID
-			        std::wstring id = xmlPropertiesDocument.SelectNodeValue(L"Data[@Column=\"TemplateFileId\"]", property_row);
+			        std::wstring id = xmlPropertiesDocument.GetNodeValue(L"Data[@Column=\"TemplateFileId\"]", property_row);
 			        if (id != templatefile_id)
 				        continue;
 
-		            std::wstring name = xmlPropertiesDocument.SelectNodeValue(L"Data[@Column=\"Name\"]", property_row);
-		            std::wstring value = xmlPropertiesDocument.SelectNodeValue(L"Data[@Column=\"Value\"]", property_row);
+		            std::wstring name = xmlPropertiesDocument.GetNodeValue(L"Data[@Column=\"Name\"]", property_row);
+		            std::wstring value = xmlPropertiesDocument.GetNodeValue(L"Data[@Column=\"Value\"]", property_row);
                     MSXML2::IXMLDOMNodePtr property_node = combined_xml_document.AppendChild(L"Property", properties_node);
                     combined_xml_document.SetAttribute(L"name", name, property_node);
                     combined_xml_document.SetAttribute(L"value", value, property_node);
@@ -126,9 +126,9 @@ CA_API UINT __stdcall TemplateFiles_Deferred(MSIHANDLE hInstall)
     MSXML2::IXMLDOMNodePtr row = NULL;
     while (NULL != (row = rows->nextNode()))
     {
-        std::wstring id = xmlDocument.SelectAttributeValue(L"id", row);
-        std::wstring source = xmlDocument.SelectNodeValue(L"Source", row);
-        std::wstring target = xmlDocument.SelectNodeValue(L"Target", row, source);
+        std::wstring id = xmlDocument.GetAttributeValue(L"id", row);
+        std::wstring source = xmlDocument.GetNodeValue(L"Source", row);
+        std::wstring target = xmlDocument.GetNodeValue(L"Target", row, source);
 
 		msiInstall.LogInfo(L"TemplateFiles_Deferred", source + L" => " + target);
 
@@ -139,8 +139,8 @@ CA_API UINT __stdcall TemplateFiles_Deferred(MSIHANDLE hInstall)
             MSXML2::IXMLDOMNodePtr property_row = NULL;
             while (NULL != (property_row = property_rows->nextNode()))
             {
-                std::wstring name = xmlDocument.SelectAttributeValue(L"name", property_row);
-                std::wstring value = xmlDocument.SelectAttributeValue(L"value", property_row);
+                std::wstring name = xmlDocument.GetAttributeValue(L"name", property_row);
+                std::wstring value = xmlDocument.GetAttributeValue(L"value", property_row);
                 properties[name] = value;
             }
         }

@@ -66,10 +66,10 @@ MSXML2::IXMLDOMNodePtr MSSQLDatabaseFileSpec::Save(AppSecInc::Xml::XmlDocument& 
 
 void MSSQLDatabaseFileSpec::Load(AppSecInc::Xml::XmlDocument& xmldoc, MSXML2::IXMLDOMNodePtr root)
 {
-    _name = xmldoc.SelectNodeValue(L"Name", root);
-    _filename = xmldoc.SelectNodeValue(L"Filename", root);
-    _type = xmldoc.SelectNodeValue(L"Type", root, L"");
-    _size = xmldoc.SelectNodeValue(L"Size", root, L"");
-    _maxsize = xmldoc.SelectNodeValue(L"MaxSize", root, L"");
-    _growthsize = xmldoc.SelectNodeValue(L"GrowthSize", root, L"");
+    _name = xmldoc.GetNodeValue(L"Name", root);
+    _filename = xmldoc.GetNodeValue(L"Filename", root);
+    _type = xmldoc.GetNodeValue(L"Type", root, L"");
+    _size = xmldoc.GetNodeValue(L"Size", root, L"");
+    _maxsize = xmldoc.GetNodeValue(L"MaxSize", root, L"");
+    _growthsize = xmldoc.GetNodeValue(L"GrowthSize", root, L"");
 }

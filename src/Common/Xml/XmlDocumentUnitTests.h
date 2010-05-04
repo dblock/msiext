@@ -10,31 +10,58 @@ namespace AppSecInc
 			{
 				CPPUNIT_TEST_SUITE( XmlDocumentUnitTests );
 				CPPUNIT_TEST( testConstructorDestructor );
-				CPPUNIT_TEST( testSelectNodeValue );
-				CPPUNIT_TEST( testSelectNodeBoolValue );
-				CPPUNIT_TEST( testXslTransform );
-				CPPUNIT_TEST( testSelectNodeAttributeValue );
-                CPPUNIT_TEST( testGetXml );
-				CPPUNIT_TEST( testSelectNodes );
+				CPPUNIT_TEST( testConstructorDestructor );
 				CPPUNIT_TEST( testCreate );
-                CPPUNIT_TEST( testAppendChild );
-                CPPUNIT_TEST( testSetAttribute );
-				CPPUNIT_TEST( testSelectAttributeValue );
-				CPPUNIT_TEST( testSelectAttributeBoolValue );
+				CPPUNIT_TEST( testLoad );
+				CPPUNIT_TEST( testLoadXml );
+				CPPUNIT_TEST( testGetXml );
+				CPPUNIT_TEST( testAppendChild );
+				CPPUNIT_TEST( testXslTransform );
+				CPPUNIT_TEST( testFindNode );
+				CPPUNIT_TEST( testHasNode );
+				CPPUNIT_TEST( testSelectNode );
+				CPPUNIT_TEST( testHasNodes );
+				CPPUNIT_TEST( testSelectNodes );
+				CPPUNIT_TEST( testFindNodes );
+				CPPUNIT_TEST( testGetNodeXml );
+				CPPUNIT_TEST( testGetNodeValue );
+				CPPUNIT_TEST( testGetNodeBoolValue );
+				CPPUNIT_TEST( testFindAttribute );
+				CPPUNIT_TEST( testGetAttributeValue );
+				CPPUNIT_TEST( testGetAttributeValueXPath );
+				CPPUNIT_TEST( testGetAttributeBoolValue );
+				CPPUNIT_TEST( testSetAttribute );
+				CPPUNIT_TEST( testSelectAttribute );
+				CPPUNIT_TEST( testHasAttribute );
 				CPPUNIT_TEST_SUITE_END();
 			public:
 				void testConstructorDestructor();
-				void testSelectNodeValue();
-				void testSelectNodeBoolValue();
+				void testCreate();
+				void testLoad();
+				void testLoadXml();
+				void testGetXml();
+				void testAppendChild();
 				void testXslTransform();
-				void testSelectNodeAttributeValue();
-                void testGetXml();
-                void testSelectNodes();
-                void testCreate();
-                void testAppendChild();
-                void testSetAttribute();
-				void testSelectAttributeValue();
-				void testSelectAttributeBoolValue();
+				// node
+				void testFindNode();
+				void testHasNode();
+				void testSelectNode();
+				// nodes
+				void testHasNodes();
+				void testSelectNodes();
+				void testFindNodes();
+				// node value
+				void testGetNodeXml();
+				void testGetNodeValue();
+				void testGetNodeBoolValue();
+				// attributes
+				void testFindAttribute();
+				void testGetAttributeValue();
+				void testGetAttributeValueXPath();
+				void testGetAttributeBoolValue();
+				void testSetAttribute();
+				void testSelectAttribute();
+				void testHasAttribute();
 			};
 		}
 	}

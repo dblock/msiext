@@ -140,7 +140,7 @@ void TcpIpImplUnitTests::Test_TcpIp_ListAddresses()
 	
 	while (NULL != (row = rows->nextNode()))
 	{
-		std::wstring value = listxml.SelectNodeValue(L"Data[@Column='Value']", row);
+		std::wstring value = listxml.GetNodeValue(L"Data[@Column='Value']", row);
 		std::wcout << std::endl << L" " << value;
 	}
 }

@@ -175,9 +175,9 @@ void ODBCConnectionUnitTests::testGetXml()
         AppSecInc::Xml::XmlDocument xmldoc;
         xmldoc.LoadXml(xml);
         CPPUNIT_ASSERT(testdata[i].expected_columns == AppSecInc::StringUtils::stringToLong(
-            xmldoc.SelectNodeAttributeValue(L"/DataSet", L"columns")));
+            xmldoc.GetAttributeValue(L"/DataSet", L"columns")));
         CPPUNIT_ASSERT(testdata[i].expected_rows == AppSecInc::StringUtils::stringToLong(
-            xmldoc.SelectNodeAttributeValue(L"/DataSet", L"rows")));
+            xmldoc.GetAttributeValue(L"/DataSet", L"rows")));
         CPPUNIT_ASSERT(testdata[i].expected_messages == 
             xmldoc.SelectNodes(L"/DataSet/Messages/Message")->length);
     }

@@ -66,7 +66,7 @@ void MsiDatabaseUnitTests::testImport()
 
     AppSecInc::Xml::XmlDocument xmlDoc;
     xmlDoc.LoadXml(install.GetViewData(L"SELECT * FROM `ComboBox`"));
-    std::wstring value = xmlDoc.SelectNodeValue(L"/Table/Row/Data[@Column=\"Property\"]");
+    std::wstring value = xmlDoc.GetNodeValue(L"/Table/Row/Data[@Column=\"Property\"]");
     std::wcout << std::endl << L"Data: " << value;
     CPPUNIT_ASSERT(value == L"DATABASE_SERVER");
     package.Close();
@@ -93,7 +93,7 @@ void MsiDatabaseUnitTests::testExecute()
 
     AppSecInc::Xml::XmlDocument xmlDoc;
     xmlDoc.LoadXml(install.GetViewData(L"SELECT `Value` FROM `Property` WHERE `Property`='ProductCode'"));
-    std::wstring value = xmlDoc.SelectNodeValue(L"/Table/Row/Data[@Column=\"Value\"]");
+    std::wstring value = xmlDoc.GetNodeValue(L"/Table/Row/Data[@Column=\"Value\"]");
     std::wcout << std::endl << L"Data: " << value;
     CPPUNIT_ASSERT(value == L"{GUID}");
     package.Close();

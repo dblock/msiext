@@ -46,14 +46,14 @@ CA_API UINT __stdcall CreateDatabases_Access_Deferred(MSIHANDLE hInstall)
         AppSecInc::Databases::Access::AccessDatabase database;
         database.Load(xmlDocument, row);
 
-        std::wstring actions_s = xmlDocument.SelectAttributeValue(L"actions", row); // actions
+        std::wstring actions_s = xmlDocument.GetAttributeValue(L"actions", row); // actions
 		if (actions_s.empty())
 		{
 			msiInstall.LogInfo(L"CreateDatabases_Access", L"Skipping " + database.GetDBQ());
 			continue;
 		}
 
-        bool checkIfExists = xmlDocument.SelectAttributeBoolValue(L"checkIfExists", row); // actions
+        bool checkIfExists = xmlDocument.GetAttributeBoolValue(L"checkIfExists", row); // actions
         std::vector<std::wstring> actions; 
         AppSecInc::StringUtils::tokenize(actions_s, actions, L",");
 
@@ -125,8 +125,8 @@ CA_API UINT __stdcall CreateDatabases_Access_Immediate(MSIHANDLE hInstall)
     MSXML2::IXMLDOMNodePtr connectionstring_row = NULL;
     while (NULL != (connectionstring_row = connectionstring_rows->nextNode()))
     {
-		std::wstring connectionstring_id = connectionstring_xml_document.SelectNodeValue(L"Data[@Column=\"Id\"]", connectionstring_row);
-        std::wstring connectionstring = connectionstring_xml_document.SelectNodeValue(L"Data[@Column=\"ConnectionString\"]", connectionstring_row);
+		std::wstring connectionstring_id = connectionstring_xml_document.GetNodeValue(L"Data[@Column=\"Id\"]", connectionstring_row);
+        std::wstring connectionstring = connectionstring_xml_document.GetNodeValue(L"Data[@Column=\"ConnectionString\"]", connectionstring_row);
         connectionstring_map.insert(std::pair<std::wstring, std::wstring>(connectionstring_id, connectionstring));
     }
 
@@ -137,20 +137,20 @@ CA_API UINT __stdcall CreateDatabases_Access_Immediate(MSIHANDLE hInstall)
     MSXML2::IXMLDOMNodePtr accessdatabase_row = NULL;
     while (NULL != (accessdatabase_row = accessdatabase_rows->nextNode()))
     {
-		std::wstring accessdatabase_id = accessdatabase_xml_document.SelectNodeValue(L"Data[@Column=\"Id\"]", accessdatabase_row);
-		std::wstring Accessdatabasecomponent_id = accessdatabase_xml_document.SelectNodeValue(L"Data[@Column=\"ComponentId\"]", accessdatabase_row, L"");
+		std::wstring accessdatabase_id = accessdatabase_xml_document.GetNodeValue(L"Data[@Column=\"Id\"]", accessdatabase_row);
+		std::wstring Accessdatabasecomponent_id = accessdatabase_xml_document.GetNodeValue(L"Data[@Column=\"ComponentId\"]", accessdatabase_row, L"");
 
         // connection string
-        std::wstring connectionstring = accessdatabase_xml_document.SelectNodeValue(L"Data[@Column=\"ConnectionStringId\"]", accessdatabase_row);
+        std::wstring connectionstring = accessdatabase_xml_document.GetNodeValue(L"Data[@Column=\"ConnectionStringId\"]", accessdatabase_row);
         connectionstring = connectionstring_map[connectionstring];
 
         // database object with options options
         AppSecInc::Databases::ODBC::ODBCConnectionStringInfo connection(connectionstring);
         AppSecInc::Databases::Access::AccessDatabase database(connection);
-        database.SetDBQ(accessdatabase_xml_document.SelectNodeValue(L"Data[@Column=\"DBQ\"]", accessdatabase_row));
+        database.SetDBQ(accessdatabase_xml_document.GetNodeValue(L"Data[@Column=\"DBQ\"]", accessdatabase_row));
 
         // operational attributes
-        long attributes = AppSecInc::StringUtils::stringToLong(accessdatabase_xml_document.SelectNodeValue(L"Data[@Column=\"Attributes\"]", accessdatabase_row));
+        long attributes = AppSecInc::StringUtils::stringToLong(accessdatabase_xml_document.GetNodeValue(L"Data[@Column=\"Attributes\"]", accessdatabase_row));
 
         std::list<std::wstring> actions;
 

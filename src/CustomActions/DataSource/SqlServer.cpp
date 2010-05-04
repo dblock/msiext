@@ -49,14 +49,14 @@ CA_API UINT __stdcall CreateDatabases_SQLServer_Deferred(MSIHANDLE hInstall)
         AppSecInc::Databases::MSSQL::MSSQLDatabase database;
         database.Load(xmlDocument, row);
 
-        std::wstring actions_s = xmlDocument.SelectAttributeValue(L"actions", row); // actions
+        std::wstring actions_s = xmlDocument.GetAttributeValue(L"actions", row); // actions
 		if (actions_s.empty())
 		{
 			msiInstall.LogInfo(L"CreateDatabases_SQLServer", L"Skipping " + database.GetName());
 			continue;
 		}
 
-        bool checkIfExists = xmlDocument.SelectAttributeBoolValue(L"checkIfExists", row); // actions
+        bool checkIfExists = xmlDocument.GetAttributeBoolValue(L"checkIfExists", row); // actions
         std::vector<std::wstring> actions; 
         AppSecInc::StringUtils::tokenize(actions_s, actions, L",");
 
@@ -130,8 +130,8 @@ CA_API UINT __stdcall CreateDatabases_SQLServer_Immediate(MSIHANDLE hInstall)
     MSXML2::IXMLDOMNodePtr connectionstring_row = NULL;
     while (NULL != (connectionstring_row = connectionstring_rows->nextNode()))
     {
-		std::wstring connectionstring_id = connectionstring_xml_document.SelectNodeValue(L"Data[@Column=\"Id\"]", connectionstring_row);
-        std::wstring connectionstring = connectionstring_xml_document.SelectNodeValue(L"Data[@Column=\"ConnectionString\"]", connectionstring_row);
+		std::wstring connectionstring_id = connectionstring_xml_document.GetNodeValue(L"Data[@Column=\"Id\"]", connectionstring_row);
+        std::wstring connectionstring = connectionstring_xml_document.GetNodeValue(L"Data[@Column=\"ConnectionString\"]", connectionstring_row);
         connectionstring_map.insert(std::pair<std::wstring, std::wstring>(connectionstring_id, connectionstring));
     }
 
@@ -143,9 +143,9 @@ CA_API UINT __stdcall CreateDatabases_SQLServer_Immediate(MSIHANDLE hInstall)
     MSXML2::IXMLDOMNodePtr mssqldatabaseoption_row = NULL;
     while (NULL != (mssqldatabaseoption_row = mssqldatabaseoption_rows->nextNode()))
     {
-	    std::wstring mssqldatabaseoption_id = mssqldatabaseoption_xml_document.SelectNodeValue(L"Data[@Column=\"Id\"]", mssqldatabaseoption_row);
-        std::wstring mssqldatabaseoption_mssqldatabase = mssqldatabaseoption_xml_document.SelectNodeValue(L"Data[@Column=\"MSSQLDatabaseId\"]", mssqldatabaseoption_row);
-        std::wstring mssqldatabaseoption_value = mssqldatabaseoption_xml_document.SelectNodeValue(L"Data[@Column=\"Value\"]", mssqldatabaseoption_row);
+	    std::wstring mssqldatabaseoption_id = mssqldatabaseoption_xml_document.GetNodeValue(L"Data[@Column=\"Id\"]", mssqldatabaseoption_row);
+        std::wstring mssqldatabaseoption_mssqldatabase = mssqldatabaseoption_xml_document.GetNodeValue(L"Data[@Column=\"MSSQLDatabaseId\"]", mssqldatabaseoption_row);
+        std::wstring mssqldatabaseoption_value = mssqldatabaseoption_xml_document.GetNodeValue(L"Data[@Column=\"Value\"]", mssqldatabaseoption_row);
         mssqldatabaseoption_map[mssqldatabaseoption_mssqldatabase].push_back(mssqldatabaseoption_value);
     }
 
@@ -158,14 +158,14 @@ CA_API UINT __stdcall CreateDatabases_SQLServer_Immediate(MSIHANDLE hInstall)
     while (NULL != (mssqldatabasefilespec_row = mssqldatabasefilespec_rows->nextNode()))
     {
         AppSecInc::Databases::MSSQL::MSSQLDatabaseFileSpec filespec;
-	    std::wstring mssqldatabasefilespec_id = mssqldatabasefilespec_xml_document.SelectNodeValue(L"Data[@Column=\"Id\"]", mssqldatabasefilespec_row);
-        std::wstring mssqldatabasefilespec_mssqldatabase = mssqldatabasefilespec_xml_document.SelectNodeValue(L"Data[@Column=\"MSSQLDatabaseId\"]", mssqldatabasefilespec_row);
-        filespec.SetName(mssqldatabasefilespec_xml_document.SelectNodeValue(L"Data[@Column=\"Name\"]", mssqldatabasefilespec_row));
-        filespec.SetFilename(mssqldatabasefilespec_xml_document.SelectNodeValue(L"Data[@Column=\"Filename\"]", mssqldatabasefilespec_row));
-        filespec.SetType(mssqldatabasefilespec_xml_document.SelectNodeValue(L"Data[@Column=\"Type\"]", mssqldatabasefilespec_row));
-        filespec.SetSize(mssqldatabasefilespec_xml_document.SelectNodeValue(L"Data[@Column=\"Size\"]", mssqldatabasefilespec_row));
-        filespec.SetMaxSize(mssqldatabasefilespec_xml_document.SelectNodeValue(L"Data[@Column=\"MaxSize\"]", mssqldatabasefilespec_row));
-        filespec.SetGrowthSize(mssqldatabasefilespec_xml_document.SelectNodeValue(L"Data[@Column=\"GrowthSize\"]", mssqldatabasefilespec_row));
+	    std::wstring mssqldatabasefilespec_id = mssqldatabasefilespec_xml_document.GetNodeValue(L"Data[@Column=\"Id\"]", mssqldatabasefilespec_row);
+        std::wstring mssqldatabasefilespec_mssqldatabase = mssqldatabasefilespec_xml_document.GetNodeValue(L"Data[@Column=\"MSSQLDatabaseId\"]", mssqldatabasefilespec_row);
+        filespec.SetName(mssqldatabasefilespec_xml_document.GetNodeValue(L"Data[@Column=\"Name\"]", mssqldatabasefilespec_row));
+        filespec.SetFilename(mssqldatabasefilespec_xml_document.GetNodeValue(L"Data[@Column=\"Filename\"]", mssqldatabasefilespec_row));
+        filespec.SetType(mssqldatabasefilespec_xml_document.GetNodeValue(L"Data[@Column=\"Type\"]", mssqldatabasefilespec_row));
+        filespec.SetSize(mssqldatabasefilespec_xml_document.GetNodeValue(L"Data[@Column=\"Size\"]", mssqldatabasefilespec_row));
+        filespec.SetMaxSize(mssqldatabasefilespec_xml_document.GetNodeValue(L"Data[@Column=\"MaxSize\"]", mssqldatabasefilespec_row));
+        filespec.SetGrowthSize(mssqldatabasefilespec_xml_document.GetNodeValue(L"Data[@Column=\"GrowthSize\"]", mssqldatabasefilespec_row));
         mssqldatabasefilespec_map[mssqldatabasefilespec_mssqldatabase].push_back(filespec);
     }
 
@@ -176,19 +176,19 @@ CA_API UINT __stdcall CreateDatabases_SQLServer_Immediate(MSIHANDLE hInstall)
     MSXML2::IXMLDOMNodePtr mssqldatabase_row = NULL;
     while (NULL != (mssqldatabase_row = mssqldatabase_rows->nextNode()))
     {
-		std::wstring mssqldatabase_id = mssqldatabase_xml_document.SelectNodeValue(L"Data[@Column=\"Id\"]", mssqldatabase_row);
-		std::wstring mssqldatabasecomponent_id = mssqldatabase_xml_document.SelectNodeValue(L"Data[@Column=\"ComponentId\"]", mssqldatabase_row, L"");
+		std::wstring mssqldatabase_id = mssqldatabase_xml_document.GetNodeValue(L"Data[@Column=\"Id\"]", mssqldatabase_row);
+		std::wstring mssqldatabasecomponent_id = mssqldatabase_xml_document.GetNodeValue(L"Data[@Column=\"ComponentId\"]", mssqldatabase_row, L"");
 
         // connection string
-        std::wstring connectionstring = mssqldatabase_xml_document.SelectNodeValue(L"Data[@Column=\"ConnectionStringId\"]", mssqldatabase_row);
+        std::wstring connectionstring = mssqldatabase_xml_document.GetNodeValue(L"Data[@Column=\"ConnectionStringId\"]", mssqldatabase_row);
         connectionstring = connectionstring_map[connectionstring];
 
         // database object with options options
         AppSecInc::Databases::ODBC::ODBCConnectionStringInfo connection(connectionstring);
         AppSecInc::Databases::MSSQL::MSSQLDatabase database(connection);
-        database.SetName(mssqldatabase_xml_document.SelectNodeValue(L"Data[@Column=\"Name\"]", mssqldatabase_row));
-        database.SetCollate(mssqldatabase_xml_document.SelectNodeValue(L"Data[@Column=\"Collate\"]", mssqldatabase_row));
-        database.SetPurpose(mssqldatabase_xml_document.SelectNodeValue(L"Data[@Column=\"Purpose\"]", mssqldatabase_row));
+        database.SetName(mssqldatabase_xml_document.GetNodeValue(L"Data[@Column=\"Name\"]", mssqldatabase_row));
+        database.SetCollate(mssqldatabase_xml_document.GetNodeValue(L"Data[@Column=\"Collate\"]", mssqldatabase_row));
+        database.SetPurpose(mssqldatabase_xml_document.GetNodeValue(L"Data[@Column=\"Purpose\"]", mssqldatabase_row));
 
         // database options
         for each (const std::wstring& option in mssqldatabaseoption_map[mssqldatabase_id])
@@ -199,7 +199,7 @@ CA_API UINT __stdcall CreateDatabases_SQLServer_Immediate(MSIHANDLE hInstall)
             database.AddFileSpec(filespec);
 
         // operational attributes
-        long attributes = AppSecInc::StringUtils::stringToLong(mssqldatabase_xml_document.SelectNodeValue(L"Data[@Column=\"Attributes\"]", mssqldatabase_row));
+        long attributes = AppSecInc::StringUtils::stringToLong(mssqldatabase_xml_document.GetNodeValue(L"Data[@Column=\"Attributes\"]", mssqldatabase_row));
 
         std::list<std::wstring> actions;
 
@@ -262,8 +262,8 @@ CA_API UINT __stdcall DataFile_SQLServer_Immediate(MSIHANDLE hInstall)
     MSXML2::IXMLDOMNodePtr connectionstring_row = NULL;
     while (NULL != (connectionstring_row = connectionstring_rows->nextNode()))
     {
-		std::wstring connectionstring_id = connectionstring_xml_document.SelectNodeValue(L"Data[@Column=\"Id\"]", connectionstring_row);
-        std::wstring connectionstring = connectionstring_xml_document.SelectNodeValue(L"Data[@Column=\"ConnectionString\"]", connectionstring_row);
+		std::wstring connectionstring_id = connectionstring_xml_document.GetNodeValue(L"Data[@Column=\"Id\"]", connectionstring_row);
+        std::wstring connectionstring = connectionstring_xml_document.GetNodeValue(L"Data[@Column=\"ConnectionString\"]", connectionstring_row);
         connectionstring_map.insert(std::pair<std::wstring, std::wstring>(connectionstring_id, connectionstring));
     }
 
@@ -275,9 +275,9 @@ CA_API UINT __stdcall DataFile_SQLServer_Immediate(MSIHANDLE hInstall)
     MSXML2::IXMLDOMNodePtr mssqldatafileparameter_row = NULL;
     while (NULL != (mssqldatafileparameter_row = mssqldatafileparameter_rows->nextNode()))
     {
-	    std::wstring mssqldatafileparameter_id = mssqldatafileparameter_xml_document.SelectNodeValue(L"Data[@Column=\"Id\"]", mssqldatafileparameter_row);
-        std::wstring mssqldatafileparameter_mssqldatafile = mssqldatafileparameter_xml_document.SelectNodeValue(L"Data[@Column=\"MSSQLDataFileId\"]", mssqldatafileparameter_row);
-        std::wstring mssqldatafileparameter_value = mssqldatafileparameter_xml_document.SelectNodeValue(L"Data[@Column=\"Value\"]", mssqldatafileparameter_row);
+	    std::wstring mssqldatafileparameter_id = mssqldatafileparameter_xml_document.GetNodeValue(L"Data[@Column=\"Id\"]", mssqldatafileparameter_row);
+        std::wstring mssqldatafileparameter_mssqldatafile = mssqldatafileparameter_xml_document.GetNodeValue(L"Data[@Column=\"MSSQLDataFileId\"]", mssqldatafileparameter_row);
+        std::wstring mssqldatafileparameter_value = mssqldatafileparameter_xml_document.GetNodeValue(L"Data[@Column=\"Value\"]", mssqldatafileparameter_row);
         mssqldatafileparameter_map[mssqldatafileparameter_mssqldatafile].push_back(mssqldatafileparameter_value);
     }
     
@@ -288,19 +288,19 @@ CA_API UINT __stdcall DataFile_SQLServer_Immediate(MSIHANDLE hInstall)
     MSXML2::IXMLDOMNodePtr mssqldatafile_row = NULL;
     while (NULL != (mssqldatafile_row = mssqldatafile_rows->nextNode()))
     {
-		std::wstring mssqldatafile_id = mssqldatafile_xml_document.SelectNodeValue(L"Data[@Column=\"Id\"]", mssqldatafile_row);
-		std::wstring mssqldatafilecomponent_id = mssqldatafile_xml_document.SelectNodeValue(L"Data[@Column=\"ComponentId\"]", mssqldatafile_row, L"");
+		std::wstring mssqldatafile_id = mssqldatafile_xml_document.GetNodeValue(L"Data[@Column=\"Id\"]", mssqldatafile_row);
+		std::wstring mssqldatafilecomponent_id = mssqldatafile_xml_document.GetNodeValue(L"Data[@Column=\"ComponentId\"]", mssqldatafile_row, L"");
         // connection string
-        std::wstring connectionstring = mssqldatafile_xml_document.SelectNodeValue(L"Data[@Column=\"ConnectionStringId\"]", mssqldatafile_row);
+        std::wstring connectionstring = mssqldatafile_xml_document.GetNodeValue(L"Data[@Column=\"ConnectionStringId\"]", mssqldatafile_row);
         connectionstring = connectionstring_map[connectionstring];
-        std::wstring database = mssqldatafile_xml_document.SelectNodeValue(L"Data[@Column=\"Database\"]", mssqldatafile_row, L"");
-        std::wstring schema = mssqldatafile_xml_document.SelectNodeValue(L"Data[@Column=\"Schema\"]", mssqldatafile_row, L"");
-        std::wstring table = mssqldatafile_xml_document.SelectNodeValue(L"Data[@Column=\"Table\"]", mssqldatafile_row, L"");
-        std::wstring filename = mssqldatafile_xml_document.SelectNodeValue(L"Data[@Column=\"Filename\"]", mssqldatafile_row, L"");
-        std::wstring binaryid = mssqldatafile_xml_document.SelectNodeValue(L"Data[@Column=\"BinaryId\"]", mssqldatafile_row, L"");
-        std::wstring condition = mssqldatafile_xml_document.SelectNodeValue(L"Data[@Column=\"Condition\"]", mssqldatafile_row);
+        std::wstring database = mssqldatafile_xml_document.GetNodeValue(L"Data[@Column=\"Database\"]", mssqldatafile_row, L"");
+        std::wstring schema = mssqldatafile_xml_document.GetNodeValue(L"Data[@Column=\"Schema\"]", mssqldatafile_row, L"");
+        std::wstring table = mssqldatafile_xml_document.GetNodeValue(L"Data[@Column=\"Table\"]", mssqldatafile_row, L"");
+        std::wstring filename = mssqldatafile_xml_document.GetNodeValue(L"Data[@Column=\"Filename\"]", mssqldatafile_row, L"");
+        std::wstring binaryid = mssqldatafile_xml_document.GetNodeValue(L"Data[@Column=\"BinaryId\"]", mssqldatafile_row, L"");
+        std::wstring condition = mssqldatafile_xml_document.GetNodeValue(L"Data[@Column=\"Condition\"]", mssqldatafile_row);
         // operational attributes
-        long attributes = AppSecInc::StringUtils::stringToLong(mssqldatafile_xml_document.SelectNodeValue(L"Data[@Column=\"Attributes\"]", mssqldatafile_row));
+        long attributes = AppSecInc::StringUtils::stringToLong(mssqldatafile_xml_document.GetNodeValue(L"Data[@Column=\"Attributes\"]", mssqldatafile_row));
 
         // no condition (executes by default) or condition evaluates to true
         bool execute_per_condition = condition.empty() || msiInstall.EvaluateCondition(condition);
@@ -386,15 +386,15 @@ CA_API UINT __stdcall DataFile_SQLServer_Deferred(MSIHANDLE hInstall)
     MSXML2::IXMLDOMNodePtr row = NULL;
     while (NULL != (row = rows->nextNode()))
     {
-        bool execute = xmlDocument.SelectAttributeBoolValue(L"execute", row);
-        bool deleteAfterExecute = xmlDocument.SelectAttributeBoolValue(L"deleteAfterExecute", row);
+        bool execute = xmlDocument.GetAttributeBoolValue(L"execute", row);
+        bool deleteAfterExecute = xmlDocument.GetAttributeBoolValue(L"deleteAfterExecute", row);
         
         if (execute)
         {
             AppSecInc::Databases::MSSQL::MSSQLDataFile datafile;
             datafile.Load(xmlDocument, row);
             msiInstall.LogInfo(_T(__FUNCTION__), datafile.GetInsertQuery());
-            std::wstring connection_string = xmlDocument.SelectNodeValue(L"ConnectionString", row);
+            std::wstring connection_string = xmlDocument.GetNodeValue(L"ConnectionString", row);
             msiInstall.LogInfo(_T(__FUNCTION__), datafile.GetInsertQuery());
             AppSecInc::Databases::ODBC::ODBCConnectionStringInfo connection_info(connection_string);
             AppSecInc::Databases::ODBC::ODBCConnection connection;

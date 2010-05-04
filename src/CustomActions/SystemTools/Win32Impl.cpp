@@ -142,7 +142,7 @@ CA_API UINT __stdcall Win32_CopyFiles_Deferred(MSIHANDLE hInstall)
         }
 
         // recurse says whether we need to recurse into subdirectories
-        bool recurse = xmlDocument.SelectAttributeBoolValue(L"recurse", row);
+        bool recurse = xmlDocument.GetAttributeBoolValue(L"recurse", row);
         if (recurse) 
         {
             status << L", recurse";
@@ -240,11 +240,11 @@ CA_API UINT __stdcall Win32_CopyFiles_Immediate(MSIHANDLE hInstall)
     while (NULL != row)
     {
         // id
-		std::wstring id = xmlDocument.SelectNodeValue(L"Data[@Column=\"Id\"]", row, L"");
+		std::wstring id = xmlDocument.GetNodeValue(L"Data[@Column=\"Id\"]", row, L"");
         // operational attributes
-        long attributes = AppSecInc::StringUtils::stringToLong(xmlDocument.SelectNodeValue(L"Data[@Column=\"Attributes\"]", row));
+        long attributes = AppSecInc::StringUtils::stringToLong(xmlDocument.GetNodeValue(L"Data[@Column=\"Attributes\"]", row));
         // node condition
-        std::wstring condition = xmlDocument.SelectNodeValue(L"Data[@Column=\"Condition\"]", row);
+        std::wstring condition = xmlDocument.GetNodeValue(L"Data[@Column=\"Condition\"]", row);
         // no condition (executes by default) or condition evaluates to true
         bool copy_per_condition = condition.empty() || msiInstall.EvaluateCondition(condition);
 		// evaluate copy
@@ -314,14 +314,14 @@ CA_API UINT __stdcall Win32_MoveFiles_Deferred(MSIHANDLE hInstall)
         }
 
         // recurse says whether we need to recurse into subdirectories
-        bool recurse = xmlDocument.SelectAttributeBoolValue(L"recurse", row);
+        bool recurse = xmlDocument.GetAttributeBoolValue(L"recurse", row);
         if (recurse) 
         {
             status << L", recurse";
         }
 
         // deleteemptydirectories says whether we need to delete empty leftoever directories
-        bool deleteemptydirectories = xmlDocument.SelectAttributeBoolValue(L"deleteemptydirectories", row);
+        bool deleteemptydirectories = xmlDocument.GetAttributeBoolValue(L"deleteemptydirectories", row);
         if (deleteemptydirectories) 
         {
             status << L", delete empty directories";
@@ -424,11 +424,11 @@ CA_API UINT __stdcall Win32_MoveFiles_Immediate(MSIHANDLE hInstall)
     while (NULL != row)
     {
         // id
-		std::wstring id = xmlDocument.SelectNodeValue(L"Data[@Column=\"Id\"]", row, L"");
+		std::wstring id = xmlDocument.GetNodeValue(L"Data[@Column=\"Id\"]", row, L"");
         // operational attributes
-        long attributes = AppSecInc::StringUtils::stringToLong(xmlDocument.SelectNodeValue(L"Data[@Column=\"Attributes\"]", row));
+        long attributes = AppSecInc::StringUtils::stringToLong(xmlDocument.GetNodeValue(L"Data[@Column=\"Attributes\"]", row));
         // node condition
-        std::wstring condition = xmlDocument.SelectNodeValue(L"Data[@Column=\"Condition\"]", row);
+        std::wstring condition = xmlDocument.GetNodeValue(L"Data[@Column=\"Condition\"]", row);
         // no condition (executes by default) or condition evaluates to true
         bool move_per_condition = condition.empty() || msiInstall.EvaluateCondition(condition);
 		// evaluate move
@@ -483,8 +483,8 @@ CA_API UINT __stdcall Win32_DeleteFiles_Deferred(MSIHANDLE hInstall)
     while (NULL != row)
     {
         // copy the file
-        std::wstring source = xmlDocument.SelectNodeValue(L"Data[@Column=\"File\"]", row);
-        std::wstring wildcard = xmlDocument.SelectNodeValue(L"Data[@Column=\"Wildcard\"]", row, L"");
+        std::wstring source = xmlDocument.GetNodeValue(L"Data[@Column=\"File\"]", row);
+        std::wstring wildcard = xmlDocument.GetNodeValue(L"Data[@Column=\"Wildcard\"]", row, L"");
 
         std::wstringstream status;
         
@@ -498,20 +498,20 @@ CA_API UINT __stdcall Win32_DeleteFiles_Deferred(MSIHANDLE hInstall)
         status << "Deleting " << source << wildcard;
 
         // recurse says whether we need to recurse into subdirectories
-        bool recurse = xmlDocument.SelectAttributeBoolValue(L"recurse", row);
+        bool recurse = xmlDocument.GetAttributeBoolValue(L"recurse", row);
         if (recurse) 
         {
             status << L", recurse";
         }
 
-        bool check_exists = xmlDocument.SelectAttributeBoolValue(L"check", row);
+        bool check_exists = xmlDocument.GetAttributeBoolValue(L"check", row);
         if (check_exists) 
         {
             status << L", check if exists";
         }
 
         // deleteemptydirectories says whether we need to delete empty leftoever directories
-        bool deleteemptydirectories = xmlDocument.SelectAttributeBoolValue(L"deleteemptydirectories", row);
+        bool deleteemptydirectories = xmlDocument.GetAttributeBoolValue(L"deleteemptydirectories", row);
         if (deleteemptydirectories) 
         {
             status << L", delete empty directories";
@@ -568,11 +568,11 @@ CA_API UINT __stdcall Win32_DeleteFiles_Immediate(MSIHANDLE hInstall)
     while (NULL != row)
     {
         // id
-		std::wstring id = xmlDocument.SelectNodeValue(L"Data[@Column=\"Id\"]", row, L"");
+		std::wstring id = xmlDocument.GetNodeValue(L"Data[@Column=\"Id\"]", row, L"");
         // operational attributes
-        long attributes = AppSecInc::StringUtils::stringToLong(xmlDocument.SelectNodeValue(L"Data[@Column=\"Attributes\"]", row));
+        long attributes = AppSecInc::StringUtils::stringToLong(xmlDocument.GetNodeValue(L"Data[@Column=\"Attributes\"]", row));
         // node condition
-        std::wstring condition = xmlDocument.SelectNodeValue(L"Data[@Column=\"Condition\"]", row);
+        std::wstring condition = xmlDocument.GetNodeValue(L"Data[@Column=\"Condition\"]", row);
         // no condition (executes by default) or condition evaluates to true
         bool delete_per_condition = condition.empty() || msiInstall.EvaluateCondition(condition);
 		// evaluate delete
@@ -624,13 +624,13 @@ CA_API UINT __stdcall Win32_Execute_Immediate(MSIHANDLE hInstall)
     while (NULL != (row = rows->nextNode()))
     {
         // id
-		std::wstring id = xmlDocument.SelectNodeValue(L"Data[@Column=\"Id\"]", row, L"");
+		std::wstring id = xmlDocument.GetNodeValue(L"Data[@Column=\"Id\"]", row, L"");
         // component id
-		std::wstring component_id = xmlDocument.SelectNodeValue(L"Data[@Column=\"ComponentId\"]", row, L"");
+		std::wstring component_id = xmlDocument.GetNodeValue(L"Data[@Column=\"ComponentId\"]", row, L"");
         // node condition
-        std::wstring condition = xmlDocument.SelectNodeValue(L"Data[@Column=\"Condition\"]", row);
+        std::wstring condition = xmlDocument.GetNodeValue(L"Data[@Column=\"Condition\"]", row);
         // operational attributes
-        long attributes = AppSecInc::StringUtils::stringToLong(xmlDocument.SelectNodeValue(L"Data[@Column=\"Attributes\"]", row));
+        long attributes = AppSecInc::StringUtils::stringToLong(xmlDocument.GetNodeValue(L"Data[@Column=\"Attributes\"]", row));
         // no condition (executes by default) or condition evaluates to true
         bool execute_per_condition = condition.empty() || msiInstall.EvaluateCondition(condition);
         // execute on install
@@ -686,12 +686,12 @@ CA_API UINT __stdcall Win32_Execute_Deferred(MSIHANDLE hInstall)
     MSXML2::IXMLDOMNodePtr row = NULL;
     while (NULL != (row = rows->nextNode()))
     {
-        std::wstring id = xmlDocument.SelectNodeValue(L"Data[@Column=\"Id\"]", row);
-        std::wstring directory = xmlDocument.SelectNodeValue(L"Data[@Column=\"Directory\"]", row, L"");
-        std::wstring commandline = xmlDocument.SelectNodeValue(L"Data[@Column=\"CommandLine\"]", row);
-        std::wstring errormessage = xmlDocument.SelectNodeValue(L"Data[@Column=\"ErrorMessage\"]", row, L"");
-        long returncode = AppSecInc::StringUtils::stringToLong(xmlDocument.SelectNodeValue(L"Data[@Column=\"ReturnCode\"]", row, L"0"));
-        long attributes = AppSecInc::StringUtils::stringToLong(xmlDocument.SelectNodeValue(L"Data[@Column=\"Attributes\"]", row, L"0"));
+        std::wstring id = xmlDocument.GetNodeValue(L"Data[@Column=\"Id\"]", row);
+        std::wstring directory = xmlDocument.GetNodeValue(L"Data[@Column=\"Directory\"]", row, L"");
+        std::wstring commandline = xmlDocument.GetNodeValue(L"Data[@Column=\"CommandLine\"]", row);
+        std::wstring errormessage = xmlDocument.GetNodeValue(L"Data[@Column=\"ErrorMessage\"]", row, L"");
+        long returncode = AppSecInc::StringUtils::stringToLong(xmlDocument.GetNodeValue(L"Data[@Column=\"ReturnCode\"]", row, L"0"));
+        long attributes = AppSecInc::StringUtils::stringToLong(xmlDocument.GetNodeValue(L"Data[@Column=\"Attributes\"]", row, L"0"));
 
 		msiInstall.LogInfo(_T(__FUNCTION__), commandline);
 

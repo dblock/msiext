@@ -27,11 +27,11 @@ CA_API UINT __stdcall LocalUsers_Immediate(MSIHANDLE hInstall)
     MSXML2::IXMLDOMNodePtr localusers_row = NULL;
     while (NULL != (localusers_row = localusers_rows->nextNode()))
     {
-		std::wstring localusers_id = localusers_xml_document.SelectNodeValue(L"Data[@Column=\"Id\"]", localusers_row);
-		std::wstring localuserscomponent_id = localusers_xml_document.SelectNodeValue(L"Data[@Column=\"ComponentId\"]", localusers_row, L"");
-        std::wstring username = localusers_xml_document.SelectNodeValue(L"Data[@Column=\"Username\"]", localusers_row);
-        std::wstring password = localusers_xml_document.SelectNodeValue(L"Data[@Column=\"Password\"]", localusers_row, L"");
-        long attributes = AppSecInc::StringUtils::stringToLong(localusers_xml_document.SelectNodeValue(L"Data[@Column=\"Attributes\"]", localusers_row));
+		std::wstring localusers_id = localusers_xml_document.GetNodeValue(L"Data[@Column=\"Id\"]", localusers_row);
+		std::wstring localuserscomponent_id = localusers_xml_document.GetNodeValue(L"Data[@Column=\"ComponentId\"]", localusers_row, L"");
+        std::wstring username = localusers_xml_document.GetNodeValue(L"Data[@Column=\"Username\"]", localusers_row);
+        std::wstring password = localusers_xml_document.GetNodeValue(L"Data[@Column=\"Password\"]", localusers_row, L"");
+        long attributes = AppSecInc::StringUtils::stringToLong(localusers_xml_document.GetNodeValue(L"Data[@Column=\"Attributes\"]", localusers_row));
 
         // execute on install
         bool execute_per_component_install = (localuserscomponent_id.empty() || msiInstall.IsComponentInstalling(localuserscomponent_id));
@@ -77,12 +77,12 @@ CA_API UINT __stdcall LocalUsers_Deferred(MSIHANDLE hInstall)
     MSXML2::IXMLDOMNodePtr row = NULL;
     while (NULL != (row = rows->nextNode()))
     {
-        std::wstring id = xmlDocument.SelectAttributeValue(L"id", row);
-        std::wstring username = xmlDocument.SelectNodeValue(L"Username", row);
-        std::wstring password = xmlDocument.SelectNodeValue(L"Password", row, L"");
-        bool create_user = xmlDocument.SelectAttributeBoolValue(L"create", row);
-        bool delete_user = xmlDocument.SelectAttributeBoolValue(L"delete", row);
-        bool check = xmlDocument.SelectAttributeBoolValue(L"check", row);
+        std::wstring id = xmlDocument.GetAttributeValue(L"id", row);
+        std::wstring username = xmlDocument.GetNodeValue(L"Username", row);
+        std::wstring password = xmlDocument.GetNodeValue(L"Password", row, L"");
+        bool create_user = xmlDocument.GetAttributeBoolValue(L"create", row);
+        bool delete_user = xmlDocument.GetAttributeBoolValue(L"delete", row);
+        bool check = xmlDocument.GetAttributeBoolValue(L"check", row);
 
         if (delete_user && (! check || AppSecInc::LSA::Account::Exists(username)))
         {

@@ -62,6 +62,6 @@ MSXML2::IXMLDOMNodePtr AccessDatabase::Save(AppSecInc::Xml::XmlDocument& xmldoc,
 
 void AccessDatabase::Load(AppSecInc::Xml::XmlDocument& xmldoc, MSXML2::IXMLDOMNodePtr root)
 {
-    _dbq = xmldoc.SelectNodeValue(L"DBQ", root);
-    _connection_string = xmldoc.SelectNodeValue(L"ConnectionString", root, L"");
+    _dbq = xmldoc.GetNodeValue(L"DBQ", root);
+    _connection_string = xmldoc.GetNodeValue(L"ConnectionString", root, L"");
 }

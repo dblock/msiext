@@ -135,17 +135,7 @@ void XmlDocument::LoadXml(const std::wstring& xml, const CLSID clsid)
 
 MSXML2::IXMLDOMNodePtr XmlDocument::SelectNode(const std::wstring& xpath, MSXML2::IXMLDOMNode * parent) const
 {
-    CHECK_BOOL(! xpath.empty(),
-        L"Missing xpath");
-
-	CHECK_BOOL(_loaded,
-        L"Document not loaded");
-
-    MSXML2::IXMLDOMNodePtr node;
-
-    node = (NULL != parent) 
-        ? parent->selectSingleNode(_bstr_t(xpath.c_str())) 
-        : _document->selectSingleNode(_bstr_t(xpath.c_str()));
+	MSXML2::IXMLDOMNodePtr node = FindNode(xpath, parent);
 
     CHECK_BOOL(node != NULL,
 		L"Invalid xpath: " << xpath);
@@ -154,6 +144,31 @@ MSXML2::IXMLDOMNodePtr XmlDocument::SelectNode(const std::wstring& xpath, MSXML2
 }
 
 MSXML2::IXMLDOMNodeListPtr XmlDocument::SelectNodes(const std::wstring& xpath, MSXML2::IXMLDOMNode * parent) const
+{
+	MSXML2::IXMLDOMNodeListPtr nodes = FindNodes(xpath, parent);
+
+    CHECK_BOOL(nodes != NULL,
+		L"Invalid xpath: " << xpath);
+
+	return nodes.Detach();
+}
+
+MSXML2::IXMLDOMNodePtr XmlDocument::FindNode(const std::wstring& xpath, MSXML2::IXMLDOMNode * parent) const
+{
+    CHECK_BOOL(! xpath.empty(),
+        L"Missing xpath");
+
+    CHECK_BOOL(_loaded,
+        L"Document not loaded");
+
+    MSXML2::IXMLDOMNodePtr node = (NULL != parent) 
+        ? parent->selectSingleNode(_bstr_t(xpath.c_str())) 
+        : _document->selectSingleNode(_bstr_t(xpath.c_str()));
+
+	return (node == NULL) ? NULL : node.Detach();
+}
+
+MSXML2::IXMLDOMNodeListPtr XmlDocument::FindNodes(const std::wstring& xpath, MSXML2::IXMLDOMNode * parent) const
 {
 	MSXML2::IXMLDOMNode * pnode = NULL;
 
@@ -165,91 +180,61 @@ MSXML2::IXMLDOMNodeListPtr XmlDocument::SelectNodes(const std::wstring& xpath, M
 
     MSXML2::IXMLDOMNodeListPtr nodes;
 
-    nodes = (NULL != parent) 
-        ? parent->selectNodes(_bstr_t(xpath.c_str())) 
-        : _document->selectNodes(_bstr_t(xpath.c_str()));
-
-    CHECK_BOOL(nodes != NULL,
-		L"Invalid xpath: " << xpath);
-
-    return nodes.Detach();
+	if (parent != NULL)
+	{
+		MSXML2::IXMLDOMNodeListPtr nodes;
+		HRESULT hr = parent->raw_selectNodes(_bstr_t(xpath.c_str()), & nodes);
+		return SUCCEEDED(hr) ? nodes.Detach() : NULL;
+	}
+	else
+	{
+		MSXML2::IXMLDOMNodeListPtr nodes;
+		HRESULT hr = _document->raw_selectNodes(_bstr_t(xpath.c_str()), & nodes);
+		return SUCCEEDED(hr) ? nodes.Detach() : NULL;
+	}
 }
 
 bool XmlDocument::HasNode(const std::wstring& xpath, MSXML2::IXMLDOMNode * parent) const
 {
-    CHECK_BOOL(! xpath.empty(),
-        L"Missing xpath");
-
-    CHECK_BOOL(_loaded,
-        L"Document not loaded");
-
-    MSXML2::IXMLDOMNodePtr node;
-
-    node = (NULL != parent) 
-        ? parent->selectSingleNode(_bstr_t(xpath.c_str())) 
-        : _document->selectSingleNode(_bstr_t(xpath.c_str()));
-
-    return (node != NULL);
+	return (NULL != FindNode(xpath, parent));
 }
 
-bool XmlDocument::SelectNodeBoolValue(const std::wstring& xpath, MSXML2::IXMLDOMNode * parent) const
+bool XmlDocument::HasNodes(const std::wstring& xpath, MSXML2::IXMLDOMNode * parent) const
 {
-    std::wstring value = SelectNodeValue(xpath, parent);
-    std::wstring l_value = value;
-    AppSecInc::StringUtils::lowercase(l_value);
-    bool result = false;
-    if (l_value == L"true" || l_value == L"1") result = true;
-    else if (l_value == L"false" || l_value == L"0") result = false;
-	else { THROW(L"invalid boolean value: " << value); }
-    return result;
+	return (NULL != FindNodes(xpath, parent));
 }
 
-std::wstring XmlDocument::SelectNodeValue(const std::wstring& xpath, MSXML2::IXMLDOMNode * parent, const std::wstring& defaultvalue) const
+bool XmlDocument::GetNodeBoolValue(const std::wstring& xpath, MSXML2::IXMLDOMNode * parent) const
 {
-    if (HasNode(xpath, parent))
-        return SelectNodeValue(xpath, parent);
-
-    return defaultvalue;
+	return GetNodeBoolValue(SelectNode(xpath, parent));
 }
 
-bool XmlDocument::SelectNodeBoolValue(const std::wstring& xpath, MSXML2::IXMLDOMNode * parent, bool defaultvalue) const
+std::wstring XmlDocument::GetNodeValue(const std::wstring& xpath, MSXML2::IXMLDOMNode * parent, const std::wstring& defaultvalue) const
 {
-    if (HasNode(xpath, parent))
-        return SelectNodeBoolValue(xpath, parent);
-
-    return defaultvalue;
+	MSXML2::IXMLDOMNodePtr node = FindNode(xpath, parent);
+	return NULL != node ? GetNodeValue(node) : defaultvalue;
 }
 
-std::wstring XmlDocument::SelectNodeValue(const std::wstring& xpath, MSXML2::IXMLDOMNode * parent) const
+bool XmlDocument::GetNodeBoolValue(const std::wstring& xpath, MSXML2::IXMLDOMNode * parent, bool defaultvalue) const
 {
-    CHECK_BOOL(! xpath.empty(),
-        L"Missing xpath");
-
-    CComBSTR result;
-    MSXML2::IXMLDOMNodePtr node;
-
-	node = SelectNode(xpath, parent);
-
-	CHECK_HR(node->get_text(& result),
-        L"Error getting node text.");
-
-	return static_cast<LPCWSTR>(result);
+	MSXML2::IXMLDOMNodePtr node = FindNode(xpath, parent);
+	return NULL != node ? GetNodeBoolValue(node) : defaultvalue;
 }
 
-std::wstring XmlDocument::SelectNodeXml(const std::wstring& xpath, MSXML2::IXMLDOMNode * parent) const
+std::wstring XmlDocument::GetNodeValue(const std::wstring& xpath, MSXML2::IXMLDOMNode * parent) const
 {
-    CHECK_BOOL(! xpath.empty(),
-        L"Missing xpath");
+	return GetNodeValue(SelectNode(xpath, parent));
+}
 
-    CComBSTR result;
-    MSXML2::IXMLDOMNodePtr node;
+std::wstring XmlDocument::GetNodeXml(const std::wstring& xpath, MSXML2::IXMLDOMNode * parent) const
+{
+	return GetNodeXml(SelectNode(xpath, parent));
+}
 
-    node = SelectNode(xpath, parent);
-
-    CHECK_HR(node->get_xml(& result),
-        L"Error getting node text.");
-
-	return static_cast<LPCWSTR>(result);
+std::wstring XmlDocument::GetNodeXml(const std::wstring& xpath, MSXML2::IXMLDOMNode * parent, const std::wstring& defaultvalue) const
+{
+	MSXML2::IXMLDOMNodePtr node = FindNode(xpath, parent);
+	return NULL != node ? GetNodeXml(node) : defaultvalue;
 }
 
 std::wstring XmlDocument::GetXml() const
@@ -260,33 +245,19 @@ std::wstring XmlDocument::GetXml() const
     CComBSTR result;
 
     CHECK_HR(_document->get_xml(& result),
-        L"Error getting node text.");
+        L"Error getting node xml");
 
 	return static_cast<LPCWSTR>(result);
 }
 
-std::wstring XmlDocument::SelectNodeAttributeValue(const std::wstring& xpath, const std::wstring& attributename, MSXML2::IXMLDOMNode * parent) const
+std::wstring XmlDocument::GetAttributeValue(const std::wstring& xpath, const std::wstring& attributename, MSXML2::IXMLDOMNode * parent) const
 {
     CHECK_BOOL(! attributename.empty(),
         L"Missing attribute name");
 
     MSXML2::IXMLDOMNodePtr node = SelectNode(xpath, parent);
-
-    MSXML2::IXMLDOMNamedNodeMapPtr attributes;
-    CHECK_HR(node->get_attributes(& attributes),
-        L"Error getting node attributes.");
-
-    MSXML2::IXMLDOMNodePtr attribute(attributes->getNamedItem(_bstr_t(attributename.c_str())));
-
-    CComBSTR result;
-
-    if (attribute != NULL)
-    {
-		CHECK_HR(attribute->get_text(& result),
-            L"Error getting value of " << attributename);
-    }
-
-	return result != NULL ? static_cast<LPCWSTR>(result) : L"";
+	MSXML2::IXMLDOMAttributePtr attribute = SelectAttribute(attributename, node);
+	return GetAttributeValue(attribute);
 }
 
 std::wstring XmlDocument::XslTransform(const std::wstring xslt_filename)
@@ -333,8 +304,7 @@ MSXML2::IXMLDOMAttributePtr XmlDocument::SetAttribute(const std::wstring& name, 
     return node->attributes->setNamedItem(attribute);
 }
 
-
-MSXML2::IXMLDOMAttributePtr XmlDocument::SelectAttribute(const std::wstring& name, MSXML2::IXMLDOMNode * node) const
+MSXML2::IXMLDOMAttributePtr XmlDocument::FindAttribute(const std::wstring& name, MSXML2::IXMLDOMNode * node) const
 {
     CHECK_BOOL(! name.empty(),
         L"Missing name");
@@ -346,6 +316,13 @@ MSXML2::IXMLDOMAttributePtr XmlDocument::SelectAttribute(const std::wstring& nam
 
 	CHECK_HR(node->attributes->raw_getNamedItem(_bstr_t(name.c_str()), & attribute),
 		L"Error getting attribute: " << name);
+
+	return attribute != NULL ? attribute.Detach() : NULL;
+}
+
+MSXML2::IXMLDOMAttributePtr XmlDocument::SelectAttribute(const std::wstring& name, MSXML2::IXMLDOMNode * node) const
+{
+    MSXML2::IXMLDOMNodePtr attribute = FindAttribute(name, node);
 
     CHECK_BOOL(attribute != NULL,
 		L"Invalid attribute name: " << name);
@@ -356,23 +333,12 @@ MSXML2::IXMLDOMAttributePtr XmlDocument::SelectAttribute(const std::wstring& nam
 
 bool XmlDocument::HasAttribute(const std::wstring& name, MSXML2::IXMLDOMNode * node) const
 {
-	CHECK_BOOL(! name.empty(),
-        L"Missing name");
-
-	CHECK_BOOL(_loaded,
-        L"Document not loaded");
-
-    MSXML2::IXMLDOMNodePtr attribute;
-
-	CHECK_HR(node->attributes->raw_getNamedItem(_bstr_t(name.c_str()), & attribute),
-		L"Error getting attribute: " << name);
-
-	return (attribute != NULL);
+	return (NULL != FindAttribute(name, node));
 }
 
-bool XmlDocument::SelectAttributeBoolValue(const std::wstring& name, MSXML2::IXMLDOMNode * node) const
+bool XmlDocument::GetAttributeBoolValue(const std::wstring& name, MSXML2::IXMLDOMNode * node) const
 {
-    std::wstring value = SelectAttributeValue(name, node);
+    std::wstring value = GetAttributeValue(name, node);
     std::wstring l_value = value;
     AppSecInc::StringUtils::lowercase(l_value);
     bool result = false;
@@ -382,34 +348,84 @@ bool XmlDocument::SelectAttributeBoolValue(const std::wstring& name, MSXML2::IXM
     return result;
 }
 
-std::wstring XmlDocument::SelectAttributeValue(const std::wstring& name, MSXML2::IXMLDOMNode * node, const std::wstring& defaultvalue) const
+std::wstring XmlDocument::GetAttributeValue(const std::wstring& name, MSXML2::IXMLDOMNode * node, const std::wstring& defaultvalue) const
 {
-    if (HasAttribute(name, node))
-        return SelectAttributeValue(name, node);
-
-    return defaultvalue;
+	MSXML2::IXMLDOMAttributePtr attribute = FindAttribute(name, node);
+	
+	return attribute != NULL 
+		? GetAttributeValue(attribute) 
+		: defaultvalue;
 }
 
-bool XmlDocument::SelectAttributeBoolValue(const std::wstring& name, MSXML2::IXMLDOMNode * node, bool defaultvalue) const
+bool XmlDocument::GetAttributeBoolValue(const std::wstring& name, MSXML2::IXMLDOMNode * node, bool defaultvalue) const
 {
-    if (HasNode(name, node))
-        return SelectAttributeBoolValue(name, node);
-
-    return defaultvalue;
+	MSXML2::IXMLDOMAttributePtr attribute = FindAttribute(name, node);
+	
+	return attribute != NULL 
+		? GetAttributeBoolValue(attribute) 
+		: defaultvalue;
 }
 
-std::wstring XmlDocument::SelectAttributeValue(const std::wstring& name, MSXML2::IXMLDOMNode * node) const
+std::wstring XmlDocument::GetAttributeValue(const std::wstring& name, MSXML2::IXMLDOMNode * node) const
 {
-    CHECK_BOOL(! name.empty(),
-        L"Missing name");
+	return GetAttributeValue(SelectAttribute(name, node));	
+}
 
-    CComBSTR result;
-    MSXML2::IXMLDOMAttributePtr attribute;
+std::wstring XmlDocument::GetAttributeValue(MSXML2::IXMLDOMAttribute * attribute) const
+{
+	CHECK_BOOL(attribute != NULL,
+		L"Missing attribute");
 
-	attribute = SelectAttribute(name, node);
-
+	CComBSTR result;
 	CHECK_HR(attribute->get_text(& result),
-        L"Error getting node text.");
+        L"Error getting node text");
 
 	return static_cast<LPCWSTR>(result);
+}
+
+std::wstring XmlDocument::GetNodeXml(MSXML2::IXMLDOMNode * node) const
+{
+	CHECK_BOOL(node != NULL,
+		L"Missing node");
+
+	CComBSTR result;
+    CHECK_HR(node->get_xml(& result),
+        L"Error getting node XML");
+
+	return static_cast<LPCWSTR>(result);
+}
+
+std::wstring XmlDocument::GetNodeValue(MSXML2::IXMLDOMNode * node) const
+{
+	CHECK_BOOL(node != NULL,
+		L"Missing node");
+
+	CComBSTR result;
+	CHECK_HR(node->get_text(& result),
+		L"Error getting node text");
+	return static_cast<LPCWSTR>(result);
+}
+
+bool XmlDocument::GetNodeBoolValue(MSXML2::IXMLDOMNode * node) const
+{
+	return wstring2bool(GetNodeValue(node));
+}
+
+bool XmlDocument::GetAttributeBoolValue(MSXML2::IXMLDOMAttribute * attribute) const
+{
+	return wstring2bool(GetAttributeValue(attribute));
+}
+
+bool XmlDocument::wstring2bool(const std::wstring& value)
+{
+	std::wstring l_value = value;
+    AppSecInc::StringUtils::lowercase(l_value);
+    bool result = false;
+    if (l_value == L"true" || l_value == L"1") result = true;
+    else if (l_value == L"false" || l_value == L"0") result = false;
+	else 
+	{ 
+		THROW(L"invalid boolean value: " << value); 
+	}
+    return result;
 }

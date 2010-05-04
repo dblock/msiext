@@ -119,7 +119,7 @@ void MsiInstallUnitTests::testGetViewData()
 
     AppSecInc::Xml::XmlDocument xmlDoc;
     xmlDoc.LoadXml(msiInstall.GetViewData(L"SELECT * FROM `ComboBox`"));
-    CPPUNIT_ASSERT(L"DATABASE_SERVER" == xmlDoc.SelectNodeValue(L"/Table/Row/Data[@Column=\"Property\"]"));
+    CPPUNIT_ASSERT(L"DATABASE_SERVER" == xmlDoc.GetNodeValue(L"/Table/Row/Data[@Column=\"Property\"]"));
 }
 
 void MsiInstallUnitTests::testGetViewInfo()

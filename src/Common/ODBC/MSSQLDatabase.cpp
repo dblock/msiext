@@ -146,10 +146,10 @@ void MSSQLDatabase::Load(AppSecInc::Xml::XmlDocument& xmldoc, MSXML2::IXMLDOMNod
     _database_options.clear();
     _filespecs.clear();
 
-    _database_name = xmldoc.SelectNodeValue(L"Name", root);
-    _database_collate = xmldoc.SelectNodeValue(L"Collate", root, L"");
-    _database_purpose = xmldoc.SelectNodeValue(L"Purpose", root, L"");
-    _connection_string = xmldoc.SelectNodeValue(L"ConnectionString", root, L"");
+    _database_name = xmldoc.GetNodeValue(L"Name", root);
+    _database_collate = xmldoc.GetNodeValue(L"Collate", root, L"");
+    _database_purpose = xmldoc.GetNodeValue(L"Purpose", root, L"");
+    _connection_string = xmldoc.GetNodeValue(L"ConnectionString", root, L"");
 
     MSXML2::IXMLDOMNodeListPtr option_rows = xmldoc.SelectNodes(L"MSSQLDatabaseOptions/MSSQLDatabaseOption", root);
     MSXML2::IXMLDOMNodePtr option_row = NULL;

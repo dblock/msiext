@@ -12,7 +12,7 @@ CA_API UINT __stdcall Xml_SelectNodeValue(MSIHANDLE hInstall)
 
 	std::wstring xpath = msiInstall.GetProperty(L"XML_XPATH");
 
-	std::wstring value = doc.SelectNodeValue(xpath);
+	std::wstring value = doc.GetNodeValue(xpath);
 	msiInstall.SetProperty(L"XML_NODEVALUE", value);
 
 	MSI_EXCEPTION_HANDLER_EPILOG;
@@ -30,7 +30,7 @@ CA_API UINT __stdcall Xml_SelectNodeXml(MSIHANDLE hInstall)
 
 	std::wstring xpath = msiInstall.GetProperty(L"XML_XPATH");
 
-	std::wstring xml = doc.SelectNodeXml(xpath);
+	std::wstring xml = doc.GetNodeXml(xpath);
 	msiInstall.SetProperty(L"XML_NODEXML", xml);
 
 	MSI_EXCEPTION_HANDLER_EPILOG;
@@ -49,7 +49,7 @@ CA_API UINT __stdcall Xml_SelectNodeAttributeValue(MSIHANDLE hInstall)
 	std::wstring xpath = msiInstall.GetProperty(L"XML_XPATH");
 	std::wstring attributename = msiInstall.GetProperty(L"XML_ATTRIBUTENAME");
 
-	std::wstring value = doc.SelectNodeAttributeValue(xpath, attributename);
+	std::wstring value = doc.GetAttributeValue(xpath, attributename);
 	msiInstall.SetProperty(L"XML_ATTRIBUTEVALUE", value);
 
 	MSI_EXCEPTION_HANDLER_EPILOG;

@@ -203,8 +203,8 @@ void ODBQCmdEngine::Execute(AppSecInc::Databases::ODBC::OdbcParser& parser)
         long rows = 0;
         if (result != NULL)
         {
-            cols = AppSecInc::StringUtils::stringToLong(_xmlresults.SelectAttributeValue(L"columns", result));
-            rows = AppSecInc::StringUtils::stringToLong(_xmlresults.SelectAttributeValue(L"rows", result));
+            cols = AppSecInc::StringUtils::stringToLong(_xmlresults.GetAttributeValue(L"columns", result));
+            rows = AppSecInc::StringUtils::stringToLong(_xmlresults.GetAttributeValue(L"rows", result));
         }
 
 		if (rows != 0 && !_rawoutput.getValue())

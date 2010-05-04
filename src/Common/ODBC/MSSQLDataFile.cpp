@@ -73,10 +73,10 @@ MSXML2::IXMLDOMNodePtr MSSQLDataFile::Save(AppSecInc::Xml::XmlDocument& xmldoc, 
 
 void MSSQLDataFile::Load(AppSecInc::Xml::XmlDocument& xmldoc, MSXML2::IXMLDOMNodePtr root)
 {
-    _database = xmldoc.SelectNodeValue(L"Database", root, L"");
-    _schema = xmldoc.SelectNodeValue(L"Schema", root, L"");
-    _table = xmldoc.SelectNodeValue(L"Table", root);
-    _filename = xmldoc.SelectNodeValue(L"Filename", root);
+    _database = xmldoc.GetNodeValue(L"Database", root, L"");
+    _schema = xmldoc.GetNodeValue(L"Schema", root, L"");
+    _table = xmldoc.GetNodeValue(L"Table", root);
+    _filename = xmldoc.GetNodeValue(L"Filename", root);
 
     MSXML2::IXMLDOMNodeListPtr parameter_rows = xmldoc.SelectNodes(L"MSSQLDataFileParameters/MSSQLDataFileParameter", root);
     MSXML2::IXMLDOMNodePtr parameter_row = NULL;

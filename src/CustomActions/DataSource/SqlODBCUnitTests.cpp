@@ -180,8 +180,8 @@ void SQLODBCUnitTests::Test_SQLODBC_GetXml()
     CPPUNIT_ASSERT(! xml.empty());
     AppSecInc::Xml::XmlDocument xmldoc;
     xmldoc.LoadXml(xml);
-    CPPUNIT_ASSERT(L"3" == xmldoc.SelectNodeAttributeValue(L"/DataSet", L"columns"));
-    CPPUNIT_ASSERT(L"10" == xmldoc.SelectNodeAttributeValue(L"/DataSet", L"rows"));
+    CPPUNIT_ASSERT(L"3" == xmldoc.GetAttributeValue(L"/DataSet", L"columns"));
+    CPPUNIT_ASSERT(L"10" == xmldoc.GetAttributeValue(L"/DataSet", L"rows"));
 }
 
 void SQLODBCUnitTests::Test_EntryPoints()
@@ -337,9 +337,9 @@ void SQLODBCUnitTests::Test_DataSource_ODBC()
     MSXML2::IXMLDOMNodePtr row = NULL;
     while (NULL != (row = rows->nextNode()))
     {
-        std::wstring name = xml.SelectNodeValue(L"Data[@Column=\"Name\"]", row);
+        std::wstring name = xml.GetNodeValue(L"Data[@Column=\"Name\"]", row);
         CPPUNIT_ASSERT(AppSecInc::Registry::KeyExists(HKEY_CURRENT_USER, L"Software\\ODBC\\ODBC.INI\\" + name));
-        std::wstring driver = xml.SelectNodeValue(L"Data[@Column=\"Driver\"]", row);
+        std::wstring driver = xml.GetNodeValue(L"Data[@Column=\"Driver\"]", row);
         std::wcout << std::endl << L"Removing " << driver << L" DSN: " << name;
         AppSecInc::Databases::ODBC::ODBCDataSource::Configure(ODBC_REMOVE_DSN, driver, L"DSN=" + name);
     }

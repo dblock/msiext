@@ -58,14 +58,14 @@ void CompareVersionImplUnitTests::Test_CompareVersion()
     {
         CPPUNIT_ASSERT(row != NULL);
 
-        msiInstall.SetProperty(L"VERSION_INSTALLED", xmlDoc.SelectNodeValue(L"Data[@Column =\"InstalledVersion\"]", row));
-        msiInstall.SetProperty(L"VERSION_MINIMUM", xmlDoc.SelectNodeValue(L"Data[@Column =\"MinimumVersion\"]", row));
-		msiInstall.SetProperty(L"VERSION_MAXIMUM", xmlDoc.SelectNodeValue(L"Data[@Column =\"MaximumVersion\"]", row, L""));
-		msiInstall.SetProperty(L"VERSION_PROPERTY", xmlDoc.SelectNodeValue(L"Data[@Column =\"Property\"]", row));
+        msiInstall.SetProperty(L"VERSION_INSTALLED", xmlDoc.GetNodeValue(L"Data[@Column =\"InstalledVersion\"]", row));
+        msiInstall.SetProperty(L"VERSION_MINIMUM", xmlDoc.GetNodeValue(L"Data[@Column =\"MinimumVersion\"]", row));
+		msiInstall.SetProperty(L"VERSION_MAXIMUM", xmlDoc.GetNodeValue(L"Data[@Column =\"MaximumVersion\"]", row, L""));
+		msiInstall.SetProperty(L"VERSION_PROPERTY", xmlDoc.GetNodeValue(L"Data[@Column =\"Property\"]", row));
 
         CPPUNIT_ASSERT(ERROR_SUCCESS == hInstall.ExecuteCA(L"SystemTools.dll", L"CompareVersion"));
 
-        std::wstring test_version = msiInstall.GetProperty(xmlDoc.SelectNodeValue(L"Data[@Column =\"Property\"]", row));
+        std::wstring test_version = msiInstall.GetProperty(xmlDoc.GetNodeValue(L"Data[@Column =\"Property\"]", row));
         std::wcout << std::endl << testdata[i].property_name << L": " << test_version << " vs. " << testdata[i].expected_version;
 	    CPPUNIT_ASSERT(StringUtils::comparei(test_version, testdata[i].expected_version));
 

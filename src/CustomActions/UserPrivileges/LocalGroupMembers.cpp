@@ -23,8 +23,8 @@ CA_API UINT __stdcall LocalGroupMembers_Immediate(MSIHANDLE hInstall)
     MSXML2::IXMLDOMNodePtr localgroups_row = NULL;
     while (NULL != (localgroups_row = localgroups_rows->nextNode()))
     {
-		std::wstring localgroup_id = localgroups_xml_document.SelectNodeValue(L"Data[@Column=\"Id\"]", localgroups_row);
-        std::wstring localgroup_name = localgroups_xml_document.SelectNodeValue(L"Data[@Column=\"Name\"]", localgroups_row);
+		std::wstring localgroup_id = localgroups_xml_document.GetNodeValue(L"Data[@Column=\"Id\"]", localgroups_row);
+        std::wstring localgroup_name = localgroups_xml_document.GetNodeValue(L"Data[@Column=\"Name\"]", localgroups_row);
         localgroups_map[localgroup_id] = localgroup_name;
     }
 
@@ -36,8 +36,8 @@ CA_API UINT __stdcall LocalGroupMembers_Immediate(MSIHANDLE hInstall)
     MSXML2::IXMLDOMNodePtr localusers_row = NULL;
     while (NULL != (localusers_row = localusers_rows->nextNode()))
     {
-		std::wstring localuser_id = localusers_xml_document.SelectNodeValue(L"Data[@Column=\"Id\"]", localusers_row);
-        std::wstring localuser_username = localusers_xml_document.SelectNodeValue(L"Data[@Column=\"Username\"]", localusers_row);
+		std::wstring localuser_id = localusers_xml_document.GetNodeValue(L"Data[@Column=\"Id\"]", localusers_row);
+        std::wstring localuser_username = localusers_xml_document.GetNodeValue(L"Data[@Column=\"Username\"]", localusers_row);
         localusers_map[localuser_id] = localuser_username;
     }
 
@@ -53,13 +53,13 @@ CA_API UINT __stdcall LocalGroupMembers_Immediate(MSIHANDLE hInstall)
     MSXML2::IXMLDOMNodePtr localgroupmembers_row = NULL;
     while (NULL != (localgroupmembers_row = localgroupmembers_rows->nextNode()))
     {
-		std::wstring localgroupmembers_id = localgroupmembers_xml_document.SelectNodeValue(L"Data[@Column=\"Id\"]", localgroupmembers_row);
-		std::wstring localgroupmemberscomponent_id = localgroupmembers_xml_document.SelectNodeValue(L"Data[@Column=\"ComponentId\"]", localgroupmembers_row, L"");
-        std::wstring localuser_id = localgroupmembers_xml_document.SelectNodeValue(L"Data[@Column=\"LocalUserId\"]", localgroupmembers_row);
+		std::wstring localgroupmembers_id = localgroupmembers_xml_document.GetNodeValue(L"Data[@Column=\"Id\"]", localgroupmembers_row);
+		std::wstring localgroupmemberscomponent_id = localgroupmembers_xml_document.GetNodeValue(L"Data[@Column=\"ComponentId\"]", localgroupmembers_row, L"");
+        std::wstring localuser_id = localgroupmembers_xml_document.GetNodeValue(L"Data[@Column=\"LocalUserId\"]", localgroupmembers_row);
         std::wstring username = localusers_map[localuser_id];
-        std::wstring localgroup_id = localgroupmembers_xml_document.SelectNodeValue(L"Data[@Column=\"LocalGroupId\"]", localgroupmembers_row, L"");
+        std::wstring localgroup_id = localgroupmembers_xml_document.GetNodeValue(L"Data[@Column=\"LocalGroupId\"]", localgroupmembers_row, L"");
         std::wstring groupname = localgroups_map[localgroup_id];
-        long attributes = AppSecInc::StringUtils::stringToLong(localgroupmembers_xml_document.SelectNodeValue(L"Data[@Column=\"Attributes\"]", localgroupmembers_row));
+        long attributes = AppSecInc::StringUtils::stringToLong(localgroupmembers_xml_document.GetNodeValue(L"Data[@Column=\"Attributes\"]", localgroupmembers_row));
 
         // execute on install
         bool execute_per_component_install = (localgroupmemberscomponent_id.empty() || msiInstall.IsComponentInstalling(localgroupmemberscomponent_id));
@@ -105,12 +105,12 @@ CA_API UINT __stdcall LocalGroupMembers_Deferred(MSIHANDLE hInstall)
     MSXML2::IXMLDOMNodePtr row = NULL;
     while (NULL != (row = rows->nextNode()))
     {
-        std::wstring id = xmlDocument.SelectAttributeValue(L"id", row);
-        std::wstring username = xmlDocument.SelectNodeValue(L"Username", row);
-        std::wstring groupname = xmlDocument.SelectNodeValue(L"Group", row, L"");
-        bool add_member = xmlDocument.SelectAttributeBoolValue(L"add", row);
-        bool remove_member = xmlDocument.SelectAttributeBoolValue(L"remove", row);
-        bool check = xmlDocument.SelectAttributeBoolValue(L"check", row);
+        std::wstring id = xmlDocument.GetAttributeValue(L"id", row);
+        std::wstring username = xmlDocument.GetNodeValue(L"Username", row);
+        std::wstring groupname = xmlDocument.GetNodeValue(L"Group", row, L"");
+        bool add_member = xmlDocument.GetAttributeBoolValue(L"add", row);
+        bool remove_member = xmlDocument.GetAttributeBoolValue(L"remove", row);
+        bool check = xmlDocument.GetAttributeBoolValue(L"check", row);
 
         if (remove_member && (! check || AppSecInc::LSA::LocalGroup::IsMember(groupname, username)))
         {

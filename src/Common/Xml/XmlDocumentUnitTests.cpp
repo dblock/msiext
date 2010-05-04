@@ -24,9 +24,9 @@ std::wstring GetLocalFileLocation(LPCWSTR pszFilename)
 		std::wstring(pszFilename);
 }
 
-void XmlDocumentUnitTests::testSelectNodeValue()
+void XmlDocumentUnitTests::testGetNodeValue()
 {	
-	struct testSelectNodeValue_TestData
+	struct testGetNodeValue_TestData
 	{
 		LPCWSTR xpath;
 		LPCWSTR result;
@@ -38,7 +38,7 @@ void XmlDocumentUnitTests::testSelectNodeValue()
 	AppSecInc::Xml::XmlDocument xml;
 	xml.Load(xmlfile, CLSID_DOMDocument);
 
-    testSelectNodeValue_TestData testdata[] = 
+    testGetNodeValue_TestData testdata[] = 
     {
         { L"/bookstore/book[@id=1]/title", L"'Emma'", L"<title xmlns=\"http://www.lucernepublishing.com\">'Emma'</title>" }
     };
@@ -46,23 +46,23 @@ void XmlDocumentUnitTests::testSelectNodeValue()
     for (int i = 0; i < ARRAYSIZE(testdata); i++)
     {
         // default value
-		std::wstring default_value = xml.SelectNodeValue(L"/invalid/xpath", NULL, L"default");
+		std::wstring default_value = xml.GetNodeValue(L"/invalid/xpath", NULL, L"default");
 		std::wcout << std::endl << L"Value: " << default_value;
 		CPPUNIT_ASSERT(L"default" == default_value);
 		// value
-		std::wstring result_value = xml.SelectNodeValue(testdata[i].xpath);
+		std::wstring result_value = xml.GetNodeValue(testdata[i].xpath);
 		std::wcout << std::endl << L"Value: " << result_value;
 		CPPUNIT_ASSERT(testdata[i].result == result_value);
 		// xml
-		std::wstring result_xml = xml.SelectNodeXml(testdata[i].xpath);
+		std::wstring result_xml = xml.GetNodeXml(testdata[i].xpath);
 		std::wcout << std::endl << L"Xml: " << result_xml;
 		CPPUNIT_ASSERT(testdata[i].xml == result_xml);
     }
 }
 
-void XmlDocumentUnitTests::testSelectNodeBoolValue()
+void XmlDocumentUnitTests::testGetNodeBoolValue()
 {
-	struct testSelectNodeBoolValue_TestData
+	struct testGetNodeBoolValue_TestData
 	{
 		LPCWSTR xpath;
 		bool result;
@@ -73,7 +73,7 @@ void XmlDocumentUnitTests::testSelectNodeBoolValue()
 	AppSecInc::Xml::XmlDocument xml;
 	xml.Load(xmlfile, CLSID_DOMDocument);
 
-    testSelectNodeBoolValue_TestData testdata[] = 
+    testGetNodeBoolValue_TestData testdata[] = 
     {
         { L"/bookstore/book[@id=1]/read", false },
         { L"/bookstore/book[@id=2]/read", true },
@@ -82,7 +82,7 @@ void XmlDocumentUnitTests::testSelectNodeBoolValue()
     for (int i = 0; i < ARRAYSIZE(testdata); i++)
     {
 		// value
-		bool result_value = xml.SelectNodeBoolValue(testdata[i].xpath);
+		bool result_value = xml.GetNodeBoolValue(testdata[i].xpath);
 		std::wcout << std::endl << L"Value: " << result_value;
 		CPPUNIT_ASSERT(testdata[i].result == result_value);
     }
@@ -108,13 +108,13 @@ void XmlDocumentUnitTests::testXslTransform()
 	CPPUNIT_ASSERT(transformResult.length() > 0);
 }
 
-void XmlDocumentUnitTests::testSelectNodeAttributeValue()
+void XmlDocumentUnitTests::testGetAttributeValue()
 {
 	std::wstring xmlfile = GetLocalFileLocation(L"store.xml");
 	std::wcout << std::endl << L"Xml: " << xmlfile;
 	AppSecInc::Xml::XmlDocument xml;
 	xml.Load(xmlfile);
-	std::wstring result = xml.SelectNodeAttributeValue(L"/bookstore/book", L"id");
+	std::wstring result = xml.GetAttributeValue(L"/bookstore/book", L"id");
 	std::wcout << std::endl << L"Value: " << result;
     CPPUNIT_ASSERT(result == L"1");
 }
@@ -205,9 +205,9 @@ void XmlDocumentUnitTests::testSetAttribute()
     }
 }
 
-void XmlDocumentUnitTests::testSelectAttributeValue()
+void XmlDocumentUnitTests::testGetAttributeValueXPath()
 {	
-	struct testSelectAttributeValue_TestData
+	struct testGetAttributeValue_TestData
 	{
 		LPCWSTR xpath;
 		LPCWSTR name;
@@ -219,7 +219,7 @@ void XmlDocumentUnitTests::testSelectAttributeValue()
 	AppSecInc::Xml::XmlDocument xml;
 	xml.Load(xmlfile, CLSID_DOMDocument);
 
-    testSelectAttributeValue_TestData testdata[] = 
+    testGetAttributeValue_TestData testdata[] = 
     {
         { L"/bookstore/book[@id=1]", L"id", L"1" }
     };
@@ -228,19 +228,19 @@ void XmlDocumentUnitTests::testSelectAttributeValue()
     {
 		MSXML2::IXMLDOMNodePtr node = xml.SelectNode(testdata[i].xpath);
         // default value
-		std::wstring default_value = xml.SelectAttributeValue(L"invalid", node, L"default");
+		std::wstring default_value = xml.GetAttributeValue(L"invalid", node, L"default");
 		std::wcout << std::endl << L"Value: " << default_value;
 		CPPUNIT_ASSERT(L"default" == default_value);
 		// value
-		std::wstring result_value = xml.SelectAttributeValue(testdata[i].name, node);
+		std::wstring result_value = xml.GetAttributeValue(testdata[i].name, node);
 		std::wcout << std::endl << L"Value: " << result_value;
 		CPPUNIT_ASSERT(testdata[i].result == result_value);
     }
 }
 
-void XmlDocumentUnitTests::testSelectAttributeBoolValue()
+void XmlDocumentUnitTests::testGetAttributeBoolValue()
 {
-	struct testSelectAttributeBoolValue_TestData
+	struct testGetAttributeBoolValue_TestData
 	{
 		LPCWSTR xpath;
 		LPCWSTR name;
@@ -252,7 +252,7 @@ void XmlDocumentUnitTests::testSelectAttributeBoolValue()
 	AppSecInc::Xml::XmlDocument xml;
 	xml.Load(xmlfile, CLSID_DOMDocument);
 
-    testSelectAttributeBoolValue_TestData testdata[] = 
+    testGetAttributeBoolValue_TestData testdata[] = 
     {
         { L"/bookstore/book[@id=1]", L"returned", false },
         { L"/bookstore/book[@id=2]", L"returned", true },
@@ -262,8 +262,127 @@ void XmlDocumentUnitTests::testSelectAttributeBoolValue()
     {
 		MSXML2::IXMLDOMNodePtr node = xml.SelectNode(testdata[i].xpath);
 		// value
-		bool result_value = xml.SelectAttributeBoolValue(testdata[i].name, node);
+		bool result_value = xml.GetAttributeBoolValue(testdata[i].name, node);
 		std::wcout << std::endl << L"Value: " << result_value;
 		CPPUNIT_ASSERT(testdata[i].result == result_value);
     }
+}
+
+void XmlDocumentUnitTests::testLoad() 
+{ 
+	std::wstring xmlfile = GetLocalFileLocation(L"store.xml");
+	std::wcout << std::endl << L"Xml: " << xmlfile.c_str();
+	AppSecInc::Xml::XmlDocument xml;
+	xml.Load(xmlfile, CLSID_DOMDocument);
+	CPPUNIT_ASSERT(AppSecInc::StringUtils::startsWith(xml.GetXml(), 
+		L"<bookstore xmlns=\"http://www.lucernepublishing.com\">"));
+}
+
+void XmlDocumentUnitTests::testLoadXml() 
+{ 
+	std::wstring xmlfile = GetLocalFileLocation(L"store.xml");
+	std::wcout << std::endl << L"Xml: " << xmlfile.c_str();
+	std::wstring data;
+	AppSecInc::File::ReadToEnd(xmlfile, data);
+	AppSecInc::Xml::XmlDocument xml;
+	xml.LoadXml(data);
+	CPPUNIT_ASSERT(AppSecInc::StringUtils::startsWith(xml.GetXml(), 
+		L"<bookstore xmlns=\"http://www.lucernepublishing.com\">"));
+}
+
+void XmlDocumentUnitTests::testFindNode() 
+{ 
+	std::wstring xmlfile = GetLocalFileLocation(L"store.xml");
+	AppSecInc::Xml::XmlDocument xml;
+	xml.Load(xmlfile, CLSID_DOMDocument);
+	CPPUNIT_ASSERT(xml.FindNode(L"/bookstore/book[@id=1]/title") != NULL);
+	CPPUNIT_ASSERT(xml.FindNode(L"/bookstore/book[@id=1]/invalid") == NULL);
+}
+
+void XmlDocumentUnitTests::testHasNode() 
+{ 
+	std::wstring xmlfile = GetLocalFileLocation(L"store.xml");
+	AppSecInc::Xml::XmlDocument xml;
+	xml.Load(xmlfile, CLSID_DOMDocument);
+	CPPUNIT_ASSERT(xml.HasNode(L"/bookstore/book[@id=1]/title"));
+	CPPUNIT_ASSERT(! xml.HasNode(L"/bookstore/book[@id=1]/invalid"));
+}
+
+void XmlDocumentUnitTests::testSelectNode() 
+{ 
+	std::wstring xmlfile = GetLocalFileLocation(L"store.xml");
+	AppSecInc::Xml::XmlDocument xml;
+	xml.Load(xmlfile, CLSID_DOMDocument);
+	CPPUNIT_ASSERT(xml.SelectNode(L"/bookstore/book[@id=1]/title") != NULL);
+	try
+	{
+		xml.SelectNode(L"/bookstore/book[@id=1]/invalid");
+		throw "expected std::exception";
+	}
+	catch(std::exception& e)
+	{
+		std::cout << std::endl << "Expected exception: " << e.what();
+	}
+}
+
+void XmlDocumentUnitTests::testHasNodes() 
+{ 
+	std::wstring xmlfile = GetLocalFileLocation(L"store.xml");
+	AppSecInc::Xml::XmlDocument xml;
+	xml.Load(xmlfile, CLSID_DOMDocument);
+	CPPUNIT_ASSERT(xml.HasNodes(L"/bookstore/book[@id=1]"));
+	CPPUNIT_ASSERT(! xml.HasNodes(L"/bookstore/book[@id=1]/invalid/"));
+}
+
+void XmlDocumentUnitTests::testFindNodes() 
+{ 
+	std::wstring xmlfile = GetLocalFileLocation(L"store.xml");
+	AppSecInc::Xml::XmlDocument xml;
+	xml.Load(xmlfile, CLSID_DOMDocument);
+	CPPUNIT_ASSERT(NULL != xml.FindNodes(L"/bookstore/book[@id=1]"));
+	CPPUNIT_ASSERT(NULL == xml.FindNodes(L"/bookstore/book[@id=1]/invalid/"));
+}
+
+void XmlDocumentUnitTests::testGetNodeXml() 
+{ 
+	std::wstring xmlfile = GetLocalFileLocation(L"store.xml");
+	AppSecInc::Xml::XmlDocument xml;
+	xml.Load(xmlfile, CLSID_DOMDocument);
+	std::wstring data = xml.GetNodeXml(L"/bookstore/book[@id=1]");
+	CPPUNIT_ASSERT(AppSecInc::StringUtils::startsWith(data, L"<book"));
+}
+
+void XmlDocumentUnitTests::testFindAttribute() 
+{ 
+	std::wstring xmlfile = GetLocalFileLocation(L"store.xml");
+	AppSecInc::Xml::XmlDocument xml;
+	xml.Load(xmlfile, CLSID_DOMDocument);
+	CPPUNIT_ASSERT(NULL != xml.FindAttribute(L"id", xml.SelectNode(L"/bookstore/book[@id=1]")));
+	CPPUNIT_ASSERT(NULL == xml.FindAttribute(L"iddoesntexist", xml.SelectNode(L"/bookstore/book[@id=1]")));
+}
+
+void XmlDocumentUnitTests::testSelectAttribute() 
+{ 
+	std::wstring xmlfile = GetLocalFileLocation(L"store.xml");
+	AppSecInc::Xml::XmlDocument xml;
+	xml.Load(xmlfile, CLSID_DOMDocument);
+	CPPUNIT_ASSERT(NULL != xml.SelectAttribute(L"id", xml.SelectNode(L"/bookstore/book[@id=1]")));
+	try
+	{
+		xml.SelectAttribute(L"iddoesntexist", xml.SelectNode(L"/bookstore/book[@id=1]"));
+		throw "expected std::exception";
+	}
+	catch(std::exception& e)
+	{
+		std::cout << std::endl << "Expected exception: " << e.what();
+	}
+}
+
+void XmlDocumentUnitTests::testHasAttribute() 
+{ 
+	std::wstring xmlfile = GetLocalFileLocation(L"store.xml");
+	AppSecInc::Xml::XmlDocument xml;
+	xml.Load(xmlfile, CLSID_DOMDocument);
+	CPPUNIT_ASSERT(xml.HasAttribute(L"id", xml.SelectNode(L"/bookstore/book[@id=1]")));
+	CPPUNIT_ASSERT(! xml.HasAttribute(L"iddoesntexist", xml.SelectNode(L"/bookstore/book[@id=1]")));
 }

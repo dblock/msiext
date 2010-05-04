@@ -27,7 +27,7 @@ CA_API UINT __stdcall JavaArchive_Deferred(MSIHANDLE hInstall)
     while (NULL != (row = rows->nextNode()))
     {
 		// optional path to jar.exe
-		std::wstring toolpath = xmlDocument.SelectAttributeValue(L"toolpath", row, L"");
+		std::wstring toolpath = xmlDocument.GetAttributeValue(L"toolpath", row, L"");
 		if (! toolpath.empty())
 		{
 			msiInstall.LogInfo(L"JavaArchive_Deferred - ToolPath", toolpath);
@@ -45,12 +45,12 @@ CA_API UINT __stdcall JavaArchive_Deferred(MSIHANDLE hInstall)
 		std::wstringstream command;
 		command << L"\"" << toolpath << L"\"";
 
-		std::wstring id = xmlDocument.SelectAttributeValue(L"id", row); // jar file affected			
-		std::wstring operation = xmlDocument.SelectAttributeValue(L"operation", row); // operation performed, combination of flags, eg. "cvf" or "cvfm"			
-		std::wstring jarfile = xmlDocument.SelectAttributeValue(L"jarfile", row); // jar file affected
-		std::wstring directory = xmlDocument.SelectAttributeValue(L"directory", row); // jar file affected
-		std::wstring manifestfile = xmlDocument.SelectAttributeValue(L"manifestfile", row, L""); // manifest file
-		std::wstring condition = xmlDocument.SelectAttributeValue(L"condition", row, L"1"); // manifest file
+		std::wstring id = xmlDocument.GetAttributeValue(L"id", row); // jar file affected			
+		std::wstring operation = xmlDocument.GetAttributeValue(L"operation", row); // operation performed, combination of flags, eg. "cvf" or "cvfm"			
+		std::wstring jarfile = xmlDocument.GetAttributeValue(L"jarfile", row); // jar file affected
+		std::wstring directory = xmlDocument.GetAttributeValue(L"directory", row); // jar file affected
+		std::wstring manifestfile = xmlDocument.GetAttributeValue(L"manifestfile", row, L""); // manifest file
+		std::wstring condition = xmlDocument.GetAttributeValue(L"condition", row, L"1"); // manifest file
 
 		command << L" " << operation << L" \"" << jarfile << "\"";
 		if (! manifestfile.empty()) command << L" " << manifestfile;
@@ -69,10 +69,10 @@ CA_API UINT __stdcall JavaArchive_Deferred(MSIHANDLE hInstall)
 		while (NULL != (file = files->nextNode()))
 		{
 			// filename
-			std::wstring fileid = xmlDocument.SelectAttributeValue(L"id", file);
-			std::wstring filename = xmlDocument.SelectAttributeValue(L"name", file);
-			std::wstring filedirectory = xmlDocument.SelectAttributeValue(L"directory", file, L"");
-			std::wstring filecondition = xmlDocument.SelectAttributeValue(L"condition", file, L"1");
+			std::wstring fileid = xmlDocument.GetAttributeValue(L"id", file);
+			std::wstring filename = xmlDocument.GetAttributeValue(L"name", file);
+			std::wstring filedirectory = xmlDocument.GetAttributeValue(L"directory", file, L"");
+			std::wstring filecondition = xmlDocument.GetAttributeValue(L"condition", file, L"1");
 
 			if (! filecondition.empty() && filecondition != L"1")
 			{
@@ -172,15 +172,15 @@ CA_API UINT __stdcall JavaArchive_Immediate(MSIHANDLE hInstall)
             }
         }			
 
-		std::wstring javaarchive_id = javaarchive_xml_document.SelectNodeValue(L"Data[@Column=\"Id\"]", javaarchive_row);
+		std::wstring javaarchive_id = javaarchive_xml_document.GetNodeValue(L"Data[@Column=\"Id\"]", javaarchive_row);
 		MSXML2::IXMLDOMNodePtr javaarchive_node = combined_xml_document.AppendChild(L"JavaArchive", combined_xml_root);
 		combined_xml_document.SetAttribute(L"id", javaarchive_id, javaarchive_node);
-		combined_xml_document.SetAttribute(L"jarfile", javaarchive_xml_document.SelectNodeValue(L"Data[@Column=\"JarFile\"]", javaarchive_row), javaarchive_node);
-		combined_xml_document.SetAttribute(L"toolpath", javaarchive_xml_document.SelectNodeValue(L"Data[@Column=\"ToolPath\"]", javaarchive_row), javaarchive_node);
-		combined_xml_document.SetAttribute(L"directory", javaarchive_xml_document.SelectNodeValue(L"Data[@Column=\"Directory\"]", javaarchive_row), javaarchive_node);
-		combined_xml_document.SetAttribute(L"condition", javaarchive_xml_document.SelectNodeValue(L"Data[@Column=\"Condition\"]", javaarchive_row), javaarchive_node);
-		combined_xml_document.SetAttribute(L"operation", javaarchive_xml_document.SelectNodeValue(L"Data[@Column=\"Operation\"]", javaarchive_row), javaarchive_node);
-		combined_xml_document.SetAttribute(L"manifestfile", javaarchive_xml_document.SelectNodeValue(L"Data[@Column=\"ManifestFile\"]", javaarchive_row), javaarchive_node);
+		combined_xml_document.SetAttribute(L"jarfile", javaarchive_xml_document.GetNodeValue(L"Data[@Column=\"JarFile\"]", javaarchive_row), javaarchive_node);
+		combined_xml_document.SetAttribute(L"toolpath", javaarchive_xml_document.GetNodeValue(L"Data[@Column=\"ToolPath\"]", javaarchive_row), javaarchive_node);
+		combined_xml_document.SetAttribute(L"directory", javaarchive_xml_document.GetNodeValue(L"Data[@Column=\"Directory\"]", javaarchive_row), javaarchive_node);
+		combined_xml_document.SetAttribute(L"condition", javaarchive_xml_document.GetNodeValue(L"Data[@Column=\"Condition\"]", javaarchive_row), javaarchive_node);
+		combined_xml_document.SetAttribute(L"operation", javaarchive_xml_document.GetNodeValue(L"Data[@Column=\"Operation\"]", javaarchive_row), javaarchive_node);
+		combined_xml_document.SetAttribute(L"manifestfile", javaarchive_xml_document.GetNodeValue(L"Data[@Column=\"ManifestFile\"]", javaarchive_row), javaarchive_node);
 
 		// append the files xml to the jar node
 		MSXML2::IXMLDOMNodePtr javaarchivefiles_node = combined_xml_document.AppendChild(L"JavaArchiveFiles", javaarchive_node);
@@ -191,7 +191,7 @@ CA_API UINT __stdcall JavaArchive_Immediate(MSIHANDLE hInstall)
 		while (NULL != (javaarchivefile_row = javaarchivefile_rows->nextNode()))
 		{
 			// \todo Change XPATH to fetch only rows that match ID
-			std::wstring javaarchivefile_id = javaarchivefile_xml_document.SelectNodeValue(L"Data[@Column=\"JavaArchiveId\"]", javaarchivefile_row);
+			std::wstring javaarchivefile_id = javaarchivefile_xml_document.GetNodeValue(L"Data[@Column=\"JavaArchiveId\"]", javaarchivefile_row);
 			if (javaarchivefile_id != javaarchive_id)
 				continue;
 
@@ -213,10 +213,10 @@ CA_API UINT __stdcall JavaArchive_Immediate(MSIHANDLE hInstall)
 
 			// append the file xml to the jar node
 			MSXML2::IXMLDOMNodePtr javaarchivefile_node = combined_xml_document.AppendChild(L"JavaArchiveFile", javaarchivefiles_node);
-			combined_xml_document.SetAttribute(L"id", javaarchivefile_xml_document.SelectNodeValue(L"Data[@Column=\"Id\"]", javaarchivefile_row), javaarchivefile_node);
-			combined_xml_document.SetAttribute(L"name", javaarchivefile_xml_document.SelectNodeValue(L"Data[@Column=\"Name\"]", javaarchivefile_row), javaarchivefile_node);
-			combined_xml_document.SetAttribute(L"directory", javaarchivefile_xml_document.SelectNodeValue(L"Data[@Column=\"Directory\"]", javaarchivefile_row), javaarchivefile_node);
-			combined_xml_document.SetAttribute(L"condition", javaarchivefile_xml_document.SelectNodeValue(L"Data[@Column=\"Condition\"]", javaarchivefile_row), javaarchivefile_node);
+			combined_xml_document.SetAttribute(L"id", javaarchivefile_xml_document.GetNodeValue(L"Data[@Column=\"Id\"]", javaarchivefile_row), javaarchivefile_node);
+			combined_xml_document.SetAttribute(L"name", javaarchivefile_xml_document.GetNodeValue(L"Data[@Column=\"Name\"]", javaarchivefile_row), javaarchivefile_node);
+			combined_xml_document.SetAttribute(L"directory", javaarchivefile_xml_document.GetNodeValue(L"Data[@Column=\"Directory\"]", javaarchivefile_row), javaarchivefile_node);
+			combined_xml_document.SetAttribute(L"condition", javaarchivefile_xml_document.GetNodeValue(L"Data[@Column=\"Condition\"]", javaarchivefile_row), javaarchivefile_node);
 		}
     }
 
