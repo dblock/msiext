@@ -451,3 +451,17 @@ void FileUnitTests::testIsAbsolutePath()
 	CPPUNIT_ASSERT(! AppSecInc::File::IsAbsolutePath(L"\\file.txt"));
 	CPPUNIT_ASSERT(! AppSecInc::File::IsAbsolutePath(L"1:not-a-file"));
 }
+
+void FileUnitTests::testReadAndConvertToEnd()
+{
+	std::wstring utf8_filename = AppSecInc::File::DirectoryCombine(AppSecInc::File::GetModuleDirectoryW(), 
+		L"TestData_FileUnitTests\\BronzeHorseman-UTF8.txt");
+	CPPUNIT_ASSERT(AppSecInc::File::FileExists(utf8_filename));
+	std::wstring raw_data;
+	AppSecInc::File::ReadToEnd(utf8_filename, raw_data);
+	std::wstring utf8_data;
+	AppSecInc::File::ReadAndConvertToEnd(utf8_filename, utf8_data);
+	// ::MessageBoxW(NULL, utf8_data.c_str(), L"Bronze Horseman", 0);	
+	CPPUNIT_ASSERT(utf8_data.length() == 300);
+	CPPUNIT_ASSERT(utf8_data != raw_data);
+}

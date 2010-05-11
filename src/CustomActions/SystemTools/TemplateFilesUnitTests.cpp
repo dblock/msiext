@@ -22,8 +22,12 @@ void TemplateFilesUnitTests::Test_TemplateFiles()
     std::wstring template_file_source = source_location + L"TemplateFile.template";
     std::wstring template_file_target = install_location + L"TemplateFile.txt";
 
+    std::wstring template_file_source_utf8 = source_location + L"TemplateFile-UTF8.template";
+    std::wstring template_file_target_utf8 = install_location + L"TemplateFile-UTF8.txt";
+
     // delete temporary files from previous runs
     ::DeleteFileW(template_file_target.c_str());
+    ::DeleteFileW(template_file_target_utf8.c_str());
 
     // execute the immediate CA that processes the TemplateFiles table and sets TemplateFiles_Deferred property
     {
@@ -32,26 +36,38 @@ void TemplateFilesUnitTests::Test_TemplateFiles()
         deferred_xml.LoadXml(msiInstall.GetProperty(L"TemplateFiles_Deferred"));
 
         // there's 1 file to process
-        CPPUNIT_ASSERT(1 == deferred_xml.SelectNodes(L"//TemplateFile")->length);
+        CPPUNIT_ASSERT(2 == deferred_xml.SelectNodes(L"//TemplateFile")->length);
         // there's 1 row that is going to be executed
-        CPPUNIT_ASSERT(1 == deferred_xml.SelectNodes(L"//TemplateFile[@execute='true']")->length);
+        CPPUNIT_ASSERT(2 == deferred_xml.SelectNodes(L"//TemplateFile[@execute='true']")->length);
         CPPUNIT_ASSERT(0 == deferred_xml.SelectNodes(L"//TemplateFile[@execute='false']")->length);
-        // there're 8 property nodes
-        CPPUNIT_ASSERT(8 == deferred_xml.SelectNodes(L"/TemplateFiles/TemplateFile/Properties/Property")->length);
+        // there're 6 property nodes of built-in properties + 2 user-defined for the first template
+        CPPUNIT_ASSERT(14 == deferred_xml.SelectNodes(L"/TemplateFiles/TemplateFile/Properties/Property")->length);
     }
 
     // execute the deferred CA that evalutes the template files
     msiInstall.SetProperty(L"CustomActionData", msiInstall.GetProperty(L"TemplateFiles_Deferred"));
     CPPUNIT_ASSERT(ERROR_SUCCESS == hInstall.ExecuteCA(L"SystemTools.dll", L"TemplateFiles_Deferred"));
+
+	// ANSI
     CPPUNIT_ASSERT(AppSecInc::File::FileExists(template_file_target));
     std::wstring data;
-    AppSecInc::File::ReadToEnd(template_file_target, data);
+    CPPUNIT_ASSERT(! AppSecInc::File::ReadAndConvertToEnd(template_file_target, data));
     CPPUNIT_ASSERT(! data.empty());
     // test properties were evaluated
     CPPUNIT_ASSERT(data.find(L"TEST1=test1") != data.npos);
     CPPUNIT_ASSERT(data.find(L"TEST2=test2") != data.npos);
     // INSTALLLOCATION was globally set, but not passed to the template files action
     CPPUNIT_ASSERT(data.find(L"INSTALLLOCATION=[INSTALLLOCATION]") != data.npos);
+    ::DeleteFileW(template_file_target.c_str());
+
+	// UTF8
+    CPPUNIT_ASSERT(AppSecInc::File::FileExists(template_file_target_utf8));
+    std::wstring data_utf8;
+    CPPUNIT_ASSERT(AppSecInc::File::ReadAndConvertToEnd(template_file_target_utf8, data_utf8));
+    CPPUNIT_ASSERT(! data_utf8.empty());
+    // test properties were evaluated
+    // INSTALLLOCATION was globally set, but not passed to the template files action
+    CPPUNIT_ASSERT(data_utf8.find(L"UTF8String=") != data_utf8.npos);
     ::DeleteFileW(template_file_target.c_str());
 }
 

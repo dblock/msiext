@@ -2,3 +2,4 @@ Id	ComponentId	Condition	Source	Target	Attributes
 s72	S72	S0	l0	l0	I2
 TemplateFiles	Id
 File_template_process			[SOURCELOCATION]TemplateFile.template	[INSTALLLOCATION]TemplateFile.txt	1
+File_template_process_utf8			[SOURCELOCATION]TemplateFile-UTF8.template	[INSTALLLOCATION]TemplateFile-UTF8.txt	1

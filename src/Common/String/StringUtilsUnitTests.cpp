@@ -6,7 +6,7 @@ CPPUNIT_TEST_SUITE_REGISTRATION(AppSecInc::UnitTests::String::StringUtilsUnitTes
 
 using namespace AppSecInc::UnitTests::String;
 
-void StringUtilsUnitTests::testTrim(void)
+void StringUtilsUnitTests::testTrim()
 {
 	typedef struct  
 	{
@@ -42,7 +42,7 @@ void StringUtilsUnitTests::testTrim(void)
 	}
 }
 
-void StringUtilsUnitTests::teststringToLong(void)
+void StringUtilsUnitTests::teststringToLong()
 {
 	typedef struct  
 	{
@@ -134,7 +134,7 @@ void StringUtilsUnitTests::teststringToLong(void)
 	}
 }
 
-void StringUtilsUnitTests::testTokenizeJoin(void)
+void StringUtilsUnitTests::testTokenizeJoin()
 {
 
 	typedef struct  
@@ -199,7 +199,7 @@ void StringUtilsUnitTests::testTokenizeJoin(void)
 	CPPUNIT_ASSERT( parts[11] == "\\\\WINGMAN\\pipe\\MSSQL$APPSECINC\\sql\\query" );
 }
 
-void StringUtilsUnitTests::testTokenizeOnChar(void)
+void StringUtilsUnitTests::testTokenizeOnChar()
 {
 
 	typedef struct  
@@ -406,7 +406,7 @@ void StringUtilsUnitTests::testReplace()
 	}
 }
 
-void StringUtilsUnitTests::testWc2Mb(void)
+void StringUtilsUnitTests::testWc2Mb()
 {
 	typedef struct  
 	{
@@ -433,7 +433,7 @@ void StringUtilsUnitTests::testWc2Mb(void)
 	}
 }
 
-void StringUtilsUnitTests::testMb2Wc(void)
+void StringUtilsUnitTests::testMb2Wc()
 {
 	typedef struct  
 	{
@@ -460,7 +460,7 @@ void StringUtilsUnitTests::testMb2Wc(void)
 	}
 }
 
-void StringUtilsUnitTests::testBSTR2Mb(void)
+void StringUtilsUnitTests::testBSTR2Mb()
 {
 	typedef struct  
 	{
@@ -488,7 +488,7 @@ void StringUtilsUnitTests::testBSTR2Mb(void)
 	}
 }
 
-void StringUtilsUnitTests::testEbcdic(void)
+void StringUtilsUnitTests::testEbcdic()
 {
 	typedef struct  
 	{
@@ -521,7 +521,7 @@ void StringUtilsUnitTests::testEbcdic(void)
 	}
 }
 
-void StringUtilsUnitTests::testVARIANT2Mb(void)
+void StringUtilsUnitTests::testVARIANT2Mb()
 {
 	// multibyte character tests
 	CPPUNIT_ASSERT(StringUtils::toString(CComVariant("hello!")) == "hello!");
@@ -584,7 +584,7 @@ void StringUtilsUnitTests::testVARIANT2Mb(void)
 	// Still need to test SAFEARRAY
 }
 
-void StringUtilsUnitTests::testlongToString(void)
+void StringUtilsUnitTests::testlongToString()
 {
 	struct TestData 
 	{
@@ -609,7 +609,7 @@ void StringUtilsUnitTests::testlongToString(void)
 	}
 }
 
-void StringUtilsUnitTests::testlongToWString(void)
+void StringUtilsUnitTests::testlongToWString()
 {
 	struct TestData 
 	{
@@ -631,5 +631,36 @@ void StringUtilsUnitTests::testlongToWString(void)
         std::wstring number = StringUtils::toWString(testData[i].testIn);
         std::cout << std::endl << testData[i].testIn << " => " << StringUtils::wc2mb(number) << " (expecting " << StringUtils::wc2mb(testData[i].testOut) << ")";
 		CPPUNIT_ASSERT(testData[i].testOut == number);
+	}
+}
+
+void StringUtilsUnitTests::testUTF8()
+{
+	typedef struct  
+	{
+		LPCSTR testIn;
+		LPCWSTR testOut;
+	} TestData;
+
+	const unsigned char s1[] = { 0xc3, 0x8a, 0x00 };
+	const unsigned char s2[] = { 0xEF, 0x80, 0xBF, 0x00 };
+	const unsigned char s3[] = { 0x41, 0xc3, 0xaa, 0xc3, 0xb1, 0xc3, 0xbc, 0x43, 0x00 };
+
+	TestData testData[] = 
+	{
+		{ "", L"" },
+		{ "x", L"x" },
+		{ "hello world", L"hello world" },
+		{ (char *) s1, L"\uCA" },
+		{ (char *) s2, L"\uF03F" },
+		{ (char *) s3, L"A\u00ea\u00f1\u00fcC" },
+	};
+
+	for( unsigned int i = 0; i < ARRAYSIZE(testData); i++ )
+	{
+		std::wstring unicode_string = StringUtils::utf82wc(testData[i].testIn);
+		CPPUNIT_ASSERT(unicode_string.length() <= strlen(testData[i].testIn));
+		std::string utf8_string = StringUtils::wc2utf8(unicode_string);
+		CPPUNIT_ASSERT(utf8_string == testData[i].testIn);
 	}
 }

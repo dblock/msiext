@@ -219,6 +219,18 @@ namespace AppSecInc
         */
         void ReadToEnd(const std::wstring& filename, std::vector<char>& data);
 
+		/*! UTF8 byte order mark */
+		static unsigned char utf8_bom[] = { 0xef, 0xbb, 0xbf };
+
+        /*!
+         \brief Read the entire contents of file and convert to UNICODE depending on the file marker.			    
+         \param filename path to a file
+         \data output, full contents of file in UNICODE format
+		 \return true if UTF8 conversion has occurred
+		 \remarks Currently supports UTF-8 only.
+        */
+		bool ReadAndConvertToEnd(const std::wstring& filename, std::wstring& data);
+
         /*!
          \brief Write data to a file
          \param data data to write

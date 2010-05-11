@@ -32,6 +32,7 @@ namespace AppSecInc
 					CPPUNIT_TEST(testInsertLargePayload_MSSQL);
 					CPPUNIT_TEST(testInsertLargePayload_Access);
 					CPPUNIT_TEST(testInsertXml);
+					CPPUNIT_TEST(testSelectUTF8String);
 					CPPUNIT_TEST_SUITE_END();
 				public:
 					void testConstructorDestructor();
@@ -56,6 +57,7 @@ namespace AppSecInc
 					void testInsertLargePayload_MSSQL();
 					void testInsertLargePayload_Access();
                     void testInsertXml();
+					void testSelectUTF8String();
 				};
 			}
 		}

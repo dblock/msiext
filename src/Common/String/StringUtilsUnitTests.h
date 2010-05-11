@@ -8,7 +8,6 @@ namespace AppSecInc
 		{
 			class StringUtilsUnitTests :  public CPPUNIT_NS::TestFixture
 			{
-
 				CPPUNIT_TEST_SUITE( StringUtilsUnitTests );
 				CPPUNIT_TEST( teststringToLong );
 				CPPUNIT_TEST( testTokenizeJoin );				
@@ -24,24 +23,24 @@ namespace AppSecInc
 				CPPUNIT_TEST( testEbcdic );
 				CPPUNIT_TEST( testlongToString );
 				CPPUNIT_TEST( testlongToWString );
+				CPPUNIT_TEST( testUTF8 );
 				CPPUNIT_TEST_SUITE_END();
-
 			public:
-
-				void teststringToLong(void);
-				void testTokenizeJoin(void);
-				void testTokenizeOnChar(void);
-                void testTrim(void);
-				void testStartsWith(void);
-				void testEndsWith(void);
-				void testReplace(void);
-				void testMb2Wc(void);
-				void testWc2Mb(void);
-				void testBSTR2Mb(void);
-				void testVARIANT2Mb(void);
-				void testEbcdic(void);
-				void testlongToString(void);
-				void testlongToWString(void);
+				void teststringToLong();
+				void testTokenizeJoin();
+				void testTokenizeOnChar();
+                void testTrim();
+				void testStartsWith();
+				void testEndsWith();
+				void testReplace();
+				void testMb2Wc();
+				void testWc2Mb();
+				void testBSTR2Mb();
+				void testVARIANT2Mb();
+				void testEbcdic();
+				void testlongToString();
+				void testlongToWString();
+				void testUTF8();
 			};
 		}
 	}

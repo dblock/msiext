@@ -124,9 +124,10 @@ void ODBQCmdEngine::ExecuteFile(const std::wstring& file)
 		std::wcout << L"- Loading \"" + file + L"\"" << std::endl;
 	}
 
-    AppSecInc::File::ReadToEnd(file, query);
+    AppSecInc::File::ReadAndConvertToEnd(file, query);
     CHECK_BOOL(! query.empty(),
         L"File \"" << file << L"\" is empty");
+
     ExecuteSql(query);
 }
 

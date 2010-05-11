@@ -210,6 +210,63 @@ std::string AppSecInc::StringUtils::wc2mb(const wchar_t * from, unsigned int len
     return to;
 }
 
+std::wstring AppSecInc::StringUtils::utf82wc(const std::string& from) 
+{
+    return utf82wc(from.c_str(), from.length());
+}
+
+std::wstring AppSecInc::StringUtils::utf82wc(const char * from) 
+{
+    return utf82wc(from, from != NULL ? lstrlenA(from) : 0);
+}
+
+std::wstring AppSecInc::StringUtils::utf82wc(const char * from, unsigned int len) 
+{
+    std::wstring to;
+
+    if (from == NULL || len == 0)
+    {
+	    return to;
+    }
+
+	int to_len = ::MultiByteToWideChar(CP_UTF8, 0, from, len, NULL, 0);
+	CHECK_WIN32_BOOL(to_len > 0, L"MultiByteToWideChar");
+
+	to.resize(to_len);
+	to_len = ::MultiByteToWideChar(CP_UTF8, 0, from, len, & * to.begin(), to.size());	
+	CHECK_WIN32_BOOL(to_len > 0, L"MultiByteToWideChar");
+
+	return to;
+}
+
+std::string AppSecInc::StringUtils::wc2utf8(const std::wstring& from) 
+{
+    return wc2utf8(from.c_str(), from.length());
+}
+
+std::string AppSecInc::StringUtils::wc2utf8(const wchar_t * from) 
+{
+    return wc2utf8(from, from != NULL ? lstrlenW(from) : 0);
+}
+
+std::string AppSecInc::StringUtils::wc2utf8(const wchar_t * from, unsigned int len) 
+{
+    std::string to;
+    if (from == NULL || len == 0)
+    {
+	    return to;
+    }
+
+	int to_len = ::WideCharToMultiByte(CP_UTF8, 0, from, len, NULL, 0, NULL, NULL);
+	CHECK_WIN32_BOOL(to_len > 0, L"WideCharToMultiByte");
+
+	to.resize(to_len);
+	to_len = ::WideCharToMultiByte(CP_UTF8, 0, from, len, & * to.begin(), to.size(), NULL, NULL);
+	CHECK_WIN32_BOOL(to_len > 0, L"WideCharToMultiByte");
+
+	return to;
+}
+
 long AppSecInc::StringUtils::stringToLong(const std::string& ss, long default_on_error, int base)
 {
     return stringToLong(ss.c_str(), default_on_error, base);

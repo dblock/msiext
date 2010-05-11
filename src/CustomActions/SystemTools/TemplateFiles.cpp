@@ -146,10 +146,20 @@ CA_API UINT __stdcall TemplateFiles_Deferred(MSIHANDLE hInstall)
         }
 
         std::wstring data;
-        AppSecInc::File::ReadToEnd(source, data);
+        bool utf8 = AppSecInc::File::ReadAndConvertToEnd(source, data);
         data = AppSecInc::Formatter::FormatTemplate(data, properties);
 
-        std::string char_data = AppSecInc::StringUtils::wc2mb(data);
+		std::string char_data;
+		if (utf8) 
+		{
+			char_data = AppSecInc::StringUtils::wc2utf8(data);
+			char_data.insert(0, std::string(reinterpret_cast<char *>(AppSecInc::File::utf8_bom)));
+		}
+		else
+		{
+			char_data = AppSecInc::StringUtils::wc2mb(data);
+		}
+
         std::vector<char> binary_data;
         binary_data.assign(char_data.begin(), char_data.end());
 

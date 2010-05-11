@@ -905,3 +905,16 @@ void ODBCConnectionUnitTests::testInsertXml()
     std::wcout << std::endl << L"Dropping: " << databasename;
     database.Drop();
 }
+
+
+void ODBCConnectionUnitTests::testSelectUTF8String()
+{
+	MSSQLConnectionInfo info(L"localhost");
+	ODBCConnection conn;
+    conn.Connect(info);
+	const unsigned char s3[] = { 0x41, 0xc3, 0xaa, 0xc3, 0xb1, 0xc3, 0xbc, 0x43, 0x00 };
+	std::wstring wctext = AppSecInc::StringUtils::utf82wc(reinterpret_cast<const char *>(s3));
+    std::wstring result = conn.GetWString(L"SELECT '" + wctext + L"'");
+	CPPUNIT_ASSERT(wctext == result);
+	CPPUNIT_ASSERT(AppSecInc::StringUtils::wc2utf8(wctext) == reinterpret_cast<const char *>(s3));
+}

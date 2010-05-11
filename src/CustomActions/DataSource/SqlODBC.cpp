@@ -197,7 +197,8 @@ CA_API UINT __stdcall Execute_ODBC_Deferred(MSIHANDLE hInstall)
         if (! filename.empty())
         {
             msiInstall.LogInfo(_T(__FUNCTION__), L"Loading \"" + filename + L"\"");
-            AppSecInc::File::ReadToEnd(filename, sql);
+
+            AppSecInc::File::ReadAndConvertToEnd(filename, sql);
 
             CHECK_BOOL(! sql.empty(),
                 L"File \"" << filename << L"\" is empty");

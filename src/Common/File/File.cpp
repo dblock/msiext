@@ -335,9 +335,9 @@ std::wstring AppSecInc::File::GetTemporaryDirectoryW()
 
 void AppSecInc::File::ReadToEnd(const std::wstring& filename, std::wstring& data)
 {
-    std::string char_data;
+	std::vector<char> char_data;
     ReadToEnd(filename, char_data);
-    data = AppSecInc::StringUtils::mb2wc(char_data);
+	data = AppSecInc::StringUtils::mb2wc(& * char_data.begin(), char_data.size());
 }
 
 void AppSecInc::File::ReadToEnd(const std::wstring& filename, std::string& data)
@@ -370,6 +370,31 @@ void AppSecInc::File::ReadToEnd(const std::wstring& filename, std::vector<char>&
         CHECK_BOOL(dwRead == size,
             L"Invalid number of bytes read from " << filename);
     }
+}
+
+bool AppSecInc::File::ReadAndConvertToEnd(const std::wstring& filename, std::wstring& data)
+{
+	data.clear();
+	std::vector<char> file_data;
+	ReadToEnd(filename, file_data);
+	if (file_data.size() >= 3 && 
+		static_cast<unsigned char>(file_data[0]) == utf8_bom[0] && 
+		static_cast<unsigned char>(file_data[1]) == utf8_bom[1] && 
+		static_cast<unsigned char>(file_data[2]) == utf8_bom[2])
+	{
+		file_data.erase(file_data.begin(), file_data.begin() + 3);
+		if (file_data.size() > 0)
+		{
+			data = AppSecInc::StringUtils::utf82wc(& * file_data.begin(), file_data.size());
+		}
+		return true;
+	}
+	else if (file_data.size() > 0)
+	{
+		data = AppSecInc::StringUtils::mb2wc(& * file_data.begin(), file_data.size());
+	}
+
+	return false;
 }
 
 void AppSecInc::File::FileWrite(

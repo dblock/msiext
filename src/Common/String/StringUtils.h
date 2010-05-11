@@ -138,6 +138,15 @@ namespace AppSecInc
 	    std::wstring mb2wc(const char * from, unsigned int len);
 
 	    /*!
+	     This converts a UTF8 string to a Wide-character (Unicode) set string.
+	     \param from Input. The UTF8 string to convert.
+	     \return The resulting Wide-character string.
+	     */
+	    std::wstring utf82wc(const std::string& from);
+	    std::wstring utf82wc(const char * from);
+	    std::wstring utf82wc(const char * from, unsigned int len);
+
+	    /*!
 	     This converts a Wide-character (Unicode) string to a Multi-byte (ASCII) string.
 	     \param from Input. The wide-char string to convert.
 	     \return The resulting multi-byte string.
@@ -145,6 +154,15 @@ namespace AppSecInc
 	    std::string wc2mb(const std::wstring& from);
 	    std::string wc2mb(const wchar_t * from);
 	    std::string wc2mb(const wchar_t * from, unsigned int len);
+
+	    /*!
+	     This converts a Wide-character (Unicode) string to a UTF8 string.
+	     \param from Input. The wide-char string to convert.
+	     \return The resulting multi-byte UTF8 string.
+	     */
+	    std::string wc2utf8(const std::wstring& from);
+	    std::string wc2utf8(const wchar_t * from);
+	    std::string wc2utf8(const wchar_t * from, unsigned int len);
 
 	    /*!
 	     This converts a BSTR to a Multi-byte (ASCII) string.

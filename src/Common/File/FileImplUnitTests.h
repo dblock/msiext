@@ -30,6 +30,7 @@ namespace AppSecInc
 				CPPUNIT_TEST( testGetParentDirectory );
 				CPPUNIT_TEST( testGetSpecialFolderPath );
 				CPPUNIT_TEST( testIsAbsolutePath );
+				CPPUNIT_TEST( testReadAndConvertToEnd );
 				CPPUNIT_TEST_SUITE_END();
 			public:
 				void testGetTemporaryFileName();
@@ -53,6 +54,7 @@ namespace AppSecInc
 				void testGetParentDirectory();
 				void testGetSpecialFolderPath();
 				void testIsAbsolutePath();
+				void testReadAndConvertToEnd();
 			};
 		}
 	}

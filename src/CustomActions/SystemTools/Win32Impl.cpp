@@ -784,7 +784,22 @@ CA_API UINT __stdcall Win32_WriteFile(MSIHANDLE hInstall)
     MsiInstall msiInstall(hInstall);
     std::wstring data = msiInstall.GetProperty(L"WIN32_FILE_DATA");
 	std::wstring filename = msiInstall.GetProperty(L"WIN32_FILE_NAME");
-	std::string char_data = AppSecInc::StringUtils::wc2mb(data);
+	std::wstring encoding = msiInstall.GetProperty(L"WIN32_FILE_ENCODING");
+	AppSecInc::StringUtils::uppercase(encoding);
+	std::string char_data;
+	if (encoding.length() == 0 || encoding == L"ANSI")
+	{
+		char_data = AppSecInc::StringUtils::wc2mb(data);
+	}
+	else if (encoding == L"UTF-8")
+	{
+		char_data = AppSecInc::StringUtils::wc2utf8(data);
+		char_data.insert(0, std::string(reinterpret_cast<char *>(AppSecInc::File::utf8_bom)));
+	}
+	else
+	{
+		THROW(L"Invalid encoding: " << encoding);
+	}
 	std::vector<char> binary_data;
 	binary_data.assign(char_data.begin(), char_data.end());
 	AppSecInc::File::FileWrite(filename, binary_data);
@@ -797,9 +812,9 @@ CA_API UINT __stdcall Win32_ReadFile(MSIHANDLE hInstall)
     MSI_EXCEPTION_HANDLER_PROLOG;
     MsiInstall msiInstall(hInstall);
 	std::wstring filename = msiInstall.GetProperty(L"WIN32_FILE_NAME");
-	std::string data;
-	AppSecInc::File::ReadToEnd(filename, data);
-	msiInstall.SetProperty("WIN32_FILE_DATA", data);
+	std::wstring data;
+	AppSecInc::File::ReadAndConvertToEnd(filename, data);
+	msiInstall.SetProperty(L"WIN32_FILE_DATA", data);
 	MSI_EXCEPTION_HANDLER_EPILOG;
     return ERROR_SUCCESS;
 }

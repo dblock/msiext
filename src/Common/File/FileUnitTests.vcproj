@@ -81,8 +81,8 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				Description="Running Unit Tests"
-				CommandLine=""
+				Description=""
+				CommandLine="if not exist &quot;$(TargetDir)TestData_$(ProjectName)&quot; mkdir &quot;$(TargetDir)TestData_$(ProjectName)&quot;&#x0D;&#x0A;copy &quot;$(ProjectDir)TestData\*.*&quot; &quot;$(TargetDir)TestData_$(ProjectName)&quot; /y&#x0D;&#x0A;"
 			/>
 		</Configuration>
 		<Configuration
@@ -152,8 +152,8 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				Description="Running Unit Tests"
-				CommandLine=""
+				Description=""
+				CommandLine="if not exist &quot;$(TargetDir)TestData_$(ProjectName)&quot; mkdir &quot;$(TargetDir)TestData_$(ProjectName)&quot;&#x0D;&#x0A;copy &quot;$(ProjectDir)TestData\*.*&quot; &quot;$(TargetDir)TestData_$(ProjectName)&quot; /y&#x0D;&#x0A;"
 			/>
 		</Configuration>
 	</Configurations>
@@ -225,6 +225,14 @@
 			</File>
 			<File
 				RelativePath=".\VersionUnitTests.h"
+				>
+			</File>
+		</Filter>
+		<Filter
+			Name="TestData"
+			>
+			<File
+				RelativePath=".\TestData\BronzeHorseman-UTF8.txt"
 				>
 			</File>
 		</Filter>

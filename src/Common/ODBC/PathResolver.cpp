@@ -22,7 +22,7 @@ std::wstring FilesystemPathResolver::readContent(const std::wstring& path)
 	std::wstring fullpath = getFullPath(path);
 	CHECK_BOOL(AppSecInc::File::FileExists(fullpath), 
 		L"File does not exist: " << fullpath);
-	AppSecInc::File::ReadToEnd(fullpath, content);
+	AppSecInc::File::ReadAndConvertToEnd(fullpath, content);
 	return content;
 }
 

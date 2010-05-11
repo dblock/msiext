@@ -182,6 +182,8 @@ CA_API UINT __stdcall Win32_GetParentDirectory(MSIHANDLE hInstall);
 \brief Read contents of an ANSI file into a property.
 \param WIN32_FILE_NAME Fully qualified path to the target file.
 \return WIN32_FILE_DATA Data in the file.
+
+If the file is in the UTF-8 format, the data is converted to UNICODE. 
 */
 CA_API UINT __stdcall Win32_ReadFile(MSIHANDLE hInstall);
 
@@ -189,5 +191,6 @@ CA_API UINT __stdcall Win32_ReadFile(MSIHANDLE hInstall);
 \brief Write to an ANSI text file.
 \param WIN32_FILE_DATA Data to write to a file.
 \param WIN32_FILE_NAME Fully qualified path to the target file.
+\param WIN32_FILE_ENCODING Set to "UTF-8" to write a file in the UTF-8 format, "ANSI" to write the file in the ANSI format. Default is ANSI.
 */
 CA_API UINT __stdcall Win32_WriteFile(MSIHANDLE hInstall);

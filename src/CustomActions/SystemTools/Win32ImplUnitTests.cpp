@@ -705,6 +705,16 @@ void Win32ImplUnitTests::Test_Win32_WriteFile()
     std::string read_guid_string(read_guid.begin(), read_guid.end());
     std::cout << std::endl << "Read GUID: " << read_guid_string;
     CPPUNIT_ASSERT(write_guid == read_guid_string);
+	// with ANSI encoding
+	msiInstall.SetProperty(L"WIN32_FILE_ENCODING", L"ANSI");
+	msiInstall.SetProperty(L"WIN32_FILE_DATA", L"A\u00ea\u00f1\u00fcC");
+	CPPUNIT_ASSERT(ERROR_SUCCESS == hInstall.ExecuteCA(L"SystemTools.dll", L"Win32_WriteFile"));
+	CPPUNIT_ASSERT(5 == AppSecInc::File::GetFileSize(tmpfile));
+    // with UTF8 encoding
+	msiInstall.SetProperty(L"WIN32_FILE_ENCODING", L"UTF-8");
+	msiInstall.SetProperty(L"WIN32_FILE_DATA", L"A\u00ea\u00f1\u00fcC");
+	CPPUNIT_ASSERT(ERROR_SUCCESS == hInstall.ExecuteCA(L"SystemTools.dll", L"Win32_WriteFile"));
+	CPPUNIT_ASSERT(11 == AppSecInc::File::GetFileSize(tmpfile));
     // delete temp file
     AppSecInc::File::FileDelete(tmpfile);
 }
