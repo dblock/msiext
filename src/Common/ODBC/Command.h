@@ -41,15 +41,15 @@ namespace AppSecInc
 			// e.g. for sqlcmd: :ON ERROR EXIT, :ON ERROR IGNORE
 			class OnErrorCommand: public Command {
 			public:
-				OnErrorCommand(const std::wstring& name,
-				               const std::wstring& exitParam,
-				               const std::wstring& continueParam);
+				OnErrorCommand(
+					const std::wstring& name,
+				    const std::wstring& exitParam,
+				    const std::wstring& continueParam);
 				virtual void process(const std::wstring& line, OdbcParserImpl& parser);
 			private:
 				std::wstring exitParam;
 				std::wstring continueParam;
-			};
-			
+			};			
 		}
 	}
 }

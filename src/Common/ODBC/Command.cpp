@@ -5,22 +5,28 @@
 using namespace AppSecInc::Databases::ODBC;
 
 Command::Command(const std::wstring& name, bool params, bool insert, bool terminator)
-: name(name), params(params), insert(insert), batchTerminator(terminator) {
+	: name(name)
+	, params(params)
+	, insert(insert)
+	, batchTerminator(terminator) 
+{
+
 }
 
 Command::~Command()
 {
 }
 
-void Command::process(const std::wstring& line, OdbcParserImpl& parser) {
+void Command::process(const std::wstring& line, OdbcParserImpl& parser) 
+{
     // default - do nothing
 }
 
 InsertCommand::InsertCommand(const std::wstring& name) 
-: Command(name,true,true,false) 
+	: Command(name, true, true, false) 
 {
-}
 
+}
 
 void InsertCommand::process(const std::wstring& line, OdbcParserImpl& parser) 
 {
@@ -29,11 +35,15 @@ void InsertCommand::process(const std::wstring& line, OdbcParserImpl& parser)
 	parser.insertSource( sourceName );
 }
 
-OnErrorCommand::OnErrorCommand(const std::wstring& name,
-				               const std::wstring& eParam,
-				               const std::wstring& cParam)
-: Command(name, true,false,false), exitParam(eParam), continueParam(cParam)
+OnErrorCommand::OnErrorCommand(
+	const std::wstring& name,
+	const std::wstring& eParam,
+	const std::wstring& cParam)
+	: Command(name, true, false, false)
+	, exitParam(eParam)
+	, continueParam(cParam)
 {
+
 }
 
 void OnErrorCommand::process(const std::wstring& line, OdbcParserImpl& parser) 
@@ -43,7 +53,7 @@ void OnErrorCommand::process(const std::wstring& line, OdbcParserImpl& parser)
 	AppSecInc::StringUtils::lowercase(param);
 	if (AppSecInc::StringUtils::startsWith(param, exitParam))
 	{
-			parser.setExitOnErrorFlag( true );
+		parser.setExitOnErrorFlag( true );
 	}
 	else if (AppSecInc::StringUtils::startsWith(param, continueParam))
 	{
@@ -51,6 +61,6 @@ void OnErrorCommand::process(const std::wstring& line, OdbcParserImpl& parser)
 	}
 	else
 	{
-			// ignore invalid command - or should we throw?
+		THROW(L"Unsupported command: " << param);
 	}
 }

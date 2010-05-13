@@ -40,7 +40,6 @@ namespace AppSecInc
 			  public:
 				OdbcParser();
 				virtual ~OdbcParser();
-
 				/*! \brief select sql flavor (type of command-line tool)
 				    \param sqlFlavour sql flavour, case-insensitive.
 				                      One of 'sqlserver', 'mssql', 'osql', 'tsql',
@@ -58,17 +57,14 @@ namespace AppSecInc
 				void setInput(const std::wstring& input);
 				//! get path resolver used
 				PathResolver* getPathResolver() const;
-				
 				//! check if there are more batches in the input
 				bool hasMore();
 				//! get next batch to execute
 				std::wstring getNextBatch();
 				//! returns current state of error processing in the script
 				bool exitOnErrorFlag();
-
-				// return input with all files inserted (flatten input)
+				//! return input with all files inserted (flatten input)
 				std::wstring processInsertsOnly();
-				
 			  private:
 				OdbcParser(const OdbcParser& other);
 				OdbcParser& operator=(const OdbcParser& other);

@@ -128,6 +128,11 @@ void ODBQCmdEngine::ExecuteFile(const std::wstring& file)
     CHECK_BOOL(! query.empty(),
         L"File \"" << file << L"\" is empty");
 
+	if (! _nologo.getValue())
+	{
+		std::wcout << L"- Executing\"" + file + L"\"" << std::endl;
+	}
+
     ExecuteSql(query);
 }
 

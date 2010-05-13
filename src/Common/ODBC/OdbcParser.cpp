@@ -23,13 +23,16 @@ void OdbcParser::setDelimiters(const std::vector<const std::wstring>& delimiters
 	pimpl->setDelimiters(delimiters);
 }
 
-void OdbcParser::setSqlTypeOrDelimiter(const std::wstring& sqltype, 
-                                       const std::wstring& delimiter)
+void OdbcParser::setSqlTypeOrDelimiter(
+	const std::wstring& sqltype, 
+    const std::wstring& delimiter)
 {
-	if (!sqltype.empty()) {
+	if (!sqltype.empty()) 
+	{
 		pimpl->setSqlFlavour(sqltype);
 	}
-	else if (!delimiter.empty()) {
+	else if (! delimiter.empty()) 
+	{
 		std::vector<const std::wstring> delims;
 		delims.push_back(delimiter);
 		pimpl->setDelimiters(delims);
@@ -41,7 +44,7 @@ void OdbcParser::setPathResolver(PathResolver* resolver)
 	pimpl->setPathResolver(resolver);
 }
 
-PathResolver* OdbcParser::getPathResolver() const
+PathResolver * OdbcParser::getPathResolver() const
 {
 	return pimpl->getPathResolver();
 }

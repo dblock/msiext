@@ -77,6 +77,8 @@ void OdbcParserUnitTests::testOdbcParserSplitting()
 	CPPUNIT_ASSERT(L"Line 1\r\nLINE 2" == stmt);
 	stmt = parser.getNextBatch();
 	CPPUNIT_ASSERT(L"Line 3" == stmt);
+	CPPUNIT_ASSERT(parser.hasMore());
+	CPPUNIT_ASSERT(L"" == parser.getNextBatch());
 	CPPUNIT_ASSERT(!parser.hasMore());
 }
 
@@ -114,11 +116,11 @@ void OdbcParserUnitTests::testOdbcParserInsertNotTerminating()
 	OdbcParser parser;
 	parser.setSqlFlavour(L"SqlServer");
 	parser.setInput( input );
-	MockNameResolver resolver(L"Inserted B\r\n");
+	MockNameResolver resolver(L"Inserted B");
 	parser.setPathResolver( &resolver );
 	
 	CPPUNIT_ASSERT(L"Line 1" == parser.getNextBatch());
-	CPPUNIT_ASSERT(L"Inserted B\r\nLINE 2" == parser.getNextBatch());
+	CPPUNIT_ASSERT(L"Inserted B\nLINE 2" == parser.getNextBatch());
 	CPPUNIT_ASSERT(!parser.hasMore());
 }
 
@@ -151,4 +153,61 @@ void OdbcParserUnitTests::testOdbcParserExitOnErrorFlag()
 	
 	parser.getNextBatch();
 	CPPUNIT_ASSERT_EQUAL( true, parser.exitOnErrorFlag() );
+}
+
+void OdbcParserUnitTests::testOdbcParserCr()
+{
+	std::wstring input = L"Line 1\rgo\r:r A.sql\rLINE 2";
+	OdbcParser parser;
+	parser.setSqlFlavour(L"SqlServer");
+	parser.setInput( input );
+	MockNameResolver resolver(L"Inserted A\rGO");
+	parser.setPathResolver( &resolver );
+	
+	CPPUNIT_ASSERT(L"Line 1" == parser.getNextBatch());
+	CPPUNIT_ASSERT(L"Inserted A" == parser.getNextBatch());
+	CPPUNIT_ASSERT(L"LINE 2" == parser.getNextBatch());
+	CPPUNIT_ASSERT(! parser.hasMore());
+}
+
+void OdbcParserUnitTests::testOdbcParserLf()
+{
+	std::wstring input = L"Line 1\ngo\n:r A.sql\nLINE 2";
+	OdbcParser parser;
+	parser.setSqlFlavour(L"SqlServer");
+	parser.setInput( input );
+	MockNameResolver resolver(L"Inserted A\nGO");
+	parser.setPathResolver( &resolver );
+	
+	CPPUNIT_ASSERT(L"Line 1" == parser.getNextBatch());
+	CPPUNIT_ASSERT(L"Inserted A" == parser.getNextBatch());
+	CPPUNIT_ASSERT(L"LINE 2" == parser.getNextBatch());
+	CPPUNIT_ASSERT(! parser.hasMore());
+}
+
+void OdbcParserUnitTests::testOdbcParserLfCr()
+{
+	std::wstring input = L"Line 1\n\rgo\n\r:r A.sql\n\rLINE 2";
+	OdbcParser parser;
+	parser.setSqlFlavour(L"SqlServer");
+	parser.setInput( input );
+	MockNameResolver resolver(L"Inserted A\n\rGO");
+	parser.setPathResolver( &resolver );
+	
+	CPPUNIT_ASSERT(L"Line 1" == parser.getNextBatch());
+	CPPUNIT_ASSERT(L"Inserted A" == parser.getNextBatch());
+	CPPUNIT_ASSERT(L"LINE 2" == parser.getNextBatch());
+	CPPUNIT_ASSERT(! parser.hasMore());
+}
+
+void OdbcParserUnitTests::testOdbcParserPrintMultipleLines()
+{
+	std::wstring input = L"PRINT '\n\r\n\rhello world\n\r'\r\nLINE 2";
+	std::wstring expected = L"PRINT '\n\r\n\rhello world\n\r'\r\nLINE 2";
+	OdbcParser parser;
+	parser.setSqlFlavour(L"SqlServer");
+	parser.setInput( input );
+	std::wstring output = parser.getNextBatch();
+	CPPUNIT_ASSERT(expected == output);
+	CPPUNIT_ASSERT(! parser.hasMore());
 }

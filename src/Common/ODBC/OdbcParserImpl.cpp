@@ -7,15 +7,18 @@ using namespace AppSecInc::Databases::ODBC;
 static FilesystemPathResolver defaultPathResolver;
 static CommandSet emptySet;
 
-
 OdbcParserImpl::OdbcParserImpl()
-: commandSet(&emptySet),pathResolver(&defaultPathResolver), currPos(0),
-  exitOnError(true)
+	: commandSet(&emptySet)
+	, pathResolver(&defaultPathResolver)
+	, currPos(0)
+	, exitOnError(true)
 {
+
 }
 
 OdbcParserImpl::~OdbcParserImpl()
 {
+
 }
 
 void OdbcParserImpl::setPathResolver(PathResolver* resolver) 
@@ -48,19 +51,21 @@ void OdbcParserImpl::insertSource(const std::wstring& path)
 
 void OdbcParserImpl::insertInput(const std::wstring& input)
 {
-	std::vector<std::wstring> inp;
-	AppSecInc::StringUtils::tokenize(input, inp, L"\n");
-	// do not insert last empty line (artefact of tokenizing when '\n' is at the end)
-	int skiplast = 0;
-	if (inp.size() > 0 && inp[inp.size() - 1] == L"") {
-		skiplast = 1;
+	char inputDelimiter = (input.length() > 0) ? input[input.length() - 1] : 0;
+	char sqlDelimiter = (currPos < sql.length()) ? sql[currPos] : 0;
+
+	if (inputDelimiter != L'\n' && inputDelimiter != L'\r' 
+		&& sqlDelimiter != L'\n' && sqlDelimiter != L'\r')
+	{
+		sql.insert(currPos, L"\n");
 	}
-	lines.insert(lines.begin() + currPos, inp.begin(), inp.end() - skiplast);
+
+	sql.insert(currPos, input);
 }
 
 bool OdbcParserImpl::hasMore() const
 {
-	return currPos < lines.size();
+	return currPos < sql.length();
 }
 
 std::wstring OdbcParserImpl::getNextBatch()
@@ -78,20 +83,32 @@ std::wstring OdbcParserImpl::processInsertsOnly()
 	return buffer;
 }
 
+void OdbcParserImpl::nextline(std::wstring& buffer)
+{
+	int start = currPos;
+	while(currPos < sql.length() && sql[currPos] != L'\n' && sql[currPos] != L'\r')
+		currPos++;
+	buffer = sql.substr(start, currPos - start + 1);
+	currPos++;
+}
 
 void OdbcParserImpl::prepareNext(std::wstring& buffer, bool processInsertsOnly)
 {
-	while (currPos < lines.size()) {
-		std::wstring& currLine = lines[currPos++];
+	while (currPos < sql.length()) 
+	{
+		std::wstring currLine;
+		nextline(currLine);
 		Command* cmd = commandSet->findCommand( currLine );
-		if (cmd == 0 || (processInsertsOnly && !cmd->isInsert())) {
-			if (!buffer.empty())
-				buffer.append(L"\n");
+		if (cmd == 0 || (processInsertsOnly && ! cmd->isInsert())) 
+		{
 			buffer.append( currLine );
 		}
-		else {
+		else 
+		{
 			cmd->process( currLine, *this );
-			if (cmd->isBatchTerminator()) {
+			
+			if (cmd->isBatchTerminator()) 
+			{
 				break;
 			}
 		}
@@ -100,7 +117,8 @@ void OdbcParserImpl::prepareNext(std::wstring& buffer, bool processInsertsOnly)
 
 void OdbcParserImpl::checkInitialState()
 {
-	if (currPos >0) {
+	if (currPos > 0) 
+	{
 		throw std::exception("Illegal operation - allowed only in initial state");
 	}
 }

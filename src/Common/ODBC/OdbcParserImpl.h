@@ -38,11 +38,12 @@ namespace AppSecInc
 				
 			private:
 				void prepareNext(std::wstring& buffer, bool processInsertsOnly);
-				
+				void nextline(std::wstring& buffer);
+
 				CommandSet*               commandSet;
 				PathResolver*             pathResolver;
 				unsigned int              currPos;
-				std::vector<std::wstring> lines;
+				std::wstring              sql;
 				bool                      exitOnError;
 			};
 		}
