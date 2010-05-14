@@ -34,6 +34,9 @@ void ServiceManagerUnitTests::testGetServices()
 	CPPUNIT_ASSERT(services.size() > 0);
 	for each(const ServiceStatusProcess& sp in services)
 	{
+		if (sp.name == L"MsiExtDemoService")
+			continue;
+
 		CPPUNIT_ASSERT(sp.name.size() > 0);
 		std::wcout << std::endl 
 			<< sp.name << L" (" << sp.display_name << L")"

@@ -46,6 +46,12 @@ void ServiceInstanceUnitTests::testControl()
     scm.Open();
     ServiceInstance instance;
     instance.Open(scm, L"W32Time");    
+	if (! instance.IsStarted())
+	{
+		instance.Start();
+		instance.Wait();
+	}
+
     CPPUNIT_ASSERT(instance.IsStarted());
     instance.Stop();
     CPPUNIT_ASSERT(instance.Wait());

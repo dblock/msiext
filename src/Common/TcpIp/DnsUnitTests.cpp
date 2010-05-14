@@ -87,8 +87,8 @@ void DnsUnitTests::testGetHostIpAddresses()
 
 	TestData testdata[] = 
 	{
-		{ "192.168.1.25", "192.168.1.25" },
-		{ "www.codeplex.com", "192.168.1.25" },
+		{ "65.55.11.218", "65.55.11.218" },
+		{ "www.codeplex.com", "65.55.11.218" },
 	};
 
 	for (int i = 0; i < ARRAYSIZE(testdata); i++)

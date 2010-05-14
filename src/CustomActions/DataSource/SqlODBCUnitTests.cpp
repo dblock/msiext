@@ -383,5 +383,5 @@ void SQLODBCUnitTests::Test_BinaryIdPathResolver_processInserts()
 	parser.setSourcePath(L"v1_0_main_sql");
 	
 	std::wstring result = parser.processInsertsOnly();
-	CPPUNIT_ASSERT(L"DECLARE @a INT\r\nDECLARE @b INT\r\nGO\r" == result);
+	CPPUNIT_ASSERT(L"DECLARE @a INT\r\nDECLARE @b INT\r\n\nGO\r\n" == result);
 }
