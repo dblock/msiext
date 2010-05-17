@@ -194,3 +194,11 @@ CA_API UINT __stdcall Win32_ReadFile(MSIHANDLE hInstall);
 \param WIN32_FILE_ENCODING Set to "UTF-8" to write a file in the UTF-8 format, "ANSI" to write the file in the ANSI format. Default is ANSI.
 */
 CA_API UINT __stdcall Win32_WriteFile(MSIHANDLE hInstall);
+
+/*!
+\brief Retrieves the path of a special folder, identified by its CSIDL.
+\param WIN32_FOLDER_CSIDL A CSIDL that identifies the folder of interest, such as CSIDL_APPDATA.
+\param WIN32_FOLDER_CREATE Set to "1" to indicate whether the folder should be created if it does not already exist.
+\return WIN32_SPECIAL_FOLDER Fully qualified path to the special folder.
+*/
+CA_API UINT __stdcall Win32_GetSpecialFolderPath(MSIHANDLE hInstall);

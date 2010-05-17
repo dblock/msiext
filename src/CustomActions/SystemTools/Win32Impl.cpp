@@ -1,5 +1,6 @@
 #include "StdAfx.h"
 #include "Win32Impl.h"
+#include "FlagMaps.h"
 
 CA_API UINT __stdcall Win32_CopyFile(MSIHANDLE hInstall)
 {
@@ -816,5 +817,18 @@ CA_API UINT __stdcall Win32_ReadFile(MSIHANDLE hInstall)
 	AppSecInc::File::ReadAndConvertToEnd(filename, data);
 	msiInstall.SetProperty(L"WIN32_FILE_DATA", data);
 	MSI_EXCEPTION_HANDLER_EPILOG;
+    return ERROR_SUCCESS;
+}
+
+CA_API UINT __stdcall Win32_GetSpecialFolderPath(MSIHANDLE hInstall)
+{
+    MSI_EXCEPTION_HANDLER_PROLOG;
+    MsiInstall msiInstall(hInstall);
+    std::wstring csidl_s = msiInstall.GetProperty(L"WIN32_FOLDER_CSIDL");
+	int csidl = (int) GetFlagValue<FlagMapEntryCSIDL[ARRAYSIZE(s_CSIDL)], int>(csidl_s, s_CSIDL);
+	bool create = (msiInstall.GetProperty(L"WIN32_FOLDER_CREATE") == L"1");
+	std::wstring path = AppSecInc::File::GetSpecialFolderPath(csidl, create);
+	msiInstall.SetProperty(L"WIN32_SPECIAL_FOLDER", path);
+    MSI_EXCEPTION_HANDLER_EPILOG;
     return ERROR_SUCCESS;
 }

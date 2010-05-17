@@ -26,6 +26,7 @@ namespace AppSecInc
 				CPPUNIT_TEST( Test_Win32_FileExists );
 				CPPUNIT_TEST( Test_Win32_WriteFile );
 				CPPUNIT_TEST( Test_Win32_ReadFile );
+				CPPUNIT_TEST( Test_Win32_GetSpecialFolderPath );
                 CPPUNIT_TEST_SUITE_END();
 			public:
                 void Test_Win32_CopyFileOverwrite();
@@ -45,6 +46,7 @@ namespace AppSecInc
                 void Test_Win32_FileExists();
 				void Test_Win32_WriteFile();
 				void Test_Win32_ReadFile();
+				void Test_Win32_GetSpecialFolderPath();
 			};
         }
 	}

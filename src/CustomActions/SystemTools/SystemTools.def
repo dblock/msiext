@@ -47,4 +47,5 @@ EXPORTS
 	Win32_RegistryCopy_Deferred
 	Win32_GenerateGuidString
 	Win32_IsValidGuid
-	
+	Win32_GetSpecialFolderPath
+

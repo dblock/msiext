@@ -95,6 +95,7 @@ void Win32ImplUnitTests::Test_EntryPoints()
     CPPUNIT_ASSERT(NULL != GetProcAddress(h, "Win32_FileExists"));
 	CPPUNIT_ASSERT(NULL != GetProcAddress(h, "Win32_ReadFile"));
 	CPPUNIT_ASSERT(NULL != GetProcAddress(h, "Win32_WriteFile"));
+	CPPUNIT_ASSERT(NULL != GetProcAddress(h, "Win32_GetSpecialFolderPath"));
 	::FreeLibrary(h);
 }
 
@@ -717,4 +718,16 @@ void Win32ImplUnitTests::Test_Win32_WriteFile()
 	CPPUNIT_ASSERT(11 == AppSecInc::File::GetFileSize(tmpfile));
     // delete temp file
     AppSecInc::File::FileDelete(tmpfile);
+}
+
+void Win32ImplUnitTests::Test_Win32_GetSpecialFolderPath()
+{
+    AppSecInc::Msi::MsiShim hInstall;
+	MsiInstall msiInstall(hInstall);
+
+	msiInstall.SetProperty(L"WIN32_FOLDER_CSIDL", L"CSIDL_APPDATA");
+	CPPUNIT_ASSERT(ERROR_SUCCESS == hInstall.ExecuteCA(L"SystemTools.dll", L"Win32_GetSpecialFolderPath"));
+	std::wstring special_folder = msiInstall.GetProperty(L"WIN32_SPECIAL_FOLDER");
+	std::wcout << std::endl << special_folder;
+	CPPUNIT_ASSERT(special_folder == AppSecInc::File::GetSpecialFolderPath(CSIDL_APPDATA));
 }

@@ -275,10 +275,10 @@ namespace AppSecInc
         /*!
          \brief Takes the CSIDL of a folder and returns the path.
          \param csidl a CSIDL value that identifies the folder whose path is to be retrieved
-		 \param flags flags to specify which path is to be returned
+		 \param create Indicates whether the folder should be created if it does not already exist.
 		 \return special folder path
          */
-		std::wstring GetSpecialFolderPath(int csidl, SHGFP_TYPE flags = SHGFP_TYPE_CURRENT);
+		std::wstring GetSpecialFolderPath(int csidl, BOOL create = FALSE);
 		
 		//!returns true if provided path is absolute, false otherwise
 		bool IsAbsolutePath(const std::wstring& path);

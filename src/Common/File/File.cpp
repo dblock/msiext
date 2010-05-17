@@ -627,12 +627,12 @@ std::wstring AppSecInc::File::GetParentDirectory(const std::wstring& path)
 	return DirectoryCombine(path, L"..\\");
 }
 
-std::wstring AppSecInc::File::GetSpecialFolderPath(int csidl, SHGFP_TYPE flags)
+std::wstring AppSecInc::File::GetSpecialFolderPath(int csidl, BOOL create)
 {
 	wchar_t buffer [MAX_PATH] = { 0 };
 
-	CHECK_HR(::SHGetFolderPath(NULL, csidl, NULL, flags,  buffer),
-		"SHGetFolderPath failed");
+	CHECK_HR(::SHGetSpecialFolderPath(NULL, buffer, csidl, create),
+		"SHGetSpecialFolderPath failed");
 
 	return buffer;
 }
