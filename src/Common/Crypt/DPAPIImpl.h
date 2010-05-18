@@ -4,16 +4,13 @@ namespace AppSecInc
 {
     namespace Crypt
     {
-        /*! \class DPAPIImpl
+        /*! \namespace DPAPI
 	        \brief This class implements basic cryptographic operations using the Microsoft DPAPI
         */
-        class DPAPIImpl
+        namespace DPAPIImpl
         {
-        public:
-            static std::string Protect(const std::string& input, const std::string& entropy = "");
-            static std::string UnProtect(const std::string& input, const std::string& entropy = "");
-        private:	
-	        DPAPIImpl(); // making this private as this class only exposes static objects
+            std::string Protect(const std::string& input, const std::string& entropy = "");
+            std::string UnProtect(const std::string& input, const std::string& entropy = "");
         };
     }
 }

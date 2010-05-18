@@ -12,6 +12,11 @@ EXPORTS
 	HexDecodeW
 	HexDecodeA
 
+	Base64EncodeW
+	Base64EncodeA
+	Base64DecodeW
+	Base64DecodeA
+	
     DESEDE3_GenerateKey
     DESEDE3_Encrypt
     DESEDE3_Decrypt

@@ -2,168 +2,131 @@
 
 using namespace AppSecInc::Crypt;
 
-std::string CryptoPPImpl::Base64Encode(const std::string& input)
+std::string CryptoPPImpl::Base64Encode(const std::vector<byte>& input)
 {
     std::string output;
     if (input.size() > 0)
     {
-	    output.resize(input.size() * 2);
         Base64Encoder encoder;
-        encoder.PutMessageEnd(reinterpret_cast<const byte *>(input.c_str()), input.size()); 
-        encoder.Get(reinterpret_cast<LPBYTE>(& * output.begin()), output.size()); 
+        encoder.PutMessageEnd(& * input.begin(), input.size()); 
+		output.resize(static_cast<size_t>(encoder.MaxRetrievable() - 1)); // seems to include the null terminator
+		encoder.Get(reinterpret_cast<byte *>(& * output.begin()), output.size());
     }
     return output;
 }
 
-std::string CryptoPPImpl::Base64Decode(const std::string& input)
+std::vector<byte> CryptoPPImpl::Base64Decode(const std::string& input)
 {
-    std::string output;
+    std::vector<byte> output;
     if (input.length() > 0)
     {
-	    // input is a string and the output is bytes
-	    output.resize(input.length() * 3 / 2);
         Base64Decoder decoder;
         decoder.PutMessageEnd(reinterpret_cast<const byte *>(input.c_str()), input.length()); 
-        decoder.Get(reinterpret_cast<LPBYTE>(& * output.begin()), output.size()); 
+		output.resize(static_cast<size_t>(decoder.MaxRetrievable()));
+        decoder.Get(& * output.begin(), output.size()); 
     }
+
     return output;
 }
 
-std::string CryptoPPImpl::DESEDE3Encrypt(const std::string& input, const std::string& key )
+std::vector<byte> CryptoPPImpl::DESEDE3Encrypt(const std::vector<byte>& input, const std::vector<byte>& key )
 {
-	// only 24 bytes of the key are used, otherwise it's padded
-    std::string key_pad = key;
-	if (key_pad.length() < 24) key_pad.resize(24);
+	CHECK_BOOL(key.size() <= DES_EDE3::DEFAULT_KEYLENGTH,
+		L"DESEDE3 key cannot exceed " << DES_EDE3::DEFAULT_KEYLENGTH << L" bytes");
 
-    std::string input_pad;
-    int nBlocks = 0;
-	Pad(input, 8, input_pad, nBlocks);
-    std::string output;
-	output.resize(input_pad.size());
-
-	DES_EDE3_Encryption des_encryptor(reinterpret_cast<const byte *>(& * key_pad.begin()), key_pad.size());
-
-	for (int block_num = 0; block_num < nBlocks; block_num ++)
+	std::vector<byte> output;
+	if (input.size() > 0)
 	{
-		des_encryptor.ProcessBlock(reinterpret_cast<const byte *>(input.c_str()) + block_num * 8, 
-			reinterpret_cast<LPBYTE>(& * output.begin()) + block_num * 8);
-	}
+		std::vector<byte> iv;
+		iv = Pad(iv, DES_EDE3::BLOCKSIZE);
 
-    return output;
+		// keys are 24 bytes
+		std::vector<byte> key_pad = (key.size() < DES_EDE3::DEFAULT_KEYLENGTH) 
+			? Pad(key, DES_EDE3::DEFAULT_KEYLENGTH) : key;
+
+		CBC_Mode<DES_EDE3>::Encryption ecbEncryption(& * key_pad.begin(), DES_EDE3::DEFAULT_KEYLENGTH, & * iv.begin());
+		StreamTransformationFilter encryptor(ecbEncryption, NULL, StreamTransformationFilter::DEFAULT_PADDING);
+		encryptor.Put(& * input.begin(), input.size());
+		encryptor.MessageEnd();
+
+		output.resize(static_cast<size_t>(encryptor.MaxRetrievable()));
+		encryptor.Get(& * output.begin(), output.size());
+	}
+	return output;
 }
 
-std::string CryptoPPImpl::DESEDE3Decrypt(const std::string& input, const std::string& key )
-{	
-	// only 24 bytes of the key are used, otherwise it's padded
-    std::string key_pad = key;
-	if (key_pad.length() < 24) key_pad.resize(24);
-	
-    std::string input_pad;
-	int nBlocks;
-    Pad(input, 8, input_pad, nBlocks);
-    std::string output;
-	output.resize(input.size());
+std::vector<byte> CryptoPPImpl::DESEDE3Decrypt(const std::vector<byte>& input, const std::vector<byte>& key )
+{
+	CHECK_BOOL(key.size() <= DES_EDE3::DEFAULT_KEYLENGTH,
+		L"DESEDE3 key cannot exceed " << DES_EDE3::DEFAULT_KEYLENGTH << L" bytes");
 
-	DES_EDE3_Decryption des_decryptor(
-		reinterpret_cast<const byte *>(& * key_pad.begin()), 
-		key_pad.size());
-
-	for (int block_num = 0; block_num < nBlocks; block_num ++)
+	std::vector<byte> output;
+	if (input.size() > 0)
 	{
-		des_decryptor.ProcessBlock(
-			reinterpret_cast<const byte *>(input.c_str()) + block_num * 8, 
-			reinterpret_cast<LPBYTE>(& * output.begin()) + block_num * 8);
+		std::vector<byte> iv;
+		iv = Pad(iv, DES_EDE3::BLOCKSIZE);
+
+		// keys are 24 bytes
+		std::vector<byte> key_pad = (key.size() < DES_EDE3::DEFAULT_KEYLENGTH) 
+			? Pad(key, DES_EDE3::DEFAULT_KEYLENGTH) : key;
+
+		CBC_Mode<DES_EDE3>::Decryption ecbDecryption(& * key_pad.begin(), DES_EDE3::DEFAULT_KEYLENGTH, & * iv.begin());
+		StreamTransformationFilter decryptor(ecbDecryption, NULL, StreamTransformationFilter::DEFAULT_PADDING);
+		decryptor.Put(& * input.begin(), input.size());
+		decryptor.MessageEnd();
+
+		output.resize(static_cast<size_t>(decryptor.MaxRetrievable()));
+		decryptor.Get(& * output.begin(), output.size());
 	}
+	return output;
+}
 
-	// TODO: this only works for strings, need a way to pad with a sequence which will always 
-	//       clearly identify where the string ends
-	output.resize(strlen(output.c_str()));
+std::vector<byte> CryptoPPImpl::HexDecode(const std::string& data)
+{
+    std::vector<byte> output;
+    if (data.length() > 0)
+    {
+	    HexDecoder decoder;
+        decoder.Put(reinterpret_cast<const byte *>(data.c_str()), data.length());
+        decoder.MessageEnd();
+	    output.resize(static_cast<size_t>(decoder.MaxRetrievable()));
+        decoder.Get(& * output.begin(), output.size());
+    }
     return output;
 }
 
-std::string CryptoPPImpl::HexDecode(const std::string& data)
+std::string CryptoPPImpl::HexEncode(const std::vector<byte>& data)
 {
     std::string output;
-    if (data.length() > 0)
+    if (data.size() > 0)
     {
-	    ULONG len = data.length() / 2;
-
-	    HexDecoder hexDecoder;
-        hexDecoder.Put(reinterpret_cast<const byte *>(data.c_str()), data.length());
-        hexDecoder.MessageEnd();
-        
-	    output.resize(len);    
-        hexDecoder.Get(reinterpret_cast<LPBYTE>(& * output.begin()), len);
+        HexEncoder encoder;
+	    encoder.Put(& * data.begin(), data.size());
+	    encoder.MessageEnd();
+	    output.resize(static_cast<size_t>(encoder.MaxRetrievable()));
+	    encoder.Get(reinterpret_cast<byte *>(& * output.begin()), output.size());
     }
     return output;
 }
 
-std::string CryptoPPImpl::HexEncode(const std::string& data)
-{
-    std::string output;
-    if (data.length() > 0)
-    {
-        HexEncoder hexEncoder;
-	    hexEncoder.Put(reinterpret_cast<const byte *>(data.c_str()), data.length());
-	    hexEncoder.MessageEnd();
-
-	    output.resize(data.length() * 2);
-	    hexEncoder.Get(reinterpret_cast<LPBYTE>(& * output.begin()), output.size());
-    }
-    return output;
-}
-
-std::wstring CryptoPPImpl::HexDecode(const std::wstring& data)
-{
-    std::wstring output;
-    if (data.length() > 0)
-    {
-        std::string data_a = AppSecInc::StringUtils::wc2mb(data);
-
-        HexDecoder hexDecoder;
-        hexDecoder.Put(reinterpret_cast<const byte *>(data_a.c_str()), data_a.length());
-        hexDecoder.MessageEnd();
-        
-        ULONG len = data_a.length() / 4;
-	    output.resize(len);
-        hexDecoder.Get(reinterpret_cast<LPBYTE>(& * output.begin()), len * sizeof(wchar_t));
-    }
-    return output;
-}
-
-std::wstring CryptoPPImpl::HexEncode(const std::wstring& data)
-{
-    std::string output;
-    if (data.length() > 0)
-    {
-        HexEncoder hexEncoder;
-	    hexEncoder.Put(reinterpret_cast<const byte *>(data.c_str()), data.length() * sizeof(wchar_t));
-	    hexEncoder.MessageEnd();
-
-	    output.resize(data.length() * 4);
-	    hexEncoder.Get(reinterpret_cast<LPBYTE>(& * output.begin()), output.size());
-    }
-    return AppSecInc::StringUtils::mb2wc(output);
-}
-
-std::string CryptoPPImpl::DESEDE3GenerateKey()
+std::vector<byte> CryptoPPImpl::DESEDE3GenerateKey()
 {
 	RandomPool pool;
-    std::string key;
+    std::vector<byte> key;
     key.resize(24);
-	pool.GenerateBlock(reinterpret_cast<LPBYTE>(& * key.begin()), key.size());
+	pool.GenerateBlock(& * key.begin(), key.size());
     return key;
 }
 
-std::string CryptoPPImpl::Pad(const std::string& input, int size)
+std::vector<byte> CryptoPPImpl::Pad(const std::vector<byte>& input, int size)
 {
     int nBlocks = 0;
-    std::string output;
+    std::vector<byte> output;
     Pad(input, size, output, nBlocks);
     return output;
 }
 
-void CryptoPPImpl::Pad(const std::string& input, int size, std::string& output, int& nBlocks)
+void CryptoPPImpl::Pad(const std::vector<byte>& input, int size, std::vector<byte>& output, int& nBlocks)
 {
 	int nSize = input.size() + 1;
 	nBlocks = nSize / size;
@@ -172,15 +135,17 @@ void CryptoPPImpl::Pad(const std::string& input, int size, std::string& output, 
 		nBlocks ++;
 
 	output.resize(nBlocks * size, 0);
-	memcpy(reinterpret_cast<LPBYTE>(& * output.begin()), 
-		reinterpret_cast<const byte *>(input.c_str()), input.size());	
+	if (input.size() > 0)
+	{
+		memcpy_s(& * output.begin(), output.size(), & * input.begin(), input.size());
+	}
 }
 
-std::vector<BYTE> CryptoPPImpl::GenerateRandom(long size)
+std::vector<byte> CryptoPPImpl::GenerateRandom(long size)
 {
 	RandomPool pool;
-	std::vector<BYTE> data;
+	std::vector<byte> data;
 	data.resize(size);
-	pool.GenerateBlock(reinterpret_cast<LPBYTE>(& * data.begin()), data.size());
+	pool.GenerateBlock(& * data.begin(), data.size());
     return data;
 }

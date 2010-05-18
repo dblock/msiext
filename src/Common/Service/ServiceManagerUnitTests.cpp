@@ -34,27 +34,31 @@ void ServiceManagerUnitTests::testGetServices()
 	CPPUNIT_ASSERT(services.size() > 0);
 	for each(const ServiceStatusProcess& sp in services)
 	{
-		if (sp.name == L"MsiExtDemoService")
-			continue;
-
 		CPPUNIT_ASSERT(sp.name.size() > 0);
 		std::wcout << std::endl 
 			<< sp.name << L" (" << sp.display_name << L")"
 			<< (sp.status_process.dwProcessId ? L" [" + AppSecInc::StringUtils::toWString(sp.status_process.dwProcessId) + L"]" : L"");
-		ServiceInstance si;
-		si.Open(manager, sp.name, GENERIC_READ);
-		ServiceConfig config = si.GetConfig();
-		std::wcout << std::endl << L" " << config.binary_path_name;
-		for each(const std::wstring dependency in config.dependencies)
+		try
 		{
-			std::wcout << std::endl << L"  " << dependency;
-			if (! AppSecInc::StringUtils::startsWith(dependency, AppSecInc::StringUtils::toWString(SC_GROUP_IDENTIFIER)))
+			ServiceInstance si;
+			si.Open(manager, sp.name, GENERIC_READ);
+			ServiceConfig config = si.GetConfig();
+			std::wcout << std::endl << L" " << config.binary_path_name;
+			for each(const std::wstring dependency in config.dependencies)
 			{
-				ServiceInstance si_dependency;
-				si_dependency.Open(manager, dependency, GENERIC_READ);
-				ServiceConfig config_dependency = si_dependency.GetConfig();
-				std::wcout << L" (" << config_dependency.display_name << L")";
+				std::wcout << std::endl << L"  " << dependency;
+				if (! AppSecInc::StringUtils::startsWith(dependency, AppSecInc::StringUtils::toWString(SC_GROUP_IDENTIFIER)))
+				{
+					ServiceInstance si_dependency;
+					si_dependency.Open(manager, dependency, GENERIC_READ);
+					ServiceConfig config_dependency = si_dependency.GetConfig();
+					std::wcout << L" (" << config_dependency.display_name << L")";
+				}
 			}
+		}
+		catch(std::exception& ex)
+		{
+			std::cout << std::endl << " warning: " << ex.what();
 		}
 	}
 }

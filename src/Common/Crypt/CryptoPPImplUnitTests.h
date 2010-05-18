@@ -19,7 +19,6 @@ namespace AppSecInc
 				CPPUNIT_TEST( testDESEDE3GenerateKey );
 				CPPUNIT_TEST( testGenerateRandom );
 				CPPUNIT_TEST_SUITE_END();
-
 			public:
 				void testPad();
 				void testPadEmpty();

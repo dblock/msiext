@@ -38,8 +38,6 @@ void MicrosoftCryptProviderUnitTests::testGenerateRandom()
 	CPPUNIT_ASSERT(size == data.size());
 	long total = 0;
 	for(int i = 0; i < size - 1; i++) total += data[i];
-	std::cout << std::endl << AppSecInc::Crypt::CryptoPPImpl::HexEncode(
-		std::string(data.begin(), data.end()));
 	CPPUNIT_ASSERT(total != 0);
 	prov.UnInitialize();
 }

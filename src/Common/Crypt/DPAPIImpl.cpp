@@ -3,11 +3,6 @@
 
 using namespace AppSecInc::Crypt;
 
-DPAPIImpl::DPAPIImpl()
-{
-
-}
-
 std::string DPAPIImpl::Protect(const std::string& input, const std::string& entropy)
 {
 	// Data to protect
@@ -33,7 +28,9 @@ std::string DPAPIImpl::Protect(const std::string& input, const std::string& entr
         & blobEntropy, NULL, NULL, dwFlags, & blobOut),
         L"CryptProtectData failed");
 
-    return CryptoPPImpl::HexEncode(std::string(reinterpret_cast<LPSTR>(blobOut.pbData), blobOut.cbData));
+	std::vector<byte> data(blobOut.cbData);
+	memcpy_s(& * data.begin(), data.size(), blobOut.pbData, blobOut.cbData);
+	return CryptoPPImpl::HexEncode(data);
 }
 
 std::string DPAPIImpl::UnProtect(const std::string& input, const std::string& entropy)
@@ -41,11 +38,11 @@ std::string DPAPIImpl::UnProtect(const std::string& input, const std::string& en
 	if (input.length() == 0)
         return "";
 
-	std::string decoded_input = CryptoPPImpl::HexDecode(input);
+	std::vector<byte> decoded_input = CryptoPPImpl::HexDecode(input);
 
     // Data to unprotect
     DATA_BLOB blobIn;
-	blobIn.pbData = reinterpret_cast<BYTE *>(const_cast<LPSTR>(decoded_input.c_str()));
+	blobIn.pbData = & * decoded_input.begin();
 	blobIn.cbData = decoded_input.size();
 		
 	// Optional entropy

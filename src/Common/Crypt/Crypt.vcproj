@@ -144,19 +144,7 @@
 			Filter="cpp;c;cxx;rc;def;r;odl;idl;hpj;bat"
 			>
 			<File
-				RelativePath=".\CryptoPPCryptProvider.cpp"
-				>
-			</File>
-			<File
 				RelativePath=".\CryptoPPImpl.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\CryptProvider.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\DPAPICryptProvider.cpp"
 				>
 			</File>
 			<File
@@ -201,19 +189,7 @@
 				>
 			</File>
 			<File
-				RelativePath=".\CryptoPPCryptProvider.h"
-				>
-			</File>
-			<File
 				RelativePath=".\CryptoPPImpl.h"
-				>
-			</File>
-			<File
-				RelativePath=".\CryptProvider.h"
-				>
-			</File>
-			<File
-				RelativePath=".\DPAPICryptProvider.h"
 				>
 			</File>
 			<File

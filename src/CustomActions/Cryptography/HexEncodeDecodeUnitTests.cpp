@@ -1,5 +1,5 @@
 #include "StdAfxUnitTests.h"
-#include "EncodeDecodeUnitTests.h"
+#include "HexEncodeDecodeUnitTests.h"
 
 CPPUNIT_TEST_SUITE_REGISTRATION(AppSecInc::UnitTests::Cryptography::EncodeDecodeUnitTests);
 

@@ -61,6 +61,20 @@
                 <li>Added UTF-8 encoded file support for ODBC custom actions, Wix extensions and ODBQ.exe.</li>
                 <li>Added UTF-8 encoded file support to <code>SystemTools::TemplateFile</code> Wix extension.</li>
                 <li>Added <code>Win32_GetSpecialFolderPath</code> custom action to SystemTols.dll.</li>
+                <li><code>DESEDE3_Encrypt</code> and <code>DESEDE3_Decrypt</code> now support binary
+                    data.</li>
+                <li>Added <code>Base64EncodeA</code>, <code>Base64EncodeW</code>, <code>Base64DecodeA</code>
+                    and <code>Base64DecodeW</code> to Cryptography.dll.</li>
+            </ul>
+        </li>
+        <li><strong>Breaking Changes</strong>:
+            <ul>
+                <li><code>DESEDE3_Encrypt</code> and <code>DESEDE3_Decrypt</code> custom actions now
+                    return empty results for empty inputs and use PKCS7 padding for encrypted values.
+                    Use a previous MSI Extensions 1.1 to decrypt and upgrade existing values.</li>
+                <li><code>DESEDE3_Encrypt</code> and <code>DESEDE3_Decrypt</code> custom actions will
+                    fail if passed a key larger than 24 bytes. Previous versions silently truncated
+                    the key.</li>
             </ul>
         </li>
         <li><strong>Misc</strong>:

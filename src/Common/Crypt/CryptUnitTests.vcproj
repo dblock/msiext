@@ -167,19 +167,11 @@
 			Filter="cpp;c;cxx;rc;def;r;odl;idl;hpj;bat"
 			>
 			<File
-				RelativePath=".\CryptoPPCryptProviderUnitTests.cpp"
-				>
-			</File>
-			<File
 				RelativePath=".\CryptoPPImplUnitTests.cpp"
 				>
 			</File>
 			<File
 				RelativePath=".\CryptoPPUnitTests.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\CryptProviderUnitTests.cpp"
 				>
 			</File>
 			<File
@@ -203,10 +195,6 @@
 						PreprocessorDefinitions=""
 					/>
 				</FileConfiguration>
-			</File>
-			<File
-				RelativePath=".\DPAPICryptProviderUnitTests.cpp"
-				>
 			</File>
 			<File
 				RelativePath=".\DPAPIImplUnitTests.cpp"
@@ -246,23 +234,11 @@
 			Filter="h;hpp;hxx;hm;inl"
 			>
 			<File
-				RelativePath=".\CryptoPPCryptProviderUnitTests.h"
-				>
-			</File>
-			<File
 				RelativePath=".\CryptoPPImplUnitTests.h"
 				>
 			</File>
 			<File
 				RelativePath=".\CryptoPPUnitTests.h"
-				>
-			</File>
-			<File
-				RelativePath=".\CryptProviderUnitTests.h"
-				>
-			</File>
-			<File
-				RelativePath=".\DPAPICryptProviderUnitTests.h"
 				>
 			</File>
 			<File

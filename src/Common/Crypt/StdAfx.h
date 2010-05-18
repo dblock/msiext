@@ -13,5 +13,6 @@
 #include <hex.h>
 #include <rsa.h>
 #include <randpool.h>
+#include <modes.h>
 
 using namespace CryptoPP;

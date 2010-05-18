@@ -62,8 +62,8 @@
 
 \li \ref CryptProtectDataHex 
 \li \ref CryptUnprotectDataHex
-\li \ref HexEncodeA & \ref HexEncodeW
-\li \ref HexDecodeA & \ref HexDecodeW
+\li \ref HexEncodeA & \ref HexEncodeW, \ref HexDecodeA & \ref HexDecodeW
+\li \ref Base64EncodeA & \ref Base64EncodeW, \ref Base64DecodeA & \ref Base64DecodeW
 \li \ref DESEDE3_GenerateKey, \ref DESEDE3_Encrypt & \ref DESEDE3_Decrypt
 \li \ref GenerateRandomString
 

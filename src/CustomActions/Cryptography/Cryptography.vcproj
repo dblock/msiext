@@ -156,6 +156,10 @@
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
 			<File
+				RelativePath=".\Base64EncodeDecode.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\Cryptography.cpp"
 				>
 			</File>
@@ -172,11 +176,11 @@
 				>
 			</File>
 			<File
-				RelativePath=".\EncodeDecode.cpp"
+				RelativePath=".\GenerateRandom.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\GenerateRandom.cpp"
+				RelativePath=".\HexEncodeDecode.cpp"
 				>
 			</File>
 			<File
@@ -206,6 +210,10 @@
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
 			>
 			<File
+				RelativePath=".\Base64EncodeDecode.h"
+				>
+			</File>
+			<File
 				RelativePath=".\CryptProtectDataHex.h"
 				>
 			</File>
@@ -214,15 +222,15 @@
 				>
 			</File>
 			<File
-				RelativePath=".\EncodeDecode.h"
-				>
-			</File>
-			<File
 				RelativePath=".\FlagMaps.h"
 				>
 			</File>
 			<File
 				RelativePath=".\GenerateRandom.h"
+				>
+			</File>
+			<File
+				RelativePath=".\HexEncodeDecode.h"
 				>
 			</File>
 			<File

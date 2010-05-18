@@ -23,7 +23,7 @@
 
 	<Binary Id="Cryptography" SourceFile="relative path to Cryptography.dll"/>
 	<Property Id="CRYPTPROTECT_DATA" Hidden="yes" />
-	<Property Id="CRYPTPROTECT_FLAGS" Value="CRYPTPROTECT_LOCAL_MACHINE CRYPTPROTECT_UI_FORBIDDEN" />
+	<Property Id="CRYPTPROTECT_FLAGS" Value="CRYPTPROTECT_LOCAL_MACHINE|CRYPTPROTECT_UI_FORBIDDEN" />
 	<CustomAction Id="EncryptPassword" BinaryKey="Cryptography" DllEntry="CryptProtectDataHex"Execute="immediate" />
 	<CustomAction Id="SetDBUSERsPASSWORDForEncryption"Property="CRYPTPROTECT_DATA" Value="[PASSWORD]" />
 	<InstallExecuteSequence> 
