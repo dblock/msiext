@@ -918,3 +918,40 @@ void ODBCConnectionUnitTests::testSelectUTF8String()
 	CPPUNIT_ASSERT(wctext == result);
 	CPPUNIT_ASSERT(AppSecInc::StringUtils::wc2utf8(wctext) == reinterpret_cast<const char *>(s3));
 }
+
+void ODBCConnectionUnitTests::testExecuteStoredProcedure_xp_msver() 
+{
+	MSSQLConnectionInfo info(L"localhost");
+    info.SetTrustedAuth(true);
+	ODBCConnection conn;
+	conn.Connect(info);
+	
+	std::wstring statement = 
+		L"DECLARE @toexec varchar(max)\r\n" \
+		L"DECLARE csr CURSOR LOCAL static FOR\r\n" \
+		L"SELECT 'xp_msver'\r\n" \
+		L"OPEN csr\r\n" \
+		L"FETCH csr into @toexec\r\n" \
+		L"WHILE @@FETCH_STATUS = 0\r\n" \
+		L"BEGIN\r\n" \
+		L"EXECUTE @toexec\r\n" \
+		L"FETCH NEXT FROM csr into @toexec\r\n" \
+		L"END\r\n" \
+		L"CLOSE csr\r\n" \
+		L"DEALLOCATE csr";
+ 	
+ 	ODBCRowSet results;
+	conn.Execute(statement, results);
+	SQLSMALLINT columns = results.GetNumResultCols();
+	CPPUNIT_ASSERT(4 == columns);
+
+    int count = 0;
+	while(results.Fetch())
+	{
+        std::wstring name = results[L"Name"]->GetWStringValue();
+		std::wstring value = results[L"Character_Value"]->GetBufferSize()
+			? results[L"Character_Value"]->GetWStringValue()
+			: L"NULL";
+        std::wcout << std::endl << L" " << name << L": " << value;
+	}
+}

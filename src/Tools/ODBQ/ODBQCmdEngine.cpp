@@ -130,7 +130,7 @@ void ODBQCmdEngine::ExecuteFile(const std::wstring& file)
 
 	if (! _nologo.getValue())
 	{
-		std::wcout << L"- Executing\"" + file + L"\"" << std::endl;
+		std::wcout << L"- Executing \"" + file + L"\"" << std::endl;
 	}
 
     ExecuteSql(query);

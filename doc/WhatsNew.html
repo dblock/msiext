@@ -85,13 +85,15 @@
         </li>
         <li><strong>Bugs</strong>:
             <ul>
-                <li>Bug: XmlTools_XslTransform broken for output of type text.</li>
+                <li>Bug: <code>XmlTools_XslTransform</code> broken for output of type text.</li>
                 <li>Bug: <code>CreateDatabases_SQLServer_Deferred</code> and <code>CreateDatabases_Access_Deferred</code>
                     attempt to make a database connection even if there's nothing to do.</li>
                 <li>Bug: error detail lost in custom actions that rely on functions returning Win32
                     DWORD error codes.</li>
                 <li>Bug: SystemTools extensions incorrectly impersonate for file copy, move, delete,
                     template processing and registry operations.</li>
+                <li>Bug: ODBC custom actions, extensions and ODBQ may fail to execute a statement at
+                    <code>SQLDescribeParam</code>.</li>
             </ul>
         </li>
     </ul>

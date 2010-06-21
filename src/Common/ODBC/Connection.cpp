@@ -220,8 +220,8 @@ void ODBCConnection::Execute(const std::wstring& query, ODBCRowSet& result) cons
 {
 	result.Bind(_hconnection);
 	result.Prepare(query);
-	result.BindColumns();
 	result.Execute();
+	result.BindColumns();
 }
 
 void ODBCConnection::Execute(const std::wstring& query) const
@@ -345,8 +345,8 @@ void ODBCConnection::Execute(const std::wstring& query, ODBCParameters& params, 
 	result.Bind(_hconnection);
 	result.Prepare(query);
 	params.Bind(result.PeekStatementHandle().Peek());
-	result.BindColumns();
 	result.Execute();
+	result.BindColumns();
 }
 
 void ODBCConnection::InsertXml(const AppSecInc::Xml::XmlDocument& dataxmldoc)

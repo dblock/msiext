@@ -25,6 +25,7 @@ namespace AppSecInc
                     CPPUNIT_TEST(testGetXml);
 					CPPUNIT_TEST(testExecuteStoredProcedure_sp_helprotect);
 					CPPUNIT_TEST(testExecuteStoredProcedure_sp_helpuser);
+					CPPUNIT_TEST(testExecuteStoredProcedure_xp_msver);
 					CPPUNIT_TEST(testConnect_ODBC_CONNECTION);
                     CPPUNIT_TEST(testExecuteWithParametersAndResults_sp_helpuser);
                     CPPUNIT_TEST(testExecuteSelectAllSupportedTypes);
@@ -50,6 +51,7 @@ namespace AppSecInc
 					void testConnectWithODBCConnectionInfo();
 					void testExecuteStoredProcedure_sp_helprotect();
 					void testExecuteStoredProcedure_sp_helpuser();
+					void testExecuteStoredProcedure_xp_msver();
                     void testExecuteWithParametersAndResults_sp_helpuser();
                     void testConnect_ODBC_CONNECTION();
                     void testExecuteSelectAllSupportedTypes();
