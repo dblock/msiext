@@ -47,7 +47,7 @@
     <CreateItem Include="$(BinDir)\*.msi">
       <Output TaskParameter="Include" ItemName="DemoMsis" />
     </CreateItem>
-    <CreateItem Include="$(BinDir)\*.exe" Exclude="$(BinDir)\*UnitTests.exe">
+    <CreateItem Include="$(BinDir)\*.exe" Exclude="$(BinDir)\*UnitTests.exe;$(BinDir)\DemoService.exe">
       <Output TaskParameter="Include" ItemName="ToolBinaries" />
     </CreateItem>
     <MakeDir Directories="$(DropDir)\msiext-$(Major).$(Minor)\CustomActions" />
