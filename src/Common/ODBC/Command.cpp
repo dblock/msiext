@@ -31,7 +31,7 @@ InsertCommand::InsertCommand(const std::wstring& name)
 void InsertCommand::process(const std::wstring& line, OdbcParserImpl& parser) 
 {
 	std::wstring sourceName = line.substr( name.size() );
-	AppSecInc::StringUtils::lrtrim( sourceName, L" \t\r" );
+	AppSecInc::StringUtils::lrtrim( sourceName, L" \t\r\n" );
 	parser.insertSource( sourceName );
 }
 

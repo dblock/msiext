@@ -83,16 +83,31 @@ void OdbcParserUnitTests::testOdbcParserSplitting()
 }
 
 
-class MockNameResolver: public PathResolver {
+class MockNameResolver : public PathResolver 
+{
 	std::wstring content;
   public:
-	MockNameResolver(std::wstring content): content(content) {}
+	MockNameResolver(std::wstring content)
+		: content(content) 
+	{
+
+	}
 	
-	virtual std::wstring readContent(const std::wstring& path) {
+	virtual std::wstring readContent(const std::wstring& path) 
+	{
+		// make sure that the path is a valid one that can be parsed
+		AppSecInc::File::DirectoryExists(path);
 		return content;
 	}
-	virtual void setBasePath(const std::wstring& path) {}
-	virtual std::wstring getFolderPath(const std::wstring& path) const {return L"";}
+
+	virtual void setBasePath(const std::wstring& path) 
+	{
+	}
+
+	virtual std::wstring getFolderPath(const std::wstring& path) const 
+	{		
+		return L"";
+	}
 };
 
 void OdbcParserUnitTests::testOdbcParserInsert()

@@ -20,9 +20,12 @@ std::wstring FilesystemPathResolver::readContent(const std::wstring& path)
 {
 	std::wstring content;
 	std::wstring fullpath = getFullPath(path);
+
 	CHECK_BOOL(AppSecInc::File::FileExists(fullpath), 
 		L"File does not exist: " << fullpath);
+
 	AppSecInc::File::ReadAndConvertToEnd(fullpath, content);
+
 	return content;
 }
 
@@ -34,8 +37,10 @@ std::wstring FilesystemPathResolver::getFolderPath(const std::wstring& path) con
 
 std::wstring FilesystemPathResolver::getFullPath(const std::wstring path) const
 {
-	if (AppSecInc::File::IsAbsolutePath(path) || basepath.empty()) {
+	if (AppSecInc::File::IsAbsolutePath(path) || basepath.empty()) 
+	{
 		return path;
 	}
+
 	return AppSecInc::File::DirectoryCombine(basepath, path);
 }
