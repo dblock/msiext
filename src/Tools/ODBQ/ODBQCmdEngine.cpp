@@ -125,12 +125,15 @@ void ODBQCmdEngine::ExecuteFile(const std::wstring& file)
 	}
 
     AppSecInc::File::ReadAndConvertToEnd(file, query);
-    CHECK_BOOL(! query.empty(),
-        L"File \"" << file << L"\" is empty");
 
 	if (! _nologo.getValue())
 	{
 		std::wcout << L"- Executing \"" + file + L"\"" << std::endl;
+	}
+
+	if (query.empty() && ! _nologo.getValue())
+	{
+		std::wcout << L"- File \"" << file << L"\" is empty" << std::endl;
 	}
 
     ExecuteSql(query);
@@ -177,7 +180,8 @@ void ODBQCmdEngine::Execute(AppSecInc::Databases::ODBC::OdbcParser& parser)
 		}
 
 		MSXML2::IXMLDOMNodePtr result;
-        try {
+        try 
+		{
             result = conn.GetXml(statement, _xmlresults, _xmlresults_rootnode);
         }
         catch (std::exception& ex) 

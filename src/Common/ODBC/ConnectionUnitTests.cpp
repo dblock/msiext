@@ -955,3 +955,14 @@ void ODBCConnectionUnitTests::testExecuteStoredProcedure_xp_msver()
         std::wcout << std::endl << L" " << name << L": " << value;
 	}
 }
+
+void ODBCConnectionUnitTests::testExecuteComment()
+{
+	MSSQLConnectionInfo info(L"localhost");
+    info.SetTrustedAuth(true);
+	ODBCConnection conn;
+	conn.Connect(info);
+	std::wstring xml = conn.GetXml(L"/**/");
+	std::wcout << std::endl << xml;
+}
+	

@@ -198,10 +198,15 @@ CA_API UINT __stdcall Execute_ODBC_Deferred(MSIHANDLE hInstall)
         {
             msiInstall.LogInfo(_T(__FUNCTION__), L"Loading \"" + filename + L"\"");
 
+			CHECK_BOOL(AppSecInc::File::FileExists(filename),
+				L"File \"" << filename << L"\" does not exist");
+
             AppSecInc::File::ReadAndConvertToEnd(filename, sql);
 
-            CHECK_BOOL(! sql.empty(),
-                L"File \"" << filename << L"\" is empty");
+			if (sql.empty())
+			{
+				msiInstall.LogInfo(_T(__FUNCTION__), L"File \"" + filename + L"\" is empty");            
+			}
         }
 
         AppSecInc::Databases::ODBC::ODBCConnectionStringInfo ci(connectionstring);

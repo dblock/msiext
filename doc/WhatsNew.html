@@ -75,6 +75,8 @@
                 <li><code>DESEDE3_Encrypt</code> and <code>DESEDE3_Decrypt</code> custom actions will
                     fail if passed a key larger than 24 bytes. Previous versions silently truncated
                     the key.</li>
+                <li>ODBC custom actions, extensions and ODBQ will no longer fail processing empty files.
+                    A warning will be produced instead.</li>
             </ul>
         </li>
         <li><strong>Misc</strong>:

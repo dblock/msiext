@@ -235,9 +235,9 @@ void SQLODBCUnitTests::Test_Execute_ODBC()
     AppSecInc::Xml::XmlDocument xml;
     xml.LoadXml(msiInstall.GetProperty(L"Execute_ODBC_Deferred_Install"));
 
-    CPPUNIT_ASSERT(16 == xml.SelectNodes(L"/ODBCExecutes/ODBCExecute")->length);
+    CPPUNIT_ASSERT(17 == xml.SelectNodes(L"/ODBCExecutes/ODBCExecute")->length);
     CPPUNIT_ASSERT(15 == xml.SelectNodes(L"/ODBCExecutes/ODBCExecute/Sql/text()")->length);
-    CPPUNIT_ASSERT(16 == xml.SelectNodes(L"/ODBCExecutes/ODBCExecute/ConnectionString/text()")->length);
+    CPPUNIT_ASSERT(17 == xml.SelectNodes(L"/ODBCExecutes/ODBCExecute/ConnectionString/text()")->length);
 
     // Access database
     CPPUNIT_ASSERT(ERROR_SUCCESS == hInstall.ExecuteCA(L"DataSource.dll", L"CreateDatabases_Access_Immediate"));

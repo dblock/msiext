@@ -9,6 +9,7 @@ MSSQLDemoDatabase_Query_CreateTable_2		LocalSQLServerConnection	CREATE TABLE [\[
 MSSQLDemoDatabase_Query_DropTable		LocalSQLServerConnection	DROP TABLE [\[][MSSQL_DATABASE_NAME][\]].[\[]dbo[\]].[\[]QueryTableNotEncoded[\]]									10
 MSSQLDemoDatabase_Query_DropTable_2		LocalSQLServerConnection	DROP TABLE [\[][MSSQL_DATABASE_NAME]2[\]].[\[]dbo[\]].[\[]QueryTableEncoded[\]]									10
 MSSQLDemoDatabase_CreateTable_File		LocalSQLServerConnectionDemoDatabase		[SOURCELOCATION]\MSSQL_CreateTable_NotEncoded.sql						SqlServer		9
+MSSQLDemoDatabase_Empty_File		LocalSQLServerConnectionDemoDatabase		[SOURCELOCATION]\MSSQL_Empty.sql						SqlServer		9
 MSSQLDemoDatabase_Binary_CreateTable_NotEncoded		LocalSQLServerConnectionDemoDatabase					MSSQL_CreateTable_NotEncoded_sql					1
 MSSQLDemoDatabase_Binary_CreateTable_Encoded		LocalSQLServerConnectionDemoDatabase					MSSQL_CreateTable_Encoded_sql					9
 MSSQLDemoDatabase_Binary_ExecuteManyGoStatements		LocalSQLServerConnectionDemoDatabase					MSSQL_ExecuteManyGoStatements_sql			SqlServer		9
