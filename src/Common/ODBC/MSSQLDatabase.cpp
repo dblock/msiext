@@ -22,6 +22,18 @@ MSSQLDatabase::~MSSQLDatabase()
 {
 }
 
+std::vector<std::wstring> MSSQLDatabase::GetOptionQueries() const
+{
+	std::vector<std::wstring> options;
+	for each(const std::wstring& database_option in _database_options)
+	{
+		std::wstringstream query;
+		query << L"ALTER DATABASE [" << _database_name << "] SET " << database_option;
+		options.push_back(query.str());
+	}
+	return options;
+}
+
 std::wstring MSSQLDatabase::GetCreateQuery() const
 {
     std::wstringstream query;
@@ -50,12 +62,6 @@ std::wstring MSSQLDatabase::GetCreateQuery() const
         query << std::endl << L"FOR " << _database_purpose;
     }
 
-    if (_database_options.size() > 0)
-    {
-        query << std::endl << L"WITH ";
-        query << AppSecInc::StringUtils::join(_database_options, L", ");
-    }
-
     return query.str();
 }
 
@@ -69,20 +75,24 @@ std::wstring MSSQLDatabase::GetDropQuery() const
 std::wstring MSSQLDatabase::GetExistsQuery() const
 {
     std::wstringstream query;
-    query << L"IF EXISTS (SELECT * FROM sys.databases WHERE name = '" << _database_name << "')";
+    query << L"IF db_id('" << _database_name << "') IS NOT NULL";
     return query.str();
 }
 
 std::wstring MSSQLDatabase::GetNotExistsQuery() const
 {
     std::wstringstream query;
-    query << L"IF NOT EXISTS (SELECT * FROM sys.databases WHERE name = '" << _database_name << "')";
+	query << L"IF db_id('" << _database_name << "') IS NULL";
     return query.str();
 }
 
 void MSSQLDatabase::Create()
 {
     _connection.Execute(GetCreateQuery());
+	for each (const std::wstring& option in GetOptionQueries())
+	{
+		_connection.Execute(option);
+	}
 }
 
 bool MSSQLDatabase::Exists()

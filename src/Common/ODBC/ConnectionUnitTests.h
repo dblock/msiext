@@ -36,6 +36,8 @@ namespace AppSecInc
 					CPPUNIT_TEST(testSelectUTF8String);
 					CPPUNIT_TEST(testExecuteComment);
 					CPPUNIT_TEST_SUITE_END();
+				private:
+					bool isSql2000();
 				public:
 					void testConstructorDestructor();
 					void testInitialize();

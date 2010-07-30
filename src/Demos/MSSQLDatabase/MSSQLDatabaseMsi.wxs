@@ -29,7 +29,7 @@
                         <File Id="RawOutputXslt" Name="RawOutput.xslt" Source="RawOutput.xslt" />
                         <!-- a demo database -->
                         <AppSecInc:MSSQLDatabase Id="MSSQLDemoDatabase" Name="[MSSQL_DATABASE_NAME]" ConnectionId="LocalSQLServerConnection" CreateOnInstall="yes" DropOnUnInstall="yes">
-                            <AppSecInc:MSSQLDatabaseOption Id="MSSQLDemoDatabase_TrustWorthyOn" Value="TRUSTWORTHY ON" />
+                            <AppSecInc:MSSQLDatabaseOption Id="MSSQLDemoDatabase_QuotedIdentifierOn" Value="QUOTED_IDENTIFIER ON" />
                             <AppSecInc:MSSQLDatabaseFileSpec Id="MSSQLDemoDatabase_PRIMARY" Name="Demo_mdf" Filename="[MSSQL_DATABASE_MDF_PATH]" Size="10MB" Type="PRIMARY" />
                             <AppSecInc:MSSQLDatabaseFileSpec Id="MSSQLDemoDatabase_LOG" Name="Demo_ldf" Filename="[MSSQL_DATABASE_LDF_PATH]" Size="12MB" Type="LOG ON" />
                             <AppSecInc:ODBCExecute Id="MSSQLDemoDatabase_CreateTable1" Sql="CREATE TABLE [\[][MSSQL_DATABASE_NAME][\]].[\[]dbo[\]].[\[]Table1[\]] ( [\[]Table1_Id[\]] [\[]int[\]] IDENTITY(1,1) NOT NULL )" ExecuteOnInstall="yes" OutputFilename="[INSTALLLOCATION]CreateTable1.xml" />
@@ -61,7 +61,7 @@
                         <File Id="MSSQLOptionalDatabaseMsi_wxs" Name="MSSQLOptionalDatabaseMsi.wxs" Source="MSSQLDatabaseMsi.wxs" />
                         <!-- an optional demo database -->
                         <AppSecInc:MSSQLDatabase Id="MSSQLOptionalDemoDatabase" Name="[MSSQL_DATABASE_NAME]Optional" ConnectionId="LocalSQLServerConnection" CreateOnInstall="yes" DropOnUnInstall="yes">
-                            <AppSecInc:MSSQLDatabaseOption Id="MSSQLOptionalDemoDatabase_TrustWorthyOn" Value="TRUSTWORTHY ON" />
+                            <AppSecInc:MSSQLDatabaseOption Id="MSSQLOptionalDemoDatabase_QuotedIdentifierOn" Value="QUOTED_IDENTIFIER ON" />
                             <AppSecInc:MSSQLDatabaseFileSpec Id="MSSQLOptionalDemoDatabase_PRIMARY" Name="OptionalDemo_mdf" Filename="[INSTALLLOCATION]OptionalDemo.mdf" Size="10MB" Type="PRIMARY" />
                             <AppSecInc:MSSQLDatabaseFileSpec Id="MSSQLOptionalDemoDatabase_LOG" Name="OptionalDemo_ldf" Filename="[INSTALLLOCATION]OptionalDemo.ldf" Size="12MB" Type="LOG ON" />
                             <AppSecInc:ODBCExecute Id="MSSQLDemoDatabase_CreateOptionalTable1" Sql="CREATE TABLE [\[][MSSQL_DATABASE_NAME]Optional[\]].[\[]dbo[\]].[\[]OptionalTable1[\]] ( [\[]OptionalTable1_Id[\]] [\[]int[\]] IDENTITY(1,1) NOT NULL )" ExecuteOnInstall="yes" />

@@ -265,7 +265,7 @@ void SQLODBCUnitTests::Test_Execute_ODBC()
     mssql_connection_info.SetIPAddress(L"localhost");
     AppSecInc::Databases::ODBC::ODBCConnection mssql_connection;
     mssql_connection.Connect(mssql_connection_info);
-    int tables = mssql_connection.GetScalar(L"SELECT COUNT(*) FROM [" + databasename + L"].sys.tables");
+    int tables = mssql_connection.GetScalar(L"SELECT COUNT(*) FROM [" + databasename + L"].INFORMATION_SCHEMA.Tables WHERE TABLE_TYPE = 'BASE TABLE'");
     std::wcout << std::endl << L" " << databasename << L": " << tables << L" table(s)";
     CPPUNIT_ASSERT(tables == 5);
 

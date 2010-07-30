@@ -30,7 +30,7 @@ to support other database types in the near future.
 <File Id="CreateFileTable_sql" Name="CreateTable.sql" Source="CreateTable.sql" />
 ...
 <AppSecInc:MSSQLDatabase Id="MSSQLDemoDatabase" Name="[MSSQL_DATABASE_NAME]" Connection="LocalSQLServerConnection" CreateOnInstall="yes" DropOnUnInstall="yes">
- <AppSecInc:MSSQLDatabaseOption Id="MSSQLDemoDatabase_TrustWorthyOn" Value="TRUSTWORTHY ON" />
+ <AppSecInc:MSSQLDatabaseOption Id="MSSQLDemoDatabase_QuotedIdentifierOn" Value="QUOTED_IDENTIFIER ON" />
  <AppSecInc:MSSQLDatabaseFileSpec Id="MSSQLDemoDatabase_PRIMARY" Name="Demo_mdf" Filename="[INSTALLLOCATION]Demo.mdf" Size="10MB" Type="PRIMARY" />
  <AppSecInc:MSSQLDatabaseFileSpec Id="MSSQLDemoDatabase_LOG" Name="Demo_ldf" Filename="[INSTALLLOCATION]Demo.ldf" Size="12MB" Type="LOG ON" />
  <AppSecInc:ODBCExecute Id="MSSQLDemoDatabase_CreateOptionalTable1" Sql="CREATE TABLE [\[][MSSQL_DATABASE_NAME]Optional[\]].[\[]dbo[\]].[\[]OptionalTable1[\]] ( [\[]OptionalTable1_Id[\]] [\[]int[\]] IDENTITY(1,1) NOT NULL )" ExecuteOnInstall="yes" />
@@ -293,7 +293,7 @@ to support other database types in the near future.
           </xs:attribute>
           <xs:attribute name="Value" type="xs:string" use="required">
             <xs:annotation>
-              <xs:documentation>Database option, eg. TRUSTWORTHY ON.</xs:documentation>
+              <xs:documentation>Database option, eg. QUOTED_IDENTIFIER ON.</xs:documentation>
             </xs:annotation>
           </xs:attribute>
         </xs:extension>

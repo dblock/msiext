@@ -45,11 +45,15 @@ void ODBCConnectionUnitTests::testGetError()
 	MSSQLConnectionInfo info(L"127.0.0.1", -2);
     try { conn.Connect(info); throw "Expected exception"; } catch (std::exception&) { }
     std::wcout << std::endl << L"Error => {" << std::endl << conn.GetError() << L"}";
-	CPPUNIT_ASSERT(conn.GetError() == 
-		L"SQLSTATE: 08001, Native error: 17, Message: [Microsoft][ODBC SQL Server Driver][DBNETLIB]" \
+	std::wstring sql2005error = L"SQLSTATE: 08001, Native error: 17, Message: [Microsoft][ODBC SQL Server Driver][DBNETLIB]" \
 			L"SQL Server does not exist or access denied.\n" \
 		L"SQLSTATE: 01000, Native error: 53, Message: [Microsoft][ODBC SQL Server Driver][DBNETLIB]" \
-			L"ConnectionOpen (Connect()).");
+			L"ConnectionOpen (Connect()).";
+	std::wstring sql2000error = L"SQLSTATE: 08001, Native error: 17, Message: [Microsoft][ODBC SQL Server Driver][DBNETLIB]" \
+			L"SQL Server does not exist or access denied.\n" \
+		L"SQLSTATE: 01000, Native error: 1231, Message: [Microsoft][ODBC SQL Server Driver][DBNETLIB]" \
+			L"ConnectionOpen (Connect()).";
+	CPPUNIT_ASSERT(conn.GetError() == sql2005error || conn.GetError() == sql2000error);
     std::vector<ODBCError> errors = conn.GetErrors();
 	CPPUNIT_ASSERT(2 == errors.size());
 	CPPUNIT_ASSERT(errors[0].state == L"08001");
@@ -58,7 +62,7 @@ void ODBCConnectionUnitTests::testGetError()
 	CPPUNIT_ASSERT(errors[0].message == L"[Microsoft][ODBC SQL Server Driver][DBNETLIB]" \
 		L"SQL Server does not exist or access denied.");
 	CPPUNIT_ASSERT(errors[1].state == L"01000");
-	CPPUNIT_ASSERT(errors[1].native_error == 53);
+	CPPUNIT_ASSERT(errors[1].native_error == 53 || errors[1].native_error == 1231);
 	std::wcout << std::endl << errors[1].message;
 	CPPUNIT_ASSERT(errors[1].message == L"[Microsoft][ODBC SQL Server Driver][DBNETLIB]" \
 		L"ConnectionOpen (Connect()).");
@@ -301,7 +305,10 @@ void ODBCConnectionUnitTests::testExecuteStoredProcedure_sp_helpuser()
 	results.AddColumn(L"GroupName", SQL_WCHAR, 128);
 	results.AddColumn(L"LoginName", SQL_WCHAR, 128);
 	results.AddColumn(L"DefDbName", SQL_WCHAR, 128);
-    results.AddColumn(L"DefSchemaName", SQL_CHAR, 128);
+	if (! isSql2000())
+	{
+		results.AddColumn(L"DefSchemaName", SQL_CHAR, 128);
+	}
 	results.AddColumn(L"UserID", SQL_SMALLINT);
 	results.AddColumn(L"SID", SQL_CHAR, 0);
     conn.Execute(L"EXECUTE [master].dbo.sp_helpuser", results);
@@ -313,8 +320,24 @@ void ODBCConnectionUnitTests::testExecuteStoredProcedure_sp_helpuser()
 	}
 }
 
+bool ODBCConnectionUnitTests::isSql2000()
+{
+	MSSQLConnectionInfo info(L"localhost");
+    ODBCConnection conn;
+    conn.Connect(info);
+	std::wstring version = conn.GetWString(L"SELECT @@VERSION");
+	std::wcout << std::endl << version;
+	return (version.find(L"2000") != version.npos);
+}
+
 void ODBCConnectionUnitTests::testConnect_ODBC_CONNECTION()
 {
+	if (isSql2000()) 
+	{
+		std::wcout << std::endl << L"Skipped, SQL 2000";
+		return;
+	}
+
     typedef struct
     {
         ODBCConnectionProtocol protocol;
@@ -358,7 +381,10 @@ void ODBCConnectionUnitTests::testExecuteWithParametersAndResults_sp_helpuser()
 	results.AddColumn(L"GroupName", SQL_WCHAR, 128);
 	results.AddColumn(L"LoginName", SQL_WCHAR, 128);
 	results.AddColumn(L"DefDbName", SQL_WCHAR, 128);
-    results.AddColumn(L"DefSchemaName", SQL_CHAR, 128);
+	if (! isSql2000())
+	{
+		results.AddColumn(L"DefSchemaName", SQL_CHAR, 128);
+	}
 	results.AddColumn(L"UserID", SQL_SMALLINT);
 	results.AddColumn(L"SID", SQL_CHAR, 0);
 
@@ -443,7 +469,7 @@ void ODBCConnectionUnitTests::testExecuteSelectAllSupportedTypes()
 	     L"[ntext_value] [ntext] NULL," 
 	     // L"[numeric_value] [numeric] (18, 0) NULL," 
 	     L"[nvarchar_value] [nvarchar] (512) NULL," 
-	     L"[nvarchar_max_value] [nvarchar] (MAX) NULL," 
+	     // L"[nvarchar_max_value] [nvarchar] (MAX) NULL," 
 	     L"[real_value] [real] NULL," 
 	     L"[smalldatetime_value] [smalldatetime] NULL," 
 	     L"[smallint_value] [smallint] NULL," 
@@ -454,10 +480,10 @@ void ODBCConnectionUnitTests::testExecuteSelectAllSupportedTypes()
 	     L"[tinyint_value] [tinyint] NULL," 
 	     // L"[uniqueidentifier_value] [uniqueidentifier] NULL," 
 	     L"[varbinary_value] [varbinary] (512) NULL," 
-	     L"[varbinary_max_value] [varbinary] (MAX) NULL," 
+	     // L"[varbinary_max_value] [varbinary] (MAX) NULL," 
 	     L"[varchar_value] [varchar] (512) NULL," 
-	     L"[varchar_max_value] [varchar] (MAX) NULL," 
-	     L"[xml_value] [xml] NULL," 
+	     // L"[varchar_max_value] [varchar] (MAX) NULL," 
+	     // L"[xml_value] [xml] NULL," 
         L")");
     
     LONGLONG bigint_value = 0;
@@ -474,7 +500,7 @@ void ODBCConnectionUnitTests::testExecuteSelectAllSupportedTypes()
     std::wstring ntext_value = L"very long text"; // \todo
     // int numeric_value = 3;
     std::wstring nvarchar_value = L"nvarchar text";
-    std::wstring nvarchar_max_value = L"nvarchar max text";
+    // std::wstring nvarchar_max_value = L"nvarchar max text";
     float real_value = (float) 3.4;
     std::wstring smalldatetime_value = L"2008-01-01 13:11:00.000";
     int smallint_value = 4;
@@ -484,10 +510,10 @@ void ODBCConnectionUnitTests::testExecuteSelectAllSupportedTypes()
     int tinyint_value = 1;
     // std::wstring uniqueidentifier_value = AppSecInc::Com::GenerateGUIDStringW();
     std::wstring varbinary_value = L"0xcd";
-    std::wstring varbinary_max_value = L"0xef";
+    // std::wstring varbinary_max_value = L"0xef";
     std::string varchar_value = "varchar value";
-    std::string varchar_max_value = "varchar max value";
-    std::wstring xml_value = L"<xml />";
+    // std::string varchar_max_value = "varchar max value";
+    // std::wstring xml_value = L"<xml />";
 
     try
     {
@@ -507,7 +533,7 @@ void ODBCConnectionUnitTests::testExecuteSelectAllSupportedTypes()
 	         + L", '" + ntext_value + L"'"
 	         // + L", " + AppSecInc::StringUtils::toWString(numeric_value)
 	         + L", '" + nvarchar_value + L"'"
-	         + L", '" + nvarchar_max_value + L"'"
+	         // + L", '" + nvarchar_max_value + L"'"
 	         + L", '" + AppSecInc::StringUtils::toWString(real_value) + L"'"
 	         + L", '" + smalldatetime_value + L"'"
 	         + L", '" + AppSecInc::StringUtils::toWString(smallint_value) + L"'"
@@ -518,10 +544,10 @@ void ODBCConnectionUnitTests::testExecuteSelectAllSupportedTypes()
 	         + L", '" + AppSecInc::StringUtils::toWString(tinyint_value) + L"'"
 	         // + L", '" + uniqueidentifier_value + L"'"
 	         + L", " + varbinary_value
-	         + L", " + varbinary_max_value
+	         // + L", " + varbinary_max_value
              + L", '" + AppSecInc::StringUtils::mb2wc(varchar_value) + L"'"
-	         + L", '" + AppSecInc::StringUtils::mb2wc(varchar_max_value) + L"'"
-	         + L", '" + xml_value + L"'"
+	         // + L", '" + AppSecInc::StringUtils::mb2wc(varchar_max_value) + L"'"
+	         // + L", '" + xml_value + L"'"
             L")");
 
 	    ODBCRowSet results;
@@ -543,7 +569,7 @@ void ODBCConnectionUnitTests::testExecuteSelectAllSupportedTypes()
 	    CPPUNIT_ASSERT(results[L"ntext_value"]->GetWStringValue() == ntext_value); 
 	    // CPPUNIT_ASSERT(results[L"numeric_value"]-> == numeric_value);
 	    CPPUNIT_ASSERT(results[L"nvarchar_value"]->GetWStringValue() == nvarchar_value); 
-	    CPPUNIT_ASSERT(results[L"nvarchar_max_value"]->GetWStringValue() == nvarchar_max_value); 
+	    // CPPUNIT_ASSERT(results[L"nvarchar_max_value"]->GetWStringValue() == nvarchar_max_value); 
         CPPUNIT_ASSERT(results[L"real_value"]->GetFloatValue() == real_value);
         CPPUNIT_ASSERT(results[L"smalldatetime_value"]->ToWString() == smalldatetime_value);
         CPPUNIT_ASSERT(results[L"smallint_value"]->GetIntValue() == smallint_value);
@@ -554,9 +580,9 @@ void ODBCConnectionUnitTests::testExecuteSelectAllSupportedTypes()
         CPPUNIT_ASSERT(results[L"tinyint_value"]->GetShortValue() == tinyint_value);
         // CPPUNIT_ASSERT(results["uniqueidentifier_value"]-> == uniqueidentifier_value);
 	    CPPUNIT_ASSERT(L"0x" + results[L"varbinary_value"]->ToWString() == varbinary_value);
-	    CPPUNIT_ASSERT(L"0x" + results[L"varbinary_max_value"]->ToWString() == varbinary_max_value);
+	    // CPPUNIT_ASSERT(L"0x" + results[L"varbinary_max_value"]->ToWString() == varbinary_max_value);
         CPPUNIT_ASSERT(results[L"varchar_value"]->GetStringValue() == varchar_value);
-        CPPUNIT_ASSERT(results[L"varchar_max_value"]->GetStringValue() == varchar_max_value);
+        // CPPUNIT_ASSERT(results[L"varchar_max_value"]->GetStringValue() == varchar_max_value);
         // CPPUNIT_ASSERT(results[L"xml_value"]->GetWStringValue() == xml_value);
     }
     catch(std::exception&)
@@ -762,7 +788,7 @@ void ODBCConnectionUnitTests::testInsertXml()
 	     L"[ntext_value] [ntext] NULL," 
 	     // L"[numeric_value] [numeric] (18, 0) NULL," 
 	     L"[nvarchar_value] [nvarchar] (512) NULL," 
-	     L"[nvarchar_max_value] [nvarchar] (MAX) NULL," 
+	     // L"[nvarchar_max_value] [nvarchar] (MAX) NULL," 
 	     L"[real_value] [real] NULL," 
 	     L"[smalldatetime_value] [smalldatetime] NULL," 
 	     L"[smallint_value] [smallint] NULL," 
@@ -773,10 +799,10 @@ void ODBCConnectionUnitTests::testInsertXml()
 	     L"[tinyint_value] [tinyint] NULL," 
 	     // L"[uniqueidentifier_value] [uniqueidentifier] NULL," 
 	     L"[varbinary_value] [varbinary] (512) NULL," 
-	     L"[varbinary_max_value] [varbinary] (MAX) NULL," 
+	     // L"[varbinary_max_value] [varbinary] (MAX) NULL," 
 	     L"[varchar_value] [varchar] (512) NULL," 
-	     L"[varchar_max_value] [varchar] (MAX) NULL," 
-	     L"[xml_value] [xml] NULL," 
+	     // L"[varchar_max_value] [varchar] (MAX) NULL," 
+	     // L"[xml_value] [xml] NULL," 
         L")");
     
     LONGLONG bigint_value = 0;
@@ -793,7 +819,7 @@ void ODBCConnectionUnitTests::testInsertXml()
     std::wstring ntext_value = L"very long text"; // \todo
     // int numeric_value = 3;
     std::wstring nvarchar_value = L"nvarchar text";
-    std::wstring nvarchar_max_value = L"nvarchar max text";
+    // std::wstring nvarchar_max_value = L"nvarchar max text";
     float real_value = (float) 3.4;
     std::wstring smalldatetime_value = L"2008-01-01 13:11:00.000";
     int smallint_value = 4;
@@ -803,10 +829,10 @@ void ODBCConnectionUnitTests::testInsertXml()
     int tinyint_value = 1;
     // std::wstring uniqueidentifier_value = AppSecInc::Com::GenerateGUIDStringW();
     std::wstring varbinary_value = L"0xcd";
-    std::wstring varbinary_max_value = L"0xef";
+    // std::wstring varbinary_max_value = L"0xef";
     std::string varchar_value = "varchar value";
-    std::string varchar_max_value = "varchar max value";
-    std::wstring xml_value = L"<xml />";
+    // std::string varchar_max_value = "varchar max value";
+    // std::wstring xml_value = L"<xml />";
 
     try
     {
@@ -840,7 +866,7 @@ void ODBCConnectionUnitTests::testInsertXml()
         testInsertXml_APPEND(L"ntext_value", ntext_value, L"ntext");
         // testInsertXml_APPEND(L"numeric_value", AppSecInc::StringUtils::toWString(numeric_value), L"numeric");
         testInsertXml_APPEND(L"nvarchar_value", nvarchar_value, L"nvarchar");
-        testInsertXml_APPEND(L"nvarchar_max_value", nvarchar_max_value, L"nvarchar");
+        // testInsertXml_APPEND(L"nvarchar_max_value", nvarchar_max_value, L"nvarchar");
         // testInsertXml_APPEND(L"real_value", AppSecInc::StringUtils::toWString(real_value), L"real");
         // testInsertXml_APPEND(L"smalldatetime_value", smalldatetime_value, L"smalldatetime");
         testInsertXml_APPEND(L"smallint_value", AppSecInc::StringUtils::toWString(smallint_value), L"smallint");
@@ -853,7 +879,7 @@ void ODBCConnectionUnitTests::testInsertXml()
         // testInsertXml_APPEND(L"varbinary_value", varbinary_value, L"varbinary");
         // testInsertXml_APPEND(L"varbinary_max_value", varbinary_max_value, L"varbinary");
         testInsertXml_APPEND(L"varchar_value", varchar_value, L"varchar");
-        testInsertXml_APPEND(L"varchar_max_value", varchar_max_value, L"varchar");
+        // testInsertXml_APPEND(L"varchar_max_value", varchar_max_value, L"varchar");
         // testInsertXml_APPEND(L"xml_value", xml_value, L"xml");
     
         conn.InsertXml(data);
@@ -877,7 +903,7 @@ void ODBCConnectionUnitTests::testInsertXml()
 	    CPPUNIT_ASSERT(results[L"ntext_value"]->GetWStringValue() == ntext_value); 
 	    // CPPUNIT_ASSERT(results[L"numeric_value"]->GetIntValue() == numeric_value);
 	    CPPUNIT_ASSERT(results[L"nvarchar_value"]->GetWStringValue() == nvarchar_value); 
-	    CPPUNIT_ASSERT(results[L"nvarchar_max_value"]->GetWStringValue() == nvarchar_max_value); 
+	    // CPPUNIT_ASSERT(results[L"nvarchar_max_value"]->GetWStringValue() == nvarchar_max_value); 
         // CPPUNIT_ASSERT(results[L"real_value"]->GetFloatValue() == real_value);
         // CPPUNIT_ASSERT(results[L"smalldatetime_value"]->ToWString() == smalldatetime_value);
         CPPUNIT_ASSERT(results[L"smallint_value"]->GetIntValue() == smallint_value);
@@ -890,7 +916,7 @@ void ODBCConnectionUnitTests::testInsertXml()
 	    // CPPUNIT_ASSERT(L"0x" + results[L"varbinary_value"]->ToWString() == varbinary_value);
 	    // CPPUNIT_ASSERT(L"0x" + results[L"varbinary_max_value"]->ToWString() == varbinary_max_value);
         CPPUNIT_ASSERT(results[L"varchar_value"]->GetStringValue() == varchar_value);
-        CPPUNIT_ASSERT(results[L"varchar_max_value"]->GetStringValue() == varchar_max_value);
+        // CPPUNIT_ASSERT(results[L"varchar_max_value"]->GetStringValue() == varchar_max_value);
         // CPPUNIT_ASSERT(results[L"xml_value"]->GetWStringValue() == xml_value);
     }
     catch(std::exception&)
@@ -927,7 +953,7 @@ void ODBCConnectionUnitTests::testExecuteStoredProcedure_xp_msver()
 	conn.Connect(info);
 	
 	std::wstring statement = 
-		L"DECLARE @toexec varchar(max)\r\n" \
+		L"DECLARE @toexec varchar(1024)\r\n" \
 		L"DECLARE csr CURSOR LOCAL static FOR\r\n" \
 		L"SELECT 'xp_msver'\r\n" \
 		L"OPEN csr\r\n" \
@@ -958,6 +984,12 @@ void ODBCConnectionUnitTests::testExecuteStoredProcedure_xp_msver()
 
 void ODBCConnectionUnitTests::testExecuteComment()
 {
+	if (isSql2000())
+	{
+		std::wcout << std::endl << L"Skipped, SQL 2000";
+		return;
+	}
+
 	MSSQLConnectionInfo info(L"localhost");
     info.SetTrustedAuth(true);
 	ODBCConnection conn;

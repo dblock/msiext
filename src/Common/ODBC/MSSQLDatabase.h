@@ -55,6 +55,7 @@ namespace AppSecInc
                 void DropIfExists();
 				~MSSQLDatabase();
                 std::wstring GetCreateQuery() const;
+				std::vector<std::wstring> GetOptionQueries() const;
                 std::wstring GetDropQuery() const;
                 std::wstring GetExistsQuery() const;
                 std::wstring GetNotExistsQuery() const;

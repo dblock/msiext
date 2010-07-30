@@ -86,7 +86,7 @@ void MSSQLDatabaseUnitTests::testGetCreateQuery()
     database1.AddFileSpec(spec2);
     database1.SetCollate(L"French_CI_AI");
     database1.SetPurpose(L"ATTACH_REBUILD_LOG");
-    database1.AddOption(L"TRUSTWORTHY ON");
+    database1.AddOption(L"QUOTED_IDENTIFIER ON");
     database1.AddOption(L"DB_CHAINING ON");
 
     std::wcout << std::endl << database1.GetCreateQuery();
@@ -94,8 +94,11 @@ void MSSQLDatabaseUnitTests::testGetCreateQuery()
         L" PRIMARY ( NAME = [spec1], FILENAME = 'filename1' )\n" \
         L" LOG ON ( NAME = [spec1], FILENAME = 'filename1' )\n" \
         L"COLLATE French_CI_AI\n" \
-        L"FOR ATTACH_REBUILD_LOG\n" \
-        L"WITH TRUSTWORTHY ON, DB_CHAINING ON" == database1.GetCreateQuery());
+        L"FOR ATTACH_REBUILD_LOG" == database1.GetCreateQuery());
+	std::vector<std::wstring> options = database1.GetOptionQueries();
+	CPPUNIT_ASSERT(options.size() == 2);
+	CPPUNIT_ASSERT(options[0] == L"ALTER DATABASE [test] SET QUOTED_IDENTIFIER ON");
+	CPPUNIT_ASSERT(options[1] == L"ALTER DATABASE [test] SET DB_CHAINING ON");
 }
 
 void MSSQLDatabaseUnitTests::testLoadSave()
@@ -117,7 +120,7 @@ void MSSQLDatabaseUnitTests::testLoadSave()
     database1.AddFileSpec(spec2);
     database1.SetCollate(L"French_CI_AI");
     database1.SetPurpose(L"ATTACH_REBUILD_LOG");
-    database1.AddOption(L"TRUSTWORTHY ON");
+    database1.AddOption(L"QUOTED_IDENTIFIER ON");
     database1.AddOption(L"DB_CHAINING ON");
 
     AppSecInc::Xml::XmlDocument doc;

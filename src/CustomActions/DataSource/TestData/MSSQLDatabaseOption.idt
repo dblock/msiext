@@ -1,4 +1,4 @@
 Id	MSSQLDatabaseId	Value
 s72	s72	s255
 MSSQLDatabaseOption	Id
-MSSQLDemoDatabase_TrustWorthyOn	MSSQLDemoDatabase	TRUSTWORTHY ON
+MSSQLDemoDatabase_QuotedIdentifierOn	MSSQLDemoDatabase	QUOTED_IDENTIFIER ON

@@ -35,6 +35,11 @@ MsiShim::MsiShim()
 
 void MsiShim::Import(const std::wstring& path, const std::wstring& file)
 {
+	std::wstring full_path = AppSecInc::File::DirectoryCombine(path, file);
+
+	CHECK_BOOL(AppSecInc::File::FileExists(full_path),
+		L"File '" << full_path << "' does not exist.");
+
     Close();
 
     _database.Open(_filename, MSIDBOPEN_DIRECT);
