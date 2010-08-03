@@ -235,14 +235,18 @@ CA_API UINT __stdcall Execute_ODBC_Deferred(MSIHANDLE hInstall)
             }
             catch (std::exception& ex) 
             {
-                std::wstringstream error;
-                error << AppSecInc::StringUtils::mb2wc(ex.what())
-                      << (parser.exitOnErrorFlag()? L"": L" - IGNORED");
-                msiInstall.LogError(error.str());                
+				std::wstringstream error;
+				error << AppSecInc::StringUtils::mb2wc(ex.what());
 				if (parser.exitOnErrorFlag()) 
 				{
-                    throw std::exception("Error executing sql statement, terminated");
-                }
+					msiInstall.LogError(error.str());
+					throw std::exception("Error executing sql statement, terminated");
+				}
+				else
+				{
+					error << L" - IGNORED";
+					msiInstall.LogInfo(_T(__FUNCTION__), error.str());
+				}
             }
         }
 
