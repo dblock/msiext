@@ -66,13 +66,26 @@ std::vector<std::wstring> ODBCHandle::GetDiagFields(SQLHANDLE handle, int type, 
 
 std::vector<ODBCDiagnosticsMessage> ODBCHandle::GetDiagMessages(SQLHANDLE handle, int type)
 {
-	SQLWCHAR sql_message[SQL_MAX_MESSAGE_LENGTH];
+	std::vector<SQLWCHAR> sql_message;
+	sql_message.resize(SQL_MAX_MESSAGE_LENGTH + 2);
 	SQLSMALLINT sql_message_len;
 
 	std::vector<ODBCDiagnosticsMessage> messages;
 	SQLSMALLINT i = 1;
-	while (SQL_SUCCEEDED(SQLGetDiagField(type, handle, i, SQL_DIAG_MESSAGE_TEXT, sql_message, SQL_MAX_MESSAGE_LENGTH, & sql_message_len))) 
+	SQLRETURN rc = 0;
+	while (SQL_SUCCEEDED(rc = SQLGetDiagField(type, handle, i, SQL_DIAG_MESSAGE_TEXT, & * sql_message.begin(), sql_message.size(), & sql_message_len))) 
 	{
+		if (rc == SQL_SUCCESS_WITH_INFO && sql_message_len > sql_message.size())
+		{
+			sql_message.resize(sql_message_len + 2);
+			rc = SQLGetDiagField(type, handle, i, SQL_DIAG_MESSAGE_TEXT, & * sql_message.begin(), sql_message.size(), & sql_message_len);
+
+			if (rc != SQL_SUCCESS)
+			{
+				break;
+			}
+		}
+
 		ODBCDiagnosticsMessage message;
 		// the messages are formatted according to http://msdn.microsoft.com/en-us/library/ms713606(VS.85).aspx
 		// For errors and warnings that do not occur in a data source, the diagnostic message must use this format:
@@ -80,7 +93,7 @@ std::vector<ODBCDiagnosticsMessage> ODBCHandle::GetDiagMessages(SQLHANDLE handle
 		// For errors and warnings that occur in a data source, the diagnostic message must use this format:
 		// [ vendor-identifier ][ ODBC-component-identifier ][ data-source-identifier ] data-source-supplied-text 
 		std::vector<std::wstring> message_tokens;
-		AppSecInc::StringUtils::tokenizeWithSkip(static_cast<LPCWSTR>(sql_message), message_tokens, L"][");
+		AppSecInc::StringUtils::tokenizeWithSkip(& * sql_message.begin(), message_tokens, L"][");
 		CHECK_BOOL(message_tokens.size() == 3 || message_tokens.size() == 4, L"Invalid message format");
 		message.vendor = message_tokens[0];
 		message.component = message_tokens[1];
@@ -99,8 +112,11 @@ std::vector<ODBCDiagnosticsMessage> ODBCHandle::GetDiagMessages(SQLHANDLE handle
 		i++;
 	}
 
-    CHECK_BOOL(! messages.empty(),
-        L"Error retreiving ODBC diag fields, handle=" << std::hex << handle << L", type=" << type);
+	if (rc != SQL_NO_DATA && rc != SQL_SUCCESS)
+	{
+		CHECK_BOOL(rc == SQL_SUCCESS,
+			L"SQLGetDiagField(" << i << L"): " << std::hex << rc);
+	}
 
 	return messages;
 }

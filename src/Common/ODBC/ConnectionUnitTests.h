@@ -16,6 +16,7 @@ namespace AppSecInc
 					CPPUNIT_TEST(testGetError);
 					CPPUNIT_TEST(testGetDiagFields);
 					CPPUNIT_TEST(testGetDiagMessages);
+					CPPUNIT_TEST(testGetDiagLongMessages);
 					CPPUNIT_TEST(testConnectWithODBCConnectionInfo);
                     CPPUNIT_TEST(testGetScalar);
                     CPPUNIT_TEST(testGetString);
@@ -44,6 +45,7 @@ namespace AppSecInc
 					void testGetError();
 					void testGetDiagFields();
 					void testGetDiagMessages();
+					void testGetDiagLongMessages();
                     void testGetScalar();
                     void testGetString();
                     void testGetWString();
