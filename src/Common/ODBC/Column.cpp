@@ -52,7 +52,10 @@ SQLSMALLINT ODBCColumn::GetBindDataType() const
     case SQL_LONGVARBINARY:
 	case SQL_VARBINARY:
         bind_datatype = SQL_BINARY;
-        break;	
+        break;
+	case SQL_SS_VARIANT:
+		bind_datatype = SQL_BINARY;
+		break;
     }
     return bind_datatype;
 }
@@ -108,7 +111,21 @@ void ODBCColumn::GetDataAt(SQLHANDLE hstmt, int index)
             "Error getting data for column of type " << _type << " at index " << index << L": " << 
                     ODBCHandle::GetError(hstmt, SQL_HANDLE_STMT));
 
-        // text types are null-terminated, the last character was the null terminator
+		// variant type needs to be changed to the actual type
+		// see http://msdn.microsoft.com/en-us/library/ms130902.aspx
+		switch(_type)
+		{
+		case SQL_SS_VARIANT:
+			rc = SQLColAttribute(hstmt, index, SQL_CA_SS_VARIANT_TYPE, NULL, NULL, NULL, & _type);
+
+			CHECK_BOOL(SQL_SUCCEEDED(rc),
+				"Error getting data type for sql_variant column at index " << index << L": " << 
+						ODBCHandle::GetError(hstmt, SQL_HANDLE_STMT));
+
+			break;
+		}
+
+		// text types are null-terminated, the last character was the null terminator
         switch(_type)
         {
         case SQL_LONGVARCHAR:

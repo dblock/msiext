@@ -1028,3 +1028,12 @@ void ODBCConnectionUnitTests::testExecuteComment()
 	std::wcout << std::endl << xml;
 }
 	
+void ODBCConnectionUnitTests::testSelectServerProperty()
+{
+	MSSQLConnectionInfo info(L"localhost");
+    info.SetTrustedAuth(true);
+	ODBCConnection conn;
+	conn.Connect(info);
+	std::wstring xml = conn.GetXml(L"SELECT SERVERPROPERTY('ProductVersion')");
+	std::wcout << std::endl << xml;
+}

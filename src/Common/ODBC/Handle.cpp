@@ -75,7 +75,7 @@ std::vector<ODBCDiagnosticsMessage> ODBCHandle::GetDiagMessages(SQLHANDLE handle
 	SQLRETURN rc = 0;
 	while (SQL_SUCCEEDED(rc = SQLGetDiagField(type, handle, i, SQL_DIAG_MESSAGE_TEXT, & * sql_message.begin(), sql_message.size(), & sql_message_len))) 
 	{
-		if (rc == SQL_SUCCESS_WITH_INFO && sql_message_len > sql_message.size())
+		if (rc == SQL_SUCCESS_WITH_INFO && sql_message_len > (SQLSMALLINT) sql_message.size())
 		{
 			sql_message.resize(sql_message_len + 2);
 			rc = SQLGetDiagField(type, handle, i, SQL_DIAG_MESSAGE_TEXT, & * sql_message.begin(), sql_message.size(), & sql_message_len);

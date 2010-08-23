@@ -1,6 +1,7 @@
 #pragma once
 
 #include <odbcinst.h>
+#include <odbcss.h>
 #include <sqlext.h>
 
 #include "ConnectionInfo.h"

@@ -209,6 +209,8 @@ std::string ODBCBuffer::ToString() const
 	case SQL_VARBINARY:
     case SQL_LONGVARBINARY:
         // this is probably incorrect for SQL_VARBINARY, we shouldn't be truncating the buffer
+	case SQL_SS_VARIANT:
+		// this is probably incorrect for SQL_VARIANT, we should know the actual data type
         {
             std::string binary = AppSecInc::Formatter::FormatHexStringA(
 			    (byte *) & * _buffer.begin(), _buffer.size());
@@ -273,6 +275,8 @@ std::wstring ODBCBuffer::ToWString() const
 	case SQL_VARBINARY:
     case SQL_LONGVARBINARY:
         // this is probably incorrect for SQL_VARBINARY, we shouldn't be truncating the buffer
+	case SQL_SS_VARIANT:
+		// this is probably incorrect for SQL_VARIANT, we should know the actual data type
         {
             std::wstring binary = AppSecInc::Formatter::FormatHexStringW(
 			    (byte *) & * _buffer.begin(), _buffer.size());
@@ -354,7 +358,8 @@ static SQLTypeToStringEntry SQLTypeToStringEntry_map[] =
 	{ SQL_TYPE_TIMESTAMP, L"timestamp" },
     { SQL_WCHAR, L"nchar" },
     { SQL_WVARCHAR, L"nvarchar" },
-    { SQL_WLONGVARCHAR, L"ntext" },    
+    { SQL_WLONGVARCHAR, L"ntext" },
+	{ SQL_SS_VARIANT, L"sqlvariant" },
 };
 
 SQLSMALLINT ODBCBuffer::StringToSQLType(const std::wstring& type)

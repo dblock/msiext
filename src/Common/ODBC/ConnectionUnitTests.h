@@ -35,6 +35,7 @@ namespace AppSecInc
 					CPPUNIT_TEST(testInsertLargePayload_Access);
 					CPPUNIT_TEST(testInsertXml);
 					CPPUNIT_TEST(testSelectUTF8String);
+					CPPUNIT_TEST(testSelectServerProperty);
 					CPPUNIT_TEST(testExecuteComment);
 					CPPUNIT_TEST_SUITE_END();
 				private:
@@ -66,6 +67,7 @@ namespace AppSecInc
                     void testInsertXml();
 					void testSelectUTF8String();
 					void testExecuteComment();
+					void testSelectServerProperty();
 				};
 			}
 		}
