@@ -222,6 +222,8 @@ void FileUnitTests::testDirectoryCreate()
 	std::wcout << std::endl << L"Creating: " << path1;
 	CPPUNIT_ASSERT(! AppSecInc::File::DirectoryExists(path1));
 	std::wstring path1_created = AppSecInc::File::DirectoryCreate(path1);
+	// shouldn't fail a second time and return blank (nothing new was created)
+	CPPUNIT_ASSERT(L"" == AppSecInc::File::DirectoryCreate(path1));
 	CPPUNIT_ASSERT(AppSecInc::File::DirectoryExists(path1));
 	CPPUNIT_ASSERT(path1 == path1_created);
 	// check that we can create two more levels

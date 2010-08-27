@@ -54,7 +54,7 @@ CA_API UINT __stdcall Win32_DeleteFile(MSIHANDLE hInstall);
 /*!
 \brief Create a directory.
 \param WIN32_PATH Fully qualified path to the directory to create; may contain several levels of directories to make.
-\return WIN32_PATH_CREATED Full qualified path that has been created first; this is the top level directory that didn't exist.
+\return WIN32_PATH_CREATED Fully qualified path that has been created first; this is the top level directory that didn't exist.
 
 */
 CA_API UINT __stdcall Win32_CreateDirectory(MSIHANDLE hInstall);
