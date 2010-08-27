@@ -168,28 +168,31 @@ std::wstring AppSecInc::File::DirectoryCombine(const std::wstring& dir, const st
 
 std::list<std::wstring> AppSecInc::File::GetFiles(const std::wstring& path_and_wildcard, int flags)
 {
-	std::wstring::size_type star_pos = path_and_wildcard.find(L"*");
-	std::wstring::size_type question_pos = path_and_wildcard.find(L"?");
-	std::wstring::size_type bs_pos = path_and_wildcard.rfind(L"\\");
+	std::wstring path_and_wildcard_bs(path_and_wildcard);
+	AppSecInc::StringUtils::replace(path_and_wildcard_bs, L"/", L"\\");
+
+	std::wstring::size_type star_pos = path_and_wildcard_bs.find(L"*");
+	std::wstring::size_type question_pos = path_and_wildcard_bs.find(L"?");
+	std::wstring::size_type bs_pos = path_and_wildcard_bs.rfind(L"\\");
 	
-	if (bs_pos == path_and_wildcard.npos)
+	if (bs_pos == path_and_wildcard_bs.npos)
 	{
 		// the entire path_and_wildcard is a name or a wildcard
-		return GetFiles(GetCurrentDirectoryW(), path_and_wildcard, flags);
+		return GetFiles(GetCurrentDirectoryW(), path_and_wildcard_bs, flags);
 	} 
 
 	// the only supported wildcards are part of the file name
 	// directory wildcards are not supported
-	if ((star_pos != path_and_wildcard.npos && star_pos < bs_pos)
-		|| (question_pos != path_and_wildcard.npos && question_pos < bs_pos))
+	if ((star_pos != path_and_wildcard_bs.npos && star_pos < bs_pos)
+		|| (question_pos != path_and_wildcard_bs.npos && question_pos < bs_pos))
 	{
 		throw std::exception("wildcard in a directory name");
 	}
 
 	// split in 2, path and wildcard
 	return GetFiles(
-		path_and_wildcard.substr(0, bs_pos),
-		path_and_wildcard.substr(bs_pos + 1),
+		path_and_wildcard_bs.substr(0, bs_pos),
+		path_and_wildcard_bs.substr(bs_pos + 1),
 		flags);	
 }
 
@@ -449,7 +452,9 @@ std::wstring AppSecInc::File::DirectoryCreate(const std::wstring& path)
 {
 	std::wstring result;
 	std::vector<std::wstring> parts;
-	AppSecInc::StringUtils::tokenize(path, parts, L"\\");
+	std::wstring path_bs = path;
+	AppSecInc::StringUtils::replace(path_bs, L"/", L"\\");
+	AppSecInc::StringUtils::tokenize(path_bs, parts, L"\\");
 	
 	std::wstring current;
 	for each (std::wstring part in parts)

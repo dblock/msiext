@@ -235,6 +235,10 @@ void FileUnitTests::testDirectoryCreate()
 	CPPUNIT_ASSERT(AppSecInc::File::DirectoryExists(path2));
 	// the first created directory is path2
 	CPPUNIT_ASSERT(path2 == path3_created);
+	// create a subpath with a /
+	std::wstring path4 = path3 + L"/" + guid;
+	std::wcout << std::endl << L"Creating: " << path4;
+	CPPUNIT_ASSERT(path3 + L"\\" + guid == AppSecInc::File::DirectoryCreate(path4));
 	// delete the final result
 	AppSecInc::File::DirectoryDelete(path1);
 }
