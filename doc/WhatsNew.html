@@ -67,8 +67,6 @@
                     and <code>Base64DecodeW</code> to Cryptography.dll.</li>
                 <li>Added support for <code>sqlvariant</code> in ODBC custom actions, Wix extensions
                     and ODBQ.exe.</li>
-                <li>Connection String in data passed between Immediante and Deferred Data Source Custom Actions
-                    is now encrypted so that credentials are not logged in MSI log file.</li>
             </ul>
         </li>
         <li><strong>Breaking Changes</strong>:
@@ -87,6 +85,9 @@
             <ul>
                 <li>Build and unit tests run on Windows 7, <code>MSIShim</code> adds a dummy <code>Property</code>
                     table with a value for <code>ProductCode</code>.</li>
+                <li>Connection strings in custom action data passed between immediate and deferred ODBC
+                    custom actions is now encrypted so that credentials are not logged in clear in MSI
+                    logs.</li>
             </ul>
         </li>
         <li><strong>Bugs</strong>:
