@@ -353,7 +353,7 @@ CA_API UINT __stdcall DataFile_SQLServer_Immediate(MSIHANDLE hInstall)
         combined_xml_document.AppendChild(L"Database", combined_xml_mssqldatafile_root)->text = _bstr_t(database.c_str());
         combined_xml_document.AppendChild(L"Schema", combined_xml_mssqldatafile_root)->text = _bstr_t(schema.c_str());
         combined_xml_document.AppendChild(L"Table", combined_xml_mssqldatafile_root)->text = _bstr_t(table.c_str());
-        combined_xml_document.AppendChild(L"ConnectionString", combined_xml_mssqldatafile_root)->text = _bstr_t(connectionstring.c_str());
+        combined_xml_document.AppendChild(L"ConnectionString", combined_xml_mssqldatafile_root)->text = _bstr_t(AppSecInc::Crypt::DPAPIImpl::Protect(connectionstring).c_str());
 
         // append parameters
         MSXML2::IXMLDOMNodePtr parameters_node = combined_xml_document.AppendChild(L"MSSQLDataFileParameters", combined_xml_mssqldatafile_root);
@@ -394,7 +394,7 @@ CA_API UINT __stdcall DataFile_SQLServer_Deferred(MSIHANDLE hInstall)
             AppSecInc::Databases::MSSQL::MSSQLDataFile datafile;
             datafile.Load(xmlDocument, row);
             msiInstall.LogInfo(_T(__FUNCTION__), datafile.GetInsertQuery());
-            std::wstring connection_string = xmlDocument.GetNodeValue(L"ConnectionString", row);
+            std::wstring connection_string = AppSecInc::Crypt::DPAPIImpl::UnProtect(xmlDocument.GetNodeValue(L"ConnectionString", row));
             msiInstall.LogInfo(_T(__FUNCTION__), datafile.GetInsertQuery());
             AppSecInc::Databases::ODBC::ODBCConnectionStringInfo connection_info(connection_string);
             AppSecInc::Databases::ODBC::ODBCConnection connection;

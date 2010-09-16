@@ -16,3 +16,4 @@
 #include <CppUnitTests/CppUnitTests.h>
 #include <ODBC/MSSQLDatabase.h>
 #include <ODBC/AccessDatabase.h>
+#include <Crypt/Crypt.h>

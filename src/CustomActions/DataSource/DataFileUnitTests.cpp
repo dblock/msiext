@@ -54,6 +54,14 @@ void DataFileUnitTests::Test_DataFile_SQLServer()
     // seven total parameters
     CPPUNIT_ASSERT(7 == xml.SelectNodes(L"/MSSQLDataFiles/MSSQLDataFile/MSSQLDataFileParameters/MSSQLDataFileParameter")->length);
 
+    // connection strings must be encrypted
+    MSXML2::IXMLDOMNodeListPtr connectionStrings = xml.SelectNodes(L"/MSSQLDataFiles/MSSQLDataFile/ConnectionString/text()");
+    for (int i = 0; i < connectionStrings->length; i++)
+    {
+        std::wstring encrypted = StringUtils::mb2wc(StringUtils::bstr2mb(connectionStrings->item[i]->text));
+        AppSecInc::Crypt::DPAPIImpl::UnProtect(encrypted); // Fails if input string is not encrypted
+    }
+
     // create the database
     AppSecInc::Databases::MSSQL::MSSQLConnectionInfo connection_info;
     AppSecInc::Databases::MSSQL::MSSQLDatabase database(connection_info);   

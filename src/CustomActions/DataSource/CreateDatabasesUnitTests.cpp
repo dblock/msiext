@@ -40,6 +40,14 @@ void CreateDatabasesUnitTests::Test_CreateDatabases_SQLServer()
     CPPUNIT_ASSERT(1 == xml.SelectNodes(L"/MSSQLDatabases/MSSQLDatabase/MSSQLDatabaseOptions/MSSQLDatabaseOption")->length);
     CPPUNIT_ASSERT(4 == xml.SelectNodes(L"/MSSQLDatabases/MSSQLDatabase/MSSQLDatabaseFileSpecs/MSSQLDatabaseFileSpec")->length);
 
+    // connection strings must be encrypted
+    MSXML2::IXMLDOMNodeListPtr connectionStrings = xml.SelectNodes(L"/MSSQLDatabases/MSSQLDatabase/ConnectionString/text()");
+    for (int i = 0; i < connectionStrings->length; i++)
+    {
+        std::wstring encrypted = StringUtils::mb2wc(StringUtils::bstr2mb(connectionStrings->item[i]->text));
+        AppSecInc::Crypt::DPAPIImpl::UnProtect(encrypted); // Fails if input string is not encrypted
+    }
+
     // create the databases
     msiInstall.SetProperty(L"CustomActionData", msiInstall.GetProperty(L"CreateDatabases_SQLServer_Deferred_Install"));
     CPPUNIT_ASSERT(ERROR_SUCCESS == hInstall.ExecuteCA(L"DataSource.dll", L"CreateDatabases_SQLServer_Deferred"));
@@ -96,6 +104,14 @@ void CreateDatabasesUnitTests::Test_CreateDatabases_Access()
     CPPUNIT_ASSERT(1 == xml.SelectNodes(L"/AccessDatabases/AccessDatabase[@actions='create']")->length);
     CPPUNIT_ASSERT(1 == xml.SelectNodes(L"/AccessDatabases/AccessDatabase[@checkIfExists='false']")->length);
     CPPUNIT_ASSERT(0 == xml.SelectNodes(L"/AccessDatabases/AccessDatabase[@checkIfExists='true']")->length);
+
+    // connection strings must be encrypted
+    MSXML2::IXMLDOMNodeListPtr connectionStrings = xml.SelectNodes(L"/AccessDatabases/AccessDatabase/ConnectionString/text()");
+    for (int i = 0; i < connectionStrings->length; i++)
+    {
+        std::wstring encrypted = StringUtils::mb2wc(StringUtils::bstr2mb(connectionStrings->item[i]->text));
+        AppSecInc::Crypt::DPAPIImpl::UnProtect(encrypted); // Fails if input string is not encrypted
+    }
 
     // create the databases
     msiInstall.SetProperty(L"CustomActionData", msiInstall.GetProperty(L"CreateDatabases_Access_Deferred_Install"));

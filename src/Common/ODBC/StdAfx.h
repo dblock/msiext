@@ -6,5 +6,6 @@
 #include <shlobj.h>
 #include <File/File.h>
 #include <Xml/Xml.h>
+#include <Crypt/Crypt.h>
 
 #include "ODBC.h"

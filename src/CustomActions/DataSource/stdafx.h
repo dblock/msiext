@@ -13,6 +13,7 @@
 #include <LSA/LSA.h>
 #include <Msi/MsiImpersonatedInstall.h>
 #include "DSNAttributes.h"
+#include <Crypt/Crypt.h>
 
 using namespace AppSecInc::Msi;
 

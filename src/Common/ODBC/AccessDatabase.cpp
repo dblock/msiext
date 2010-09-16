@@ -56,12 +56,12 @@ MSXML2::IXMLDOMNodePtr AccessDatabase::Save(AppSecInc::Xml::XmlDocument& xmldoc,
 {
     MSXML2::IXMLDOMNodePtr root = xmldoc.AppendChild(L"AccessDatabase", parent);
     xmldoc.AppendChild(L"DBQ", root)->text = _bstr_t(_dbq.c_str());
-    xmldoc.AppendChild(L"ConnectionString", root)->text = _bstr_t(_connection_string.c_str());
+    xmldoc.AppendChild(L"ConnectionString", root)->text = _bstr_t(AppSecInc::Crypt::DPAPIImpl::Protect(_connection_string).c_str());
     return root;
 }
 
 void AccessDatabase::Load(AppSecInc::Xml::XmlDocument& xmldoc, MSXML2::IXMLDOMNodePtr root)
 {
     _dbq = xmldoc.GetNodeValue(L"DBQ", root);
-    _connection_string = xmldoc.GetNodeValue(L"ConnectionString", root, L"");
+    _connection_string = AppSecInc::Crypt::DPAPIImpl::UnProtect(xmldoc.GetNodeValue(L"ConnectionString", root, L""));
 }

@@ -138,7 +138,7 @@ MSXML2::IXMLDOMNodePtr MSSQLDatabase::Save(AppSecInc::Xml::XmlDocument& xmldoc, 
     xmldoc.AppendChild(L"Name", root)->text = _bstr_t(_database_name.c_str());
     xmldoc.AppendChild(L"Collate", root)->text = _bstr_t(_database_collate.c_str());
     xmldoc.AppendChild(L"Purpose", root)->text = _bstr_t(_database_purpose.c_str());
-    xmldoc.AppendChild(L"ConnectionString", root)->text = _bstr_t(_connection_string.c_str());
+    xmldoc.AppendChild(L"ConnectionString", root)->text = _bstr_t(AppSecInc::Crypt::DPAPIImpl::Protect(_connection_string).c_str());
 
     MSXML2::IXMLDOMNodePtr options_root = xmldoc.AppendChild(L"MSSQLDatabaseOptions", root);
     for each (const std::wstring& option in _database_options)        
@@ -159,7 +159,7 @@ void MSSQLDatabase::Load(AppSecInc::Xml::XmlDocument& xmldoc, MSXML2::IXMLDOMNod
     _database_name = xmldoc.GetNodeValue(L"Name", root);
     _database_collate = xmldoc.GetNodeValue(L"Collate", root, L"");
     _database_purpose = xmldoc.GetNodeValue(L"Purpose", root, L"");
-    _connection_string = xmldoc.GetNodeValue(L"ConnectionString", root, L"");
+    _connection_string = AppSecInc::Crypt::DPAPIImpl::UnProtect(xmldoc.GetNodeValue(L"ConnectionString", root, L""));
 
     MSXML2::IXMLDOMNodeListPtr option_rows = xmldoc.SelectNodes(L"MSSQLDatabaseOptions/MSSQLDatabaseOption", root);
     MSXML2::IXMLDOMNodePtr option_row = NULL;

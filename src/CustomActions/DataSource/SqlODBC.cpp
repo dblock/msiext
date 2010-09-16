@@ -182,7 +182,7 @@ CA_API UINT __stdcall Execute_ODBC_Deferred(MSIHANDLE hInstall)
     while (NULL != (row = rows->nextNode()))
     {
         std::wstring id = xmlDocument.GetAttributeValue(L"id", row);
-        std::wstring connectionstring = xmlDocument.GetNodeValue(L"ConnectionString", row);
+        std::wstring connectionstring = AppSecInc::Crypt::DPAPIImpl::UnProtect(xmlDocument.GetNodeValue(L"ConnectionString", row));
         std::wstring sql = xmlDocument.GetNodeValue(L"Sql", row, L"");
         std::wstring filename = xmlDocument.GetNodeValue(L"Filename", row, L"");
         std::wstring outputfilename = xmlDocument.GetNodeValue(L"OutputFilename", row, L"");
@@ -227,7 +227,7 @@ CA_API UINT __stdcall Execute_ODBC_Deferred(MSIHANDLE hInstall)
             std::wstring trimmed_statement = parser.getNextBatch();
             if (trimmed_statement.empty()) continue;
             std::wstringstream status;
-            status << L"Executing \"" << trimmed_statement << "\" on \"" << connectionstring << L"\" (" << id << L")";
+            status << L"Executing \"" << trimmed_statement << "\" (" << id << L")";
             msiInstall.LogInfo(_T(__FUNCTION__), status.str());
             try 
 			{
@@ -404,7 +404,7 @@ CA_API UINT __stdcall Execute_ODBC_Immediate(MSIHANDLE hInstall)
             combined_xml_document.AppendChild(L"Sql", combined_xml_odbcexecute_root)->text = _bstr_t(sql.c_str());
         }
 
-        combined_xml_document.AppendChild(L"ConnectionString", combined_xml_odbcexecute_root)->text = _bstr_t(connectionstring.c_str());
+        combined_xml_document.AppendChild(L"ConnectionString", combined_xml_odbcexecute_root)->text = _bstr_t(AppSecInc::Crypt::DPAPIImpl::Protect(connectionstring).c_str());
         combined_xml_document.AppendChild(L"Delimiter", combined_xml_odbcexecute_root)->text = _bstr_t(delimiter.c_str());
         combined_xml_document.AppendChild(L"Type", combined_xml_odbcexecute_root)->text = _bstr_t(sqltype.c_str());
         combined_xml_document.AppendChild(L"BasePath", combined_xml_odbcexecute_root)->text = _bstr_t(basepath.c_str());

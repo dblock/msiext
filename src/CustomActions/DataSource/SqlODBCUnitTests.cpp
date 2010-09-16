@@ -239,6 +239,14 @@ void SQLODBCUnitTests::Test_Execute_ODBC()
     CPPUNIT_ASSERT(15 == xml.SelectNodes(L"/ODBCExecutes/ODBCExecute/Sql/text()")->length);
     CPPUNIT_ASSERT(17 == xml.SelectNodes(L"/ODBCExecutes/ODBCExecute/ConnectionString/text()")->length);
 
+    // connection strings must be encrypted
+    MSXML2::IXMLDOMNodeListPtr connectionStrings = xml.SelectNodes(L"/ODBCExecutes/ODBCExecute/ConnectionString/text()");
+    for (int i = 0; i < connectionStrings->length; i++)
+    {
+        std::wstring encrypted = StringUtils::mb2wc(StringUtils::bstr2mb(connectionStrings->item[i]->text));
+        AppSecInc::Crypt::DPAPIImpl::UnProtect(encrypted); // Fails if input string is not encrypted
+    }
+
     // Access database
     CPPUNIT_ASSERT(ERROR_SUCCESS == hInstall.ExecuteCA(L"DataSource.dll", L"CreateDatabases_Access_Immediate"));
     msiInstall.SetProperty(L"CustomActionData", msiInstall.GetProperty(L"CreateDatabases_Access_Deferred_Install"));
@@ -385,3 +393,4 @@ void SQLODBCUnitTests::Test_BinaryIdPathResolver_processInserts()
 	std::wstring result = parser.processInsertsOnly();
 	CPPUNIT_ASSERT(L"DECLARE @a INT\r\nDECLARE @b INT\r\n\nGO\r\n" == result);
 }
+
