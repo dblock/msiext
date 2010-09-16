@@ -9,10 +9,12 @@ namespace AppSecInc
 			class DPAPIImplUnitTests :  public CPPUNIT_NS::TestFixture
 			{
 				CPPUNIT_TEST_SUITE( DPAPIImplUnitTests );
-				CPPUNIT_TEST( testProtectUnprotect );				
+				CPPUNIT_TEST( testProtectUnprotect );
+				CPPUNIT_TEST( testProtectUnprotectW );
 				CPPUNIT_TEST_SUITE_END();
 			public:
 				void testProtectUnprotect(void);
+				void testProtectUnprotectW(void);
 			};
 		}
 	}

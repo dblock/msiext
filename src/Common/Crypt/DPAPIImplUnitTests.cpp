@@ -22,4 +22,24 @@ void DPAPIImplUnitTests::testProtectUnprotect(void)
 		CPPUNIT_ASSERT(strcmp(decrypted.c_str(), testdata[i]) == 0);
 		CPPUNIT_ASSERT(decrypted.length() == strlen(testdata[i]));
 	}
-}		
+}
+
+void DPAPIImplUnitTests::testProtectUnprotectW(void)
+{
+	wchar_t * testdata[] = 
+	{
+		L"",
+		L"hello World",
+		L"HeLlO 7452397-\u1234\uB0000340234=124 random #$_)sdsdsd*_)*#",
+	    L"xxxxxxxxxxxxxxxxxxxyyyyyyyyyyyyyyyyyyyyyyyyyzzzzzzzzzzzzzzzzzzzzzzzzzz\u4C21"
+	};
+
+	for (int i = 0; i < sizeof(testdata) / sizeof(testdata[0]); i++)
+	{
+        std::wstring encrypted = AppSecInc::Crypt::DPAPIImpl::Protect(testdata[i], L"entropy");
+        std::wstring decrypted = AppSecInc::Crypt::DPAPIImpl::UnProtect(encrypted, L"entropy");
+		CPPUNIT_ASSERT(wcscmp(decrypted.c_str(), testdata[i]) == 0);
+		CPPUNIT_ASSERT(decrypted.length() == wcslen(testdata[i]));
+	}
+}
+
