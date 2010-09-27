@@ -60,7 +60,7 @@ CA_API UINT __stdcall SQLDMO_ListAvailableSQLServers(MSIHANDLE hInstall)
 			L"Error in GetItemByOrd");
 
         // the dialog already contains a local default
-        if (StrCmp(listlocal.c_str(), static_cast<LPCWSTR>(name)) == 0)
+        if (0 == StrCmpI(listlocal.c_str(), static_cast<LPCWSTR>(name)))
             continue;
 
 		names.push_back(static_cast<LPCWSTR>(name));

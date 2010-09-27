@@ -82,12 +82,12 @@
         <CustomAction Id="SetSqlDmoListType" Property="SQLDMO_LIST_TYPE" Value="ComboBox" />
 
         <InstallUISequence>
-            <Custom Action="SetDefaultDbServer" After="CostInitialize">DATABASE_SERVER</Custom>
+            <Custom Action="SetDefaultDbServer" Before="SetSqlDmoListLocal">DATABASE_SERVER</Custom>
 
+            <Custom Action="SetSqlDmoListLocal" Before="AsiUI_SQLDMO_ListAvailableSQLServers" />
             <Custom Action="SetSqlDmoListProperty" Before="AsiUI_SQLDMO_ListAvailableSQLServers" />
             <Custom Action="SetSqlDmoListType" Before="AsiUI_SQLDMO_ListAvailableSQLServers" />
             <Custom Action="SetSqlDmoListIndex" Before="AsiUI_SQLDMO_ListAvailableSQLServers" />
-            <Custom Action="SetSqlDmoListLocal" Before="AsiUI_SQLDMO_ListAvailableSQLServers" />
             <Custom Action="AsiUI_SQLDMO_ListAvailableSQLServers" Before="CostInitialize">NOT Installed AND NOT (DBTYPE = "Access")</Custom>
         </InstallUISequence>
     </Fragment>
