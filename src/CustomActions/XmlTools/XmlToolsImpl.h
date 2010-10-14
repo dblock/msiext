@@ -4,7 +4,7 @@
 \brief Select the text value of an xml node in a document.
 \param XML_FILENAME XML file
 \param XML_XPATH XPATH to select, if more than one node matches the first one only is used
-\param XML_NODEVALUE XML property value to copy the result to
+\param XML_NODEVALUE MSI property that contains the result after execution
 
 \par Example:
 
@@ -20,12 +20,12 @@ Xml_SelectNodeValue custom action. Each action must be named individually.
  <CustomAction Id="Xml_SetFileName" Property="XML_FILENAME" Value="[INSTALLDIR]\config\Config.xml" Execute="immediate" />
  <!-- select /Configuration/Host into the HOST property -->
  <CustomAction Id="Xml_SelectNodeValue_Host_XPath" Property="XML_XPATH" Value="/Configuration/Host" Execute="immediate" />
- <CustomAction Id="Xml_SelectNodeValue_Host_Property" Property="XML_NODEVALUE" Value="HOST" Execute="immediate" />
  <CustomAction Id="Xml_SelectNodeValue_Host" BinaryKey="XmlTools" DllEntry="Xml_SelectNodeValue" Execute="immediate" Return="check" />
+ <CustomAction Id="Xml_GetNodeValue_Host" Property="HOST" Value="[XML_NODEVALUE]" Execute="immediate" />
  <!-- select /Configuration/Port into the PORT property -->
  <CustomAction Id="Xml_SelectNodeValue_Port_XPath" Property="XML_XPATH" Value="/Configuration/Port" Execute="immediate" />
- <CustomAction Id="Xml_SelectNodeValue_Port_Property" Property="XML_NODEVALUE" Value="PORT" Execute="immediate" />
  <CustomAction Id="Xml_SelectNodeValue_Port" BinaryKey="XmlTools" DllEntry="Xml_SelectNodeValue" Execute="immediate" Return="check" />
+ <CustomAction Id="Xml_GetNodeValue_Port" Property="PORT" Value="[XML_NODEVALUE]" Execute="immediate" />
  <!-- custom action binary -->
  <Binary Id="XmlTools" SourceFile="$(var.BinDir)\XmlTools.dll" />
 \endcode
@@ -38,12 +38,12 @@ These custom actions are then inserted into InstallExecuteSequence. Once they ar
  <Custom Action="Xml_SetFileName" After="FindRelatedProducts">OLDERVERSIONBEINGUPGRADED</Custom>      
  <!-- get /Configuration/Host -->
  <Custom Action="Xml_SelectNodeValue_Host_XPath" After="Xml_SetFileName">OLDERVERSIONBEINGUPGRADED</Custom>
- <Custom Action="Xml_SelectNodeValue_Host_Property" After="Xml_SelectNodeValue_Host_XPath">OLDERVERSIONBEINGUPGRADED</Custom>
- <Custom Action="Xml_SelectNodeValue_Host" After="Xml_SelectNodeValue_Host_Property">OLDERVERSIONBEINGUPGRADED</Custom>
+ <Custom Action="Xml_SelectNodeValue_Host" After="Xml_SelectNodeValue_Host_XPath">OLDERVERSIONBEINGUPGRADED</Custom>
+ <Custom Action="Xml_GetNodeValue_Port" After="Xml_SelectNodeValue_Host">OLDERVERSIONBEINGUPGRADED</Custom>
  <!-- get /Configuration/Port -->
- <Custom Action="Xml_SelectNodeValue_Port_XPath" After="Xml_SelectNodeValue_Host">OLDERVERSIONBEINGUPGRADED</Custom>
- <Custom Action="Xml_SelectNodeValue_Port_Property" After="Xml_SelectNodeValue_Port_XPath">OLDERVERSIONBEINGUPGRADED</Custom>
- <Custom Action="Xml_SelectNodeValue_Port" After="Xml_SelectNodeValue_Port_Property">OLDERVERSIONBEINGUPGRADED</Custom>
+ <Custom Action="Xml_SelectNodeValue_Port_XPath" After="Xml_GetNodeValue_Port">OLDERVERSIONBEINGUPGRADED</Custom>
+ <Custom Action="Xml_SelectNodeValue_Port" After="Xml_SelectNodeValue_Port_XPath">OLDERVERSIONBEINGUPGRADED</Custom>
+ <Custom Action="Xml_GetNodeValue_Port" After="Xml_SelectNodeValue_Port">OLDERVERSIONBEINGUPGRADED</Custom>
  ...
 </InstallExecuteSequence>
 \endcode
@@ -54,7 +54,7 @@ CA_API UINT __stdcall Xml_SelectNodeValue(MSIHANDLE hInstall);
 \brief Select the XML value of a node in a document.
 \param XML_FILENAME XML file
 \param XML_XPATH XPATH to select, if more than one node matches the first one only is used
-\param XML_NODEXML XML property value to copy the result to
+\param XML_NODEXML MSI property that contains the result after execution
 */
 CA_API UINT __stdcall Xml_SelectNodeXml(MSIHANDLE hInstall);
 
@@ -63,7 +63,7 @@ CA_API UINT __stdcall Xml_SelectNodeXml(MSIHANDLE hInstall);
 \param XML_FILENAME XML file
 \param XML_XPATH XPATH to select, if more than one node matches the first one only is used
 \param XML_ATTRIBUTENAME attribute name
-\param XML_ATTRIBUTEVALUE XML property value to copy the result to
+\param XML_ATTRIBUTEVALUE MSI property that contains the result after execution
 */
 CA_API UINT __stdcall Xml_SelectNodeAttributeValue(MSIHANDLE hInstall);
 
