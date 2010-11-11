@@ -60,7 +60,7 @@ CA_API UINT __stdcall CryptProtectDataHex(MSIHANDLE hInstall);
 
 	<Binary Id="Cryptography" SourceFile="relative path to Cryptography.dll"/>
 	<Property Id="CRYPTUNPROTECT_FLAGS" Value="CRYPTPROTECT_LOCAL_MACHINE|CRYPTPROTECT_UI_FORBIDDEN" />
-	<CustomAction Id="DecryptPassword" BinaryKey="Cryptography" DllEntry="CryptUnProtectDataHex"Execute="immediate" />
+	<CustomAction Id="DecryptPassword" BinaryKey="Cryptography" DllEntry="CryptUnprotectDataHex"Execute="immediate" />
 	<CustomAction Id="SetDBUSERsDecryptedPASSWORD"Property="PASSWORD" Value="[CRYPTUNPROTECT_RESULT]"/>
 	<InstallExecuteSequence> 
 	  <Custom Action="DecryptPassword" After="InstallInitialize"/>
