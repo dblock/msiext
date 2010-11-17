@@ -20,13 +20,13 @@
     <EmbeddedResource Include="en-US.wxl" />
   </ItemGroup>
   <ItemGroup>
-    <WixExtension Include="WixUIExtension">
-      <HintPath>C:\Program Files\Windows Installer XML v3\bin\WixUIExtension.dll</HintPath>
-    </WixExtension>
-  </ItemGroup>
-  <ItemGroup>
     <Compile Include="DbCreateCredDlg.wxs" />
     <Compile Include="SelectDbDlg.wxs" />
+  </ItemGroup>
+  <ItemGroup>
+    <WixExtension Include="WixUIExtension">
+      <HintPath>..\..\..\..\externals\wix\bin\WixUIExtension.dll</HintPath>
+    </WixExtension>
   </ItemGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
     <OutputPath>..\..\..\..\target\Debug\bin</OutputPath>

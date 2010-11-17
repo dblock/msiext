@@ -1,6 +1,6 @@
 ﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="3.5">
   <PropertyGroup>
-    <ProjectGuid>{0C8507E5-DB13-49c3-B840-BF83A61E35B4}</ProjectGuid>
+    <ProjectGuid>{0C8507E5-DB13-49C3-B840-BF83A61E35B4}</ProjectGuid>
     <AssemblyName>WixUserPrivilegesExtension</AssemblyName>
     <OutputType>Library</OutputType>
     <RootNamespace>AppSecInc.Wix.Extensions</RootNamespace>
@@ -55,15 +55,12 @@
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
-    <Reference Include="Microsoft.Build.Framework" />
-    <Reference Include="Microsoft.Build.Utilities" />
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
-    <Reference Include="wix, Version=3.0.3621.0, Culture=neutral, PublicKeyToken=ce35f76fcda82bad, processorArchitecture=MSIL">
+    <Reference Include="wix, Version=3.0.0.0, Culture=neutral, PublicKeyToken=ce35f76fcda82bad, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>C:\Program Files\Windows Installer XML v3\bin\wix.dll</HintPath>
-      <Private>True</Private>
+      <HintPath>..\..\..\..\externals\wix\bin\wix.dll</HintPath>
     </Reference>
   </ItemGroup>
 </Project>
