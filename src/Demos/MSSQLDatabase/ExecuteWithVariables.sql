@@ -1,0 +1,2 @@
+INSERT INTO BinaryTableEncoded VALUES ( [ARPNOMODIFY] )
+GO
