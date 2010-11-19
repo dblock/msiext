@@ -107,5 +107,5 @@ void MsiDatabase::Execute(const std::wstring& query)
 
     // fetch the record from the view
     CHECK_WIN32_DWORD(::MsiViewExecute(msiView, NULL),
-        L"Error executing binary view.");
+        L"Error executing binary view");
 }

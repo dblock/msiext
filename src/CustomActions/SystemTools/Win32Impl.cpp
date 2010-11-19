@@ -651,7 +651,7 @@ CA_API UINT __stdcall Win32_Execute_Immediate(MSIHANDLE hInstall)
             xmlDocument.SetAttribute(L"execute", execute ? L"true" : L"false", row);
             // get the xml for this node alone
             CComBSTR actionxml;
-            CHECK_HR(row->get_xml(& actionxml), L"Error getting row text.");
+            CHECK_HR(row->get_xml(& actionxml), L"Error getting row text");
             // the id of the deferred CA is the id of this action
             msiInstall.SetProperty(id, static_cast<LPCWSTR>(actionxml));
             // don't execute in the standard deferred action

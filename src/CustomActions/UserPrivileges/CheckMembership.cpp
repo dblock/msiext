@@ -19,7 +19,7 @@ CA_API UINT __stdcall CheckMembership(MSIHANDLE hInstall)
 	boost::shared_ptr<void> sid_ptr(sid, ::FreeSid);
 
 	CHECK_WIN32_BOOL(::CheckTokenMembership(NULL, sid, & isMember), 
-		L"CheckTokenMembership failed.");
+		L"CheckTokenMembership failed");
 
 	if (isMember)
 	{

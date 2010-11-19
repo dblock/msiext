@@ -18,6 +18,7 @@
         <Binary Id="CreateBinaryTable_NotEncoded_sql" SourceFile="CreateBinaryTable_NotEncoded.sql" />
         <Binary Id="ExecuteManyGoStatements_sql" SourceFile="ExecuteManyGoStatements.sql" />
         <Binary Id="ExecuteWithVariables_sql" SourceFile="ExecuteWithVariables.sql" />
+        <Binary Id="ExecuteIgnoreErrors.sql" SourceFile="ExecuteIgnoreErrors.sql" />
         <Binary Id="BinaryTable_csv" SourceFile="BinaryTable.csv" />
         <CustomAction Id="ODBC_GetString" BinaryKey="DataSource" DllEntry="ODBC_GetString" Execute="immediate" Return="ignore" />
         <Directory Id="TARGETDIR" Name="SourceDir">
@@ -31,8 +32,10 @@
                         <!-- a demo database -->
                         <AppSecInc:MSSQLDatabase Id="MSSQLDemoDatabase" Name="[MSSQL_DATABASE_NAME]" ConnectionId="LocalSQLServerConnection" CreateOnInstall="yes" DropOnUnInstall="yes">
                             <AppSecInc:MSSQLDatabaseOption Id="MSSQLDemoDatabase_QuotedIdentifierOn" Value="QUOTED_IDENTIFIER ON" />
+                          <!--
                             <AppSecInc:MSSQLDatabaseFileSpec Id="MSSQLDemoDatabase_PRIMARY" Name="Demo_mdf" Filename="[MSSQL_DATABASE_MDF_PATH]" Size="10MB" Type="PRIMARY" />
                             <AppSecInc:MSSQLDatabaseFileSpec Id="MSSQLDemoDatabase_LOG" Name="Demo_ldf" Filename="[MSSQL_DATABASE_LDF_PATH]" Size="12MB" Type="LOG ON" />
+                            -->
                             <AppSecInc:ODBCExecute Id="MSSQLDemoDatabase_CreateTable1" Sql="CREATE TABLE [\[][MSSQL_DATABASE_NAME][\]].[\[]dbo[\]].[\[]Table1[\]] ( [\[]Table1_Id[\]] [\[]int[\]] IDENTITY(1,1) NOT NULL )" ExecuteOnInstall="yes" OutputFilename="[INSTALLLOCATION]CreateTable1.xml" />
                             <AppSecInc:ODBCExecute Id="MSSQLDemoDatabase_DropTable1" Sql="DROP TABLE [\[][MSSQL_DATABASE_NAME][\]].[\[]dbo[\]].[\[]Table1[\]]" ExecuteOnUnInstall="yes" />
                             <AppSecInc:ODBCExecute Id="MSSQLDemoDatabase_SelectVersion" Sql="PRINT @@VERSION" ExecuteOnInstall="yes" OutputFilename="[INSTALLLOCATION]SqlVersion.txt" XsltFilename="[#RawOutputXslt]" />
@@ -57,6 +60,7 @@
                         <!-- a binary sql that is split and evaluated statement by statement -->
                         <AppSecInc:ODBCExecuteBinary Id="MSSQLDemoDatabase_ExecuteManyGOStatements" ConnectionId="LocalSQLServerConnectionDemoDatabase" BinaryId="ExecuteManyGoStatements_sql" EvaluateProperties="no" Delimiter="GO" ExecuteOnInstall="yes" />
                         <AppSecInc:ODBCExecuteBinary Id="MSSQLDemoDatabase_ExecuteWithVariables" ConnectionId="LocalSQLServerConnectionDemoDatabase" BinaryId="ExecuteWithVariables_sql" EvaluateProperties="yes" ExecuteOnInstall="yes" Type="SqlServer" />
+                        <AppSecInc:ODBCExecuteBinary Id="MSSQLDemoDatabase_ExecuteIgnoreErrors" ConnectionId="LocalSQLServerConnectionDemoDatabase" BinaryId="ExecuteIgnoreErrors.sql" EvaluateProperties="yes" ExecuteOnInstall="yes" Type="SqlServer" />
                         <AppSecInc:ODBCExecute Id="MSSQLDemoDatabase_ExecuteSelect" ConnectionId="LocalSQLServerConnectionDemoDatabase" Sql="SELECT name, usertype, id FROM [\[]master[\]].dbo.syscolumns" ExecuteOnInstall="yes" OutputFilename="[INSTALLLOCATION]Columns.xml" />
                     </Component>
                     <Component Id="MSSQLDatabaseMsiOptionalComponent" Guid="A402A68A-9F8E-4809-8A7E-B20D410C9950">

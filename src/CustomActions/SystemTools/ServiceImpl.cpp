@@ -42,7 +42,7 @@ CA_API UINT __stdcall Service_ChangeBinaryPathName(MSIHANDLE hInstall)
     // Change the binary path name
 	CHECK_WIN32_BOOL(::ChangeServiceConfig(service.GetHandle(), SERVICE_NO_CHANGE, SERVICE_NO_CHANGE, SERVICE_NO_CHANGE, 
         service_binary_path.c_str(), NULL, NULL, NULL, NULL, NULL, NULL), 
-        L"ChangeServiceConfig failed.");
+        L"ChangeServiceConfig failed");
 
 	MSI_EXCEPTION_HANDLER_EPILOG;
     return ERROR_SUCCESS;
@@ -65,7 +65,7 @@ CA_API UINT __stdcall Service_ChangeDisplayName(MSIHANDLE hInstall)
     // Change the display name
 	CHECK_WIN32_BOOL(::ChangeServiceConfig(service.GetHandle(), SERVICE_NO_CHANGE, SERVICE_NO_CHANGE, SERVICE_NO_CHANGE, 
         NULL, NULL, NULL, NULL, NULL, NULL, service_display_name.c_str()), 
-        L"ChangeServiceConfig failed.");
+        L"ChangeServiceConfig failed");
 
 	MSI_EXCEPTION_HANDLER_EPILOG;
     return ERROR_SUCCESS;
@@ -89,7 +89,7 @@ CA_API UINT __stdcall Service_ChangeDescription(MSIHANDLE hInstall)
     SERVICE_DESCRIPTION sd = { 0 };
 	sd.lpDescription = const_cast<LPWSTR>(service_description.c_str());
 	CHECK_WIN32_BOOL(::ChangeServiceConfig2(service.GetHandle(), SERVICE_CONFIG_DESCRIPTION, &sd), 
-        L"ChangeServiceConfig2 failed.");
+        L"ChangeServiceConfig2 failed");
 
 	MSI_EXCEPTION_HANDLER_EPILOG;
     return ERROR_SUCCESS;

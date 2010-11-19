@@ -9,6 +9,6 @@ MSSQL_BinaryTable_csv	MSSQL_BinaryTable.ibd
 MSSQL_BinaryTable2_csv	MSSQL_BinaryTable2.ibd
 Access_CreateTable_NotEncoded_sql	Access_CreateTable_NotEncoded.ibd
 Access_ExecuteManyGoStatements_sql	Access_ExecuteManyGoStatements.ibd
-v1_0_main_sql	MSSQL_BinarySqlWithInclude.ibd
-v1_0_other_sql	MSSQL_BinarySqlIncluded.ibd
+v1.0_main.sql	MSSQL_BinarySqlWithInclude.ibd
+v1.0_other.sql	MSSQL_BinarySqlIncluded.ibd
 MSSQL_Select_sql	MSSQL_Select.ibd

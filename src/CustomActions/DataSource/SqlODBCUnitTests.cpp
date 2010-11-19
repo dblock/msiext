@@ -359,7 +359,9 @@ void SQLODBCUnitTests::Test_BinaryIdPathResolver_pathToId()
 	AppSecInc::Databases::ODBC::BinaryIdPathResolver r(0);
 	
 	CPPUNIT_ASSERT(L"Binary_Id"     == r.pathToId(L"Binary_Id"));
-	CPPUNIT_ASSERT(L"dir_file1_sql" == r.pathToId(L"..\\\\dir\\.\\file1.sql"));
+	CPPUNIT_ASSERT(L"file1.sql" == r.pathToId(L"file1.sql"));
+	CPPUNIT_ASSERT(L"file1-sql" == r.pathToId(L"file1-sql"));
+	CPPUNIT_ASSERT(L"dir_file1.sql" == r.pathToId(L"..\\\\dir\\.\\file1.sql"));
 }
 
 void SQLODBCUnitTests::Test_BinaryIdPathResolver_readContent()
@@ -370,7 +372,7 @@ void SQLODBCUnitTests::Test_BinaryIdPathResolver_readContent()
     AppSecInc::Msi::MsiInstall msiInstall(hInstall);
 
 	AppSecInc::Databases::ODBC::BinaryIdPathResolver r( &msiInstall );
-	std::wstring result = r.readContent(L"v1_0_main_sql");
+	std::wstring result = r.readContent(L"v1.0_main.sql");
 	CPPUNIT_ASSERT(L"DECLARE @a INT\r\n:r v1.0\\other.sql\r\nGO\r\n" == result);
 	
 	result = r.readContent(L"v1.0\\other.sql");
@@ -388,7 +390,7 @@ void SQLODBCUnitTests::Test_BinaryIdPathResolver_processInserts()
 	AppSecInc::Databases::ODBC::OdbcParser parser;
 	parser.setPathResolver(&r);
 	parser.setSqlFlavour(L"mssql");
-	parser.setSourcePath(L"v1_0_main_sql");
+	parser.setSourcePath(L"v1.0_main.sql");
 	
 	std::wstring result = parser.processInsertsOnly();
 	CPPUNIT_ASSERT(L"DECLARE @a INT\r\nDECLARE @b INT\r\n\nGO\r\n" == result);

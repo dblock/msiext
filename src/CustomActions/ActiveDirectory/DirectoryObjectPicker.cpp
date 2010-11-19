@@ -17,7 +17,7 @@ CA_API UINT __stdcall DirectoryObjectPicker(MSIHANDLE hInstall)
     CComPtr<IDsObjectPicker> pDsObjectPicker;
 
     CHECK_HR(::CoCreateInstance(CLSID_DsObjectPicker, NULL, CLSCTX_INPROC_SERVER, IID_IDsObjectPicker, (void**) & pDsObjectPicker),
-        L"Error in CoCreateInstance(CLSID_DsObjectPicker, IID_IDsObjectPicker).");
+        L"Error in CoCreateInstance(CLSID_DsObjectPicker, IID_IDsObjectPicker)");
 
     DSOP_SCOPE_INIT_INFO aScopeInit[1] = { 0 };
     aScopeInit[0].cbSize = sizeof(DSOP_SCOPE_INIT_INFO);
@@ -40,7 +40,7 @@ CA_API UINT __stdcall DirectoryObjectPicker(MSIHANDLE hInstall)
     // initInfo.flOptions = DSOP_FLAG_MULTISELECT;
 
     CHECK_HR(pDsObjectPicker->Initialize(& initInfo), 
-        L"Error in pDsObjectPicker->Initialize.");
+        L"Error in pDsObjectPicker->Initialize");
 
     HWND hwndParent = ::GetConsoleWindow();
     if (hwndParent == NULL) hwndParent = ::GetForegroundWindow();
@@ -49,7 +49,7 @@ CA_API UINT __stdcall DirectoryObjectPicker(MSIHANDLE hInstall)
 
 	HRESULT hr = pDsObjectPicker->InvokeDialog(hwndParent, &pdo);
     CHECK_HR(hr, 
-		L"Error in pDsObjectPicker->InvokeDialog.");
+		L"Error in pDsObjectPicker->InvokeDialog");
     
     if (hr == S_FALSE)
     {
@@ -71,11 +71,11 @@ CA_API UINT __stdcall DirectoryObjectPicker(MSIHANDLE hInstall)
 	// http://msdn2.microsoft.com/en-us/library/ms683812(VS.85).aspx
 	STGMEDIUM stm = { 0 };
     CHECK_HR(pdo->GetData(&fe, &stm), 
-        L"Error in pdo->GetData.");
+        L"Error in pdo->GetData");
 
     PDS_SELECTION_LIST pDsSelList = static_cast<PDS_SELECTION_LIST>(GlobalLock(stm.hGlobal));
 
-    CHECK_WIN32_BOOL(pDsSelList != NULL, "Error in GlobalLock.");
+    CHECK_WIN32_BOOL(pDsSelList != NULL, "Error in GlobalLock");
     
 	std::wstring dsop_class, dsop_name, dsop_adspath, dsop_upn;
     for (ULONG i = 0; i < pDsSelList->cItems; i++) 

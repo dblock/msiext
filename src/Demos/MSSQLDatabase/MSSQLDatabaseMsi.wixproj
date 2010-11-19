@@ -94,6 +94,7 @@
     <Content Include="CreateFileTable_NotEncoded.sql" />
     <Content Include="CreateBinaryTable_Encoded.sql" />
     <Content Include="CreateBinaryTable_NotEncoded.sql" />
+    <Content Include="ExecuteIgnoreErrors.sql" />
     <Content Include="ExecuteManyGoStatements.sql" />
     <Content Include="ExecuteWithVariables.sql" />
     <Content Include="MSSQLDatabaseRecommendPathUI.wxi" />

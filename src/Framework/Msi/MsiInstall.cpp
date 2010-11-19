@@ -117,14 +117,14 @@ void MsiInstall::GetBinaryData(const std::wstring& name, std::vector<char>& data
     // fetch the record from the view
     MsiHandle hRecBinary;
     CHECK_WIN32_DWORD(::MsiViewExecute(msiView, NULL),
-        L"Error executing binary view.");
+		L"Error executing binary view for \"" << name << L"\"");
     CHECK_WIN32_DWORD(::MsiViewFetch(msiView, & hRecBinary),
-        L"Error fetching binary record.");
+        L"Error fetching \"" << name << L"\" binary record");
 
     // read the data size
     DWORD cbRead = 0;
     CHECK_WIN32_DWORD(::MsiRecordReadStream(hRecBinary, 1, NULL, & cbRead),
-        L"Error reading binary stream data size.");
+        L"Error reading binary stream data size for \"" << name << L"\"");
 
     if (cbRead > 0) // an empty stream means a zero-sized file
     {
@@ -132,11 +132,11 @@ void MsiInstall::GetBinaryData(const std::wstring& name, std::vector<char>& data
         data.resize(cbRead);
 
         CHECK_WIN32_DWORD(::MsiRecordReadStream(hRecBinary, 1, & * data.begin(), & cbRead),
-            L"Error reading binary stream data size.");
+            L"Error reading binary stream data size for \"" << name << L"\"");
 
         data.resize(cbRead);
         CHECK_BOOL(cbRead > 0 && data.size() > 0, 
-            L"Invalid or empty data stream read.");
+            L"Invalid or empty data stream read for \"" << name << L"\"");
     }
     else
     {
@@ -178,10 +178,10 @@ void MsiInstall::GetViewInfo(const std::wstring& query, std::vector<std::wstring
             std::wstring column_name;
             DWORD cbRead = 0;
             CHECK_WIN32_DWORD(::MsiRecordGetString(hColNames, i, NULL, & cbRead), 
-                L"Error reading data size.");
+                L"Error reading data size");
             column_name.resize(cbRead++);
             CHECK_WIN32_DWORD(::MsiRecordGetString(hColNames, i, & * column_name.begin(), & cbRead), 
-                L"Error reading data size (2).");
+                L"Error reading data size (2)");
             column_name.resize(cbRead);
             column_names.push_back(column_name);
         }
@@ -191,10 +191,10 @@ void MsiInstall::GetViewInfo(const std::wstring& query, std::vector<std::wstring
             std::wstring column_type;
             DWORD cbRead = 0;
             CHECK_WIN32_DWORD(::MsiRecordGetString(hColTypes, i, NULL, & cbRead), 
-                L"Error reading data size.");
+                L"Error reading data size");
             column_type.resize(cbRead++);
             CHECK_WIN32_DWORD(::MsiRecordGetString(hColTypes, i, & * column_type.begin(), & cbRead), 
-                L"Error reading data size (2).");
+                L"Error reading data size (2)");
             column_type.resize(cbRead);
             column_types.push_back(column_type);
         }
@@ -262,12 +262,12 @@ std::wstring MsiInstall::GetViewData(const std::wstring& query)
                     std::wstring data;
                     DWORD cbRead = 0;
                     CHECK_WIN32_DWORD(::MsiRecordGetString(hRow, i, NULL, & cbRead), 
-                        L"Error reading data size.");
+                        L"Error reading data size");
 					if (cbRead > 0)
 					{
 						data.resize(cbRead++);
 						CHECK_WIN32_DWORD(::MsiRecordGetString(hRow, i, & * data.begin(), & cbRead), 
-							L"Error reading data size (2).");
+							L"Error reading data size (2)");
 						data.resize(cbRead);
 						std::wstring formatted_data = GetFormattedString(data);
 						MSXML2::IXMLDOMNodePtr spXmlDataColumnValue = spXMLDOM->createTextNode(formatted_data.c_str());
@@ -280,7 +280,7 @@ std::wstring MsiInstall::GetViewData(const std::wstring& query)
                 {
                     int data = MSI_NULL_INTEGER;
                     CHECK_WIN32_BOOL(MSI_NULL_INTEGER != (data = ::MsiRecordGetInteger(hRow, i)), 
-                        L"Error reading integer.");
+                        L"Error reading integer");
                     MSXML2::IXMLDOMNodePtr spXmlDataColumnValue = spXMLDOM->createTextNode(StringUtils::toString(data).c_str());
                     CHECK_BOOL(NULL != spXMLData->appendChild(spXmlDataColumnValue), L"Error setting data attribute");
                 }
@@ -298,7 +298,7 @@ std::wstring MsiInstall::GetViewData(const std::wstring& query)
     if (fetch_rc != ERROR_NO_MORE_ITEMS)
     {
         CHECK_WIN32_DWORD(fetch_rc,
-            L"Error fetching record.");
+            L"Error fetching record");
     }
 
     CComBSTR bstrXml;
@@ -333,7 +333,7 @@ std::wstring MsiInstall::GetFormattedString(const std::wstring& s)
 
     DWORD rc = ::MsiFormatRecord(_h, hRecord, NULL, & cch);
     CHECK_WIN32_DWORD(rc == ERROR_MORE_DATA,
-        L"Error in MsiFormatRecord.");
+        L"Error in MsiFormatRecord");
 
 	std::wstring result;
 	if (cch != 0)
@@ -341,7 +341,7 @@ std::wstring MsiInstall::GetFormattedString(const std::wstring& s)
 		result.resize(cch++);
 
 		CHECK_WIN32_DWORD(MsiFormatRecord(_h, hRecord, & * result.begin(), & cch),
-			L"Error in MsiFormatRecord (2).");
+			L"Error in MsiFormatRecord (2)");
 	}
 
     return result;

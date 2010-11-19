@@ -23,7 +23,17 @@
 </head>
 <body>
     <h3>
-        1.2 (${Date})</h3>
+        1.3 (${Date})</h3>
+    <ul>
+        <li><strong>Bugs</strong>:
+            <ul>
+                <li>Bug: <code>ODBCExecuteBinary</code> fails to load the binary record when the binary
+                    ID contains a . (dot) or - (dash).</li>
+            </ul>
+        </li>
+    </ul>
+    <h3>
+        1.2 (11/09/2010)</h3>
     <ul>
         <li><strong>Features</strong>:
             <ul>
@@ -106,8 +116,8 @@
                     forward slashes depending on whether a path exists or not.</li>
                 <li>Bug: ODBC messages are truncated at 208 characters.</li>
                 <li>Bug: <code>SelectDbDlg</code> dialog mail fail when <code>DATABASE_SERVER</code>
-                    is re-defined with a custom action with "Error 2878: On the dialog SelectDbDlg the control
-                    Server has a possible value: [1]. This is an invalid or duplicate value."</li>
+                    is re-defined with a custom action with "Error 2878: On the dialog SelectDbDlg the
+                    control Server has a possible value: [1]. This is an invalid or duplicate value."</li>
             </ul>
         </li>
     </ul>

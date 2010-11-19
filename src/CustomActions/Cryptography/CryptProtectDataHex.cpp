@@ -35,7 +35,7 @@ CA_API UINT __stdcall CryptProtectDataHex(MSIHANDLE hInstall)
 		NULL,                         
 		NULL, //! \todo Support PromptStruct.                   
 		dwFlags,
-		&blobOut), L"Error in CryptProtectData.");
+		&blobOut), L"Error in CryptProtectData");
 
     CryptoPP::HexEncoder hexEncoder;
 	hexEncoder.Put(blobOut.pbData, blobOut.cbData);
@@ -93,7 +93,7 @@ CA_API UINT __stdcall CryptUnprotectDataHex(MSIHANDLE hInstall)
 		NULL,                         
 		NULL, //! \todo Support PromptStruct.                   
 		dwFlags,
-		&blobOut), L"Error in CryptUnprotectData.");
+		&blobOut), L"Error in CryptUnprotectData");
 
     std::wstring output;
     

@@ -42,7 +42,7 @@ std::wstring BinaryIdPathResolver::pathToId(const std::wstring& path)
 void BinaryIdPathResolver::replaceNonIdCharsWithUnderscore(std::wstring& str)
 {
 	static std::wstring validChars =
-		L"abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_";
+		L"abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_.-";
 
 	size_t pos = str.find_first_not_of(validChars);
 	while (pos != str.npos) {
