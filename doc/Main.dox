@@ -31,6 +31,7 @@
 \li \ref CompareVersion
 \li \ref Service_Control, \ref Service_RenameRegistryEntry, \ref Service_Delete, \ref Service_ChangeBinaryPathName, \ref Service_ChangeDisplayName, \ref Service_ChangeDescription, \ref Service_GetConfig, \ref Service_Exists
 \li \ref Registry_CopyBranch, \ref Registry_DeleteBranch, \ref Registry_MoveBranch
+\li \ref Registry_CreateKey, \ref Registry_KeyExists, \ref Registry_SetStringValue
 \li \ref Win32_IsValidGuid, \ref Win32_GenerateGuidString
 
 \par Strings (StringTools.dll)
@@ -49,7 +50,7 @@
 
 \li \ref ConfigDataSource, \ref ConfigDataSource_Access, \ref ConfigDataSource_SQLServer 
 \li \ref SQLDMO_ListAvailableSQLServers
-\li \ref ODBC_Connect, \ref ODBC_Execute, \ref ODBC_GetString, \ref ODBC_GetScalar, \ref ODBC_GetXml
+\li \ref ODBC_Connect, \ref ODBC_Execute, \ref ODBC_Execute_Binary, \ref ODBC_GetString, \ref ODBC_GetScalar, \ref ODBC_GetXml
 
 \par Security & Authentication (UserPrivileges.dll)
 
