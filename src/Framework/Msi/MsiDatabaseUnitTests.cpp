@@ -84,7 +84,7 @@ void MsiDatabaseUnitTests::testExecute()
 
     std::wstring path = File::GetModuleDirectoryW() + L"\\TestData_MsiUnitTests";
 	database.Execute(L"CREATE TABLE `Property` (`Property` CHAR(72) NOT NULL, `Value` CHAR(0) NOT NULL LOCALIZABLE PRIMARY KEY `Property`)");
-	database.Execute(L"INSERT INTO `Property` (`Property`, `Value`) VALUES ('ProductCode', '{GUID}')");
+	database.Execute(L"INSERT INTO `Property` (`Property`, `Value`) VALUES ('ProductCode', '{72B62622-57A8-46ac-A12A-7669772D35DA}')");
     database.Commit();
     database.Close();
 
@@ -95,7 +95,7 @@ void MsiDatabaseUnitTests::testExecute()
     xmlDoc.LoadXml(install.GetViewData(L"SELECT `Value` FROM `Property` WHERE `Property`='ProductCode'"));
     std::wstring value = xmlDoc.GetNodeValue(L"/Table/Row/Data[@Column=\"Value\"]");
     std::wcout << std::endl << L"Data: " << value;
-    CPPUNIT_ASSERT(value == L"{GUID}");
+    CPPUNIT_ASSERT(value == L"{72B62622-57A8-46ac-A12A-7669772D35DA}");
     package.Close();
     
     AppSecInc::File::FileDelete(filename);
