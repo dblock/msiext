@@ -149,20 +149,32 @@ bool AppSecInc::File::DirectoryExists(const std::wstring& path)
 void AppSecInc::File::FileDelete(const std::string& filename)
 {
 	CHECK_WIN32_BOOL(::DeleteFileA(filename.c_str()),
-		_T("DeleteFile"));
+		L"Error deleting '" << AppSecInc::StringUtils::mb2wc(filename) << L"'");
 }
 
 void AppSecInc::File::FileDelete(const std::wstring& filename)
 {
 	CHECK_WIN32_BOOL(::DeleteFileW(filename.c_str()),
-		_T("DeleteFile"));
+		L"Error deleting '" << filename << L"'");
+}
+
+void AppSecInc::File::FileCopy(const std::string& src, const std::string& dest, bool overwrite)
+{
+	CHECK_WIN32_BOOL(::CopyFileA(src.c_str(), dest.c_str(), overwrite ? FALSE : TRUE),
+		L"Error copying '" << AppSecInc::StringUtils::mb2wc(src) << L"' to '" << AppSecInc::StringUtils::mb2wc(dest) << L"'");
+}
+
+void AppSecInc::File::FileCopy(const std::wstring& src, const std::wstring& dest, bool overwrite)
+{
+	CHECK_WIN32_BOOL(::CopyFileW(src.c_str(), dest.c_str(), overwrite ? FALSE : TRUE),
+		L"Error copying '" << src << L"' to '" << dest << L"'");
 }
 
 std::wstring AppSecInc::File::DirectoryCombine(const std::wstring& dir, const std::wstring& file)
 {
     wchar_t buffer[MAX_PATH];
     CHECK_BOOL(NULL != ::PathCombineW(buffer, dir.length() ? dir.c_str() : NULL, file.length() ? file.c_str() : NULL),
-        L"Error combining \"" << dir << "\" and \"" << file << "\"");
+        L"Error combining '" << dir << "' and '" << file << "'");
     return buffer;
 }
 

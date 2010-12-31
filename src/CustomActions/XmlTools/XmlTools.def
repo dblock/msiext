@@ -3,6 +3,7 @@ LIBRARY XmlTools
 ;DESCRIPTION "Application Security Inc. Custom Action Library - XML Tools"
 
 EXPORTS
+	Xml_DeleteNodes
     Xml_SelectNodeValue
     Xml_SelectNodeXml
     Xml_SelectNodeAttributeValue

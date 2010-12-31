@@ -75,6 +75,14 @@ namespace AppSecInc
 		void FileDelete(const std::wstring& filename);
 
 		/*!
+		  \brief Copy a file.
+		  \param src source file
+		  \param dest destination file
+		*/
+		void FileCopy(const std::string& src, const std::string& dest, bool overwrite = true);
+		void FileCopy(const std::wstring& src, const std::wstring& dest, bool overwrite = true);
+
+		/*!
 		  \brief Check whether a directory exists.
 
 		  Unlike Win32 ::PathFileExists this function fails when the parameter is not a directory 

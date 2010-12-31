@@ -13,12 +13,14 @@ namespace AppSecInc
                 CPPUNIT_TEST( Test_SelectNodeAttributeValue );
 				CPPUNIT_TEST( Test_XslTranform );
 				CPPUNIT_TEST( Test_EntryPoints );
+				CPPUNIT_TEST( Test_DeleteNodes );
                 CPPUNIT_TEST_SUITE_END();
 			public:
                 void Test_SelectNodeValue();
                 void Test_XslTranform();
                 void Test_SelectNodeAttributeValue();
 				void Test_EntryPoints();
+				void Test_DeleteNodes();
 			};
         }
 	}

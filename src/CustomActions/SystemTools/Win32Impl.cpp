@@ -22,8 +22,7 @@ CA_API UINT __stdcall Win32_CopyFile(MSIHANDLE hInstall)
 
     if (file_overwrite == WIN32COPYFILE_OVERWRITEYES || ! file_exists)
     {
-        CHECK_WIN32_BOOL(::CopyFile(source_filename.c_str(), target_filename.c_str(), FALSE),
-            L"Error copying " << source_filename << L" to " << target_filename);
+		AppSecInc::File::FileCopy(source_filename, target_filename);
     }
 
 	MSI_EXCEPTION_HANDLER_EPILOG;
@@ -201,8 +200,7 @@ CA_API UINT __stdcall Win32_CopyFiles_Deferred(MSIHANDLE hInstall)
                 copy_status << L"Copy: " << source_file << " => " << target_file;
                 msiInstall.LogInfo(_T(__FUNCTION__), copy_status.str());
 
-                CHECK_WIN32_BOOL(::CopyFile(source_file.c_str(), target_file.c_str(), FALSE),
-                    L"Error copying: " << source_file << L" => " << target_file);
+				AppSecInc::File::FileCopy(source_filename, target_filename);
             }
         }
 
@@ -379,10 +377,8 @@ CA_API UINT __stdcall Win32_MoveFiles_Deferred(MSIHANDLE hInstall)
                     AppSecInc::File::DirectoryCreate(target_directory);
                 }
 
-                CHECK_WIN32_BOOL(::CopyFile(source_file.c_str(), target_file.c_str(), FALSE),
-                    L"Error copying: " << source_file << L" => " << target_file);
-                CHECK_WIN32_BOOL(::DeleteFile(source_file.c_str()),
-                    L"Error deleting: " << source_file);
+				AppSecInc::File::FileCopy(source_filename, target_filename);
+				AppSecInc::File::FileDelete(source_file);
             }
         }
 

@@ -74,3 +74,11 @@ CA_API UINT __stdcall Xml_SelectNodeAttributeValue(MSIHANDLE hInstall);
 \param XSLT_RESULT_FILENAME file that will contain the transformed output
 */
 CA_API UINT __stdcall Xml_XslTransform(MSIHANDLE hInstall);
+
+/*!
+\brief Delete an xml node in a document.
+\param XML_FILENAME XML file
+\param XML_XPATH XPATH to select, if more than one node matches, all are deleted
+\return XML_DELETED set to the number of nodes deleted (0 if none)
+*/
+CA_API UINT __stdcall Xml_DeleteNodes(MSIHANDLE hInstall);

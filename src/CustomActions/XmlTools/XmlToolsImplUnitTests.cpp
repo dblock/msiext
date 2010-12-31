@@ -100,6 +100,54 @@ void XmlToolsGetUnitTests::Test_SelectNodeAttributeValue()
     CPPUNIT_ASSERT(result == L"1");
 }
 
+void XmlToolsGetUnitTests::Test_DeleteNodes()
+{
+    struct TestData
+    {
+        LPCWSTR xpath;
+		int deleted_books;
+        int remaining_books;
+    };
+
+    TestData testdata[] = 
+    {
+		{ L"/bookstore/book[@id=1]", 1, 1 },
+		{ L"/bookstore/book[@id=2]", 1, 1 },
+		{ L"/bookstore/book[@id=0]", 0, 2 },
+		{ L"/bookstore/book", 2, 0 }
+    };
+
+    for (int i = 0; i < ARRAYSIZE(testdata); i++)
+    {
+        std::wcout << std::endl << testdata[i].xpath;
+
+		AppSecInc::Msi::MsiShim hInstall;
+		MsiInstall msiInstall(hInstall);
+		std::wstring xmlfile = AppSecInc::File::GetModuleDirectoryW();
+		xmlfile.append(L"\\TestData_XmlToolsUnitTests\\store.xml");
+		std::wstring target_xmlfile = AppSecInc::File::GetTemporaryDirectoryW();
+		target_xmlfile.append(L"XmlToolsGetUnitTests_Test_DeleteNode.xml");
+		AppSecInc::File::FileCopy(xmlfile, target_xmlfile);
+		// delete the book id=1 node
+		msiInstall.SetProperty(L"XML_FILENAME", target_xmlfile);
+		msiInstall.SetProperty(L"XML_XPATH", testdata[i].xpath);
+		msiInstall.SetProperty(L"XML_FLAGS", L"CHECK_IF_EXISTS");
+		CPPUNIT_ASSERT(ERROR_SUCCESS == hInstall.ExecuteCA(L"XmlTools.dll", L"Xml_DeleteNodes"));
+		std::wstring result = msiInstall.GetProperty(L"XML_DELETED");
+		std::wcout << std::endl << L" Deleted books: " << result;
+		CPPUNIT_ASSERT(AppSecInc::StringUtils::stringToLong(result) == testdata[i].deleted_books);
+		// check that there's only 1 book left
+		AppSecInc::Xml::XmlDocument doc;
+		doc.Load(target_xmlfile);
+		MSXML2::IXMLDOMNodeListPtr books = doc.FindNodes(L"/bookstore/book");
+		long remaining_books = 0;
+		CPPUNIT_ASSERT(SUCCEEDED(books->get_length(& remaining_books)));
+		std::wcout << std::endl << L" Remaining books: " << remaining_books;
+		CPPUNIT_ASSERT(remaining_books == testdata[i].remaining_books);
+		AppSecInc::File::FileDelete(target_xmlfile);
+	}
+}
+
 void XmlToolsGetUnitTests::Test_EntryPoints()
 {
 	HMODULE h  = ::LoadLibrary(L"XmlTools.dll");
@@ -108,5 +156,6 @@ void XmlToolsGetUnitTests::Test_EntryPoints()
 	CPPUNIT_ASSERT(NULL != GetProcAddress(h, "Xml_SelectNodeXml"));
 	CPPUNIT_ASSERT(NULL != GetProcAddress(h, "Xml_SelectNodeAttributeValue"));
 	CPPUNIT_ASSERT(NULL != GetProcAddress(h, "Xml_XslTransform"));
+	CPPUNIT_ASSERT(NULL != GetProcAddress(h, "Xml_DeleteNodes"));
 	::FreeLibrary(h);
 }

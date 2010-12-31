@@ -13,7 +13,10 @@ namespace AppSecInc
 				CPPUNIT_TEST( testGetTemporaryDirectory );
 				CPPUNIT_TEST( testGetModuleDirectory );
 				CPPUNIT_TEST( testFileDirectoryExists );
-				CPPUNIT_TEST( testDelete );
+				CPPUNIT_TEST( testDeleteFileA );
+				CPPUNIT_TEST( testDeleteFileW );
+				CPPUNIT_TEST( testCopyFileA );
+				CPPUNIT_TEST( testCopyFileW );
                 CPPUNIT_TEST( testDirectoryCombine );
                 CPPUNIT_TEST( testGetFileSize );
                 CPPUNIT_TEST( testGetFilesRecursive );
@@ -37,7 +40,10 @@ namespace AppSecInc
                 void testGetTemporaryDirectory();
 				void testGetModuleDirectory();
 				void testFileDirectoryExists();
-				void testDelete();
+				void testCopyFileA();
+				void testDeleteFileA();
+				void testCopyFileW();
+				void testDeleteFileW();
                 void testDirectoryCombine();
                 void testGetFileSize();
                 void testGetFilesRecursive();

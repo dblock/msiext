@@ -78,3 +78,36 @@ CA_API UINT __stdcall Xml_XslTransform(MSIHANDLE hInstall)
 	MSI_EXCEPTION_HANDLER_EPILOG;
 	return ERROR_SUCCESS;
 }
+
+CA_API UINT __stdcall Xml_DeleteNodes(MSIHANDLE hInstall)
+{
+	MSI_EXCEPTION_HANDLER_PROLOG;
+    MsiInstall msiInstall(hInstall);
+
+	std::wstring filename = msiInstall.GetProperty(L"XML_FILENAME");
+	AppSecInc::Xml::XmlDocument doc;
+	doc.Load(filename);
+
+	std::wstring xpath = msiInstall.GetProperty(L"XML_XPATH");
+	MSXML2::IXMLDOMNodeListPtr nodes = doc.FindNodes(xpath);
+	int count = 0;
+	if (NULL != nodes)
+	{
+		MSXML2::IXMLDOMNodePtr node = NULL;
+		while (NULL != (node = nodes->nextNode()))
+		{
+			node->parentNode->removeChild(node);
+			count++;
+		}
+	}
+
+	if (count > 0)
+	{
+		CHECK_HR(doc->save(CComVariant(filename.c_str())),
+			L"Error saving '" << filename << L"'");
+	}
+
+	msiInstall.SetProperty(L"XML_DELETED", AppSecInc::StringUtils::toWString(count));
+	MSI_EXCEPTION_HANDLER_EPILOG;
+	return ERROR_SUCCESS;
+}

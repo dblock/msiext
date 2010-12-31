@@ -63,16 +63,70 @@ void FileUnitTests::testFileDirectoryExists()
 	CPPUNIT_ASSERT(! AppSecInc::File::FileExists(guidpath));
 }
 
-void FileUnitTests::testDelete()
+void FileUnitTests::testDeleteFileA()
 {
 	std::string path = AppSecInc::File::GetTemporaryFileNameA();
 	std::cout << std::endl << "Temporary filename: " << path;
-	bool exists = false;
-	CPPUNIT_ASSERT(AppSecInc::File::FileExists(path.c_str()));
+	CPPUNIT_ASSERT(AppSecInc::File::FileExists(path));
 	CPPUNIT_ASSERT(::PathFileExistsA(path.c_str()));
-	AppSecInc::File::FileDelete(path.c_str());
-	CPPUNIT_ASSERT(! AppSecInc::File::FileExists(path.c_str()));
+	AppSecInc::File::FileDelete(path);
+	CPPUNIT_ASSERT(! AppSecInc::File::FileExists(path));
 	CPPUNIT_ASSERT(FALSE == ::PathFileExistsA(path.c_str()));
+}
+
+void FileUnitTests::testDeleteFileW()
+{
+	std::wstring path = AppSecInc::File::GetTemporaryFileNameW();
+	std::wcout << std::endl << L"Temporary filename: " << path;
+	CPPUNIT_ASSERT(AppSecInc::File::FileExists(path));
+	CPPUNIT_ASSERT(::PathFileExistsW(path.c_str()));
+	AppSecInc::File::FileDelete(path);
+	CPPUNIT_ASSERT(! AppSecInc::File::FileExists(path));
+	CPPUNIT_ASSERT(FALSE == ::PathFileExistsW(path.c_str()));
+}
+
+void FileUnitTests::testCopyFileA()
+{
+	std::string src = AppSecInc::File::GetTemporaryFileNameA();
+	std::string dest = src + ".copy";
+	std::cout << std::endl << "Temporary filename: " << src;
+	CPPUNIT_ASSERT(AppSecInc::File::FileExists(src));
+	CPPUNIT_ASSERT(! AppSecInc::File::FileExists(dest));
+	AppSecInc::File::FileCopy(src, dest);
+	CPPUNIT_ASSERT(AppSecInc::File::FileExists(src));
+	CPPUNIT_ASSERT(AppSecInc::File::FileExists(dest));
+	try
+	{
+		AppSecInc::File::FileCopy(src, dest, false);
+	}
+	catch(std::exception& ex)
+	{
+		std::cout << std::endl << "expected: " << ex.what();
+	}
+	AppSecInc::File::FileDelete(src);
+	AppSecInc::File::FileDelete(dest);
+}
+
+void FileUnitTests::testCopyFileW()
+{
+	std::wstring src = AppSecInc::File::GetTemporaryFileNameW();
+	std::wstring dest = src + L".copy";
+	std::wcout << std::endl << L"Temporary filename: " << src;
+	CPPUNIT_ASSERT(AppSecInc::File::FileExists(src));
+	CPPUNIT_ASSERT(! AppSecInc::File::FileExists(dest));
+	AppSecInc::File::FileCopy(src, dest);
+	CPPUNIT_ASSERT(AppSecInc::File::FileExists(src));
+	CPPUNIT_ASSERT(AppSecInc::File::FileExists(dest));
+	try
+	{
+		AppSecInc::File::FileCopy(src, dest, false);
+	}
+	catch(std::exception& ex)
+	{
+		std::cout << std::endl << "expected: " << ex.what();
+	}
+	AppSecInc::File::FileDelete(src);
+	AppSecInc::File::FileDelete(dest);
 }
 
 void FileUnitTests::testDirectoryCombine()

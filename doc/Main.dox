@@ -71,6 +71,7 @@
 \par Xml (XmlTools.dll)
 
 \li \ref Xml_SelectNodeXml, \ref Xml_SelectNodeValue & \ref Xml_SelectNodeAttributeValue
+\li \ref Xml_DeleteNodes
 \li \ref Xml_XslTransform
 
 \par Msi (MsiTools.dll)
