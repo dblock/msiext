@@ -200,7 +200,7 @@ CA_API UINT __stdcall Win32_CopyFiles_Deferred(MSIHANDLE hInstall)
                 copy_status << L"Copy: " << source_file << " => " << target_file;
                 msiInstall.LogInfo(_T(__FUNCTION__), copy_status.str());
 
-				AppSecInc::File::FileCopy(source_filename, target_filename);
+				AppSecInc::File::FileCopy(source_file, target_file);
             }
         }
 
@@ -377,7 +377,7 @@ CA_API UINT __stdcall Win32_MoveFiles_Deferred(MSIHANDLE hInstall)
                     AppSecInc::File::DirectoryCreate(target_directory);
                 }
 
-				AppSecInc::File::FileCopy(source_filename, target_filename);
+				AppSecInc::File::FileCopy(source_file, target_file);
 				AppSecInc::File::FileDelete(source_file);
             }
         }
