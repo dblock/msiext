@@ -4,7 +4,7 @@
 //    Copyright (c) Microsoft Corporation.  All rights reserved.
 //    
 //    The use and distribution terms for this software are covered by the
-//    Common Public License 1.0 (http://opensource.org/licenses/cpl.php)
+//    Common Public License 1.0 (http://opensource.org/licenses/cpl1.0.php)
 //    which can be found in the file CPL.TXT at the root of this distribution.
 //    By using this software in any fashion, you are agreeing to be bound by
 //    the terms of this license.
@@ -51,17 +51,19 @@ void DAPI CabUninitialize(
     );
 
 HRESULT DAPI CabExtract(
-    __in LPCWSTR wzCabinet,
-    __in LPCWSTR wzExtractFile,
-    __in LPCWSTR wzExtractDir,
+    __in_z LPCWSTR wzCabinet,
+    __in_z LPCWSTR wzExtractFile,
+    __in_z LPCWSTR wzExtractDir,
     __in_opt CAB_CALLBACK_PROGRESS pfnProgress,
-    __in_opt LPVOID pvContext
+    __in_opt LPVOID pvContext,
+    __in DWORD64 dw64EmbeddedOffset
     );
 
 HRESULT DAPI CabEnumerate(
-    __in LPCWSTR wzCabinet,
-    __in LPCWSTR wzEnumerateFile,
-    __in STDCALL_PFNFDINOTIFY pfnNotify
+    __in_z LPCWSTR wzCabinet,
+    __in_z LPCWSTR wzEnumerateFile,
+    __in STDCALL_PFNFDINOTIFY pfnNotify,
+    __in DWORD64 dw64EmbeddedOffset
     );
 
 #ifdef __cplusplus

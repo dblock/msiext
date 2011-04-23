@@ -4,7 +4,7 @@
 //    Copyright (c) Microsoft Corporation.  All rights reserved.
 //    
 //    The use and distribution terms for this software are covered by the
-//    Common Public License 1.0 (http://opensource.org/licenses/cpl.php)
+//    Common Public License 1.0 (http://opensource.org/licenses/cpl1.0.php)
 //    which can be found in the file CPL.TXT at the root of this distribution.
 //    By using this software in any fashion, you are agreeing to be bound by
 //    the terms of this license.
@@ -233,7 +233,7 @@ HRESULT WIXAPI WcaGetRecordFormattedString(
     );
 
 HRESULT WIXAPI WcaAllocStream(
-    __inout BYTE** ppbData,
+    __deref_out_bcount_part(cbData, 0) BYTE** ppbData,
     __in DWORD cbData
     );
 HRESULT WIXAPI WcaFreeStream(
@@ -242,9 +242,9 @@ HRESULT WIXAPI WcaFreeStream(
 
 HRESULT WIXAPI WcaGetRecordStream(
     __in MSIHANDLE hRecBinary,
-    __in UINT uiField, 
-    __inout BYTE** ppbData,
-    __inout DWORD* pcbData
+    __in UINT uiField,
+    __deref_out_bcount_full(*pcbData) BYTE** ppbData,
+    __out DWORD* pcbData
     );
 HRESULT WIXAPI WcaSetRecordString(
     __in MSIHANDLE hRec,
@@ -265,31 +265,37 @@ HRESULT WIXAPI WcaDoDeferredAction(
 DWORD WIXAPI WcaCountOfCustomActionDataRecords(
     __in_z LPCWSTR wzData
     );
+
+void WIXAPI RevertCustomActionData(
+    __in LPWSTR wzRevertTo,
+    __in LPCWSTR wzRevertFrom
+    );
+
 HRESULT WIXAPI WcaReadStringFromCaData(
-    __inout LPWSTR* ppwzCustomActionData,
-    __inout LPWSTR* ppwzString
+    __deref_in LPWSTR* ppwzCustomActionData,
+    __deref_out_z LPWSTR* ppwzString
     );
 HRESULT WIXAPI WcaReadIntegerFromCaData(
-    __inout LPWSTR* ppwzCustomActionData,
-    __inout int* piResult
+    __deref_in LPWSTR* ppwzCustomActionData,
+    __out int* piResult
     );
 HRESULT WIXAPI WcaReadStreamFromCaData(
-    __inout LPWSTR* ppwzCustomActionData,
-    __out BYTE** ppbData,
+    __deref_in LPWSTR* ppwzCustomActionData,
+    __deref_out_bcount(*pcbData) BYTE** ppbData,
     __out DWORD_PTR* pcbData
     );
 HRESULT WIXAPI WcaWriteStringToCaData(
     __in_z LPCWSTR wzString,
-    __inout LPWSTR* ppwzCustomActionData
+    __deref_inout_z LPWSTR* ppwzCustomActionData
     );
 HRESULT WIXAPI WcaWriteIntegerToCaData(
     __in int i, 
-    __inout LPWSTR* ppwzCustomActionData
+    __deref_inout_z LPWSTR* ppwzCustomActionData
     );
 HRESULT WIXAPI WcaWriteStreamToCaData(
     __in_bcount(cbData) const BYTE* pbData,
     __in DWORD cbData,
-    __inout LPWSTR* ppwzCustomActionData
+    __deref_inout_z LPWSTR* ppwzCustomActionData
     );
 
 HRESULT __cdecl WcaAddTempRecord(
@@ -359,12 +365,12 @@ void WIXAPI WcaCaScriptCleanup(
     __in BOOL fImpersonated
     );
 
-HRESULT QuietExec(
-    __in_z LPWSTR wzCommand,
+HRESULT WIXAPI QuietExec(
+    __inout_z LPWSTR wzCommand,
     __in DWORD dwTimeout
     );
 
-WCA_TODO WcaGetComponentToDo(
+WCA_TODO WIXAPI WcaGetComponentToDo(
     __in_z LPCWSTR wzComponentId
     );
 

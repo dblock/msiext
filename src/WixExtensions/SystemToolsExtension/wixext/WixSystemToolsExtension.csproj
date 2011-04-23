@@ -60,7 +60,7 @@
     <Reference Include="System.Xml" />
     <Reference Include="wix, Version=3.0.0.0, Culture=neutral, PublicKeyToken=ce35f76fcda82bad, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\externals\wix\bin\wix.dll</HintPath>
+      <HintPath>..\..\..\..\externals\wix\wix.dll</HintPath>
     </Reference>
   </ItemGroup>
 </Project>

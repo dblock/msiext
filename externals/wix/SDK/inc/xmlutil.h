@@ -4,7 +4,7 @@
 //    Copyright (c) Microsoft Corporation.  All rights reserved.
 //    
 //    The use and distribution terms for this software are covered by the
-//    Common Public License 1.0 (http://opensource.org/licenses/cpl.php)
+//    Common Public License 1.0 (http://opensource.org/licenses/cpl1.0.php)
 //    which can be found in the file CPL.TXT at the root of this distribution.
 //    By using this software in any fashion, you are agreeing to be bound by
 //    the terms of this license.
@@ -46,7 +46,7 @@ void DAPI XmlUninitialize();
 
 HRESULT DAPI XmlCreateElement(
     __in IXMLDOMDocument *pixdDocument,
-    __in LPCWSTR wzElementName,
+    __in_z LPCWSTR wzElementName,
     __out IXMLDOMElement **ppixnElement
     );
 HRESULT DAPI XmlCreateDocument(
@@ -55,16 +55,16 @@ HRESULT DAPI XmlCreateDocument(
     __out_opt IXMLDOMElement** ppixeRootElement = NULL
     );
 HRESULT DAPI XmlLoadDocument(
-    __in LPCWSTR wzDocument,
+    __in_z LPCWSTR wzDocument,
     __out IXMLDOMDocument** ppixdDocument
     );
 HRESULT DAPI XmlLoadDocumentEx(
-    __in LPCWSTR wzDocument,
+    __in_z LPCWSTR wzDocument,
     __in DWORD dwAttributes,
     __out IXMLDOMDocument** ppixdDocument
     );
 HRESULT DAPI XmlLoadDocumentFromFile(
-    __in LPCWSTR wzPath,
+    __in_z LPCWSTR wzPath,
     __out IXMLDOMDocument** ppixdDocument
     );
 HRESULT DAPI XmlLoadDocumentFromBuffer(
@@ -73,38 +73,59 @@ HRESULT DAPI XmlLoadDocumentFromBuffer(
     __out IXMLDOMDocument** ppixdDocument
     );
 HRESULT DAPI XmlLoadDocumentFromFileEx(
-    __in LPCWSTR wzPath,
+    __in_z LPCWSTR wzPath,
     __in DWORD dwAttributes,
     __out IXMLDOMDocument** ppixdDocument
     );
 HRESULT DAPI XmlSelectSingleNode(
     __in IXMLDOMNode* pixnParent,
-    __in LPCWSTR wzXPath,
+    __in_z LPCWSTR wzXPath,
     __out IXMLDOMNode **ppixnChild
     );
 HRESULT DAPI XmlSetAttribute(
     __in IXMLDOMNode* pixnNode,
-    __in LPCWSTR pwzAttribute,
-    __in LPCWSTR pwzAttributeValue
+    __in_z LPCWSTR pwzAttribute,
+    __in_z LPCWSTR pwzAttributeValue
     );
 HRESULT DAPI XmlCreateTextNode(
     __in IXMLDOMDocument *pixdDocument,
-    __in LPCWSTR wzText,
+    __in_z LPCWSTR wzText,
     __out IXMLDOMText **ppixnTextNode
     );
 HRESULT DAPI XmlGetText(
     __in IXMLDOMNode* pixnNode,
-    __out BSTR* pbstrText
+    __deref_out_z BSTR* pbstrText
     );
 HRESULT DAPI XmlGetAttribute(
     __in IXMLDOMNode* pixnNode,
-    __in LPCWSTR pwzAttribute,
-    __out BSTR* pbstrAttributeValue
+    __in_z LPCWSTR pwzAttribute,
+    __deref_out_z BSTR* pbstrAttributeValue
+    );
+HRESULT DAPI XmlGetAttributeEx(
+    __in IXMLDOMNode* pixnNode,
+    __in_z LPCWSTR wzAttribute,
+    __deref_out_z LPWSTR* psczAttributeValue
+    );
+HRESULT DAPI XmlGetYesNoAttribute(
+    __in IXMLDOMNode* pixnNode,
+    __in_z LPCWSTR wzAttribute,
+    __out BOOL* pfYes
     );
 HRESULT DAPI XmlGetAttributeNumber(
     __in IXMLDOMNode* pixnNode,
-    __in LPCWSTR pwzAttribute,
+    __in_z LPCWSTR pwzAttribute,
     __out DWORD* pdwValue
+    );
+HRESULT DAPI XmlGetAttributeNumberBase(
+    __in IXMLDOMNode* pixnNode,
+    __in_z LPCWSTR pwzAttribute,
+    __in int nBase,
+    __out DWORD* pdwValue
+    );
+HRESULT DAPI XmlGetAttributeLargeNumber(
+    __in IXMLDOMNode* pixnNode,
+    __in_z LPCWSTR pwzAttribute,
+    __out DWORD64* pdw64Value
     );
 HRESULT DAPI XmlGetNamedItem(
     __in IXMLDOMNamedNodeMap *pixnmAttributes, 
@@ -113,7 +134,7 @@ HRESULT DAPI XmlGetNamedItem(
     );
 HRESULT DAPI XmlSetText(
     __in IXMLDOMNode* pixnNode,
-    __in LPCWSTR pwzText
+    __in_z LPCWSTR pwzText
     );
 HRESULT DAPI XmlSetTextNumber(
     __in IXMLDOMNode *pixnNode,
@@ -121,26 +142,31 @@ HRESULT DAPI XmlSetTextNumber(
     );
 HRESULT DAPI XmlCreateChild(
     __in IXMLDOMNode* pixnParent,
-    __in LPCWSTR pwzElementType,
+    __in_z LPCWSTR pwzElementType,
     __out IXMLDOMNode** ppixnChild
     );
 HRESULT DAPI XmlRemoveAttribute(
     __in IXMLDOMNode* pixnNode,
-    __in LPCWSTR pwzAttribute
+    __in_z LPCWSTR pwzAttribute
     );
 HRESULT DAPI XmlSelectNodes(
     __in IXMLDOMNode* pixnParent,
-    __in LPCWSTR wzXPath,
+    __in_z LPCWSTR wzXPath,
     __out IXMLDOMNodeList **ppixnChild
+    );
+HRESULT DAPI XmlNextAttribute(
+    __in IXMLDOMNamedNodeMap* pixnnm,
+    __out IXMLDOMNode** pixnAttribute,
+    __deref_opt_out_z_opt BSTR* pbstrAttribute
     );
 HRESULT DAPI XmlNextElement(
     __in IXMLDOMNodeList* pixnl,
     __out IXMLDOMNode** pixnElement,
-    __out BSTR* pbstrElement
+    __deref_opt_out_z_opt BSTR* pbstrElement
     );
 HRESULT DAPI XmlRemoveChildren(
     __in IXMLDOMNode* pixnSource,
-    __in LPCWSTR pwzXPath
+    __in_z LPCWSTR pwzXPath
     );
 HRESULT DAPI XmlSaveDocument(
     __in IXMLDOMDocument* pixdDocument, 

@@ -6,9 +6,8 @@
     <OutputType>Library</OutputType>
     <BindFiles>True</BindFiles>
     <Pedantic>True</Pedantic>
-    <WixTargetsPath Condition=" '$(WixTargetsPath)' == '' AND '$(MSBuildExtensionsPath32)' != '' ">$(MSBuildExtensionsPath32)\Microsoft\WiX\v3.0\Wix.targets</WixTargetsPath>
-    <WixTargetsPath Condition=" '$(WixTargetsPath)' == '' ">$(MSBuildExtensionsPath)\Microsoft\WiX\v3.0\Wix.targets</WixTargetsPath>
-    <WixToolPath>$(ProgramFiles)\Windows Installer XML v3\bin\</WixToolPath>
+    <WixTargetsPath Condition=" '$(WixTargetsPath)' == '' ">..\..\..\..\externals\wix\Wix.targets</WixTargetsPath>
+    <WixToolPath>..\..\..\..\externals\wix\</WixToolPath>
     <Name>CommonUiExtension</Name>
   </PropertyGroup>
   <ItemGroup>
@@ -25,7 +24,8 @@
   </ItemGroup>
   <ItemGroup>
     <WixExtension Include="WixUIExtension">
-      <HintPath>..\..\..\..\externals\wix\bin\WixUIExtension.dll</HintPath>
+      <HintPath>..\..\..\..\externals\wix\WixUIExtension.dll</HintPath>
+      <Name>WixUIExtension</Name>
     </WixExtension>
   </ItemGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">

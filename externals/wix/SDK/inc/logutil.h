@@ -4,7 +4,7 @@
 //    Copyright (c) Microsoft Corporation.  All rights reserved.
 //    
 //    The use and distribution terms for this software are covered by the
-//    Common Public License 1.0 (http://opensource.org/licenses/cpl.php)
+//    Common Public License 1.0 (http://opensource.org/licenses/cpl1.0.php)
 //    which can be found in the file CPL.TXT at the root of this distribution.
 //    By using this software in any fashion, you are agreeing to be bound by
 //    the terms of this license.
@@ -31,63 +31,75 @@ extern "C" {
 // structs
 
 // functions
+BOOL DAPI IsLogInitialized();
+
 HRESULT DAPI LogInitialize(
-    IN HMODULE hModule,
-    IN LPCWSTR wzLog,
-    IN LPCWSTR wzExt,
-    IN BOOL fAppend,
-    IN BOOL fHeader
+    __in HMODULE hModule,
+    __in_z LPCWSTR wzLog,
+    __in_z_opt LPCWSTR wzExt,
+    __in BOOL fAppend,
+    __in BOOL fHeader
+    );
+
+HRESULT DAPI LogRename(
+    __in_z LPCWSTR wzNewPath
     );
 
 void DAPI LogUninitialize(
-    IN BOOL fFooter
+    __in BOOL fFooter
     );
 
 BOOL DAPI LogIsOpen();
 
+HRESULT DAPI LogSetSpecialParams(
+    __in_z LPCSTR wzSpecialBeginLine,
+    __in_z LPCSTR wzSpecialAfterTimeStamp,
+    __in_z LPCSTR wzSpecialEndLine
+    );
+
 REPORT_LEVEL DAPI LogSetLevel(
-    IN REPORT_LEVEL rl,
-    IN BOOL fLogChange
+    __in REPORT_LEVEL rl,
+    __in BOOL fLogChange
     );
 
 REPORT_LEVEL DAPI LogGetLevel();
 
 HRESULT DAPI LogGetPath(
-    __out_ecount(cchLogPath) LPWSTR pwzLogPath, 
+    __out_ecount_z(cchLogPath) LPWSTR pwzLogPath, 
     __in DWORD cchLogPath
     );
 
 HANDLE DAPI LogGetHandle();
 
 HRESULT DAPIV LogString(
-    IN REPORT_LEVEL rl,
-    IN LPCSTR szFormat,
+    __in REPORT_LEVEL rl,
+    __in_z __format_string LPCSTR szFormat,
     ...
     );
 
 HRESULT DAPI LogStringArgs(
-    IN REPORT_LEVEL rl,
-    IN LPCSTR szFormat,
-    IN va_list args
+    __in REPORT_LEVEL rl,
+    __in_z __format_string LPCSTR szFormat,
+    __in va_list args
     );
 
 HRESULT DAPIV LogStringLine(
-    IN REPORT_LEVEL rl,
-    IN LPCSTR szFormat,
+    __in REPORT_LEVEL rl,
+    __in_z __format_string LPCSTR szFormat,
     ...
     );
 
 HRESULT DAPI LogStringLineArgs(
-    IN REPORT_LEVEL rl,
-    IN LPCSTR szFormat,
-    IN va_list args
+    __in REPORT_LEVEL rl,
+    __in_z __format_string LPCSTR szFormat,
+    __in va_list args
     );
 
 HRESULT DAPI LogIdModuleArgs(
-    IN REPORT_LEVEL rl,
-    IN DWORD dwLogId,
-    IN HMODULE hModule,
-    va_list args
+    __in REPORT_LEVEL rl,
+    __in DWORD dwLogId,
+    __in_opt HMODULE hModule,
+    __in va_list args
     );
 
 /* 
@@ -95,18 +107,18 @@ HRESULT DAPI LogIdModuleArgs(
  */
 
 inline HRESULT LogId(
-    IN REPORT_LEVEL rl,
-    IN DWORD dwLogId,
+    __in REPORT_LEVEL rl,
+    __in DWORD dwLogId,
     ...
     )
 {
     HRESULT hr = S_OK;
     va_list args;
-    
+
     va_start(args, dwLogId);
     hr = LogIdModuleArgs(rl, dwLogId, NULL, args);
     va_end(args);
-    
+
     return hr;
 }
 
@@ -116,41 +128,41 @@ inline HRESULT LogId(
  */
  
 inline HRESULT LogIdArgs(
-    IN REPORT_LEVEL rl,
-    IN DWORD dwLogId,
-    va_list args
+    __in REPORT_LEVEL rl,
+    __in DWORD dwLogId,
+    __in va_list args
     )
 {
     return LogIdModuleArgs(rl, dwLogId, NULL, args);
 }
 
 HRESULT DAPIV LogErrorString(
-    IN HRESULT hrError,
-    IN LPCSTR szFormat,
+    __in HRESULT hrError,
+    __in_z __format_string LPCSTR szFormat,
     ...
     );
 
 HRESULT DAPI LogErrorStringArgs(
-    IN HRESULT hrError,
-    IN LPCSTR szFormat,
-    IN va_list args
+    __in HRESULT hrError,
+    __in_z __format_string LPCSTR szFormat,
+    __in va_list args
     );
 
 HRESULT DAPI LogErrorIdModule(
-    IN HRESULT hrError,
-    IN DWORD dwLogId,
-    IN HMODULE hModule,
-    IN LPCWSTR wzString1,
-    IN LPCWSTR wzString2,
-    IN LPCWSTR wzString3
+    __in HRESULT hrError,
+    __in DWORD dwLogId,
+    __in_opt HMODULE hModule,
+    __in_z_opt LPCWSTR wzString1,
+    __in_z_opt LPCWSTR wzString2,
+    __in_z_opt LPCWSTR wzString3
     );
 
 inline HRESULT LogErrorId(
-    IN HRESULT hrError,
-    IN DWORD dwLogId,
-    IN LPCWSTR wzString1,
-    IN LPCWSTR wzString2,
-    IN LPCWSTR wzString3
+    __in HRESULT hrError,
+    __in DWORD dwLogId,
+    __in_z_opt LPCWSTR wzString1,
+    __in_z_opt LPCWSTR wzString2,
+    __in_z_opt LPCWSTR wzString3
     )
 {
     return LogErrorIdModule(hrError, dwLogId, NULL, wzString1, wzString2, wzString3);

@@ -4,7 +4,7 @@
 //    Copyright (c) Microsoft Corporation.  All rights reserved.
 //    
 //    The use and distribution terms for this software are covered by the
-//    Common Public License 1.0 (http://opensource.org/licenses/cpl.php)
+//    Common Public License 1.0 (http://opensource.org/licenses/cpl1.0.php)
 //    which can be found in the file CPL.TXT at the root of this distribution.
 //    By using this software in any fashion, you are agreeing to be bound by
 //    the terms of this license.
@@ -16,7 +16,6 @@
 //  Theme helper functions.
 // </summary>
 //-------------------------------------------------------------------------------------------------
-
 
 #ifdef __cplusplus
 extern "C" {
@@ -30,9 +29,14 @@ enum THEME_CONTROL_DATA
 enum THEME_CONTROL_TYPE
 {
     THEME_CONTROL_TYPE_UNKNOWN,
-    THEME_CONTROL_TYPE_HYPERLINK,
     THEME_CONTROL_TYPE_BUTTON,
+    THEME_CONTROL_TYPE_CHECKBOX,
+    THEME_CONTROL_TYPE_EDITBOX,
+    THEME_CONTROL_TYPE_HYPERLINK,
+    THEME_CONTROL_TYPE_IMAGE,
     THEME_CONTROL_TYPE_PROGRESSBAR,
+    THEME_CONTROL_TYPE_RICHEDIT,
+    THEME_CONTROL_TYPE_STATIC,
     THEME_CONTROL_TYPE_TEXT,
 };
 
@@ -48,6 +52,7 @@ struct THEME_CONTROL
     int nSourceX;
     int nSourceY;
 
+    DWORD dwStyle;
     DWORD dwFontId;
     DWORD dwFontHoverId;
     DWORD dwFontSelectedId;
@@ -69,14 +74,14 @@ struct THEME
 {
     DWORD dwStyle;
     DWORD dwFontId;
-    HICON hIcon;
+    HANDLE hIcon;
     LPWSTR wzCaption;
     int nHeight;
     int nWidth;
     int nSourceX;
     int nSourceY;
 
-    Gdiplus::Image* pImage;
+    HBITMAP hImage;
 
     DWORD cFonts;
     THEME_FONT* rgFonts;
@@ -89,13 +94,20 @@ struct THEME
 };
 
 
-HRESULT DAPI ThemeInitialize();
+HRESULT DAPI ThemeInitialize(
+    __in HMODULE hModule
+    );
 
 void DAPI ThemeUninitialize();
 
+HRESULT DAPI ThemeLoadFromFile(
+    __in_z LPCWSTR wzThemeFile,
+    __out THEME** ppTheme
+    );
+
 HRESULT DAPI ThemeLoadFromResource(
     __in_opt HMODULE hModule,
-    __in LPCSTR szResource,
+    __in_z LPCSTR szResource,
     __out THEME** ppTheme
     );
 
@@ -124,6 +136,11 @@ void DAPI ThemeHoverControl(
     __in HWND hwndControl
     );
 
+BOOL DAPI ThemeIsControlChecked(
+    __in THEME* pTheme,
+    __in DWORD dwControl
+    );
+
 BOOL DAPI ThemeSetControlColor(
     __in THEME* pTheme,
     __in HDC hdc,
@@ -137,10 +154,35 @@ HRESULT DAPI ThemeSetProgressControl(
     __in DWORD dwProgressPercentage
     );
 
+HRESULT DAPI ThemeSetProgressControlColor(
+    __in THEME* pTheme,
+    __in DWORD dwControl,
+    __in DWORD dwColorIndex
+    );
+
 HRESULT DAPI ThemeSetTextControl(
     __in THEME* pTheme,
     __in DWORD dwControl,
     __in_z LPCWSTR wzText
+    );
+
+HRESULT DAPI ThemeGetTextControl(
+    __in const THEME* pTheme,
+    __in DWORD dwControl,
+    __out LPWSTR* psczText
+    );
+
+HRESULT DAPI ThemeLoadRichEditFromFile(
+    __in THEME* pTheme,
+    __in DWORD dwControl,
+    __in_z LPCWSTR wzFileName, 
+    __in HMODULE hModule
+    );
+
+HRESULT DAPI ThemeLoadLocFromFile(
+    __in THEME* pTheme,
+    __in_z LPCWSTR wzFileName,
+    __in HMODULE hModule
     );
 
 #ifdef __cplusplus
