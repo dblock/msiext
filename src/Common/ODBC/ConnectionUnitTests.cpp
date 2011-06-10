@@ -468,6 +468,37 @@ void ODBCConnectionUnitTests::testGetDiagLongMessages()
 	CPPUNIT_ASSERT(messages[0].text == message);
 }
 
+void ODBCConnectionUnitTests::testGetBufferSizeLongDiagMessages()
+{
+	MSSQLConnectionInfo info(L"localhost");
+
+	ODBCConnection conn;
+	conn.Connect(info);
+
+	std::wstring header = L"[Microsoft][ODBC SQL Server Driver][SQL Server]";
+	int len = (SQL_MAX_MESSAGE_LENGTH + 2) / sizeof(SQLWCHAR) - header.length();
+	std::wstring message;
+	for(int j = 0; j < len; j++)
+	{
+		message += (L'a' + j % 26);
+	}
+
+	std::wcout << std::endl << len << L": " << message;
+
+	ODBCHandle results;
+	conn.Execute(L"PRINT '" + message + L"'", results);
+	std::vector<ODBCDiagnosticsMessage> messages = results.GetDiagMessages();
+	CPPUNIT_ASSERT(messages.size() == 1);
+	std::wcout << std::endl << messages[0].vendor 
+		<< L", " << messages[0].component 
+		<< L", " << messages[0].datasource 
+		<< L", " << messages[0].text;
+	CPPUNIT_ASSERT(messages[0].component.length() > 0);
+	CPPUNIT_ASSERT(messages[0].datasource.length() > 0);
+	CPPUNIT_ASSERT(messages[0].vendor.length() > 0);
+	CPPUNIT_ASSERT(messages[0].text == message);
+}
+
 void ODBCConnectionUnitTests::testExecuteSelectAllSupportedTypes()
 {
     std::wstring databasename = AppSecInc::Com::GenerateGUIDStringW();
