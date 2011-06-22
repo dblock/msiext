@@ -499,6 +499,27 @@ void ODBCConnectionUnitTests::testGetBufferSizeLongDiagMessages()
 	CPPUNIT_ASSERT(messages[0].text == message);
 }
 
+void ODBCConnectionUnitTests::testGetDiagMessageWithSquareBrackets()
+{
+	MSSQLConnectionInfo info(L"localhost");
+
+	ODBCConnection conn;
+	conn.Connect(info);
+
+	ODBCHandle results;
+	conn.Execute(L"PRINT 'square [brackets]'", results);
+	std::vector<ODBCDiagnosticsMessage> messages = results.GetDiagMessages();
+	CPPUNIT_ASSERT(messages.size() == 1);
+	std::wcout << std::endl << messages[0].vendor 
+		<< L", " << messages[0].component 
+		<< L", " << messages[0].datasource 
+		<< L", " << messages[0].text;
+	CPPUNIT_ASSERT(messages[0].component.length() > 0);
+	CPPUNIT_ASSERT(messages[0].datasource.length() > 0);
+	CPPUNIT_ASSERT(messages[0].vendor.length() > 0);
+	CPPUNIT_ASSERT(messages[0].text == L"square [brackets]");
+}
+
 void ODBCConnectionUnitTests::testExecuteSelectAllSupportedTypes()
 {
     std::wstring databasename = AppSecInc::Com::GenerateGUIDStringW();

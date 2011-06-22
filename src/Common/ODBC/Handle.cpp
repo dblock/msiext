@@ -1,6 +1,7 @@
 #include "StdAfx.h"
 #include "Handle.h"
 #include "Connection.h"
+#include <boost/regex.hpp>
 
 using namespace AppSecInc::Databases::ODBC;
 
@@ -66,6 +67,14 @@ std::vector<std::wstring> ODBCHandle::GetDiagFields(SQLHANDLE handle, int type, 
 
 std::vector<ODBCDiagnosticsMessage> ODBCHandle::GetDiagMessages(SQLHANDLE handle, int type)
 {
+	// the messages are formatted according to http://msdn.microsoft.com/en-us/library/ms713606(VS.85).aspx
+	// For errors and warnings that do not occur in a data source, the diagnostic message must use this format:
+	// [ vendor-identifier ][ ODBC-component-identifier ] component-supplied-text 
+	// For errors and warnings that occur in a data source, the diagnostic message must use this format:
+	// [ vendor-identifier ][ ODBC-component-identifier ][ data-source-identifier ] data-source-supplied-text 
+	boost::wregex diag_message_regex(L"\\s*\\[(.*?)\\]\\s*\\[(.*?)\\]\\s*(\\[(.*?)\\])?\\s*(.*)");
+	boost::wsmatch diag_message_match;
+
 	std::vector<SQLWCHAR> sql_message;
 	sql_message.resize(SQL_MAX_MESSAGE_LENGTH + 2);
 	SQLSMALLINT sql_message_len;
@@ -87,25 +96,24 @@ std::vector<ODBCDiagnosticsMessage> ODBCHandle::GetDiagMessages(SQLHANDLE handle
 		}
 
 		ODBCDiagnosticsMessage message;
-		// the messages are formatted according to http://msdn.microsoft.com/en-us/library/ms713606(VS.85).aspx
-		// For errors and warnings that do not occur in a data source, the diagnostic message must use this format:
-		// [ vendor-identifier ][ ODBC-component-identifier ] component-supplied-text 
-		// For errors and warnings that occur in a data source, the diagnostic message must use this format:
-		// [ vendor-identifier ][ ODBC-component-identifier ][ data-source-identifier ] data-source-supplied-text 
-		std::vector<std::wstring> message_tokens;
-		AppSecInc::StringUtils::tokenizeWithSkip(& * sql_message.begin(), message_tokens, L"][");
-		CHECK_BOOL(message_tokens.size() == 3 || message_tokens.size() == 4, L"Invalid message format");
-		message.vendor = message_tokens[0];
-		message.component = message_tokens[1];
-		
-		if (message_tokens.size() == 4) 
+		const std::wstring & expression = & * sql_message.begin();
+		boost::regex_match(expression, diag_message_match, diag_message_regex);
+		CHECK_BOOL(diag_message_match.size() == 6, L"Invalid message format");
+		if (diag_message_match[1].matched)
 		{
-			message.datasource = message_tokens[2];
-			message.text = message_tokens[3];
+			message.vendor = diag_message_match[1];
 		}
-		else if (message_tokens.size() == 3)
+		if (diag_message_match[2].matched)
 		{
-			message.text = message_tokens[2];
+			message.component = diag_message_match[2];
+		}		
+		if (diag_message_match[4].matched)
+		{
+			message.datasource = diag_message_match[4];
+		}
+		if (diag_message_match[5].matched)
+		{
+			message.text = diag_message_match[5];
 		}
 
 		messages.push_back(message);

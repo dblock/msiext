@@ -54,6 +54,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
+				AdditionalLibraryDirectories="&quot;$(SolutionDir)externals\boost\lib\Win32\VS8_0&quot;"
 				ModuleDefinitionFile="DataSource.def"
 			/>
 			<Tool
@@ -119,6 +120,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
+				AdditionalLibraryDirectories="&quot;$(SolutionDir)externals\boost\lib\Win32\VS8_0&quot;"
 				ModuleDefinitionFile="DataSource.def"
 			/>
 			<Tool
