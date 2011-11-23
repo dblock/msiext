@@ -27,6 +27,8 @@ namespace AppSecInc
 			Sid& operator=(const std::wstring&);
 			//! return a string representation of a sid
 			std::wstring ToString() const;
+			//! return a hexidecimal string reperesntation of the sid.
+			std::wstring ToHexString() const;
 			//! return the length of the SID
 			DWORD GetLength() const;
 			//! return a PSID

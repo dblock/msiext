@@ -60,6 +60,24 @@ std::wstring Sid::ToString() const
 	return buffer;
 }
 
+std::wstring Sid::ToHexString() const
+{
+	CHECK_BOOL(IsValid(), L"Invalid sid");
+
+    std::wstringstream ss(std::wstringstream::out);
+	ss << L"0x";
+	ss.flags (std::ios::right| std::ios::hex | std::ios::uppercase);
+	ss.fill('0');
+	std::vector<byte>::const_iterator it;
+	for (it = m_data.begin(); it != m_data.end(); it++)
+	{
+		ss.width(2);
+		ss << *it;
+	}
+
+	return ss.str();
+}
+
 void Sid::Set(PSID psid, SID_NAME_USE use)
 {
 	CHECK_BOOL(NULL != psid, L"Missing sid");

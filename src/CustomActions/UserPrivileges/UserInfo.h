@@ -56,3 +56,34 @@ the DNS username instead of the SAM username, also call \ref GetUserNameFormatte
 
 */
 CA_API UINT __stdcall GetUserNameFormatted(MSIHANDLE hInstall);
+
+/*!
+\brief Looks up the account and returns the SID.
+\param ACCOUNT_NAME Account name to look up. Can be in DNS, FQDN or UPN format
+\param ACCOUNT_SID_FORMAT format of the returned SID. This can be one of
+ \li \b SidString the string representation of the SID. This is the default value if ACCOUNT_SID_FORMAT is not specified.
+ \li \b SidStringHex the hexadecimal representation of the binary SID.
+\return ACCOUNT_SID Account SID in the specified format
+
+*/
+CA_API UINT __stdcall GetAccountSid(MSIHANDLE hInstall);
+
+/*!
+
+\brief Translate an account name to a specific format.
+
+\param ACCOUNT_NAME the account name to translate. This can be in any of the EXTENDED_NAME_FORMATs.
+\param ACCOUNT_NAME_FORMAT name format, one of EXTENDED_NAME_FORMAT, see http://msdn.microsoft.com/en-us/library/ms724268(VS.85).aspx
+ \li \b NameFullyQualifiedDN The fully-qualified distinguished name (for example, CN=Jeff Smith,OU=Users,DC=Engineering,DC=Microsoft,DC=Com).
+ \li \b NameSamCompatible A legacy account name (for example, Engineering\\JSmith). The domain-only version includes trailing backslashes (\\\\).
+ \li \b NameDisplay A "friendly" display name (for example, Jeff Smith). The display name is not necessarily the defining relative distinguished name (RDN).
+ \li \b NameUniqueId A GUID string that the IIDFromString function returns (for example, {4fa050f0-f561-11cf-bdd9-00aa003a77b6}).
+ \li \b NameCanonical The complete canonical name (for example, engineering.microsoft.com/software/someone). The domain-only version includes a trailing forward slash (/).
+ \li \b NameUserPrincipal The user principal name (for example, someone@example.com).
+ \li \b NameCanonicalEx The same as NameCanonical except that the rightmost forward slash (/) is replaced with a new line character (\n), even in a domain-only case (for example, engineering.microsoft.com/software\\nJSmith).
+ \li \b NameServicePrincipal The generalized service principal name (for example, www/www.microsoft.com@microsoft.com).
+ \li \b NameDnsDomain The DNS domain name followed by a backward-slash and the SAM username.
+\return ACCOUNT_NAME the account name translated to the specified format.
+
+*/
+CA_API UINT __stdcall TranslateNameFormatted(MSIHANDLE hInstall);

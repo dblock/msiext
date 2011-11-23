@@ -44,3 +44,31 @@ void SidUnitTests::testSidToString()
 		CPPUNIT_ASSERT(testdata[i] == sid.ToString());
 	}
 }
+
+void SidUnitTests::testSidToHexString()
+{
+	struct TestData
+	{
+		LPCWSTR sid;
+	};
+
+	LPCWSTR testdata[] = 
+	{
+		{ L"S-1-5-32-545" }, // Users
+		{ L"S-1-5-32-544" }, // Administrators
+	};
+
+	LPCWSTR testresults[] = 
+	{
+		{L"0x01020000000000052000000021020000"}, //Users
+		{L"0x01020000000000052000000020020000"}, //Administrators
+	};
+
+	for (int i = 0; i < ARRAYSIZE(testdata); i++)
+	{
+		AppSecInc::LSA::Sid sid(testdata[i]);
+		std::wcout << std::endl << testdata[i] << L" => " << sid.GetLength() << " byte(s)";
+		CPPUNIT_ASSERT(::GetLengthSid(sid.GetPSID()) == sid.GetLength());
+		CPPUNIT_ASSERT(testresults[i] == sid.ToHexString());
+	}
+}
