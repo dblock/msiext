@@ -11,7 +11,9 @@ Essentials
 ----------
 
 * [Download v. 1.2](https://github.com/downloads/dblock/msiext/msiext-1.2.zip)
+* [v. 1.2 Documentation](http://dblock.github.com/msiext/docs/1.2/)
 * [Need Help? Google Group](https://groups.google.com/group/msiext)
+* [MsiExt on Github](http://dblock.github.com/msiext/)
 * [Old CodePlex Site](http://msiext.codeplex.com)
 
 Features
