@@ -7,6 +7,8 @@
   <PropertyGroup>
     <MajorVersion>1</MajorVersion>
     <MinorVersion>3</MinorVersion>
+    <BuildVersion>0501</BuildVersion>
+ 	  <RevisionVersion>0</RevisionVersion>
     <ObjDir>target\$(Configuration)\obj</ObjDir>
     <BinDir>target\$(Configuration)\bin</BinDir>
     <DropDir>target\$(Configuration)\drop</DropDir>
@@ -60,7 +62,7 @@
     <Copy DestinationFolder="$(DropDir)\msiext-$(Major).$(Minor)\Demos" SourceFiles="@(DemoMsis)" />
     <MakeDir Directories="$(DropDir)\msiext-$(Major).$(Minor)\Tools" />
     <Copy DestinationFolder="$(DropDir)\msiext-$(Major).$(Minor)\Tools" SourceFiles="@(ToolBinaries)" />
-    <Copy DestinationFiles="$(DropDir)\msiext-$(Major).$(Minor)\License.html" SourceFiles="License\epl-v10.html" />
+    <Copy DestinationFiles="$(DropDir)\msiext-$(Major).$(Minor)\License.txt" SourceFiles="LICENSE" />
     <TemplateFile Template="doc\WhatsNew.html" OutputFilename="..\$(DropDir)\msiext-$(Major).$(Minor)\WhatsNew.html" Tokens="@(AssemblyInfoTokens)" />
   </Target>
   <Target Name="doc" DependsOnTargets="version">

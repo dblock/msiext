@@ -1,0 +1,9 @@
+src/Version/GlobalAssemblyInfo.cs
+src/Version/Version.h
+src/Version/Version.wxi
+bin
+obj
+Debug
+Release
+externals/cryptopp/adhoc.cpp*
+*.tmp_*
