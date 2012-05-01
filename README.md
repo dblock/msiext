@@ -14,7 +14,7 @@ Essentials
 * [Need Help? Google Group](https://groups.google.com/group/msiext)
 * [Old CodePlex Site](http://msiext.codeplex.com)
 
-Featur
+Features
 --------
 
 ### Wix Extensions
