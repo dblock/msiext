@@ -7,7 +7,6 @@
   <PropertyGroup>
     <MajorVersion>1</MajorVersion>
     <MinorVersion>3</MinorVersion>
-    <BuildVersion>0501</BuildVersion>
  	  <RevisionVersion>0</RevisionVersion>
     <ObjDir>target\$(Configuration)\obj</ObjDir>
     <BinDir>target\$(Configuration)\bin</BinDir>
