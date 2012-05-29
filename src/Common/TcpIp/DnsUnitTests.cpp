@@ -17,7 +17,7 @@ void DnsUnitTests::testGetHostByAddress()
 
 	TestData testdata[] = 
 	{
-		{ "65.55.11.218", "*.codeplex.com" }
+		{ "207.97.227.239", "github.com" }
 	};
 
 	for (int i = 0; i < ARRAYSIZE(testdata); i++)
@@ -63,7 +63,7 @@ void DnsUnitTests::testGetHostByName()
 
 	TestData testdata[] = 
 	{
-		{ "65.55.11.218", "*.codeplex.com" },
+		{ "207.97.227.239", "github.com" },
 		{ "www.codeplex.com", "lb.codeplex.com.microsoft.akadns.net" },
 	};
 
@@ -87,8 +87,8 @@ void DnsUnitTests::testGetHostIpAddresses()
 
 	TestData testdata[] = 
 	{
-		{ "65.55.11.218", "65.55.11.218" },
-		{ "www.codeplex.com", "65.55.11.218" },
+		{ "207.97.227.239", "207.97.227.239" },
+		{ "www.github.com", "207.97.227.239" },
 	};
 
 	for (int i = 0; i < ARRAYSIZE(testdata); i++)
