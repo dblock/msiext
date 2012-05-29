@@ -61,8 +61,8 @@
     <Copy DestinationFolder="$(DropDir)\msiext-$(Major).$(Minor)\Demos" SourceFiles="@(DemoMsis)" />
     <MakeDir Directories="$(DropDir)\msiext-$(Major).$(Minor)\Tools" />
     <Copy DestinationFolder="$(DropDir)\msiext-$(Major).$(Minor)\Tools" SourceFiles="@(ToolBinaries)" />
-    <Copy DestinationFiles="$(DropDir)\msiext-$(Major).$(Minor)\License.txt" SourceFiles="LICENSE" />
-    <TemplateFile Template="doc\WhatsNew.html" OutputFilename="..\$(DropDir)\msiext-$(Major).$(Minor)\WhatsNew.html" Tokens="@(AssemblyInfoTokens)" />
+    <Copy DestinationFiles="$(DropDir)\msiext-$(Major).$(Minor)\LICENSE" SourceFiles="LICENSE" />
+    <Copy DestinationFiles="$(DropDir)\msiext-$(Major).$(Minor)\CHANGELOG.md" SourceFiles="CHANGELOG.md" />
   </Target>
   <Target Name="doc" DependsOnTargets="version">
     <Message Text="Building Documentation ..." />
