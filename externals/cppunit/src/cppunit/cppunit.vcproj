@@ -89,7 +89,7 @@
 			<Tool
 				Name="VCPostBuildEventTool"
 				Description="Copying target to lib/"
-				CommandLine="copy &quot;$(TargetPath)&quot; ..\..\lib\$(TargetName).lib"
+				CommandLine="if not exist ..\..\lib mkdir ..\..\lib&#x0D;&#x0A;copy &quot;$(TargetPath)&quot; ..\..\lib\$(TargetName).lib"
 			/>
 		</Configuration>
 		<Configuration
@@ -168,7 +168,7 @@
 			<Tool
 				Name="VCPostBuildEventTool"
 				Description="Copying target to lib/"
-				CommandLine="copy &quot;$(TargetPath)&quot; ..\..\lib\$(TargetName).lib"
+				CommandLine="if not exist ..\..\lib mkdir ..\..\lib&#x0D;&#x0A;copy &quot;$(TargetPath)&quot; ..\..\lib\$(TargetName).lib"
 			/>
 		</Configuration>
 	</Configurations>
@@ -383,11 +383,11 @@
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath="..\..\include\cppunit\TextTestRunner.h"
+				RelativePath="..\..\include\cppunit\ui\text\TextTestRunner.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\include\cppunit\ui\text\TextTestRunner.h"
+				RelativePath="..\..\include\cppunit\TextTestRunner.h"
 				>
 			</File>
 		</Filter>
@@ -1650,11 +1650,11 @@
 			>
 		</File>
 		<File
-			RelativePath="..\..\include\cppunit\Makefile.am"
+			RelativePath="Makefile.am"
 			>
 		</File>
 		<File
-			RelativePath="Makefile.am"
+			RelativePath="..\..\include\cppunit\Makefile.am"
 			>
 		</File>
 	</Files>
