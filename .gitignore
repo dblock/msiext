@@ -8,3 +8,7 @@ Release
 externals/cryptopp/adhoc.cpp*
 *.tmp_*
 doc/Doxyfile
+*.vcproj.*.user
+externals/cppunit/lib
+*.ncb
+*.suo
