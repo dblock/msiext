@@ -7,3 +7,4 @@
 #include <TcpIp/WSAStartup.h>
 #include <Registry/Registry.h>
 #include <ws2tcpip.h>
+#include <TcpIp/NetBIOS.h>

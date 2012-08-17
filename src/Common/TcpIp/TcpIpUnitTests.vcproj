@@ -169,6 +169,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\NetBIOSUnitTests.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\SocketUnitTests.cpp"
 				>
 			</File>
@@ -229,6 +233,10 @@
 			>
 			<File
 				RelativePath=".\DnsUnitTests.h"
+				>
+			</File>
+			<File
+				RelativePath=".\NetBIOSUnitTests.h"
 				>
 			</File>
 			<File

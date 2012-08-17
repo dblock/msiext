@@ -97,11 +97,8 @@ CA_API UINT __stdcall TcpIp_ListAddresses(MSIHANDLE hInstall)
 	std::wstring hostname;
 
 	AppSecInc::TcpIp::CWSAStartup wsa;
-	wchar_t computername[MAX_COMPUTERNAME_LENGTH + 1] = { 0 };
-	DWORD size = MAX_COMPUTERNAME_LENGTH;
-	CHECK_BOOL(::GetComputerNameW(computername, & size), L"Could not get computer name" );
-
-	AppSecInc::TcpIp::DNS::GetHostInfo(computername, hostname, names, addresses);
+	AppSecInc::TcpIp::DNS::GetHostInfo(AppSecInc::TcpIp::NetBIOS::GetComputerName(), 
+		hostname, names, addresses);
 
     LONG insert_index = index;
 	for each (const std::wstring& address in addresses)

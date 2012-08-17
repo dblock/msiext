@@ -136,29 +136,25 @@ void DnsUnitTests::testGetLocal()
 {
 	AppSecInc::TcpIp::CWSAStartup wsa;
 
-	char computername[MAX_COMPUTERNAME_LENGTH + 1] = { 0 };
-	DWORD size = MAX_COMPUTERNAME_LENGTH;
-	CPPUNIT_ASSERT(::GetComputerNameA(computername, & size));
-	std::cout << std::endl << "Host: " << computername;
+	std::wstring computername = AppSecInc::TcpIp::NetBIOS::GetComputerName();
+	std::wcout << std::endl << L"Host: " << computername;
 
-	std::string tcpaddress = AppSecInc::TcpIp::DNS::GetHostIpAddresses(computername)[0];
-	std::cout << std::endl << "Ip: " << tcpaddress;
+	std::wstring tcpaddress = AppSecInc::TcpIp::DNS::GetHostIpAddresses(computername)[0];
+	std::wcout << std::endl << L"Ip: " << tcpaddress;
 	CPPUNIT_ASSERT(! tcpaddress.empty());
 
-	std::string host = AppSecInc::TcpIp::DNS::GetHostByName(computername);
-	std::cout << std::endl << "Host: " << host;
+	std::wstring host = AppSecInc::TcpIp::DNS::GetHostByName(computername);
+	std::wcout << std::endl << L"Host: " << host;
 	CPPUNIT_ASSERT(! host.empty());
 }
 
 void DnsUnitTests::testGetHostName()
 {
-	wchar_t computername[MAX_COMPUTERNAME_LENGTH + 1] = { 0 };
-	DWORD size = MAX_COMPUTERNAME_LENGTH;
-	CPPUNIT_ASSERT(::GetComputerNameW(computername, & size));
+	std::wstring computername = AppSecInc::TcpIp::NetBIOS::GetComputerName();
 	std::wcout << std::endl << L"Computer: " << computername;
     std::wstring hostname = AppSecInc::TcpIp::DNS::GetHostNameW();
 	std::wcout << std::endl << L"Host: " << hostname;    
-    CPPUNIT_ASSERT(0 == ::_wcsicmp(computername, hostname.c_str()));
+    CPPUNIT_ASSERT(computername == hostname);
 }
 
 void DnsUnitTests::testIsIpAddress()

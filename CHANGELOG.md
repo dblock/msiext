@@ -1,3 +1,8 @@
+###  Next Release
+
+  * **Bugs**: 
+    * Bug: `TcpIp_ListAddresses` fails for computer names with exactly 15 characters (max length) - [@dblock](https://github.com/dblock).
+
 ###  1.3.529.0 (5/29/2012)
 
   * **Features**: 

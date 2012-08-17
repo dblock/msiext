@@ -94,11 +94,7 @@ CA_API UINT __stdcall DirectoryObjectPicker(MSIHANDLE hInstall)
 			{
 				// a username without a domain (local)
                 dsop_name.insert(0, L"\\");
-	            wchar_t computername[MAX_COMPUTERNAME_LENGTH + 1] = { 0 };
-	            DWORD size = MAX_COMPUTERNAME_LENGTH;
-	            CHECK_WIN32_BOOL(::GetComputerName(computername, & size),
-                    L"Error fetching local computer name");
-                dsop_name.insert(0, computername);
+                dsop_name.insert(0, AppSecInc::TcpIp::NetBIOS::GetComputerName());
 			}
 		}
 

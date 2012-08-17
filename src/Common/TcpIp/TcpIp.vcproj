@@ -146,6 +146,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\NetBIOS.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\Socket.cpp"
 				>
 			</File>
@@ -184,6 +188,10 @@
 			>
 			<File
 				RelativePath=".\Dns.h"
+				>
+			</File>
+			<File
+				RelativePath=".\NetBIOS.h"
 				>
 			</File>
 			<File

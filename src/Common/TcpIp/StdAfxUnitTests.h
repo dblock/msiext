@@ -5,3 +5,5 @@
 #include <TcpIp/WSAStartup.h>
 #include <TcpIp/Socket.h>
 #include <TcpIp/DNS.h>
+#include <TcpIp/NetBIOS.h>
+
