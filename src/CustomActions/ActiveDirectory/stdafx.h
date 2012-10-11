@@ -16,3 +16,4 @@
 
 #include <Msi/Msi.h>
 
+#include <TcpIp/NetBIOS.h>
