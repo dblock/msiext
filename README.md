@@ -10,10 +10,9 @@ AppSecInc. Community MSI Extensions is a collection of MSI custom actions and WI
 Essentials
 ----------
 
-* [Download v. 1.3](https://github.com/downloads/dblock/msiext/msiext-1.3.zip)
+* [Download v. 1.3](http://code.dblock.org/downloads/msiext/msiext-1.3.zip)
 * [v. 1.3 Documentation](http://dblock.github.com/msiext/docs/1.3/)
 * [Need Help? Google Group](https://groups.google.com/group/msiext)
-* [MsiExt on Github](http://dblock.github.com/msiext/)
 * [Old CodePlex Site](http://msiext.codeplex.com)
 
 Features
