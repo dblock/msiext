@@ -7,6 +7,11 @@
 
 #include <cppunit/plugin/TestPlugIn.h>
 
+#if CPPUNIT_NEED_DLL_DECL
+#pragma warning( push )
+#pragma warning( disable: 4251 4660 )  // X needs to have dll-interface to be used by clients of class Z
+#endif
+
 CPPUNIT_NS_BEGIN
 
 
@@ -46,6 +51,10 @@ public:
 
 
 CPPUNIT_NS_END
+
+#if CPPUNIT_NEED_DLL_DECL
+#pragma warning( pop )
+#endif
 
 #endif // !defined(CPPUNIT_NO_TESTPLUGIN)
 

@@ -133,7 +133,7 @@ private:
   public:
     ValueBadCall( int value =0 ) : Value( value ) {}
 
-    ValueBadCall( const ValueBadCall &other ) 
+    ValueBadCall( const ValueBadCall & ) : Value()
     {
       static int serialNumber = 0;
       m_value = ++serialNumber;
@@ -156,7 +156,7 @@ private:
       return ValueBadAssignment( -1 - m_value );
     }
 
-    ValueBadAssignment &operator =( const ValueBadAssignment &other )
+    ValueBadAssignment &operator =( const ValueBadAssignment & )
     {
       ++m_value;
       return *this;

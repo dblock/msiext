@@ -1,6 +1,7 @@
 AlgorithmType: FileList
 Name: all.txt collection
 Test: TestVectors/tea.txt
+Test: TestVectors/wake.txt
 Test: TestVectors/camellia.txt
 Test: TestVectors/shacal2.txt
 Test: TestVectors/ttmac.txt
@@ -17,6 +18,7 @@ Test: TestVectors/rsa_pss.txt
 Test: TestVectors/rw.txt
 Test: TestVectors/seal.txt
 Test: TestVectors/sha.txt
+Test: TestVectors/sha3.txt
 Test: TestVectors/panama.txt
 Test: TestVectors/aes.txt
 Test: TestVectors/salsa.txt
@@ -26,3 +28,4 @@ Test: TestVectors/ccm.txt
 Test: TestVectors/gcm.txt
 Test: TestVectors/cmac.txt
 Test: TestVectors/eax.txt
+Test: TestVectors/mars.txt

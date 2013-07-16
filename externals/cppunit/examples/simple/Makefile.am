@@ -7,6 +7,5 @@ noinst_PROGRAMS=simple
 simple_SOURCES= ExampleTestCase.cpp Main.cpp  ExampleTestCase.h
 
 simple_LDADD= \
-  $(top_builddir)/src/cppunit/libcppunit.la 
-
-simple_LDFLAGS = $(LIBADD_DL)
+  $(top_builddir)/src/cppunit/libcppunit.la \
+  $(LIBADD_DL)

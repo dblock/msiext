@@ -1,3 +1,108 @@
+2013-04-19 Baptiste Lepilleur <blep@users.sourceforge.net>
+    * amalgamate.py: a Python 2.6 script to generate a single .cpp of
+	  src/cppunit library. Used to reduce build time when always building
+	  from source or use an alternate build system.
+
+2012-08-05 Harvey Brydon <hbrydon@users.sourceforge.net>
+    * Fix VS2010 C4251 warnings (bug #3554666)
+    * Fix VS2010 "_WIN32_WINNT not defined..." warnings (bug #3554667).
+    * Fix W4 C4100 warnings in TestPlugIn.h (bug #2912630)
+    * Add VS2010 project and build files (bug #3554670) - largely based on the
+      VS2008 effort from A.Dent
+    * Update version string (bug #2983798)
+    * Add VS2010 deployment project (BuildMSI.vdproj) and changes to support
+      files to build project installer (cppunit_1_12_2.msi).
+
+2012-06-22 Baptiste Lepilleur <blep@users.sourceforge.net>
+    * include/cppunit/portability/FloatingPoint.h:
+    * configure.in:
+    * INSTALL-unix: Fixed build on Solaris/Sun Studio (configure issues). 
+      Applied patch from bug #3483400 & #3483396. Updated build instructions.
+      Added missing include <ieeefp.h> required to use finite() on 
+      Solaris/Sun Studio. Added -lm to link for fabs().
+
+2009-11-24 Baptiste Lepilleur <blep@users.sourceforge.net>
+	* src/cppunit/TestResult.cpp: flush stdout & stderr in destructor
+	  to avoid message loss in case of crash (bug #2832029).
+
+	* include/cppunit/plugin/TestPlugIn.h: 
+	* include/cppunit/plugin/TestPlugInDefaultImpl.h: added missing dllexport
+	  for CppUnitTestPlugIn.
+
+	* include/cppunit/portability/config-msvc6.h:
+	* include/cppunit/portability/Portability.h: Added macro 
+	  CPPUNIT_UNIQUE_COUNTER on MSVS 7.0+ using __COUNTER__ to
+	  fix bug #2031696.
+	  
+	* examples/examples2008.sln: Fixed compilation issue in debug
+	  configuration with VS2008 (due to incorrect configuration
+	  being picked up).
+	  
+	* src/msvc6/testpluginrunner/TestPlugInRunnerDlg.cpp: fixed
+	  memory leak in getCommandLineArguments() (bug #1721408).
+
+	* config/ax_cxx_gcc_abi_demangle.m4:
+	* src/cppunit/TypeInfoHelper.cpp: Fixed demangling of symbols on gcc 4.3
+	  (bug #2796543).
+
+2009-11-23 Baptiste Lepilleur <blep@users.sourceforge.net>
+
+    * src/DllPlugInTester/Makefile.am:
+    * examples/cppunittest/Makefile.am:
+    * examples/money/Makefile.am:
+    * examples/simple/Makefile.am:
+    * examples/hierarchy/Makefile.am: Applied patch #2807259
+      contributed by Jan Echternach. LIBADD_DL contains a list of libraries
+      like "-ldl". Thus, it should be in LDADD instead of LDFLAGS in case
+      one of the libraries depends on a path set in LDFLAGS.
+
+2008-12-16 Andy Dent
+	* src/msvc6/testrunner/MsDevCallerListCtrl.cpp: 
+	* INSTALL-VS.Net2008.txt: Added updated project and instructions for 
+	building under Visual Studio.Net 2008 and fixed compilation issue.
+
+2008-10-12  Baptiste Lepilleur <blep@users.sourceforge.net>
+
+   * doc/cookbook.dox: fixed typos.
+
+2008-02-21  Steve M. Robbins  <smr@sumost.ca>
+	* examples/cppunittest/OrthodoxTest.h:
+	* examples/cppunittest/XMLOutputterTest.cpp:
+	* examples/hierarchy/main.cpp:
+	* include/cppunit/extensions/ExceptionTestCaseDecorator.h:
+	* src/cppunit/BriefTestProgressListener.cpp:
+	* src/cppunit/TestFactoryRegistry.cpp:
+	* src/cppunit/TestPlugInDefaultImpl.cpp:
+	* src/cppunit/TestSuccessListener.cpp:
+	* src/cppunit/TextProgressListener.cpp:
+	* src/cppunit/XmlOutputterHook.cpp:
+	* src/DllPlugInTester/CommandLineParserTest.cpp:
+	* src/DllPlugInTester/DllPlugInTesterTest.cpp: Changes to suppress 
+	warnings of gcc -Wall -W -ansi, mainly from patch [1898225].
+
+2008-02-20  Steve M. Robbins  <smr@sumost.ca>
+
+	* examples/money/MoneyTest.h (TestFixture): Change deprecated
+	CPPUNIT_TEST_EXCEPTION to simple CPPUNIT_TEST.
+	* examples/money/MoneyTest.cpp (testAddThrow): Wrap throwing
+	expression "money += money123FF" inside CPPUNIT_ASSERT_THROW().
+
+	* Changes to build without warnings using gcc -Wall -W -ansi.
+	Applied patch [1898225] to remove name of unused argument and use
+	no-arg version of main(). Tested on both GCC 4.2.3 and a
+	prerelease of GCC 4.3.0.
+	* examples/cppunittest/assertion_traitsTest.cpp (test_toString):
+	Change template parameter of
+	CPPUNIT_NS::assertion_traits<char*>::toString() to const char*,
+	avoiding a deprecated conversion from string literal to char*.
+	* src/DllPlugInTester/CommandLineParserTest.cpp (parse): move
+	semicolon of empty loop body to its own line, avoiding a warning
+	in GCC 4.3.
+
+2008-02-20  Steve M. Robbins  <smr@sumost.ca>
+
+	* configure.in: Update CPPUNIT_MICRO_VERSION for release 1.12.1.
+
 2008-02-07  Steve M. Robbins  <smr@sumost.ca>
 
 	* src/qttestrunner/MostRecentTests.h: 

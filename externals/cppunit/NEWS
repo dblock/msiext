@@ -1,3 +1,45 @@
+  New in CppUnit 1.12.2:
+  ----------------------
+
+* Portability:
+  - Added support for macro CPPUNIT_UNIQUE_COUNTER to config-*.h. It
+    should expands to a unique number per translation unit. Default
+    to __LINE__ if not defined. Use __COUNTER__ on MSVS 7.0+.
+    (Bug #2031696)
+	
+  - Fixed 'configure' script for Solaris / Sun Studio plateform.
+    (Bug #3483400 & #3483396, patches contributed by Tim Mooney). 
+
+* Compilation:
+
+  - Fixed compilation issue with Microsoft Visual Studio.Net 2008 and
+    added Visual Studio  projects (.vcproj).
+
+  - Added support for Microsoft Visual Studio 2010: added Visual Studio
+    project files (.vcxproj), solution file to manage these (VS2010.sln)
+    and a batch file to clean or build all VS2010 targets (BuildVS2010.bat).
+     
+  - Changes to build without warnings using gcc -Wall -W -ansi 
+    (patch #1898225 contributed by dpkatz)
+
+  - Libraries flags such as "-ldl" are now in LDADD instead of LIBADD_DL
+    ( patch #2807259 contributed by Jan Echternach).
+
+  - Fixed detection of cxxabi.h with gcc 4.3 in configure (bug #2796543).
+
+  - Fixed numerous VS2010 C4100, C4251 and "_WIN32_WINNT not defined..."
+    warnings (bug #3554666, #3554667).
+      
+* Test Plug-in Runner: 
+  - fixed memory leak in TestPlugInRunnerDlg (#1721408)
+
+* Installer
+  - Added deployment project and support files to build cppunit_1_12_2.msi
+    installer file for project installation from compiled binaries (based
+    on VS2010 compilation).
+
+      
+      
   New in CppUnit 1.12.1:
   ----------------------
 

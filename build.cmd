@@ -8,13 +8,13 @@ if "%~1"=="" (
 pushd "%~dp0"
 setlocal ENABLEEXTENSIONS ENABLEDELAYEDEXPANSION
 
-set VisualStudioCmd=%ProgramFiles%\Microsoft Visual Studio 8.0\VC\vcvarsall.bat
+set VisualStudioCmd=%ProgramFiles%\Microsoft Visual Studio 10.0\VC\vcvarsall.bat
 
 if EXIST "%VisualStudioCmd%" ( 
  call "%VisualStudioCmd%"
 )
 
-set FrameworkVersion=v2.0.50727
+set FrameworkVersion=v4.0.30319
 set FrameworkDir=%SystemRoot%\Microsoft.NET\Framework
 
 PATH=%FrameworkDir%\%FrameworkVersion%;%NUnitDir%;%SvnDir%;%DoxygenDir%;%JAVA_HOME%\bin;%PATH%

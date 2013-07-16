@@ -14,6 +14,7 @@ USING_NAMESPACE(CryptoPP)
 USING_NAMESPACE(std)
 
 typedef std::map<std::string, std::string> TestData;
+static bool s_thorough;
 
 class TestFailure : public Exception
 {
@@ -57,14 +58,31 @@ const std::string & GetRequiredDatum(const TestData &data, const char *name)
 	return i->second;
 }
 
+void RandomizedTransfer(BufferedTransformation &source, BufferedTransformation &target, bool finish, const std::string &channel=DEFAULT_CHANNEL)
+{
+	while (source.MaxRetrievable() > (finish ? 0 : 4096))
+	{
+		byte buf[4096+64];
+		size_t start = GlobalRNG().GenerateWord32(0, 63);
+		size_t len = GlobalRNG().GenerateWord32(1, UnsignedMin(4096U, 3*source.MaxRetrievable()/2));
+		len = source.Get(buf+start, len);
+		target.ChannelPut(channel, buf+start, len);
+	}
+}
+
 void PutDecodedDatumInto(const TestData &data, const char *name, BufferedTransformation &target)
 {
 	std::string s1 = GetRequiredDatum(data, name), s2;
+	ByteQueue q;
 
 	while (!s1.empty())
 	{
 		while (s1[0] == ' ')
+		{
 			s1 = s1.substr(1);
+			if (s1.empty())
+				goto end;	// avoid invalid read if s1 is empty
+		}
 
 		int repeat = 1;
 		if (s1[0] == 'r')
@@ -91,14 +109,15 @@ void PutDecodedDatumInto(const TestData &data, const char *name, BufferedTransfo
 			s1 = s1.substr(STDMIN(s1.find(' '), s1.length()));
 		}
 
-		ByteQueue q;
 		while (repeat--)
 		{
 			q.Put((const byte *)s2.data(), s2.size());
-			if (q.MaxRetrievable() > 4*1024 || repeat == 0)
-				q.TransferTo(target);
+			RandomizedTransfer(q, target, false);
 		}
 	}
+
+end:
+	RandomizedTransfer(q, target, true);
 }
 
 std::string GetDecodedDatum(const TestData &data, const char *name)
@@ -168,18 +187,17 @@ private:
 
 void TestKeyPairValidAndConsistent(CryptoMaterial &pub, const CryptoMaterial &priv)
 {
-	if (!pub.Validate(GlobalRNG(), 3))
+	if (!pub.Validate(GlobalRNG(), 2+s_thorough))
 		SignalTestFailure();
-	if (!priv.Validate(GlobalRNG(), 3))
+	if (!priv.Validate(GlobalRNG(), 2+s_thorough))
 		SignalTestFailure();
 
-/*	EqualityComparisonFilter comparison;
-	pub.Save(ChannelSwitch(comparison, "0"));
+	ByteQueue bq1, bq2;
+	pub.Save(bq1);
 	pub.AssignFrom(priv);
-	pub.Save(ChannelSwitch(comparison, "1"));
-	comparison.ChannelMessageSeriesEnd("0");
-	comparison.ChannelMessageSeriesEnd("1");
-*/
+	pub.Save(bq2);
+	if (bq1 != bq2)
+		SignalTestFailure();
 }
 
 void TestSignatureScheme(TestData &v)
@@ -191,41 +209,50 @@ void TestSignatureScheme(TestData &v)
 	std::auto_ptr<PK_Verifier> verifier(ObjectFactoryRegistry<PK_Verifier>::Registry().CreateObject(name.c_str()));
 
 	TestDataNameValuePairs pairs(v);
-	std::string keyFormat = GetRequiredDatum(v, "KeyFormat");
 
-	if (keyFormat == "DER")
-		verifier->AccessMaterial().Load(StringStore(GetDecodedDatum(v, "PublicKey")).Ref());
-	else if (keyFormat == "Component")
-		verifier->AccessMaterial().AssignFrom(pairs);
-
-	if (test == "Verify" || test == "NotVerify")
+	if (test == "GenerateKey")
 	{
-		VerifierFilter verifierFilter(*verifier, NULL, VerifierFilter::SIGNATURE_AT_BEGIN);
-		PutDecodedDatumInto(v, "Signature", verifierFilter);
-		PutDecodedDatumInto(v, "Message", verifierFilter);
-		verifierFilter.MessageEnd();
-		if (verifierFilter.GetLastResult() == (test == "NotVerify"))
-			SignalTestFailure();
-	}
-	else if (test == "PublicKeyValid")
-	{
-		if (!verifier->GetMaterial().Validate(GlobalRNG(), 3))
-			SignalTestFailure();
+		signer->AccessPrivateKey().GenerateRandom(GlobalRNG(), pairs);
+		verifier->AccessPublicKey().AssignFrom(signer->AccessPrivateKey());
 	}
 	else
-		goto privateKeyTests;
+	{
+		std::string keyFormat = GetRequiredDatum(v, "KeyFormat");
 
-	return;
+		if (keyFormat == "DER")
+			verifier->AccessMaterial().Load(StringStore(GetDecodedDatum(v, "PublicKey")).Ref());
+		else if (keyFormat == "Component")
+			verifier->AccessMaterial().AssignFrom(pairs);
 
-privateKeyTests:
-	if (keyFormat == "DER")
-		signer->AccessMaterial().Load(StringStore(GetDecodedDatum(v, "PrivateKey")).Ref());
-	else if (keyFormat == "Component")
-		signer->AccessMaterial().AssignFrom(pairs);
-	
-	if (test == "KeyPairValidAndConsistent")
+		if (test == "Verify" || test == "NotVerify")
+		{
+			VerifierFilter verifierFilter(*verifier, NULL, VerifierFilter::SIGNATURE_AT_BEGIN);
+			PutDecodedDatumInto(v, "Signature", verifierFilter);
+			PutDecodedDatumInto(v, "Message", verifierFilter);
+			verifierFilter.MessageEnd();
+			if (verifierFilter.GetLastResult() == (test == "NotVerify"))
+				SignalTestFailure();
+			return;
+		}
+		else if (test == "PublicKeyValid")
+		{
+			if (!verifier->GetMaterial().Validate(GlobalRNG(), 3))
+				SignalTestFailure();
+			return;
+		}
+
+		if (keyFormat == "DER")
+			signer->AccessMaterial().Load(StringStore(GetDecodedDatum(v, "PrivateKey")).Ref());
+		else if (keyFormat == "Component")
+			signer->AccessMaterial().AssignFrom(pairs);
+	}
+
+	if (test == "GenerateKey" || test == "KeyPairValidAndConsistent")
 	{
 		TestKeyPairValidAndConsistent(verifier->AccessMaterial(), signer->GetMaterial());
+		VerifierFilter verifierFilter(*verifier, NULL, VerifierFilter::THROW_EXCEPTION);
+		verifierFilter.Put((const byte *)"abc", 3);
+		StringSource ss("abc", true, new SignerFilter(GlobalRNG(), *signer, new Redirector(verifierFilter)));
 	}
 	else if (test == "Sign")
 	{
@@ -242,11 +269,6 @@ privateKeyTests:
 	{
 		SignalTestError();
 		assert(false);	// TODO: implement
-	}
-	else if (test == "GenerateKey")
-	{
-		SignalTestError();
-		assert(false);
 	}
 	else
 	{
@@ -306,7 +328,7 @@ void TestSymmetricCipher(TestData &v, const NameValuePairs &overrideParameters)
 	TestDataNameValuePairs testDataPairs(v);
 	CombinedNameValuePairs pairs(overrideParameters, testDataPairs);
 
-	if (test == "Encrypt" || test == "EncryptXorDigest" || test == "Resync")
+	if (test == "Encrypt" || test == "EncryptXorDigest" || test == "Resync" || test == "EncryptionMCT" || test == "DecryptionMCT")
 	{
 		static member_ptr<SymmetricCipher> encryptor, decryptor;
 		static std::string lastName;
@@ -339,10 +361,49 @@ void TestSymmetricCipher(TestData &v, const NameValuePairs &overrideParameters)
 			encryptor->Seek(seek);
 			decryptor->Seek(seek);
 		}
+
 		std::string encrypted, xorDigest, ciphertext, ciphertextXorDigest;
-		StringSource ss(plaintext, false, new StreamTransformationFilter(*encryptor, new StringSink(encrypted), StreamTransformationFilter::NO_PADDING));
-		ss.Pump(plaintext.size()/2 + 1);
-		ss.PumpAll();
+		if (test == "EncryptionMCT" || test == "DecryptionMCT")
+		{
+			SymmetricCipher *cipher = encryptor.get();
+			SecByteBlock buf((byte *)plaintext.data(), plaintext.size()), keybuf((byte *)key.data(), key.size());
+
+			if (test == "DecryptionMCT")
+			{
+				cipher = decryptor.get();
+				ciphertext = GetDecodedDatum(v, "Ciphertext");
+				buf.Assign((byte *)ciphertext.data(), ciphertext.size());
+			}
+
+			for (int i=0; i<400; i++)
+			{
+				encrypted.reserve(10000 * plaintext.size());
+				for (int j=0; j<10000; j++)
+				{
+					cipher->ProcessString(buf.begin(), buf.size());
+					encrypted.append((char *)buf.begin(), buf.size());
+				}
+
+				encrypted.erase(0, encrypted.size() - keybuf.size());
+				xorbuf(keybuf.begin(), (const byte *)encrypted.data(), keybuf.size());
+				cipher->SetKey(keybuf, keybuf.size());
+			}
+			encrypted.assign((char *)buf.begin(), buf.size());
+			ciphertext = GetDecodedDatum(v, test == "EncryptionMCT" ? "Ciphertext" : "Plaintext");
+			if (encrypted != ciphertext)
+			{
+				std::cout << "incorrectly encrypted: ";
+				StringSource xx(encrypted, false, new HexEncoder(new FileSink(std::cout)));
+				xx.Pump(256); xx.Flush(false);
+				std::cout << "\n";
+				SignalTestFailure();
+			}
+			return;
+		}
+
+		StreamTransformationFilter encFilter(*encryptor, new StringSink(encrypted), StreamTransformationFilter::NO_PADDING);
+		RandomizedTransfer(StringStore(plaintext).Ref(), encFilter, true);
+		encFilter.MessageEnd();
 		/*{
 			std::string z;
 			encryptor->Seek(seek);
@@ -365,14 +426,14 @@ void TestSymmetricCipher(TestData &v, const NameValuePairs &overrideParameters)
 		{
 			std::cout << "incorrectly encrypted: ";
 			StringSource xx(encrypted, false, new HexEncoder(new FileSink(std::cout)));
-			xx.Pump(256); xx.Flush(false);
+			xx.Pump(2048); xx.Flush(false);
 			std::cout << "\n";
 			SignalTestFailure();
 		}
 		std::string decrypted;
-		StringSource dd(encrypted, false, new StreamTransformationFilter(*decryptor, new StringSink(decrypted), StreamTransformationFilter::NO_PADDING));
-		dd.Pump(plaintext.size()/2 + 1);
-		dd.PumpAll();
+		StreamTransformationFilter decFilter(*decryptor, new StringSink(decrypted), StreamTransformationFilter::NO_PADDING);
+		RandomizedTransfer(StringStore(encrypted).Ref(), decFilter, true);
+		decFilter.MessageEnd();
 		if (decrypted != plaintext)
 		{
 			std::cout << "incorrectly decrypted: ";
@@ -427,27 +488,24 @@ void TestAuthenticatedSymmetricCipher(TestData &v, const NameValuePairs &overrid
 		StringStore sh(header), sp(plaintext), sc(ciphertext), sf(footer), sm(mac);
 
 		if (macAtBegin)
-			sm.TransferTo(df);
+			RandomizedTransfer(sm, df, true);
 		sh.CopyTo(df, LWORD_MAX, AAD_CHANNEL);
-		sc.TransferTo(df);
+		RandomizedTransfer(sc, df, true);
 		sf.CopyTo(df, LWORD_MAX, AAD_CHANNEL);
 		if (!macAtBegin)
-			sm.TransferTo(df);
+			RandomizedTransfer(sm, df, true);
 		df.MessageEnd();
 
-		sh.TransferTo(ef, sh.MaxRetrievable()/2+1, AAD_CHANNEL);
-		sh.TransferTo(ef, LWORD_MAX, AAD_CHANNEL);
-		sp.TransferTo(ef, sp.MaxRetrievable()/2+1);
-		sp.TransferTo(ef);
-		sf.TransferTo(ef, sf.MaxRetrievable()/2+1, AAD_CHANNEL);
-		sf.TransferTo(ef, LWORD_MAX, AAD_CHANNEL);
+		RandomizedTransfer(sh, ef, true, AAD_CHANNEL);
+		RandomizedTransfer(sp, ef, true);
+		RandomizedTransfer(sf, ef, true, AAD_CHANNEL);
 		ef.MessageEnd();
 
 		if (test == "Encrypt" && encrypted != ciphertext+mac)
 		{
 			std::cout << "incorrectly encrypted: ";
 			StringSource xx(encrypted, false, new HexEncoder(new FileSink(std::cout)));
-			xx.Pump(256); xx.Flush(false);
+			xx.Pump(2048); xx.Flush(false);
 			std::cout << "\n";
 			SignalTestFailure();
 		}
@@ -630,7 +688,7 @@ void TestDataFile(const std::string &filename, const NameValuePairs &overridePar
 			break;
 		v[name] = value;
 
-		if (name == "Test")
+		if (name == "Test" && (s_thorough || v["SlowTest"] != "1"))
 		{
 			bool failed = true;
 			std::string algType = GetRequiredDatum(v, "AlgorithmType");
@@ -687,11 +745,12 @@ void TestDataFile(const std::string &filename, const NameValuePairs &overridePar
 	}
 }
 
-bool RunTestDataFile(const char *filename, const NameValuePairs &overrideParameters)
+bool RunTestDataFile(const char *filename, const NameValuePairs &overrideParameters, bool thorough)
 {
+	s_thorough = thorough;
 	unsigned int totalTests = 0, failedTests = 0;
 	TestDataFile(filename, overrideParameters, totalTests, failedTests);
-	cout << "\nTests complete. Total tests = " << totalTests << ". Failed tests = " << failedTests << ".\n";
+	cout << dec << "\nTests complete. Total tests = " << totalTests << ". Failed tests = " << failedTests << ".\n";
 	if (failedTests != 0)
 		cout << "SOME TESTS FAILED!\n";
 	return failedTests == 0;

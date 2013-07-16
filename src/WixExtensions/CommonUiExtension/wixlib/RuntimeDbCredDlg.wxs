@@ -3,7 +3,8 @@
     <Fragment xmlns="http://schemas.microsoft.com/wix/2006/wi">
 
         <Property Id="IMPERSONATE_PASSWORD" Hidden="yes" />
-        <Property Id="ODBC_CONNECTION_STRING" Hidden="yes" />
+        <!--<Property Id="ODBC_CONNECTION_STRING" Hidden="yes" />-->
+        <PropertyRef Id="ODBC_CONNECTION_STRING"/>
 
         <?define DbLogonCanBeValidated    = (RUNTIME_DATABASE_LOGON_TYPE = "SqlAuth" OR SERVICE_USERNAME)?>
         <?define DbLogonCannotBeValidated = NOT $(var.DbLogonCanBeValidated)?>

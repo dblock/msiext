@@ -3,6 +3,9 @@
 
 #include <cppunit/Portability.h>
 #include <math.h>
+#if defined(CPPUNIT_HAVE_IEEEFP_H)
+#include <ieeefp.h> /* required for isfinite() on Solaris with Sun Studio */
+#endif
 
 CPPUNIT_NS_BEGIN
 

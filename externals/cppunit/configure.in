@@ -73,6 +73,7 @@ BB_ENABLE_DOXYGEN
 # ----------------------------------------------------------------------------
 
 AC_CHECK_HEADERS(cmath,[],[],[/**/])
+AC_CHECK_HEADERS(ieeefp.h,[],[],[/**/])
 
 # Check for compiler characteristics 
 # ----------------------------------------------------------------------------
@@ -88,6 +89,7 @@ AC_CXX_HAVE_SSTREAM
 AC_CXX_HAVE_STRSTREAM
 AX_CXX_HAVE_ISFINITE
 AC_CHECK_FUNCS(finite)
+AC_CHECK_LIB([m],[fabs])
 
 cppunit_val='CPPUNIT_HAVE_RTTI'
 AC_ARG_ENABLE(typeinfo-name,

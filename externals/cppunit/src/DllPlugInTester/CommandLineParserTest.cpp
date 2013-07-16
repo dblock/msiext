@@ -32,7 +32,8 @@ void
 CommandLineParserTest::parse( const char **lines )
 {
   int count =0;
-  for ( const char **line = lines; *line != NULL; ++line, ++count );
+  for ( const char **line = lines; *line != NULL; ++line, ++count )
+      ;
 
   delete _parser;
   _parser = new CommandLineParser( count, lines );

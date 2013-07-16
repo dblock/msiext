@@ -17,9 +17,10 @@ TextTestProgressListener::~TextTestProgressListener()
 
 
 void 
-TextTestProgressListener::startTest( Test *test )
+TextTestProgressListener::startTest( Test * )
 {
   stdCOut() << ".";
+  stdCOut().flush();
 }
 
 
@@ -27,12 +28,13 @@ void
 TextTestProgressListener::addFailure( const TestFailure &failure )
 {
   stdCOut() << ( failure.isError() ? "E" : "F" );
+  stdCOut().flush();
 }
 
 
 void 
-TextTestProgressListener::endTestRun( Test *test, 
-                                      TestResult *eventManager )
+TextTestProgressListener::endTestRun( Test *, 
+                                      TestResult * )
 {
   stdCOut()  <<  "\n";
   stdCOut().flush();

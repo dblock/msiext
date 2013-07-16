@@ -8,7 +8,7 @@
 
 
 int 
-main(int argc, char** argv)
+main()
 {
   CPPUNIT_NS::TextUi::TestRunner runner;
 
