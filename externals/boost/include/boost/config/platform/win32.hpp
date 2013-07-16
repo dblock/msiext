@@ -21,17 +21,30 @@
 #  define BOOST_NO_SWPRINTF
 #endif
 
-#if !defined(__GNUC__) && !defined(BOOST_HAS_DECLSPEC)
+//  Default defines for BOOST_SYMBOL_EXPORT and BOOST_SYMBOL_IMPORT
+//  If a compiler doesn't support __declspec(dllexport)/__declspec(dllimport),
+//  its boost/config/compiler/ file must define BOOST_SYMBOL_EXPORT and
+//  BOOST_SYMBOL_IMPORT
+#ifndef BOOST_SYMBOL_EXPORT
 #  define BOOST_HAS_DECLSPEC
+#  define BOOST_SYMBOL_EXPORT __declspec(dllexport)
+#  define BOOST_SYMBOL_IMPORT __declspec(dllimport)
 #endif
 
 #if defined(__MINGW32__) && ((__MINGW32_MAJOR_VERSION > 2) || ((__MINGW32_MAJOR_VERSION == 2) && (__MINGW32_MINOR_VERSION >= 0)))
 #  define BOOST_HAS_STDINT_H
-#  define __STDC_LIMIT_MACROS
+#  ifndef __STDC_LIMIT_MACROS
+#     define __STDC_LIMIT_MACROS
+#  endif
 #  define BOOST_HAS_DIRENT_H
 #  define BOOST_HAS_UNISTD_H
 #endif
 
+#if defined(__MINGW32__) && (__GNUC__ >= 4)
+#  define BOOST_HAS_EXPM1
+#  define BOOST_HAS_LOG1P
+#  define BOOST_HAS_GETTIMEOFDAY
+#endif
 //
 // Win32 will normally be using native Win32 threads,
 // but there is a pthread library avaliable as an option,
@@ -44,6 +57,8 @@
 
 #ifdef _WIN32_WCE
 #  define BOOST_NO_ANSI_APIS
+#else
+#  define BOOST_HAS_GETSYSTEMTIMEASFILETIME
 #endif
 
 #ifndef BOOST_HAS_PTHREADS

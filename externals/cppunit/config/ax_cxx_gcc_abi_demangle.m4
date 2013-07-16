@@ -5,7 +5,7 @@ dnl and abi::__cxa_demangle() function), define HAVE_GCC_ABI_DEMANGLE
 dnl
 dnl Adapted from AC_CXX_RTTI by Luc Maisonobe
 dnl
-dnl @version $Id: ax_cxx_gcc_abi_demangle.m4,v 1.1 2004/02/18 20:45:36 blep Exp $
+dnl @version $Id: ax_cxx_gcc_abi_demangle.m4,v 1.1 2004-02-18 20:45:36 blep Exp $
 dnl @author Neil Ferguson <nferguso@eso.org>
 dnl
 AC_DEFUN([AX_CXX_GCC_ABI_DEMANGLE],
@@ -15,6 +15,7 @@ ac_cv_cxx_gcc_abi_demangle,
  AC_LANG_CPLUSPLUS
  AC_TRY_COMPILE([#include <typeinfo>
 #include <cxxabi.h>
+#include <malloc.h> 
 #include <string>
 
 template<typename TYPE>

@@ -30,9 +30,9 @@ namespace detail
 
 inline int32_t compare_and_swap( int32_t * dest_, int32_t compare_, int32_t swap_ )
 {
-    __asm__ __volatile__( "cas %0, %2, %1"
-                        : "+m" (*dest_), "+r" (swap_)
-                        : "r" (compare_)
+    __asm__ __volatile__( "cas [%1], %2, %0"
+                        : "+r" (swap_)
+                        : "r" (dest_), "r" (compare_)
                         : "memory" );
 
     return swap_;
@@ -120,6 +120,7 @@ public:
     }
 
     virtual void * get_deleter( sp_typeinfo const & ti ) = 0;
+    virtual void * get_untyped_deleter() = 0;
 
     void add_ref_copy()
     {

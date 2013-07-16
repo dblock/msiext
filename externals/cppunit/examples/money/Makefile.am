@@ -15,7 +15,5 @@ check_PROGRAMS = $(TESTS)
 MoneyApp_SOURCES = Money.h MoneyTest.h MoneyTest.cpp MoneyApp.cpp StdAfx.h
 MoneyApp_CXXFLAGS = $(CPPUNIT_CFLAGS)
 MoneyApp_LDADD= \
-  $(top_builddir)/src/cppunit/libcppunit.la 
-
-MoneyApp_LDFLAGS = $(CPPUNIT_LIBS) $(LIBADD_DL)
-
+  $(top_builddir)/src/cppunit/libcppunit.la \
+  $(CPPUNIT_LIBS) $(LIBADD_DL)

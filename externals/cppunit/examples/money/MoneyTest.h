@@ -10,7 +10,7 @@ class MoneyTest : public CPPUNIT_NS::TestFixture
   CPPUNIT_TEST( testConstructor );
   CPPUNIT_TEST( testEqual );
   CPPUNIT_TEST( testAdd );
-  CPPUNIT_TEST_EXCEPTION( testAddThrow, IncompatibleMoneyError );
+  CPPUNIT_TEST( testAddThrow );
   CPPUNIT_TEST_SUITE_END();
 
 public:

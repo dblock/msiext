@@ -112,7 +112,7 @@ MockTestCase::setExpectedSetUpCall( int callCount )
 
 
 void 
-MockTestCase::setExpectedTearDownCall( int callCount )
+MockTestCase::setExpectedTearDownCall( int )
 {
 }
 

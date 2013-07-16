@@ -39,7 +39,7 @@
     <MSBuild Projects="Msi.sln" Targets="Build" />
   </Target>
   <Target Name="drop" DependsOnTargets="version">
-    <CreateItem Include="$(BinDir)\*.dll" Exclude="$(BinDir)\*Extension.dll;$(BinDir)\wix.dll">
+    <CreateItem Include="$(BinDir)\*.dll" Exclude="$(BinDir)\*Extension.dll;$(BinDir)\wix.dll;$(BinDir)\Microsoft.Deployment.*.dll">
       <Output TaskParameter="Include" ItemName="CustomActionBinaries" />
     </CreateItem>
     <CreateItem Include="$(BinDir)\*Extension.dll">

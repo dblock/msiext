@@ -1,5 +1,5 @@
 #
-# $Id: Makefile.am,v 1.44 2005/06/14 21:28:46 blep Exp $
+# $Id: Makefile.am,v 1.44 2005-06-14 21:28:46 blep Exp $
 #
 
 EXTRA_DIST = cppunit.dsp cppunit_dll.dsp DllMain.cpp

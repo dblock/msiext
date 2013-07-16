@@ -1,0 +1,30 @@
+* Unix:
+
+To generate the configure script, you need several auxiliary
+tools.  The version numbers are minimal: later versions should
+also work.
+
+	autoconf 2.50 
+	- see http://www.gnu.org/directory/autoconf.html
+
+	automake 1.4
+	- see http://www.gnu.org/directory/automake.html
+
+	libtool 1.4
+	- see http://www.gnu.org/directory/libtool.html
+
+
+After checking the sources out from CVS, you need to run the script
+
+	sh autogen.sh
+
+from the top-level source directory (i.e. the one containing this
+file).  This needs only to be done once.
+
+* Win32:
+
+To generate the documentation, use doc/makedox.bat. You need doxygen 
+(doc generator tool), which can be found at: 
+http://www.doxygen.org/
+
+

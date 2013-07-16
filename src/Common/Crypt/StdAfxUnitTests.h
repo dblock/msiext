@@ -12,6 +12,8 @@
 #include <rsa.h>
 #include <randpool.h>
 
-using namespace CryptoPP;
+
 
 #include "Crypt.h"
+
+using namespace CryptoPP;

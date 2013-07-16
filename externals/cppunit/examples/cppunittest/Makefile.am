@@ -76,8 +76,5 @@ cppunittestmain_SOURCES = \
 	XmlUniformiserTest.cpp
 
 cppunittestmain_LDADD= \
-  $(top_builddir)/src/cppunit/libcppunit.la 
-
-cppunittestmain_LDFLAGS = $(LIBADD_DL)
-
-
+  $(top_builddir)/src/cppunit/libcppunit.la \
+  $(LIBADD_DL)

@@ -6,11 +6,12 @@
 #if !defined(AFX_STDAFX_H__A9C94DE9_1663_11D2_A499_00805FC1C042__INCLUDED_)
 #define AFX_STDAFX_H__A9C94DE9_1663_11D2_A499_00805FC1C042__INCLUDED_
 
-#if _MSC_VER >= 1000
 #pragma once
-#endif // _MSC_VER >= 1000
 
 #define VC_EXTRALEAN        // Exclude rarely-used stuff from Windows headers
+#define _WIN32_WINNT  _WIN32_WINNT_WINXP  // Support Windows XP and later
+#define _WIN32_IE     _WIN32_IE_IE70      // Support IE 7.0 and later
+#include <SDKDDKVer.h>
 
 #include <afxwin.h>         // MFC core and standard components
 #include <afxext.h>         // MFC extensions

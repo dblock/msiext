@@ -1,0 +1,21 @@
+This version builds and runs with the Visual Studio 2010 compiler with limited effort
+using project file Build2010.sln.  You can build a target or set of targets directly with 
+this file or use the batch file BuildVS2010.bat to run with minimal supervision.
+  This functionality provided by H Brydon mailto:hbrydon@users.sourceforge.net
+
+To run the batch file, you need to open a command line window that has the VS2010
+environment properly set up.  This might already be done, depending on your VS2010
+install options.  If not, click "Microsoft Visual Studio 2010" -> "Visual Studio Tools"
+ -> "Visual Studio Command Prompt (2010)".  You will need to 'cd' to the directory where
+BuildVS2010.bat exists and execute.
+
+For example:
+ D:\> cd \cppunitinstallarea
+ D:\cppunitinstallarea> BuildVS2010.bat
+
+Note that the MSB3073 "build errors" reported when building the 'simple_plugin' and
+'hierarchy' projects are a demonstration of failed unit tests and are not actual build
+errors.
+
+Please refer to the file 'INSTALL-WIN32.txt' for details on how to use cppunit in your
+environment.  The DSPlugin functionality is not needed in VS2010.

@@ -78,6 +78,9 @@
 //#define CPPUNIT_NO_NAMESPACE 1
 */
 
+#if _MSC_VER >= 1300    // VS 7.0
+#define CPPUNIT_UNIQUE_COUNTER __COUNTER__
+#endif // if _MSC_VER >= 1300    // VS 7.0
 
 /* _INCLUDE_CPPUNIT_CONFIG_MSVC6_H */
 #endif

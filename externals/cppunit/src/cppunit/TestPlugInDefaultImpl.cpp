@@ -21,26 +21,26 @@ TestPlugInDefaultImpl::~TestPlugInDefaultImpl()
 
 
 void 
-TestPlugInDefaultImpl::initialize( TestFactoryRegistry *registry,
-                                   const PlugInParameters &parameters )
+TestPlugInDefaultImpl::initialize( TestFactoryRegistry *,
+                                   const PlugInParameters & )
 {
 }
 
 
 void 
-TestPlugInDefaultImpl::addListener( TestResult *eventManager )
+TestPlugInDefaultImpl::addListener( TestResult * )
 {
 }
 
 
 void 
-TestPlugInDefaultImpl::removeListener( TestResult *eventManager )
+TestPlugInDefaultImpl::removeListener( TestResult * )
 {
 }
 
 
 void 
-TestPlugInDefaultImpl::addXmlOutputterHooks( XmlOutputter *outputter )
+TestPlugInDefaultImpl::addXmlOutputterHooks( XmlOutputter * )
 {
 }
 
@@ -52,7 +52,7 @@ TestPlugInDefaultImpl::removeXmlOutputterHooks()
 
 
 void 
-TestPlugInDefaultImpl::uninitialize( TestFactoryRegistry *registry )
+TestPlugInDefaultImpl::uninitialize( TestFactoryRegistry * )
 {
 }
 

@@ -4,7 +4,7 @@
 // ***************** Important Settings ********************
 
 // define this if running on a big-endian CPU
-#if !defined(IS_LITTLE_ENDIAN) && (defined(__BIG_ENDIAN__) || defined(__sparc) || defined(__sparc__) || defined(__hppa__) || defined(__mips__) || (defined(__MWERKS__) && !defined(__INTEL__)))
+#if !defined(IS_LITTLE_ENDIAN) && (defined(__BIG_ENDIAN__) || defined(__sparc) || defined(__sparc__) || defined(__hppa__) || defined(__MIPSEB__) || defined(__ARMEB__) || (defined(__MWERKS__) && !defined(__INTEL__)))
 #	define IS_BIG_ENDIAN
 #endif
 
@@ -22,11 +22,6 @@
 // Currently the only feature used is random number generation.
 // This macro will be ignored if NO_OS_DEPENDENCE is defined.
 #define USE_MS_CRYPTOAPI
-
-// Define this to 1 to enforce the requirement in FIPS 186-2 Change Notice 1 that only 1024 bit moduli be used
-#ifndef DSA_1024_BIT_MODULUS_ONLY
-#	define DSA_1024_BIT_MODULUS_ONLY 1
-#endif
 
 // ***************** Less Important Settings ***************
 
@@ -257,6 +252,7 @@ NAMESPACE_END
 #endif
 
 #if !defined(CRYPTOPP_DISABLE_ASM) && ((defined(_MSC_VER) && defined(_M_IX86)) || (defined(__GNUC__) && (defined(__i386__) || defined(__x86_64__))))
+	// C++Builder 2010 does not allow "call label" where label is defined within inline assembly
 	#define CRYPTOPP_X86_ASM_AVAILABLE
 
 	#if !defined(CRYPTOPP_DISABLE_SSE2) && (defined(CRYPTOPP_MSVC6PP_OR_LATER) || CRYPTOPP_GCC_VERSION >= 30300)
@@ -286,6 +282,12 @@ NAMESPACE_END
 	#define CRYPTOPP_BOOL_SSE2_INTRINSICS_AVAILABLE 1
 #else
 	#define CRYPTOPP_BOOL_SSE2_INTRINSICS_AVAILABLE 0
+#endif
+
+#if !defined(CRYPTOPP_DISABLE_SSSE3) && !defined(CRYPTOPP_DISABLE_AESNI) && CRYPTOPP_BOOL_SSE2_INTRINSICS_AVAILABLE && (CRYPTOPP_GCC_VERSION >= 40400 || _MSC_FULL_VER >= 150030729 || __INTEL_COMPILER >= 1110)
+	#define CRYPTOPP_BOOL_AESNI_INTRINSICS_AVAILABLE 1
+#else
+	#define CRYPTOPP_BOOL_AESNI_INTRINSICS_AVAILABLE 0
 #endif
 
 #if CRYPTOPP_BOOL_SSE2_INTRINSICS_AVAILABLE || CRYPTOPP_BOOL_SSE2_ASM_AVAILABLE || defined(CRYPTOPP_X64_MASM_AVAILABLE)
@@ -341,7 +343,7 @@ NAMESPACE_END
 	#define CRYPTOPP_ALLOW_UNALIGNED_DATA_ACCESS
 #endif
 
-#define CRYPTOPP_VERSION 560
+#define CRYPTOPP_VERSION 562
 
 // ***************** determine availability of OS features ********************
 
@@ -403,7 +405,7 @@ NAMESPACE_END
 
 // ***************** DLL related ********************
 
-#ifdef CRYPTOPP_WIN32_AVAILABLE
+#if defined(CRYPTOPP_WIN32_AVAILABLE) && !defined(CRYPTOPP_DOXYGEN_PROCESSING)
 
 #ifdef CRYPTOPP_EXPORTS
 #define CRYPTOPP_IS_DLL

@@ -5,6 +5,11 @@
 #include <cppunit/Outputter.h>
 #include <cppunit/portability/Stream.h>
 
+#if CPPUNIT_NEED_DLL_DECL
+#pragma warning( push )
+#pragma warning( disable: 4251 )  // X needs to have dll-interface to be used by clients of class Z
+#endif 
+
 CPPUNIT_NS_BEGIN
 
 
@@ -142,5 +147,8 @@ private:
 
 CPPUNIT_NS_END
 
+#if CPPUNIT_NEED_DLL_DECL
+#pragma warning( pop )
+#endif
 
 #endif  // CPPUNIT_COMPILERTESTRESULTOUTPUTTER_H

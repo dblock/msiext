@@ -1,44 +1,54 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-****************************************************************************************************
-wix.targets
+  <copyright file="wix2010.targets" company="Outercurve Foundation">
+    Copyright (c) 2004, Outercurve Foundation.
+    This software is released under Microsoft Reciprocal License (MS-RL).
+    The license and further copyright text can be found in the file
+    LICENSE.TXT at the root directory of the distribution.
+  </copyright>
+-->
+<!--
+  <remarks>
+    WARNING:  DO NOT MODIFY this file unless you are knowledgeable about MSBuild and have
+              created a backup copy.  Incorrect changes to this file will make it
+              impossible to load or build your projects from the command-line or the IDE.
 
-WARNING:  DO NOT MODIFY this file unless you are knowledgeable about MSBuild and have
-          created a backup copy.  Incorrect changes to this file will make it
-          impossible to load or build your projects from the command-line or the IDE.
+    This file defines the steps in the standard build process for WiX projects (.wixproj).
 
-This file defines the steps in the standard build process for WiX projects (.wixproj).
+    Conventions:
+      * Targets and properties that start with an underscore (_) are considered private and should not
+        be used outside of this file.
 
-Conventions:
-  * Targets and properties that start with an underscore (_) are considered private and should not
-    be used outside of this file.
+    Coding Conventions:
+      * Two-space indentation of nested elements
 
-Coding Conventions:
-  * Two-space indentation of nested elements
+      * Self-closing elements should have a space before the /> ("<MyProperty />")
 
-  * Self-closing elements should have a space before the /> ("<MyProperty />")
+      * Conditions should have a space before and after the "" and between any operators. For example:
+        <MyProperty Condition=" '$(MyProperty)' == '' ">Value</MyProperty>
 
-  * Conditions should have a space before and after the "" and between any operators. For example:
-    <MyProperty Condition=" '$(MyProperty)' == '' ">Value</MyProperty>
+      * Targets should have each attribute on a single line and indented by two spaces. Also, there
+        should be a blank line between the Target and the beginning of the contents (a blank line is
+        optional before the closing </Target> tag).
+        For example:
+        <Target
+          Name="MyTarget"
+          DependsOnTargets="$(MyTargetDependsOn)">
 
-  * Targets should have each attribute on a single line and indented by two spaces. Also, there
-    should be a blank line between the Target and the beginning of the contents (a blank line is
-    optional before the closing </Target> tag).
-    For example:
-    <Target
-      Name="MyTarget"
-      DependsOnTargets="$(MyTargetDependsOn)">
-
-      <Message Importance="low" Text="MyTarget is doing something." />
-    </Target>
-
-Copyright (c) Microsoft Corporation. All rights reserved.
-****************************************************************************************************
+          <Message Importance="low" Text="MyTarget is doing something." />
+        </Target>
+  </remarks>
 -->
 <Project
   xmlns="http://schemas.microsoft.com/developer/msbuild/2003"
+  DefaultTargets="Build"
   InitialTargets="_CheckForInvalidConfigurationAndPlatform;
                   _CheckRequiredProperties">
+  <PropertyGroup>
+    <WixInstallPath Condition=" '$(WixInstallPath)' == ''">$(Registry:HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows Installer XML\3.7@InstallRoot)</WixInstallPath>
+    <WixInstallPath Condition=" '$(WixInstallPath)' == ''">$(Registry:HKEY_LOCAL_MACHINE\SOFTWARE\Wow6432Node\Microsoft\Windows Installer XML\3.7@InstallRoot)</WixInstallPath>
+  </PropertyGroup>
+
   <!--
   //////////////////////////////////////////////////////////////////////////////////////////////////
   //////////////////////////////////////////////////////////////////////////////////////////////////
@@ -57,13 +67,11 @@ Copyright (c) Microsoft Corporation. All rights reserved.
   <!-- These properties can be overridden to support non-default installations. -->
   <PropertyGroup>
     <WixTargetsPath Condition=" '$(WixTargetsPath)' == '' AND '$(MSBuildExtensionsPath32)' != '' ">$(MSBuildExtensionsPath32)\Microsoft\WiX\v3.x\Wix.targets</WixTargetsPath>
-    <WixTasksPath Condition=" '$(WixTasksPath)' == '' AND '$(MSBuildExtensionsPath32)' != '' ">$(MSBuildExtensionsPath32)\Microsoft\WiX\v3.x\WixTasks.dll</WixTasksPath>
     <WixTargetsPath Condition=" '$(WixTargetsPath)' == '' ">$(MSBuildExtensionsPath)\Microsoft\WiX\v3.x\Wix.targets</WixTargetsPath>
-    <WixTasksPath Condition=" '$(WixTasksPath)' == '' ">$(MSBuildExtensionsPath)\Microsoft\WiX\v3.x\WixTasks.dll</WixTasksPath>
+    <WixTasksPath Condition=" '$(WixTasksPath)' == '' ">$(WixInstallPath)\WixTasks.dll</WixTasksPath>
     <LuxTargetsPath Condition=" '$(LuxTargetsPath)' == '' AND '$(MSBuildExtensionsPath32)' != '' ">$(MSBuildExtensionsPath32)\Microsoft\WiX\v3.x\Lux.targets</LuxTargetsPath>
-    <LuxTasksPath Condition=" '$(LuxTasksPath)' == '' AND '$(MSBuildExtensionsPath32)' != '' ">$(MSBuildExtensionsPath32)\Microsoft\WiX\v3.x\LuxTasks.dll</LuxTasksPath>
     <LuxTargetsPath Condition=" '$(LuxTargetsPath)' == '' ">$(MSBuildExtensionsPath)\Microsoft\WiX\v3.x\Lux.targets</LuxTargetsPath>
-    <LuxTasksPath Condition=" '$(LuxTasksPath)' == '' ">$(MSBuildExtensionsPath)\Microsoft\WiX\v3.x\LuxTasks.dll</LuxTasksPath>
+    <LuxTasksPath Condition=" '$(LuxTasksPath)' == '' ">$(WixInstallPath)\LuxTasks.dll</LuxTasksPath>
   </PropertyGroup>
 
   <!-- This makes the project files a dependency of all targets so that things rebuild if they change -->
@@ -102,6 +110,7 @@ Copyright (c) Microsoft Corporation. All rights reserved.
   <UsingTask TaskName="ResolveNonMSBuildProjectOutput" AssemblyName="Microsoft.Build.Tasks.v4.0, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
   <UsingTask TaskName="ResolveVCProjectOutput" AssemblyName="Microsoft.Build.Tasks.v4.0, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
 
+  <UsingTask TaskName="CreateItemAvoidingInference" AssemblyFile="$(WixTasksPath)" />
   <UsingTask TaskName="CreateProjectReferenceDefineConstants" AssemblyFile="$(WixTasksPath)" />
   <UsingTask TaskName="WixAssignCulture" AssemblyFile="$(WixTasksPath)" />
   <UsingTask TaskName="ResolveWixReferences" AssemblyFile="$(WixTasksPath)"/>
@@ -110,6 +119,7 @@ Copyright (c) Microsoft Corporation. All rights reserved.
   <UsingTask TaskName="GetLooseFileList" AssemblyFile="$(WixTasksPath)" />
   <UsingTask TaskName="RefreshGeneratedFile" AssemblyFile="$(WixTasksPath)"/>
   <UsingTask TaskName="RefreshBundleGeneratedFile" AssemblyFile="$(WixTasksPath)"/>
+  <UsingTask TaskName="GenerateCompileWithObjectPath" AssemblyFile="$(WixTasksPath)"/>
 
   <!-- WiX tools are 32bit EXEs, so run them out-of-proc when MSBuild is not 32bit. -->
   <PropertyGroup>
@@ -173,6 +183,13 @@ Copyright (c) Microsoft Corporation. All rights reserved.
     <BaseIntermediateOutputPath Condition="!HasTrailingSlash('$(BaseIntermediateOutputPath)')">$(BaseIntermediateOutputPath)\</BaseIntermediateOutputPath>
     <IntermediateExt Condition=" '$(IntermediateExt)' == '' ">.wixobj</IntermediateExt>
     <CleanFile Condition=" '$(CleanFile)' == '' ">$(MSBuildProjectFile).FileList.txt</CleanFile>
+    <BindContentsFilePrefix Condition=" '$(BindContentsFilePrefix)' == '' ">$(MSBuildProjectFile).BindContentsFileList</BindContentsFilePrefix>
+    <BindContentsFileExtension Condition=" '$(BindContentsFileExtension)' == '' ">.txt</BindContentsFileExtension>
+    <BindOutputsFilePrefix Condition=" '$(BindOutputsFilePrefix)' == '' ">$(MSBuildProjectFile).BindOutputsFileList</BindOutputsFilePrefix>
+    <BindOutputsFileExtension Condition=" '$(BindOutputsFileExtension)' == '' ">.txt</BindOutputsFileExtension>
+    <BindBuiltOutputsFilePrefix Condition=" '$(BindBuiltOutputsFilePrefix)' == '' ">$(MSBuildProjectFile).BindBuiltOutputsFileList</BindBuiltOutputsFilePrefix>
+    <BindBuiltOutputsFileExtension Condition=" '$(BindBuiltOutputsFileExtension)' == '' ">.txt</BindBuiltOutputsFileExtension>
+    <SignedFile Condition=" '$(SignedFile)' == '' ">$(MSBuildProjectFile).Signed.txt</SignedFile>
   </PropertyGroup>
 
   <PropertyGroup Condition=" $(IntermediateOutputPath) == '' ">
@@ -182,14 +199,16 @@ Copyright (c) Microsoft Corporation. All rights reserved.
   <PropertyGroup>
       <IntermediateOutputPath Condition="!HasTrailingSlash('$(IntermediateOutputPath)')">$(IntermediateOutputPath)\</IntermediateOutputPath>
   </PropertyGroup>
+  <PropertyGroup>
+      <CabinetCachePath Condition=" '$(CabinetCachePath)'=='' and '$(ReuseCabinetCache)'=='true' ">$(IntermediateOutputPath)cabcache\</CabinetCachePath>
+  </PropertyGroup>
   <ItemGroup>
       <IntermediateAssembly Include="$(IntermediateOutputPath)$(TargetName)$(TargetExt)"/>
       <FinalDocFile Include="@(DocFileItem->'$(OutDir)%(Filename)%(Extension)')"/>
   </ItemGroup>
 
   <PropertyGroup>
-    <WixToolPath Condition=" '$(WixToolPath)' == ''">$(Registry:HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows Installer XML\3.5@InstallRoot)</WixToolPath>
-    <WixToolPath Condition=" '$(WixToolPath)' == ''">$(Registry:HKEY_LOCAL_MACHINE\SOFTWARE\Wow6432Node\Microsoft\Windows Installer XML\3.5@InstallRoot)</WixToolPath>
+    <WixToolPath Condition=" '$(WixToolPath)' == ''">$(WixInstallPath)</WixToolPath>
     <WixExtDir Condition=" '$(WixExtDir)' == ''">$(WixToolPath)</WixExtDir>
   </PropertyGroup>
 
@@ -219,6 +238,10 @@ Copyright (c) Microsoft Corporation. All rights reserved.
     <OutDir Condition=" '$(OutDir)' == '' ">$(OutputPath)</OutDir>
     <!-- Ensure OutDir has a trailing slash, so it can be concatenated -->
     <OutDir Condition=" '$(OutDir)' != '' and !HasTrailingSlash('$(OutDir)') ">$(OutDir)\</OutDir>
+
+    <!-- Default pdb output path to the output directory -->
+    <PdbOutputPath Condition=" '$(PdbOutputPath)'=='' ">$(OutDir)</PdbOutputPath>
+    <PdbOutputPath Condition=" '$(PdbOutputPath)' != '' and !HasTrailingSlash('$(PdbOutputPath)') ">$(PdbOutputPath)\</PdbOutputPath>
 
     <!-- Example, MySetup -->
     <ProjectName Condition=" '$(ProjectName)' == '' ">$(MSBuildProjectName)</ProjectName>
@@ -267,12 +290,20 @@ Copyright (c) Microsoft Corporation. All rights reserved.
     when we pick up the value of an environment variable named TargetDir
     -->
     <TargetDir Condition="'$(OutDir)' != ''">$([System.IO.Path]::GetFullPath(`$([System.IO.Path]::Combine(`$(MSBuildProjectDirectory)`, `$(OutDir)`))`))</TargetDir>
+    <TargetPdbDir Condition=" '$(PdbOutputPath)'!='' ">$([System.IO.Path]::GetFullPath(`$([System.IO.Path]::Combine(`$(MSBuildProjectDirectory)`, `$(PdbOutputPath)`))`))</TargetPdbDir>
 
     <!-- Example, C:\MyProjects\MySetup\bin\debug\MySetup.msi -->
     <TargetPath Condition=" '$(TargetPath)' == '' ">$(TargetDir)$(TargetFileName)</TargetPath>
-
-    <TargetPdbPath Condition=" '$(TargetPdbPath)' == '' ">$(TargetDir)$(TargetPdbName)</TargetPdbPath>
+    <TargetPdbPath Condition=" '$(TargetPdbPath)' == '' ">$(TargetPdbDir)$(TargetPdbName)</TargetPdbPath>
   </PropertyGroup>
+
+  <!--
+  Set the SignTargetPath item directly when output is a Bundle. The AssignCultures target
+  sets SignTargetPath item for other output types based on the cultures provided.
+  -->
+  <ItemGroup>
+    <SignTargetPath Include="$(TargetPath)" Condition=" '$(OutputType)' == 'Bundle' AND '$(SignOutput)' == 'true' AND '$(SuppressLayout)' != 'true' " />
+  </ItemGroup>
 
   <!--
   IDE Macros available only from integrated builds. The following properties are 'macros' that are
@@ -327,6 +358,9 @@ Copyright (c) Microsoft Corporation. All rights reserved.
 
   <!-- Default HarvestProjects properties -->
   <PropertyGroup>
+    <!-- Project harvesting is defaulted to off until it works more consistently. -->
+    <EnableProjectHarvesting Condition=" '$(EnableProjectHarvesting)'=='' ">false</EnableProjectHarvesting>
+
     <HarvestProjectsNoLogo Condition=" '$(HarvestProjectsNoLogo)' == '' ">$(HarvestNoLogo)</HarvestProjectsNoLogo>
     <HarvestProjectsSuppressAllWarnings Condition=" '$(HarvestProjectsSuppressAllWarnings)' == '' ">$(HarvestSuppressAllWarnings)</HarvestProjectsSuppressAllWarnings>
     <HarvestProjectsSuppressSpecificWarnings Condition=" '$(HarvestProjectsSuppressSpecificWarnings)' == '' ">$(HarvestSuppressSpecificWarnings)</HarvestProjectsSuppressSpecificWarnings>
@@ -401,7 +435,6 @@ Copyright (c) Microsoft Corporation. All rights reserved.
   <!-- Default Linker properties. -->
   <PropertyGroup>
     <LinkerNoLogo Condition=" '$(LinkerNoLogo)' == '' ">$(NoLogo)</LinkerNoLogo>
-    <LinkerBaseInputPaths Condition=" '$(LinkerBaseInputPaths)' == '' ">$(BaseInputPaths)</LinkerBaseInputPaths>
     <LinkerBindFiles Condition=" '$(LinkerBindFiles)' == '' ">$(BindFiles)</LinkerBindFiles>
     <LinkerPedantic Condition=" '$(LinkerPedantic)' == '' ">$(Pedantic)</LinkerPedantic>
     <LinkerSuppressAllWarnings Condition=" '$(LinkerSuppressAllWarnings)' == '' ">$(SuppressAllWarnings)</LinkerSuppressAllWarnings>
@@ -413,6 +446,19 @@ Copyright (c) Microsoft Corporation. All rights reserved.
     <LinkerVerboseOutput Condition=" '$(LinkerVerboseOutput)' == '' ">$(VerboseOutput)</LinkerVerboseOutput>
   </PropertyGroup>
 
+  <!-- If BindInputPaths (or LinkerBindInputPaths) was passed in via the command line, then convert it to an ItemGroup -->
+  <ItemGroup>
+    <BindInputPaths Include="$(BindInputPaths)"  Condition=" '$(BindInputPaths)' != '' " />
+    <LinkerBindInputPaths Include="$(LinkerBindInputPaths)"  Condition=" '$(LinkerBindInputPaths)' != '' " />
+  </ItemGroup>
+
+  <!-- Default Lit and Light "properties" -->
+  <ItemGroup>
+    <LinkerBindInputPaths Condition=" '@(LinkerBindInputPaths)' == '' " Include="@(BindInputPaths)" />
+    <LinkerBindInputPaths Condition=" '@(LinkerBindInputPaths)' == '' " Include="$(LinkerBaseInputPaths)" />
+    <LinkerBindInputPaths Condition=" '@(LinkerBindInputPaths)' == '' " Include="$(BaseInputPaths)" />
+  </ItemGroup>
+
   <!-- Default Inscribe properties. -->
   <PropertyGroup>
     <InscribeNoLogo Condition=" '$(InscribeNoLogo)' == '' ">$(NoLogo)</InscribeNoLogo>
@@ -421,6 +467,24 @@ Copyright (c) Microsoft Corporation. All rights reserved.
     <InscribeTreatWarningsAsErrors Condition=" '$(InscribeTreatWarningsAsErrors)' == '' ">$(TreatWarningsAsErrors)</InscribeTreatWarningsAsErrors>
     <InscribeTreatSpecificWarningsAsErrors Condition=" '$(InscribeTreatSpecificWarningsAsErrors)' == '' ">$(TreatSpecificWarningsAsErrors)</InscribeTreatSpecificWarningsAsErrors>
     <InscribeVerboseOutput Condition=" '$(InscribeVerboseOutput)' == '' ">$(VerboseOutput)</InscribeVerboseOutput>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <ProjectDefineConstants>
+      Configuration=$(ConfigurationName);
+      OutDir=$(OutDir);
+      Platform=$(PlatformName);
+      ProjectDir=$(ProjectDir);
+      ProjectExt=$(ProjectExt);
+      ProjectFileName=$(ProjectFileName);
+      ProjectName=$(ProjectName);
+      ProjectPath=$(ProjectPath);
+      TargetDir=$(TargetDir);
+      TargetExt=$(TargetExt);
+      TargetFileName=$(TargetFileName);
+      TargetName=$(TargetName);
+      TargetPath=$(TargetPath);
+    </ProjectDefineConstants>
   </PropertyGroup>
   <!--
   //////////////////////////////////////////////////////////////////////////////////////////////////
@@ -432,10 +496,10 @@ Copyright (c) Microsoft Corporation. All rights reserved.
 
   <!--
   ============================================================
-                                      _CheckForInvalidConfigurationAndPlatform
+  _CheckForInvalidConfigurationAndPlatform
 
-  This target checks for errors in statically defined properties.  It always
-  gets executed before any other target.
+    This target checks for errors in statically defined properties.
+    It always gets executed before any other target.
   ============================================================
   -->
   <Target
@@ -492,6 +556,14 @@ Copyright (c) Microsoft Corporation. All rights reserved.
       Code="WIXTARGETS103"
       Condition="'$(OutDir)' != '' and !HasTrailingSlash('$(OutDir)')"
       Text="The OutDir property must end with a trailing slash." />
+
+    <Message
+      Condition=" '$(BaseInputPaths)' != '' "
+      Text="Deprecated: Use BindInputPaths instead of BaseInputPaths." />
+
+    <Message
+      Condition=" '$(LinkerBaseInputPaths)' != '' "
+      Text="Deprecated: Use LinkerBindInputPaths instead of LinkerBaseInputPaths." />
 
   </Target>
 
@@ -651,26 +723,9 @@ Copyright (c) Microsoft Corporation. All rights reserved.
   <Target
     Name="PrepareForBuild" DependsOnTargets="$(PrepareForBuildDependsOn)">
 
-    <!--
-    These CreateProperty calls are required because TargetDir and TargetPath are defined
-    to contain an item list. We want that item list to be expanded so that it can be used
-    as a regular property value and not as an item-list-with-transform.
-    -->
-    <CreateProperty Value="$(TargetDir)">
-      <Output TaskParameter="Value" PropertyName="TargetDir" />
-    </CreateProperty>
-
-    <CreateProperty Value="$(TargetPath)">
-      <Output TaskParameter="Value" PropertyName="TargetPath" />
-    </CreateProperty>
-
-    <CreateProperty Value="$(TargetPdbPath)">
-      <Output TaskParameter="Value" PropertyName="TargetPdbPath" />
-    </CreateProperty>
-
     <!-- Create the directories for intermediate and final build products. -->
     <MakeDir Directories="$(IntermediateOutputPath);$(OutDir)" />
-  </Target>
+  </Target> 
 
   <!--
   ==================================================================================================
@@ -746,15 +801,15 @@ Copyright (c) Microsoft Corporation. All rights reserved.
       Text="$(PreBuildEvent)"
       OldValue="!(TargetPath)"
       NewValue="$(TargetPath)">
-      
+
       <Output TaskParameter="Text" PropertyName="ExpandedPreBuildEvent" />
     </ReplaceString>
-    
+
     <ReplaceString
       Text="$(ExpandedPreBuildEvent)"
       OldValue="!(TargetPdbPath)"
       NewValue="$(TargetPdbPath)">
-      
+
       <Output TaskParameter="Text" PropertyName="ExpandedPreBuildEvent" />
     </ReplaceString>
 
@@ -904,6 +959,7 @@ Copyright (c) Microsoft Corporation. All rights reserved.
 
     [OUT]
     @(_ProjectReferenceWithConfiguration) - The list of non-VC project references.
+    @(WixLibProjects) - Paths to any .wixlibs that were built by referenced projects.
   ================================================================================================
   -->
   <Target
@@ -911,69 +967,140 @@ Copyright (c) Microsoft Corporation. All rights reserved.
     DependsOnTargets="AssignProjectConfiguration;_SplitProjectReferencesByFileExistence"
     Condition=" '@(_ProjectReferenceWithConfiguration)' != '' ">
 
+    <!-- Issue a warning for each non-existent project. -->
+    <Warning
+      Text="The referenced project '%(_MSBuildProjectReferenceNonexistent.Identity)' does not exist."
+      Condition=" '@(_MSBuildProjectReferenceNonexistent)' != '' " />
+
     <!--
-    When building this project from the IDE or when building a .sln from the command line, just
-    gather the referenced build outputs. The code that builds the .sln will already have built
-    the project, so there's no need to do it again here.
-    
+    When building this project from the IDE or when building a .sln from the command line or
+    when only building .wixlib project references, gather the referenced build outputs. The
+    code that builds the .sln will already have built the project, so there's no need to do
+    it again here and when building only .wixlib project references we'll use the results to
+    determine which projects to build.
+
     The ContinueOnError setting is here so that, during project load, as much information as
     possible will be passed to the compilers.
     -->
     <MSBuild
       Projects="@(_MSBuildProjectReferenceExistent)"
-      Targets="GetTargetPath"
-      Properties="%(_MSBuildProjectReferenceExistent.SetConfiguration); %(_MSBuildProjectReferenceExistent.SetPlatform)"
-      Condition="'@(_ProjectReferenceWithConfiguration)'!='' and ('$(BuildingInsideVisualStudio)' == 'true' or '$(BuildProjectReferences)' != 'true') and '@(_MSBuildProjectReferenceExistent)' != ''"
+      Targets="%(_MSBuildProjectReferenceExistent.Targets);GetTargetPath"
+      Properties="%(_MSBuildProjectReferenceExistent.SetConfiguration);%(_MSBuildProjectReferenceExistent.SetPlatform)"
+      Condition="('$(BuildingSolutionFile)' == 'true' or '$(BuildingInsideVisualStudio)' == 'true' or '$(BuildProjectReferences)' != 'true') and '@(_MSBuildProjectReferenceExistent)' != '' "
       ContinueOnError="!$(BuildingProject)">
 
-      <Output TaskParameter="TargetOutputs" ItemName="_ResolvedProjectReferencePaths" />
-      <Output TaskParameter="TargetOutputs" ItemName="_MSBuildResolvedProjectReferencePaths" />
+      <Output TaskParameter="TargetOutputs" ItemName="_GatheredProjectReferencePaths" />
     </MSBuild>
 
     <!--
+    Determine which project references should be built. Note: we will not build any project references
+    if building in the IDE because it builds project references directly.
+
+    If BuildProjectReferences is 'true' (the default) then take all MSBuild project references that exist
+    on disk and add them to the list of things to build. This is the easy case.
+    -->
+    <CreateItem
+      Include="@(_MSBuildProjectReferenceExistent)"
+      Condition=" '$(BuildProjectReferences)' == 'true' and '$(BuildingInsideVisualStudio)' != 'true' ">
+
+      <Output TaskParameter="Include" ItemName="_ProjectReferencesToBuild" />
+    </CreateItem>
+
+    <!--
+    If BuildProjectReferences is 'wixlib' then build only the MSBuild project references that exist and
+    create a .wixlib file. That requires us to first filter the gathered project references down to only
+    those that build .wixlibs.
+    -->
+    <CreateItem
+      Include="@(_GatheredProjectReferencePaths)"
+      Condition=" '$(BuildProjectReferences)' == 'wixlib' and '%(Extension)' == '.wixlib' and '$(BuildingInsideVisualStudio)' != 'true' ">
+
+      <Output TaskParameter="Include" ItemName="_ReferencedWixLibPaths" />
+    </CreateItem>
+
+    <!--
+    The second step when building only 'wixlib' project references is to create the list of existing MSBuild
+    project references that do *not* build a .wixlib. These are the projects that will be skipped.
+     -->
+    <CreateItem
+      Include="@(_MSBuildProjectReferenceExistent->'%(FullPath)')"
+      Exclude="@(_ReferencedWixLibPaths->'%(MSBuildSourceProjectFile)')"
+      Condition=" '$(BuildProjectReferences)' == 'wixlib' and '$(BuildingInsideVisualStudio)' != 'true' ">
+
+      <Output TaskParameter="Include" ItemName="_ProjectReferencesToSkip" />
+    </CreateItem>
+
+    <!--
+    Finally, when building only 'wixlib' project references, the list of projects to build are naturally the
+    list of projects *not* being skipped.
+    -->
+    <CreateItem
+      Include="@(_MSBuildProjectReferenceExistent->'%(FullPath)')"
+      Exclude="@(_ProjectReferencesToSkip)"
+      Condition=" '$(BuildProjectReferences)' == 'wixlib' and '$(BuildingInsideVisualStudio)' != 'true' ">
+
+      <Output TaskParameter="Include" ItemName="_ProjectReferencesToBuild" />
+    </CreateItem>
+
+    <!-- Display a warning for all projects being skipped. -->
+    <Warning
+      Text="BuildProjectReferences set to '$(BuildProjectReferences)'. Skipping the non-Library project: %(_ProjectReferencesToSkip.Identity)"
+      Condition=" '@(_ProjectReferencesToSkip)' != '' " />
+
+    <Message
+      Importance="low"
+      Text="Project reference to build: %(_ProjectReferencesToBuild.Identity), properties: %(_ProjectReferencesToBuild.Properties)"
+      Condition=" '@(_ProjectReferencesToBuild)' != '' " />
+
+    <!--
     Build referenced projects when building from the command line.
-    
+
     The $(ProjectReferenceBuildTargets) will normally be blank so that the project's default target
     is used during a P2P reference. However if a custom build process requires that the referenced
     project has a different target to build it can be specified.
     -->
     <MSBuild
-      Projects="@(_MSBuildProjectReferenceExistent)"
+      Projects="@(_ProjectReferencesToBuild)"
       Targets="$(ProjectReferenceBuildTargets)"
-      Properties="%(_MSBuildProjectReferenceExistent.SetConfiguration); %(_MSBuildProjectReferenceExistent.SetPlatform)"
-      Condition="'@(_ProjectReferenceWithConfiguration)'!='' and '$(BuildingInsideVisualStudio)' != 'true' and '$(BuildProjectReferences)' == 'true' and '@(_MSBuildProjectReferenceExistent)' != ''">
+      Properties="%(_ProjectReferencesToBuild.SetConfiguration);%(_ProjectReferencesToBuild.SetPlatform)"
+      Condition=" '@(_ProjectReferencesToBuild)' != '' ">
 
-      <Output TaskParameter="TargetOutputs" ItemName="_ResolvedProjectReferencePaths" />
-      <Output TaskParameter="TargetOutputs" ItemName="_MSBuildResolvedProjectReferencePaths" />
+      <Output TaskParameter="TargetOutputs" ItemName="_BuiltProjectReferencePaths" />
     </MSBuild>
 
     <!-- 
     VC project references must build GetNativeTargetPath because neither GetTargetPath nor the return of the default build
-    target return the output for a native C++ project. 
-    This will not produce duplicate paths because GetNativeTargetPath is mutually exclusive with GetTargetPath & Build TargetOutputs. 
+    target return the output for a native .vcxproj. 
     -->
     <MSBuild
       Projects="@(_MSBuildProjectReferenceExistent)"
       Targets="GetNativeTargetPath"
-      Properties="%(_MSBuildProjectReferenceExistent.SetConfiguration); %(_MSBuildProjectReferenceExistent.SetPlatform)"
-      Condition="'@(_ProjectReferenceWithConfiguration)'!='' and '%(_MSBuildProjectReferenceExistent.Extension)' == '.vcxproj'">
+      Properties="%(_MSBuildProjectReferenceExistent.SetConfiguration);%(_MSBuildProjectReferenceExistent.SetPlatform)"
+      Condition=" '@(_ProjectReferenceWithConfiguration)' != '' and '%(_MSBuildProjectReferenceExistent.Extension)' == '.vcxproj' ">
 
       <Output TaskParameter="TargetOutputs" ItemName="_ResolvedProjectReferencePaths" />
       <Output TaskParameter="TargetOutputs" ItemName="_MSBuildResolvedProjectReferencePaths" />
     </MSBuild>
-    
-    <!-- Issue a warning for each non-existent project. -->
-    <Warning
-      Text="The referenced project '%(_MSBuildProjectReferenceNonexistent.Identity)' does not exist."
-      Condition=" '@(_ProjectReferenceWithConfiguration)' != '' and '@(_MSBuildProjectReferenceNonexistent)'!=''"/>
 
-    <!-- Create list of all .wixlib project references-->
+    <!-- Assign the unique gathered and built project references to the resolved project
+         reference paths. -->
+    <RemoveDuplicates Inputs="@(_GatheredProjectReferencePaths);@(_BuiltProjectReferencePaths)">
+      <Output TaskParameter="Filtered" ItemName="_ResolvedProjectReferencePaths" />
+      <Output TaskParameter="Filtered" ItemName="_MSBuildResolvedProjectReferencePaths" />
+    </RemoveDuplicates>
+
+    <!-- Create list of all .wixlib project references. -->
     <CreateItem
       Include="@(_ResolvedProjectReferencePaths)"
       Condition=" '%(Extension)' == '.wixlib' ">
 
       <Output TaskParameter="Include" ItemName="WixLibProjects" />
     </CreateItem>
+
+    <Message
+      Importance="low"
+      Text="Library from referenced projects: %(WixLibProjects.Identity)"
+      Condition=" '@(WixLibProjects)' != '' " />
 
   </Target>
 
@@ -1085,25 +1212,7 @@ Copyright (c) Microsoft Corporation. All rights reserved.
   <Target
     Name="AddCompilerDefineConstants"
     DependsOnTargets="$(AddCompilerDefineConstantsDependsOn)">
-
-    <CreateProperty Value="
-      Configuration=$(ConfigurationName);
-      OutDir=$(OutDir);
-      Platform=$(PlatformName);
-      ProjectDir=$(ProjectDir);
-      ProjectExt=$(ProjectExt);
-      ProjectFileName=$(ProjectFileName);
-      ProjectName=$(ProjectName);
-      ProjectPath=$(ProjectPath);
-      TargetDir=$(TargetDir);
-      TargetExt=$(TargetExt);
-      TargetFileName=$(TargetFileName);
-      TargetName=$(TargetName);
-      TargetPath=$(TargetPath);
-      ">
-      <Output TaskParameter="Value" PropertyName="ProjectDefineConstants" />
-    </CreateProperty>
-    
+   
   </Target>
 
   <!--
@@ -1240,7 +1349,7 @@ Copyright (c) Microsoft Corporation. All rights reserved.
     <CreateItem Include="$(TargetPath)">
       <Output TaskParameter="Include" ItemName="TargetOutput" />
     </CreateItem>
-    
+
     <CreateItem Include="%(TargetOutput.ModifiedTime)">
       <Output TaskParameter="Include" PropertyName="_TargetOutputTimestampBeforeCompileAndLink" />
     </CreateItem>
@@ -1260,16 +1369,6 @@ Copyright (c) Microsoft Corporation. All rights reserved.
 
     <CreateItem Include="%(TargetOutput.ModifiedTime)">
       <Output TaskParameter="Include" PropertyName="_TargetOutputTimestampAfterCompileAndLink" />
-    </CreateItem>
-
-    <!-- if our target path was updated by compile & link, and it's an "inscribe-able" output type,
-         then add it to the list of things to be inscribed -->
-    <CreateItem Include="$(TargetPath)"
-      Condition="'$(_TargetOutputTimestampBeforeCompileAndLink)' != '$(_TargetOutputTimestampAfterCompileAndLink)'
-      and ('$(OutputType)' == 'Package' or '$(OutputType)' == 'PatchCreation' or '$(OutputType)' == 'Module')
-      and '$(InscribeMainOutput)' == 'true'" >
-
-        <Output TaskParameter="Include" ItemName="Inscribe"/>
     </CreateItem>
 
   </Target>
@@ -1310,18 +1409,119 @@ Copyright (c) Microsoft Corporation. All rights reserved.
   ==================================================================================================
   -->
   <PropertyGroup>
+    <InternalSignDependsOn Condition=" '$(OutputType)' == 'Module' ">
+      GetMsmsToSign;
+      InternalSignMsm;
+    </InternalSignDependsOn>
+    <InternalSignDependsOn Condition=" '$(OutputType)' == 'Package' ">
+      GetCabsToSign;
+      GetMsiToSign;
+      InternalSignCabs;
+      InscribeMsi;
+      InternalSignMsi;
+    </InternalSignDependsOn>
+    <InternalSignDependsOn Condition=" '$(OutputType)' == 'Bundle' ">
+      GetContainersToSign;
+      InternalSignContainers;
+      InscribeBundleEngine;
+      InternalSignBundleEngine;
+      InscribeBundle;
+      InternalSignBundle;
+    </InternalSignDependsOn>
+
     <SigningDependsOn>
       CompileAndLink;
       BeforeSigning;
-      SignCabs;
-      Inscribe;
-      SignMsi;
+      $(InternalSignDependsOn);
       AfterSigning
     </SigningDependsOn>
   </PropertyGroup>
   <Target
     Name="Signing"
-    DependsOnTargets="$(SigningDependsOn)" />
+    DependsOnTargets="$(SigningDependsOn)"
+    Inputs="@(SignTargetPath)"
+    Outputs="$(IntermediateOutputPath)$(SignedFile)"
+    Condition=" '@(SignTargetPath)' != '' ">
+
+    <CreateItem Include="$(IntermediateOutputPath)$(SignedFile)">
+      <Output TaskParameter="Include" ItemName="FileWrites" />
+    </CreateItem>
+
+    <WriteLinesToFile
+        File="$(IntermediateOutputPath)$(SignedFile)"
+        Lines="^$(MSBuildProjectFullPath);@(SignMsm);@(SignCabs);@(SignMsi);@(SignContainers);@(SignBundleEngine);@(SignBundle)"
+        Overwrite="true" />
+  </Target>
+
+  <!-- Internal targets so correct signing targets are called. -->
+  <Target
+      Name="GetMsmsToSign"
+      Inputs="@(SignTargetPath)"
+      Outputs="$(IntermediateOutputPath)$(SignedFile)">
+    <CreateItem Include="@(SignTargetPath)">
+      <Output TaskParameter="Include" ItemName="SignMsm" />
+      <Output TaskParameter="Include" ItemName="FileWrites" />
+    </CreateItem>
+  </Target>
+
+  <Target
+    Name="InternalSignMsm"
+    DependsOnTargets="SignMsm"
+    Condition=" '@(SignMsm)' != '' " />
+
+  <Target
+      Name="GetCabsToSign"
+      Inputs="@(SignTargetPath)"
+      Outputs="$(IntermediateOutputPath)$(SignedFile)">
+    <GetCabList Database="%(SignTargetPath.FullPath)">
+      <Output TaskParameter="CabList" ItemName="SignCabs" />
+      <Output TaskParameter="CabList" ItemName="FileWrites" />
+    </GetCabList>
+  </Target>
+
+  <Target
+    Name="InternalSignCabs"
+    DependsOnTargets="SignCabs"
+    Condition=" '@(SignCabs)' != '' " />
+
+  <Target
+      Name="GetMsiToSign"
+      Inputs="@(SignTargetPath)"
+      Outputs="$(IntermediateOutputPath)$(SignedFile)">
+    <CreateItemAvoidingInference InputProperties="@(SignTargetPath)">
+      <Output TaskParameter="OuputItems" ItemName="SignMsi" />
+      <Output TaskParameter="OuputItems" ItemName="FileWrites" />
+    </CreateItemAvoidingInference>
+  </Target>
+
+  <Target
+    Name="InternalSignMsi"
+    DependsOnTargets="SignMsi"
+    Inputs="@(SignTargetPath)"
+    Outputs="$(IntermediateOutputPath)$(SignedFile)"
+    Condition=" '@(SignMsi)' != '' " />
+
+  <Target
+      Name="GetContainersToSign"
+      Inputs="@(SignTargetPath)"
+      Outputs="$(IntermediateOutputPath)$(SignedFile)">
+    <!-- TODO: implement signing detached containers -->
+  </Target>
+
+  <Target
+    Name="InternalSignContainers"
+    DependsOnTargets="SignContainers"
+    Condition=" '@(SignContainers)' != '' " />
+
+  <Target
+    Name="InternalSignBundleEngine"
+    DependsOnTargets="SignBundleEngine"
+    Condition=" '@(SignBundleEngine)' != '' " />
+
+  <Target
+    Name="InternalSignBundle"
+    DependsOnTargets="SignBundle"
+    Condition=" '@(SignBundle)' != '' " />
 
   <!--
   ==================================================================================================
@@ -1334,9 +1534,24 @@ Copyright (c) Microsoft Corporation. All rights reserved.
 
   <!--
   ==================================================================================================
+  SignMsm
+
+    Redefine this target in your project in order to sign merge modules.
+
+    [IN]
+    @(SignMsm) - merge module files to sign.
+  ==================================================================================================
+  -->
+  <Target Name="SignMsm" />
+
+  <!--
+  ==================================================================================================
   SignCabs
 
     Redefine this target in your project in order to sign the cabs of your database.
+
+    [IN]
+    @(SignCabs) - cabinet files to sign.
   ==================================================================================================
   -->
   <Target Name="SignCabs" />
@@ -1346,10 +1561,51 @@ Copyright (c) Microsoft Corporation. All rights reserved.
   SignMsi
 
     Redefine this target in your project in order to sign your database, after it has been inscribed
-    with the signatures of your signed cabs
+    with the signatures of your signed cabs.
+
+    [IN]
+    @(SignMsi) - database files to sign.
   ==================================================================================================
   -->
   <Target Name="SignMsi" />
+
+  <!--
+  ==================================================================================================
+  SignContainers
+
+    Redefine this target in your project in order to sign your bundle's detached containers.
+
+    [IN]
+    @(SignContainers) - detached container files to sign.
+  ==================================================================================================
+  -->
+  <Target Name="SignContainers" />
+
+  <!--
+  ==================================================================================================
+  SignBundleEngine
+
+    Redefine this target in your project in order to sign your bundle, after it has been inscribed
+    with the signatures of your signed containers.
+
+    [IN]
+    @(SignBundleEngine) - bundle engine file to sign.
+  ==================================================================================================
+  -->
+  <Target Name="SignBundleEngine" />
+
+  <!--
+  ==================================================================================================
+  SignBundle
+
+    Redefine this target in your project in order to sign your bundle, after the attached container
+    is reattached.
+
+    [IN]
+    @(SignBundle) - bundle file to sign.
+  ==================================================================================================
+  -->
+  <Target Name="SignBundle" />
 
   <!--
   ==================================================================================================
@@ -1369,7 +1625,7 @@ Copyright (c) Microsoft Corporation. All rights reserved.
   -->
   <Target
     Name="ConvertReferences"
-    Condition=" ('$(OutputType)' == 'Package' or '$(OutputType)' == 'PatchCreation' or '$(OutputType)' == 'Module' ) ">
+    Condition=" $(EnableProjectHarvesting) and ('$(OutputType)' == 'Package' or '$(OutputType)' == 'PatchCreation' or '$(OutputType)' == 'Module') ">
 
     <ItemGroup>
       <_HeatProjectReference Include="@(_MSBuildProjectReferenceExistent)" Condition=" '%(_MSBuildProjectReferenceExistent.DoNotHarvest)' == '' ">
@@ -1402,7 +1658,7 @@ Copyright (c) Microsoft Corporation. All rights reserved.
   -->
   <Target
     Name="ConvertBundleReferences"
-    Condition=" ('$(OutputType)' == 'Bundle')">
+    Condition=" $(EnableProjectHarvesting) and ('$(OutputType)' == 'Bundle') ">
 
     <ItemGroup>
       <_HeatProjectReference Include="@(_MSBuildProjectReferenceExistent)" Condition=" '%(_MSBuildProjectReferenceExistent.DoNotHarvest)' == '' ">
@@ -1500,7 +1756,7 @@ Copyright (c) Microsoft Corporation. All rights reserved.
     DependsOnTargets="$(HarvestProjectsDependsOn)"
     Inputs="@(_AllHeatProjects);%(_AllHeatProjects.Transforms);$(MSBuildAllProjects);$(ProjectPath)"
     Outputs="@(_AllHeatProjects -> '%(HeatOutput)')"
-    Condition=" '@(HeatProject)' != '' or '@(HarvestProject)' != '' ">
+    Condition=" $(EnableProjectHarvesting) and ('@(HeatProject)' != '' or '@(HarvestProject)' != '') ">
 
     <HeatProject
       NoLogo="$(HarvestProjectsNoLogo)"
@@ -1716,7 +1972,7 @@ Copyright (c) Microsoft Corporation. All rights reserved.
     DependsOnTargets="$(RefreshGeneratedFileDependsOn)"
     Inputs="@(_MSBuildResolvedProjectReferencePaths);@(Compile);$(ProjectPath)"
     Outputs="@(_GeneratedFiles)"
-    Condition=" ('$(OutputType)' == 'Package' or '$(OutputType)' == 'PatchCreation' or '$(OutputType)' == 'Module') and '@(_GeneratedFiles)' != '' ">
+    Condition=" $(EnableProjectHarvesting) and ('$(OutputType)' == 'Package' or '$(OutputType)' == 'PatchCreation' or '$(OutputType)' == 'Module') and '@(_GeneratedFiles)' != '' ">
 
     <RefreshGeneratedFile
       GeneratedFiles="@(_GeneratedFiles)"
@@ -1744,7 +2000,7 @@ Copyright (c) Microsoft Corporation. All rights reserved.
     DependsOnTargets="$(RefreshBundleGeneratedFileDependsOn)"
     Inputs="@(_MSBuildResolvedProjectReferencePaths);@(Compile);$(ProjectPath)"
     Outputs="@(_GeneratedFiles)"
-    Condition=" '$(OutputType)' == 'Bundle' and '@(_GeneratedFiles)' != '' ">
+    Condition=" $(EnableProjectHarvesting) and ('$(OutputType)' == 'Bundle' and '@(_GeneratedFiles)' != '') ">
 
     <RefreshBundleGeneratedFile
       GeneratedFiles="@(_GeneratedFiles)"
@@ -1764,16 +2020,13 @@ Copyright (c) Microsoft Corporation. All rights reserved.
     <GenerateCompileWithObjectPathDependsOn></GenerateCompileWithObjectPathDependsOn>
   </PropertyGroup>
   <Target Name="GenerateCompileWithObjectPath"
-    Condition=" '@(Compile)' != '' ">
+      Condition=" '@(Compile)' != '' ">
 
-    <ItemGroup>
-      <_CompileWithObjectPath Include="@(Compile)">
-        <!-- If RelativeDir is not rooted and not in IntermediateOutputPath, and ObjectPath is undefined use IntermediateOutputPath\RelativeDir -->
-        <ObjectPath Condition=" '%(RelativeDir)%(FileName)%(Extension)' != '%(FullPath)' AND '%(RelativeDir)%(FileName)%(Extension)' != '$(IntermediateOutputPath)%(FileName)%(Extension)' AND '%(Compile.ObjectPath)' == '' " >$(IntermediateOutputPath)%(RelativeDir)</ObjectPath>
-        <!-- If RelativeDir is rooted or in IntermediateOutputPath, and ObjectPath is undefined use IntermediateOutputPath -->
-        <ObjectPath Condition=" ('%(RelativeDir)%(FileName)%(Extension)' == '%(FullPath)' OR '%(RelativeDir)%(FileName)%(Extension)' == '$(IntermediateOutputPath)%(FileName)%(Extension)') AND '%(Compile.ObjectPath)' == '' " >$(IntermediateOutputPath)</ObjectPath>
-      </_CompileWithObjectPath>
-    </ItemGroup>
+    <GenerateCompileWithObjectPath
+        Compile="@(Compile)"
+        IntermediateOutputPath="$(IntermediateOutputPath)">
+      <Output TaskParameter="CompileWithObjectPath" ItemName="_CompileWithObjectPath" />
+    </GenerateCompileWithObjectPath>
 
   </Target>
 
@@ -1806,7 +2059,7 @@ Copyright (c) Microsoft Corporation. All rights reserved.
             @(_ResolvedWixExtensionPaths);
             @(_ResolvedProjectReferencePaths);
             $(MSBuildAllProjects)"
-    Outputs="@(_CompileWithObjectPath  -> '%(ObjectPath)%(Filename)$(IntermediateExt)')"
+    Outputs="@(_CompileWithObjectPath -> '%(ObjectPath)%(Filename)$(IntermediateExt)')"
     DependsOnTargets="$(CompileDependsOn)"
     Condition=" '@(Compile)' != '' ">
 
@@ -1838,47 +2091,151 @@ Copyright (c) Microsoft Corporation. All rights reserved.
       VerboseOutput="$(CompilerVerboseOutput)">
     </Candle>
 
-    <ItemGroup>
-        <CompileObjOutput Include="@(_CompileWithObjectPath -> '%(ObjectPath)%(Filename)$(IntermediateExt)')" />
-    </ItemGroup>
+    <!-- These will be still be set if the Compile target is up to date. -->
+    <CreateItem Include="@(_CompileWithObjectPath -> '%(ObjectPath)%(Filename)$(IntermediateExt)')">
+      <Output TaskParameter="Include" ItemName="CompileObjOutput" />
+    </CreateItem>
+
+    <CreateItem Include="@(CompileObjOutput)">
+      <Output TaskParameter="Include" ItemName="FileWrites" />
+    </CreateItem>
   </Target>
 
   <!--
   ================================================================================================
-  Inscribe
+  InscribeMsi
 
     To be called after signing an MSI's cabs - inscribes an MSI with the digital signature of its
       external cabs.
 
     [IN/OUT]
-    @(Inscribe) - The list of database files to inscribe - database files will be modified in-place.
+    @(SignTargetPath) - The database file to inscribe - database file will be modified in-place.
 
+    [OUT]
+    @(SignMsi) - The database file to sign.
   ================================================================================================
   -->
   <PropertyGroup>
-    <InscribeDependsOn>
+    <InscribeMsiDependsOn>
       PrepareForBuild;
       ResolveWixExtensionReferences;
       CompileAndLink;
-      SignCabs
-    </InscribeDependsOn>
+      InternalSignCabs
+    </InscribeMsiDependsOn>
   </PropertyGroup>
   <Target
-    Name="Inscribe"
-    DependsOnTargets="$(InscribeDependsOn)"
-    Condition=" '@(Inscribe)' != '' and '$(OutputCabList)' != ''">
+      Name="InscribeMsi"
+      DependsOnTargets="$(InscribeMsiDependsOn)"
+      Inputs="@(SignTargetPath)"
+      Outputs="$(IntermediateOutputPath)$(SignedFile)"
+      Condition=" '@(SignCabs)' != '' ">
 
     <Insignia
-      DatabaseFiles="@(Inscribe)"
-      ToolPath="$(WixToolPath)"
-      NoLogo="$(InscribeNoLogo)"
-      RunAsSeparateProcess="$(RunWixToolsOutOfProc)"
-      SuppressAllWarnings="$(InscribeSuppressAllWarnings)"
-      SuppressSpecificWarnings="$(InscribeSuppressSpecificWarnings)"
-      TreatWarningsAsErrors="$(InscribeTreatWarningsAsErrors)"
-      TreatSpecificWarningsAsErrors="$(InscribeTreatSpecificWarningsAsErrors)"
-      VerboseOutput="$(InscribeVerboseOutput)"
-      AdditionalOptions="$(InscribeAdditionalOptions)">
+        DatabaseFile="%(SignTargetPath.FullPath)"
+        OutputFile="%(SignTargetPath.FullPath)"
+        ToolPath="$(WixToolPath)"
+        NoLogo="$(InscribeNoLogo)"
+        RunAsSeparateProcess="$(RunWixToolsOutOfProc)"
+        SuppressAllWarnings="$(InscribeSuppressAllWarnings)"
+        SuppressSpecificWarnings="$(InscribeSuppressSpecificWarnings)"
+        TreatWarningsAsErrors="$(InscribeTreatWarningsAsErrors)"
+        TreatSpecificWarningsAsErrors="$(InscribeTreatSpecificWarningsAsErrors)"
+        VerboseOutput="$(InscribeVerboseOutput)"
+        AdditionalOptions="$(InscribeAdditionalOptions)" />
+  </Target>
+
+  <!--
+  ================================================================================================
+  InscribeBundleEngine
+
+    To be called after signing a bundle's detached containers. Also removes attached container
+    so engine can be signed without attached container.
+
+    [IN]
+    @(SignTargetPath) - The bundle to inscribe.
+
+    [OUT]
+    @(SignBundleEngine) - The bundle engine file to be signed.
+  ================================================================================================
+  -->
+  <PropertyGroup>
+    <InscribeBundleEngineDependsOn>
+      PrepareForBuild;
+      ResolveWixExtensionReferences;
+      CompileAndLink;
+      InternalSignContainers
+    </InscribeBundleEngineDependsOn>
+  </PropertyGroup>
+  <Target
+      Name="InscribeBundleEngine"
+      DependsOnTargets="$(InscribeBundleEngineDependsOn)"
+      Inputs="@(SignTargetPath)"
+      Outputs="$(IntermediateOutputPath)$(SignedFile)">
+
+    <Insignia
+        BundleFile="@(SignTargetPath)"
+        OutputFile="$(IntermediateOutputPath)%(SignTargetPath.Filename)%(SignTargetPath.Extension)"
+        ToolPath="$(WixToolPath)"
+        NoLogo="$(InscribeNoLogo)"
+        RunAsSeparateProcess="$(RunWixToolsOutOfProc)"
+        SuppressAllWarnings="$(InscribeSuppressAllWarnings)"
+        SuppressSpecificWarnings="$(InscribeSuppressSpecificWarnings)"
+        TreatWarningsAsErrors="$(InscribeTreatWarningsAsErrors)"
+        TreatSpecificWarningsAsErrors="$(InscribeTreatSpecificWarningsAsErrors)"
+        VerboseOutput="$(InscribeVerboseOutput)"
+        AdditionalOptions="$(InscribeAdditionalOptions)">
+      <Output TaskParameter="Output" ItemName="SignBundleEngine" />
+    </Insignia>
+
+    <!-- Explicitly add output to FileWrites to ensure even when the target is up to date. -->
+    <CreateItem Include="$(IntermediateOutputPath)%(SignTargetPath.Filename)%(SignTargetPath.Extension)">
+      <Output TaskParameter="Include" ItemName="FileWrites" />
+    </CreateItem>
+
+  </Target>
+
+  <!--
+  ================================================================================================
+  InscribeBundle
+
+    To be called after signing the bundle engine to reattach the attached container.
+
+    [IN]
+    @(Inscribe) - The bundle to inscribe.
+
+    [OUT]
+    @(SignBundle) - The bundle engine file to be signed.
+  ================================================================================================
+  -->
+  <PropertyGroup>
+    <InscribeBundleDependsOn>
+      PrepareForBuild;
+      ResolveWixExtensionReferences;
+      CompileAndLink;
+      InternalSignBundleEngine
+    </InscribeBundleDependsOn>
+  </PropertyGroup>
+  <Target
+      Name="InscribeBundle"
+      DependsOnTargets="$(InscribeBundleDependsOn)"
+      Inputs="@(SignTargetPath)"
+      Outputs="$(IntermediateOutputPath)$(SignedFile)">
+
+    <Insignia
+        BundleFile="@(SignBundleEngine)"
+        OriginalBundleFile="@(SignTargetPath)"
+        OutputFile="@(SignTargetPath)"
+        ToolPath="$(WixToolPath)"
+        NoLogo="$(InscribeNoLogo)"
+        RunAsSeparateProcess="$(RunWixToolsOutOfProc)"
+        SuppressAllWarnings="$(InscribeSuppressAllWarnings)"
+        SuppressSpecificWarnings="$(InscribeSuppressSpecificWarnings)"
+        TreatWarningsAsErrors="$(InscribeTreatWarningsAsErrors)"
+        TreatSpecificWarningsAsErrors="$(InscribeTreatSpecificWarningsAsErrors)"
+        VerboseOutput="$(InscribeVerboseOutput)"
+        AdditionalOptions="$(InscribeAdditionalOptions)">
+      <Output TaskParameter="Output" ItemName="SignBundle" />
+      <Output TaskParameter="Output" ItemName="FileWrites" />
     </Insignia>
   </Target>
 
@@ -1920,7 +2277,7 @@ Copyright (c) Microsoft Corporation. All rights reserved.
     <Lit
       ObjectFiles="@(CompileObjOutput);@(WixObject);@(WixLibProjects);@(WixLibrary)"
       AdditionalOptions="$(LibAdditionalOptions)" 
-      BaseInputPaths="$(LinkerBaseInputPaths)"
+      BindInputPaths="@(LinkerBindInputPaths)"
       BindFiles="$(LibBindFiles)"
       ExtensionDirectory="$(WixExtDir)"
       Extensions="@(_ResolvedWixExtensionPaths)"
@@ -1945,14 +2302,14 @@ Copyright (c) Microsoft Corporation. All rights reserved.
 
     Determines the final list of culture groups to build based on either the Cultures property or
     those specified in .wxl files. 
-    
+
       Culture groups specified in the Cultures property must be specified as a semi-colon 
       delimited  list of groups, with comma-delimited cultures within a group.  
       For example:
         <Cultures>en-US,en;en-GB,en</Cultures>
       This will build 2 targets, outputing to en-US and en-GB sub-folders.  Light will first look
       for strings in the first culture (en-US or en-GB) then the second (en).
-    
+
       Cultures of .wxl files will be used when the Culture property is not set.  The culture of a 
       .wxl file is determined by the Culture attribute in the WixLocalization element in the file
 
@@ -1963,7 +2320,7 @@ Copyright (c) Microsoft Corporation. All rights reserved.
     directory.
 
     Updates the TargetPath and TargetPdbPath properties to be used in subsequent targets.
-    
+
     [IN]
     @(EmbeddedResource) - The list of wxl files to use for localization.
     $(Cultures) - The list of culture groups to build.
@@ -1972,13 +2329,13 @@ Copyright (c) Microsoft Corporation. All rights reserved.
     @(CultureGroup) - The list of culture group strings with OutputFolder metadata
     $(TargetPath) - Property list of target link output MSIs/MSMs
     $(TargetPdbPath) - Property list of target output pdbs
-    
+
   ================================================================================================
   -->
-  <Target 
+  <Target
     Name="AssignCultures"
     Condition=" ('$(OutputType)' == 'Package' or '$(OutputType)' == 'PatchCreation' or '$(OutputType)' == 'Module')">
-    
+
     <WixAssignCulture
       Cultures="$(Cultures)"
       Files="@(EmbeddedResource)"
@@ -1993,7 +2350,7 @@ Copyright (c) Microsoft Corporation. All rights reserved.
       <Output TaskParameter="Include"
               ItemName="_TargetPathItems"/>
     </CreateItem>
-    
+
     <!-- Convert the itemgroup to a semicolon-delimited property -->
     <CreateProperty
       Value="@(_TargetPathItems)">
@@ -2003,7 +2360,7 @@ Copyright (c) Microsoft Corporation. All rights reserved.
 
     <!-- Build an itemgroup of PDB outputs -->
     <CreateItem
-      Include="$(TargetDir)%(CultureGroup.OutputFolder)$(TargetName)$(TargetPdbExt)">
+      Include="$(TargetPdbDir)%(CultureGroup.OutputFolder)$(TargetPdbName)">
       <Output TaskParameter="Include"
               ItemName="_TargetPdbPathItems"/>
     </CreateItem>
@@ -2014,6 +2371,53 @@ Copyright (c) Microsoft Corporation. All rights reserved.
       <Output TaskParameter="Value"
               PropertyName="TargetPdbPath"/>
     </CreateProperty>
+
+    <!-- Set the sign target items, if we're signing output. -->
+    <CreateItem
+      Include="@(_TargetPathItems)"
+      Condition=" '$(SignOutput)' == 'true' AND '$(SuppressLayout)' != 'true' ">
+      <Output TaskParameter="Include"
+              ItemName="SignTargetPath"/>
+    </CreateItem>
+  </Target>
+
+  <!--
+  ================================================================================================
+  ReadPreviousBindInputsAndBuiltOutputs
+
+    Reads a previous build's Bind contents and built outputs file into @(_BindInputs) and
+    @(_BindBuiltOutputs) respectively.
+
+    Note: Only the *built* outputs are used because using files copied to output folder
+          can cause perpetual incremental build.
+
+          Imagine the case where you have: Msi.wixproj -> Lib.wixproj -> Exe.csproj. The
+          Exe.csproj cannot be both an input to Lib.wixproj and an output of Msi.wixproj
+          (as an uncompressed file) because the Lib.wixproj will always newer than the
+          Exe.csproj.
+
+    [IN]
+
+    [OUT]
+    @(_BindInputs) - the content files required to bind (i.e. the Binary/@SourceFile and File/@Source files).
+    @(_BindBuiltOutputs) - the previously built .msi, .msm, .pcp, .exe .wixpdb, .cabs, etc.
+                           Does not include content copied to output folder.
+  ================================================================================================
+  -->
+  <Target
+    Name="ReadPreviousBindInputsAndBuiltOutputs"
+    Condition=" ('$(OutputType)' == 'Bundle' or '$(OutputType)' == 'Package' or '$(OutputType)' == 'PatchCreation' or '$(OutputType)' == 'Module')">
+
+    <ReadLinesFromFile File="$(IntermediateOutputPath)$(BindContentsFilePrefix)%(CultureGroup.Identity)$(BindContentsFileExtension)">
+      <Output TaskParameter="Lines" ItemName="_BindInputs" />
+    </ReadLinesFromFile>
+
+    <ReadLinesFromFile File="$(IntermediateOutputPath)$(BindBuiltOutputsFilePrefix)%(CultureGroup.Identity)$(BindBuiltOutputsFileExtension)">
+      <Output TaskParameter="Lines" ItemName="_BindBuiltOutputs" />
+    </ReadLinesFromFile>
+
+    <Message Importance="low" Text="Previous bind inputs: @(_BindInputs)" />
+    <Message Importance="low" Text="Previous bind outputs: @(_BindBuiltOutputs)" />
   </Target>
 
   <!--
@@ -2041,6 +2445,7 @@ Copyright (c) Microsoft Corporation. All rights reserved.
       PrepareForBuild;
       ResolveReferences;
       AssignCultures;
+      ReadPreviousBindInputsAndBuiltOutputs;
     </LinkDependsOn>
   </PropertyGroup>
   
@@ -2052,12 +2457,13 @@ Copyright (c) Microsoft Corporation. All rights reserved.
             @(_ResolvedProjectReferencePaths);
             @(_ResolvedWixLibraryPaths);
             @(_ResolvedWixExtensionPaths);
-            $(MSBuildAllProjects)"
-    Outputs="$(TargetDir)%(CultureGroup.OutputFolder)$(TargetName)$(TargetExt)"
+            $(MSBuildAllProjects);
+            @(_BindInputs)"
+    Outputs="$(IntermediateOutputPath)$(BindBuiltOutputsFilePrefix)%(CultureGroup.Identity)$(BindBuiltOutputsFileExtension);@(_BindBuiltOutputs)"
     DependsOnTargets="$(LinkDependsOn)"
     Condition=" ('$(OutputType)' == 'Package' or '$(OutputType)' == 'PatchCreation' or '$(OutputType)' == 'Module' or '$(OutputType)' == 'Bundle')">
 
-    <CreateProperty Condition=" '$(OutputType)' != 'Bundle' " Value="$(TargetDir)%(CultureGroup.OutputFolder)$(TargetName)$(TargetPdbExt)">
+    <CreateProperty Value="$(TargetPdbDir)%(CultureGroup.OutputFolder)$(TargetPdbName)">
       <Output TaskParameter="Value" PropertyName="PdbOutputFile" />
     </CreateProperty>
 
@@ -2069,8 +2475,11 @@ Copyright (c) Microsoft Corporation. All rights reserved.
       AllowUnresolvedReferences="$(AllowUnresolvedReferences)"
       AdditionalCub="$(AdditionalCub)" 
       BackwardsCompatibleGuidGeneration="$(BackwardsCompatibleGuidGeneration)" 
-      BaseInputPaths="$(LinkerBaseInputPaths)"
+      BindInputPaths="@(LinkerBindInputPaths)"
       BindFiles="$(LinkerBindFiles)"
+      BindContentsFile="$(IntermediateOutputPath)$(BindContentsFilePrefix)%(CultureGroup.Identity)$(BindContentsFileExtension)"
+      BindOutputsFile="$(IntermediateOutputPath)$(BindOutputsFilePrefix)%(CultureGroup.Identity)$(BindOutputsFileExtension)"
+      BindBuiltOutputsFile="$(IntermediateOutputPath)$(BindBuiltOutputsFilePrefix)%(CultureGroup.Identity)$(BindBuiltOutputsFileExtension)"
       CabinetCachePath="$(CabinetCachePath)"
       CabinetCreationThreadCount="$(CabinetCreationThreadCount)"
       Cultures="%(CultureGroup.Identity)"
@@ -2095,6 +2504,7 @@ Copyright (c) Microsoft Corporation. All rights reserved.
       SuppressAclReset="$(SuppressAclReset)"
       SuppressAllWarnings="$(LinkerSuppressAllWarnings)"
       SuppressAssemblies="$(SuppressAssemblies)"
+      SuppressBuildInfo="$(SuppressBuildInfo)"
       SuppressDefaultAdminSequenceActions="$(SuppressDefaultAdminSequenceActions)"
       SuppressDefaultAdvSequenceActions="$(SuppressDefaultAdvSequenceActions)"
       SuppressDefaultUISequenceActions="$(SuppressDefaultUISequenceActions)"
@@ -2114,23 +2524,43 @@ Copyright (c) Microsoft Corporation. All rights reserved.
       TreatWarningsAsErrors="$(LinkerTreatWarningsAsErrors)"
       UnreferencedSymbolsFile="$(UnreferencedSymbolsFile)"
       VerboseOutput="$(LinkerVerboseOutput)"
+      WixProjectFile="$(ProjectPath)"
       WixVariables="$(WixVariables)" />
+  </Target>
 
-    <GetCabList Database="$(TargetDir)%(CultureGroup.OutputFolder)$(TargetName)$(TargetExt)"
-        Condition="('$(OutputType)' == 'Package' or '$(OutputType)' == 'Module') and '$(OutputAsXml)' != 'true' " >
-      <Output TaskParameter="CabList" PropertyName="OutputCabs" />
-      <Output TaskParameter="CabList" ItemName="FileWrites" />
-    </GetCabList>
+  <!--
+  ================================================================================================
+  UpdateLinkFileWrites
 
-    <GetLooseFileList Database="$(TargetDir)%(CultureGroup.OutputFolder)$(TargetName)$(TargetExt)"
-        Condition="('$(OutputType)' == 'Package' or '$(OutputType)' == 'Module') and '$(OutputAsXml)' != 'true' " >
-      <Output TaskParameter="LooseFileList" ItemName="FileWrites" />
-    </GetLooseFileList>
+    Reads the bind outputs file(s) output generated during Link to correctly set the @(FileWrites)
+    item. Most targets have it easy because they can do a static mapping from inputs to the outputs.
+    However, the Link target outputs are determined after a rather complex calculation we call
+    linking and binding!
 
-    <CreateItem Include="$(OutputCabs)" >
-      <Output TaskParameter="Include" ItemName="OutputCabList" />
+    This is an "after target" of Link to ensure it always runs, even if Link was up to date. It
+    reads the outputs file generated during the Link target.
+
+    [IN]
+    Path to bind outputs file(s).
+
+    [OUT]
+    @(FileWrites) updated with outputs from bind.
+  ================================================================================================
+  -->
+  <Target
+    Name="UpdateLinkFileWrites"
+    AfterTargets="Link"
+    Condition=" ('$(OutputType)' == 'Bundle' or '$(OutputType)' == 'Package' or '$(OutputType)' == 'PatchCreation' or '$(OutputType)' == 'Module' or '$(OutputType)' == 'Bundle')">
+
+    <ReadLinesFromFile File="$(IntermediateOutputPath)$(BindOutputsFilePrefix)%(CultureGroup.Identity)$(BindOutputsFileExtension)">
+      <Output TaskParameter="Lines" ItemName="FileWrites"/>
+    </ReadLinesFromFile>
+
+    <CreateItem Include="$(IntermediateOutputPath)$(BindContentsFilePrefix)%(CultureGroup.Identity)$(BindContentsFileExtension);$(IntermediateOutputPath)$(BindOutputsFilePrefix)%(CultureGroup.Identity)$(BindOutputsFileExtension);$(IntermediateOutputPath)$(BindBuiltOutputsFilePrefix)%(CultureGroup.Identity)$(BindBuiltOutputsFileExtension)">
+      <Output TaskParameter="Include" ItemName="FileWrites" />
     </CreateItem>
-    
+
+    <Message Importance="low" Text="Build files after link: @(FileWrites)" />
   </Target>
 
   <!--
@@ -2156,7 +2586,7 @@ Copyright (c) Microsoft Corporation. All rights reserved.
     Name="IncrementalClean"
     DependsOnTargets="_CleanGetCurrentAndPriorFileWrites">
 
-    <!-- Subtract list of files produced in prior builds from list of files produced in this build. -->
+    <!-- Subtract list of files produced in this build from list of files produced in prior builds. -->
     <CreateItem Include="@(_CleanPriorFileWrites)" Exclude="@(_CleanCurrentFileWrites)">
       <Output TaskParameter="Include" ItemName="_CleanOrphanFileWrites" />
     </CreateItem>
@@ -2204,14 +2634,13 @@ Copyright (c) Microsoft Corporation. All rights reserved.
   ==================================================================================================
   _CleanGetCurrentAndPriorFileWrites
 
-    Get the list of files built in the current build and in prior builds.
+    Get the list of files built in a prior build and the current build.
   ==================================================================================================
   -->
   <Target
-    Name="_CleanGetCurrentAndPriorFileWrites"
-    DependsOnTargets="_CheckForCompileAndLinkOutputs">
+    Name="_CleanGetCurrentAndPriorFileWrites">
 
-    <!-- Read the list of files produced by a prior builds from disk. -->
+    <!-- Read the list of files produced by a prior build from disk. -->
     <ReadLinesFromFile File="$(IntermediateOutputPath)$(CleanFile)">
       <Output TaskParameter="Lines" ItemName="_CleanPriorFileWrites" />
     </ReadLinesFromFile>
@@ -2231,32 +2660,6 @@ Copyright (c) Microsoft Corporation. All rights reserved.
       <Output TaskParameter="Filtered" ItemName="_CleanCurrentFileWrites" />
     </RemoveDuplicates>
 
-  </Target>
-
-  <!--
-  ==================================================================================================
-  _CheckForCompileAndLinkOutputs
-
-    Checks each file output from the main CompileAndLink target to make sure they really exist.
-    If they do, then record them in the clean cache.
-  ==================================================================================================
-  -->
-  <Target Name="_CheckForCompileAndLinkOutputs">
-
-    <!--Record the main compile outputs -->
-    <CreateItem Include="@(CompileObjOutput)" Condition="Exists('%(FullPath)')">
-      <Output TaskParameter="Include" ItemName="FileWrites" />
-    </CreateItem>
-
-    <!-- Record the link ouput(s) -->
-    <!-- Stuff into an itemgroup -->
-    <CreateItem Include="$(TargetPath);$(TargetPdbPath)">
-      <Output TaskParameter="Include" ItemName="_TempTargetOutputs" />
-    </CreateItem>
-
-    <CreateItem Include="@(_TempTargetOutputs)" Condition="Exists('%(FullPath)')">
-      <Output TaskParameter="Include" ItemName="FileWrites" />
-    </CreateItem>
   </Target>
 
   <!--
@@ -2448,7 +2851,7 @@ Copyright (c) Microsoft Corporation. All rights reserved.
       Text="$(PostBuildEvent)"
       OldValue="!(TargetPath)"
       NewValue="$(TargetPath)">
-      
+
       <Output TaskParameter="Text" PropertyName="ExpandedPostBuildEvent" />
     </ReplaceString>
 
@@ -2456,7 +2859,7 @@ Copyright (c) Microsoft Corporation. All rights reserved.
       Text="$(ExpandedPostBuildEvent)"
       OldValue="!(TargetPdbPath)"
       NewValue="$(TargetPdbPath)">
-      
+
       <Output TaskParameter="Text" PropertyName="ExpandedPostBuildEvent" />
     </ReplaceString>
 
@@ -2541,14 +2944,13 @@ Copyright (c) Microsoft Corporation. All rights reserved.
       <Output TaskParameter="Include" ItemName="BuiltProjectOutputGroupOutput" />
     </CreateItem>
 
-    <GetCabList Database="@(BuiltProjectOutputGroupKeyOutput)" Condition="('$(OutputType)' == 'Package' or '$(OutputType)' == 'Module')">
+    <GetCabList Database="@(BuiltProjectOutputGroupKeyOutput)" Condition=" '$(OutputType)' == 'Package' ">
       <Output TaskParameter="CabList" ItemName="BuiltProjectOutputGroupOutput" />
     </GetCabList>
 
-    <GetLooseFileList Database="@(BuiltProjectOutputGroupKeyOutput)" Condition="('$(OutputType)' == 'Package' or '$(OutputType)' == 'Module')" >
+    <GetLooseFileList Database="@(BuiltProjectOutputGroupKeyOutput)" Condition=" '$(OutputType)' == 'Package' ">
       <Output TaskParameter="LooseFileList" ItemName="BuiltProjectOutputGroupOutput" />
     </GetLooseFileList>
-
   </Target>
 
   <!--
@@ -2683,6 +3085,18 @@ Copyright (c) Microsoft Corporation. All rights reserved.
     Name="SGenFilesOutputGroup"
     Outputs="@(SGenFilesOutputGroupOutput)"
     DependsOnTargets="$(SGenFilesOutputGroupDependsOn)" />
+
+  <!--
+  ==================================================================================================
+  GetNativeManifest & GetCopyToOutputDirectoryItems
+
+    Some project types expect these targets to be defined when they take a project reference. They
+    are normally defined in Microsoft.Common.targets but we don't include that targets so we define
+    the targets here.
+  ==================================================================================================
+  -->
+  <Target Name="GetNativeManifest"/>
+  <Target Name="GetCopyToOutputDirectoryItems" />
 
   <!-- Extension point: Define CustomAfterWixTargets to a .targets file that you want to include after this file. -->
   <Import Project="$(CustomAfterWixTargets)" Condition=" '$(CustomAfterWixTargets)' != '' and Exists('$(CustomAfterWixTargets)')" />

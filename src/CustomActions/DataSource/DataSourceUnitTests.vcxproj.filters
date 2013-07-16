@@ -1,0 +1,159 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{96457448-6080-4191-abeb-a4d65bd11fa7}</UniqueIdentifier>
+      <Extensions>cpp;c;cxx;rc;def;r;odl;idl;hpj;bat</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{d641a709-bfa2-4258-be1b-9c486c18b78b}</UniqueIdentifier>
+      <Extensions>h;hpp;hxx;hm;inl</Extensions>
+    </Filter>
+    <Filter Include="TestData">
+      <UniqueIdentifier>{d14c23a6-e446-4d61-8fb0-5a3515fe027b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="TestData\Binary">
+      <UniqueIdentifier>{ea0d8eb4-b2e2-4409-bd33-891351b57f10}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="BinaryIdPathResolver.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ConfigDataSourceUnitTests.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="CreateDatabasesUnitTests.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="DataFileUnitTests.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="DataSourceUnitTests.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="DSNUnitTests.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="SqlDMOUnitTests.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="SqlODBCUnitTests.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="StdAfxUnitTests.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="DataSourceUnitTests.rc">
+      <Filter>Source Files</Filter>
+    </ResourceCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="BinaryIdPathResolver.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ConfigDataSourceUnitTests.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="CreateDatabasesUnitTests.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="DataFileUnitTests.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="DSNUnitTests.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SqlDMOUnitTests.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SqlODBCUnitTests.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="StdAfxUnitTests.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="TestData\AccessDatabase.idt">
+      <Filter>TestData</Filter>
+    </None>
+    <None Include="TestData\Binary.idt">
+      <Filter>TestData</Filter>
+    </None>
+    <None Include="TestData\ComboBox.idt">
+      <Filter>TestData</Filter>
+    </None>
+    <None Include="TestData\DatabaseConnectionString.idt">
+      <Filter>TestData</Filter>
+    </None>
+    <None Include="TestData\MSSQL_CreateTable_Another.sql">
+      <Filter>TestData</Filter>
+    </None>
+    <None Include="TestData\MSSQL_CreateTable_NotEncoded.sql">
+      <Filter>TestData</Filter>
+    </None>
+    <None Include="TestData\MSSQLDatabase.idt">
+      <Filter>TestData</Filter>
+    </None>
+    <None Include="TestData\MSSQLDatabaseFileSpec.idt">
+      <Filter>TestData</Filter>
+    </None>
+    <None Include="TestData\MSSQLDatabaseOption.idt">
+      <Filter>TestData</Filter>
+    </None>
+    <None Include="TestData\MSSQLDataFile.idt">
+      <Filter>TestData</Filter>
+    </None>
+    <None Include="TestData\MSSQLDataFileParameter.idt">
+      <Filter>TestData</Filter>
+    </None>
+    <None Include="TestData\ODBCDataSourceConfig.idt">
+      <Filter>TestData</Filter>
+    </None>
+    <None Include="TestData\ODBCExecute.idt">
+      <Filter>TestData</Filter>
+    </None>
+    <None Include="TestData\RawOutput.xslt">
+      <Filter>TestData</Filter>
+    </None>
+    <None Include="TestData\Test.mdb">
+      <Filter>TestData</Filter>
+    </None>
+    <None Include="TestData\Binary\Access_CreateTable_NotEncoded.ibd">
+      <Filter>TestData\Binary</Filter>
+    </None>
+    <None Include="TestData\Binary\Access_ExecuteManyGoStatements.ibd">
+      <Filter>TestData\Binary</Filter>
+    </None>
+    <None Include="TestData\Binary\MSSQL_BinarySqlIncluded.ibd">
+      <Filter>TestData\Binary</Filter>
+    </None>
+    <None Include="TestData\Binary\MSSQL_BinarySqlWithInclude.ibd">
+      <Filter>TestData\Binary</Filter>
+    </None>
+    <None Include="TestData\Binary\MSSQL_BinaryTable.ibd">
+      <Filter>TestData\Binary</Filter>
+    </None>
+    <None Include="TestData\Binary\MSSQL_BinaryTable2.ibd">
+      <Filter>TestData\Binary</Filter>
+    </None>
+    <None Include="TestData\Binary\MSSQL_CreateTable_Encoded.ibd">
+      <Filter>TestData\Binary</Filter>
+    </None>
+    <None Include="TestData\Binary\MSSQL_CreateTable_NotEncoded.ibd">
+      <Filter>TestData\Binary</Filter>
+    </None>
+    <None Include="TestData\Binary\MSSQL_ExecuteIgnoreErrors.ibd">
+      <Filter>TestData\Binary</Filter>
+    </None>
+    <None Include="TestData\Binary\MSSQL_ExecuteManyGoStatements.ibd">
+      <Filter>TestData\Binary</Filter>
+    </None>
+    <None Include="TestData\Binary\MSSQL_Select.ibd">
+      <Filter>TestData\Binary</Filter>
+    </None>
+  </ItemGroup>
+</Project>
