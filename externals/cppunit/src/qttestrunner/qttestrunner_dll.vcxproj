@@ -1,0 +1,265 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{0D1BB705-1AE7-395D-A78A-2012D1F25FC9}</ProjectGuid>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <UseOfMfc>false</UseOfMfc>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <UseOfMfc>false</UseOfMfc>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup>
+    <_ProjectFileVersion>10.0.30319.1</_ProjectFileVersion>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">.\ReleaseDLL\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">.\ReleaseDLL\</IntDir>
+    <IgnoreImportLibrary Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</IgnoreImportLibrary>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">.\DebugDLL\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">.\DebugDLL\</IntDir>
+    <IgnoreImportLibrary Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</IgnoreImportLibrary>
+    <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" />
+    <CodeAnalysisRuleSet Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">AllRules.ruleset</CodeAnalysisRuleSet>
+    <CodeAnalysisRules Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" />
+    <CodeAnalysisRuleAssemblies Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" />
+    <CodeAnalysisRuleSet Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">AllRules.ruleset</CodeAnalysisRuleSet>
+    <CodeAnalysisRules Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" />
+    <CodeAnalysisRuleAssemblies Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" />
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <AdditionalOptions>-Zm200 -GX -GX -w34100 -w34189 %(AdditionalOptions)</AdditionalOptions>
+      <Optimization>MinSpace</Optimization>
+      <AdditionalIncludeDirectories>..\..\include;$(QTDIR)\include;.;tmp\moc\;$(QTDIR)\mkspecs\win32-msvc.net;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>QTTESTRUNNER_DLL_BUILD; _WINDOWS;UNICODE;WIN32;QT_DLL;QT_THREAD_SUPPORT;NDEBUG;QT_NO_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessToFile>false</PreprocessToFile>
+      <PreprocessSuppressLineNumbers>false</PreprocessSuppressLineNumbers>
+      <MinimalRebuild>true</MinimalRebuild>
+      <ExceptionHandling>Sync</ExceptionHandling>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <BufferSecurityCheck>false</BufferSecurityCheck>
+      <RuntimeTypeInfo>true</RuntimeTypeInfo>
+      <AssemblerListingLocation>.\ReleaseDLL/</AssemblerListingLocation>
+      <ObjectFileName>.\ReleaseDLL/</ObjectFileName>
+      <ProgramDataBaseFileName>.\ReleaseDLL/</ProgramDataBaseFileName>
+      <WarningLevel>Level3</WarningLevel>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <CompileAs>Default</CompileAs>
+    </ClCompile>
+    <Link>
+      <AdditionalDependencies>cppunit_dll.lib;qt-mt335.lib;kernel32.lib;user32.lib;gdi32.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;imm32.lib;winmm.lib;wsock32.lib;winspool.lib;delayimp.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <OutputFile>.\ReleaseDLL\qttestrunner_dll.dll</OutputFile>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+      <AdditionalLibraryDirectories>..\..\lib;$(QTDIR)\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <DelayLoadDLLs>comdlg32.dll;oleaut32.dll;winmm.dll;wsock32.dll;winspool.dll;%(DelayLoadDLLs)</DelayLoadDLLs>
+      <GenerateDebugInformation>false</GenerateDebugInformation>
+      <ProgramDatabaseFile>
+      </ProgramDatabaseFile>
+      <SubSystem>Windows</SubSystem>
+      <BaseAddress>
+      </BaseAddress>
+      <TargetMachine>MachineX86</TargetMachine>
+    </Link>
+    <Midl>
+      <WarningLevel>0</WarningLevel>
+      <DefaultCharType>Unsigned</DefaultCharType>
+      <EnableErrorChecks>None</EnableErrorChecks>
+    </Midl>
+    <PostBuildEvent>
+      <Message>Copying $(TargetName).dll and $(TargetName).lib to lib/</Message>
+      <Command>copy "$(TargetDir)$(TargetName).dll" ..\..\lib\"$(TargetName)".dll
+copy "$(TargetDir)$(TargetName).lib" ..\..\lib\"$(TargetName)".lib
+</Command>
+    </PostBuildEvent>
+    <ResourceCompile>
+      <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ResourceCompile>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <AdditionalOptions>-Zm200 -GX -GX -w34100 -w34189 %(AdditionalOptions)</AdditionalOptions>
+      <Optimization>Disabled</Optimization>
+      <AdditionalIncludeDirectories>..\..\include;$(QTDIR)\include;.;$(QTDIR)\mkspecs\win32-msvc.net;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>QTTESTRUNNER_DLL_BUILD; _WINDOWS;UNICODE;WIN32;QT_DLL;QT_THREAD_SUPPORT;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessToFile>false</PreprocessToFile>
+      <PreprocessSuppressLineNumbers>false</PreprocessSuppressLineNumbers>
+      <MinimalRebuild>false</MinimalRebuild>
+      <ExceptionHandling>Sync</ExceptionHandling>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+      <BufferSecurityCheck>false</BufferSecurityCheck>
+      <RuntimeTypeInfo>true</RuntimeTypeInfo>
+      <AssemblerListingLocation>.\DebugDLL/</AssemblerListingLocation>
+      <ObjectFileName>.\DebugDLL/</ObjectFileName>
+      <ProgramDataBaseFileName>.\DebugDLL/</ProgramDataBaseFileName>
+      <WarningLevel>Level3</WarningLevel>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+      <DebugInformationFormat>OldStyle</DebugInformationFormat>
+      <CompileAs>Default</CompileAs>
+    </ClCompile>
+    <Link>
+      <AdditionalDependencies>cppunitd_dll.lib;qt-mt335.lib;kernel32.lib;user32.lib;gdi32.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;imm32.lib;winmm.lib;wsock32.lib;winspool.lib;delayimp.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <OutputFile>.\DebugDLL\qttestrunnerd_dll.dll</OutputFile>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+      <AdditionalLibraryDirectories>..\..\lib;$(QTDIR)\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <ProgramDatabaseFile>
+      </ProgramDatabaseFile>
+      <SubSystem>Windows</SubSystem>
+      <BaseAddress>
+      </BaseAddress>
+      <ImportLibrary>.\DebugDLL\qttestrunnerd_dll.lib</ImportLibrary>
+      <TargetMachine>MachineX86</TargetMachine>
+    </Link>
+    <Midl>
+      <WarningLevel>0</WarningLevel>
+      <DefaultCharType>Unsigned</DefaultCharType>
+      <EnableErrorChecks>None</EnableErrorChecks>
+    </Midl>
+    <PostBuildEvent>
+      <Message>Copying $(TargetName).dll and $(TargetName).lib to lib/</Message>
+      <Command>copy "$(TargetDir)$(TargetName).dll" ..\..\lib\"$(TargetName)".dll
+copy "$(TargetDir)$(TargetName).lib" ..\..\lib\"$(TargetName)".lib
+</Command>
+    </PostBuildEvent>
+    <ResourceCompile>
+      <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ResourceCompile>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClCompile Include="MostRecentTests.cpp" />
+    <ClCompile Include="QtTestRunner.cpp" />
+    <ClCompile Include="TestBrowserDlgImpl.cpp" />
+    <ClCompile Include="TestFailureInfo.cpp" />
+    <ClCompile Include="TestFailureListViewItem.cpp" />
+    <ClCompile Include="TestListViewItem.cpp" />
+    <ClCompile Include="TestRunnerDlgImpl.cpp" />
+    <ClCompile Include="TestRunnerFailureEvent.cpp" />
+    <ClCompile Include="TestRunnerModel.cpp" />
+    <ClCompile Include="TestRunnerModelThreadInterface.cpp" />
+    <ClCompile Include="TestRunnerTestCaseRunEvent.cpp" />
+    <ClCompile Include="TestRunnerThread.cpp" />
+    <ClCompile Include="TestRunnerThreadEvent.cpp" />
+    <ClCompile Include="TestRunnerThreadFinishedEvent.cpp" />
+    <ClCompile Include="tmp\moc\moc_MostRecentTests.cpp" />
+    <ClCompile Include="tmp\moc\moc_testbrowserdlg.cpp" />
+    <ClCompile Include="tmp\moc\moc_TestBrowserDlgImpl.cpp" />
+    <ClCompile Include="tmp\moc\moc_testrunnerdlg.cpp" />
+    <ClCompile Include="tmp\moc\moc_TestRunnerDlgImpl.cpp" />
+    <ClCompile Include="tmp\moc\moc_TestRunnerModel.cpp" />
+    <ClCompile Include="testbrowserdlg.cpp" />
+    <ClCompile Include="testrunnerdlg.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="MostRecentTests.h">
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Moc%27ing MostRecentTests.h...</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(QTDIR)\bin\moc.exe .\MostRecentTests.h -o tmp\moc\moc_MostRecentTests.cpp
+</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(QTDIR)\bin\moc.exe;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">tmp\moc\moc_MostRecentTests.cpp;%(Outputs)</Outputs>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Moc%27ing MostRecentTests.h...</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(QTDIR)\bin\moc.exe .\MostRecentTests.h -o tmp\moc\moc_MostRecentTests.cpp
+</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(QTDIR)\bin\moc.exe;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">tmp\moc\moc_MostRecentTests.cpp;%(Outputs)</Outputs>
+    </CustomBuild>
+    <CustomBuild Include="TestBrowserDlgImpl.h">
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Moc%27ing TestBrowserDlgImpl.h...</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(QTDIR)\bin\moc.exe .\TestBrowserDlgImpl.h -o tmp\moc\moc_TestBrowserDlgImpl.cpp
+</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(QTDIR)\bin\moc.exe;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">tmp\moc\moc_TestBrowserDlgImpl.cpp;%(Outputs)</Outputs>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Moc%27ing TestBrowserDlgImpl.h...</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(QTDIR)\bin\moc.exe .\TestBrowserDlgImpl.h -o tmp\moc\moc_TestBrowserDlgImpl.cpp
+</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(QTDIR)\bin\moc.exe;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">tmp\moc\moc_TestBrowserDlgImpl.cpp;%(Outputs)</Outputs>
+    </CustomBuild>
+    <ClInclude Include="TestFailureInfo.h" />
+    <ClInclude Include="TestFailureListViewItem.h" />
+    <ClInclude Include="TestListViewItem.h" />
+    <CustomBuild Include="TestRunnerDlgImpl.h">
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Moc%27ing TestRunnerDlgImpl.h...</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(QTDIR)\bin\moc.exe .\TestRunnerDlgImpl.h -o tmp\moc\moc_TestRunnerDlgImpl.cpp
+</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(QTDIR)\bin\moc.exe;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">tmp\moc\moc_TestRunnerDlgImpl.cpp;%(Outputs)</Outputs>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Moc%27ing TestRunnerDlgImpl.h...</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(QTDIR)\bin\moc.exe .\TestRunnerDlgImpl.h -o tmp\moc\moc_TestRunnerDlgImpl.cpp
+</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(QTDIR)\bin\moc.exe;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">tmp\moc\moc_TestRunnerDlgImpl.cpp;%(Outputs)</Outputs>
+    </CustomBuild>
+    <ClInclude Include="TestRunnerFailureEvent.h" />
+    <CustomBuild Include="TestRunnerModel.h">
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Moc%27ing TestRunnerModel.h...</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(QTDIR)\bin\moc.exe .\TestRunnerModel.h -o tmp\moc\moc_TestRunnerModel.cpp
+</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(QTDIR)\bin\moc.exe;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">tmp\moc\moc_TestRunnerModel.cpp;%(Outputs)</Outputs>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Moc%27ing TestRunnerModel.h...</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(QTDIR)\bin\moc.exe .\TestRunnerModel.h -o tmp\moc\moc_TestRunnerModel.cpp
+</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(QTDIR)\bin\moc.exe;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">tmp\moc\moc_TestRunnerModel.cpp;%(Outputs)</Outputs>
+    </CustomBuild>
+    <ClInclude Include="TestRunnerModelThreadInterface.h" />
+    <ClInclude Include="TestRunnerTestCaseRunEvent.h" />
+    <ClInclude Include="TestRunnerThread.h" />
+    <ClInclude Include="TestRunnerThreadEvent.h" />
+    <ClInclude Include="TestRunnerThreadFinishedEvent.h" />
+    <ClInclude Include="testbrowserdlg.h" />
+    <ClInclude Include="testrunnerdlg.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="testbrowserdlg.ui">
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Uic%27ing testbrowserdlg.ui...</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(QTDIR)\bin\uic.exe ".\testbrowserdlg.ui" -o ".\testbrowserdlg.h" &amp;&amp; $(QTDIR)\bin\uic.exe ".\testbrowserdlg.ui" -i ".\testbrowserdlg.h" -o ".\testbrowserdlg.cpp" &amp;&amp; $(QTDIR)\bin\moc.exe ".\testbrowserdlg.h" -o "tmp\moc\moc_testbrowserdlg.cpp"
+</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(QTDIR)\bin\moc.exe;$(QTDIR)\bin\uic.exe;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">.\testbrowserdlg.h;.\testbrowserdlg.cpp;tmp\moc\moc_testbrowserdlg.cpp;%(Outputs)</Outputs>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Uic%27ing testbrowserdlg.ui...</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(QTDIR)\bin\uic.exe ".\testbrowserdlg.ui" -o ".\testbrowserdlg.h" &amp;&amp; $(QTDIR)\bin\uic.exe ".\testbrowserdlg.ui" -i ".\testbrowserdlg.h" -o ".\testbrowserdlg.cpp" &amp;&amp; $(QTDIR)\bin\moc.exe ".\testbrowserdlg.h" -o "tmp\moc\moc_testbrowserdlg.cpp"
+</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(QTDIR)\bin\moc.exe;$(QTDIR)\bin\uic.exe;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">.\testbrowserdlg.h;.\testbrowserdlg.cpp;tmp\moc\moc_testbrowserdlg.cpp;%(Outputs)</Outputs>
+    </CustomBuild>
+    <CustomBuild Include="testrunnerdlg.ui">
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Uic%27ing testrunnerdlg.ui...</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(QTDIR)\bin\uic.exe ".\testrunnerdlg.ui" -o ".\testrunnerdlg.h" &amp;&amp; $(QTDIR)\bin\uic.exe ".\testrunnerdlg.ui" -i ".\testrunnerdlg.h" -o ".\testrunnerdlg.cpp" &amp;&amp; $(QTDIR)\bin\moc.exe ".\testrunnerdlg.h" -o "tmp\moc\moc_testrunnerdlg.cpp"
+</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(QTDIR)\bin\moc.exe;$(QTDIR)\bin\uic.exe;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">.\testrunnerdlg.h;.\testrunnerdlg.cpp;tmp\moc\moc_testrunnerdlg.cpp;%(Outputs)</Outputs>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Uic%27ing testrunnerdlg.ui...</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(QTDIR)\bin\uic.exe ".\testrunnerdlg.ui" -o ".\testrunnerdlg.h" &amp;&amp; $(QTDIR)\bin\uic.exe ".\testrunnerdlg.ui" -i ".\testrunnerdlg.h" -o ".\testrunnerdlg.cpp" &amp;&amp; $(QTDIR)\bin\moc.exe ".\testrunnerdlg.h" -o "tmp\moc\moc_testrunnerdlg.cpp"
+</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(QTDIR)\bin\moc.exe;$(QTDIR)\bin\uic.exe;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">.\testrunnerdlg.h;.\testrunnerdlg.cpp;tmp\moc\moc_testrunnerdlg.cpp;%(Outputs)</Outputs>
+    </CustomBuild>
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

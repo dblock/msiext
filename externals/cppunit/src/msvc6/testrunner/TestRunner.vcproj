@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="Windows-1252"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
-	Version="8.00"
+	Version="9.00"
 	Name="TestRunner"
-	ProjectGUID="{90A7CC2D-8E05-4C80-93F0-47020C8CAC10}"
+	ProjectGUID="{914D0749-B9BA-40CD-9E84-41A68786848A}"
 	Keyword="MFCProj"
+	TargetFrameworkVersion="0"
 	>
 	<Platforms>
 		<Platform
@@ -84,6 +85,8 @@
 				ModuleDefinitionFile=".\TestRunner.def"
 				ProgramDatabaseFile=".\Release/TestRunner.pdb"
 				SubSystem="2"
+				RandomizedBaseAddress="1"
+				DataExecutionPrevention="0"
 				ImportLibrary=".\Release/TestRunner.lib"
 				TargetMachine="1"
 			/>
@@ -106,9 +109,6 @@
 			/>
 			<Tool
 				Name="VCAppVerifierTool"
-			/>
-			<Tool
-				Name="VCWebDeploymentTool"
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
@@ -187,6 +187,8 @@
 				GenerateDebugInformation="true"
 				ProgramDatabaseFile=".\DebugUnicode/testrunnerud.pdb"
 				SubSystem="2"
+				RandomizedBaseAddress="1"
+				DataExecutionPrevention="0"
 				ImportLibrary=".\DebugUnicode/testrunnerud.lib"
 				TargetMachine="1"
 			/>
@@ -209,9 +211,6 @@
 			/>
 			<Tool
 				Name="VCAppVerifierTool"
-			/>
-			<Tool
-				Name="VCWebDeploymentTool"
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
@@ -289,6 +288,8 @@
 				GenerateDebugInformation="true"
 				ProgramDatabaseFile=".\Debug/testrunnerd.pdb"
 				SubSystem="2"
+				RandomizedBaseAddress="1"
+				DataExecutionPrevention="0"
 				ImportLibrary=".\Debug/testrunnerd.lib"
 				TargetMachine="1"
 			/>
@@ -311,9 +312,6 @@
 			/>
 			<Tool
 				Name="VCAppVerifierTool"
-			/>
-			<Tool
-				Name="VCWebDeploymentTool"
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
@@ -392,6 +390,8 @@
 				ModuleDefinitionFile=".\TestRunner.def"
 				ProgramDatabaseFile=".\ReleaseUnicode/testrunneru.pdb"
 				SubSystem="2"
+				RandomizedBaseAddress="1"
+				DataExecutionPrevention="0"
 				ImportLibrary=".\ReleaseUnicode/testrunneru.lib"
 				TargetMachine="1"
 			/>
@@ -414,9 +414,6 @@
 			/>
 			<Tool
 				Name="VCAppVerifierTool"
-			/>
-			<Tool
-				Name="VCWebDeploymentTool"
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"

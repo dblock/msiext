@@ -3,7 +3,7 @@
 #include <cppunit/ui/text/TestRunner.h>
 
 
-int main(int argc, char* argv[])
+int main()
 {
   CPPUNIT_NS::Test *suite = CPPUNIT_NS::TestFactoryRegistry::getRegistry().makeTest();
   CPPUNIT_NS::TextUi::TestRunner runner;

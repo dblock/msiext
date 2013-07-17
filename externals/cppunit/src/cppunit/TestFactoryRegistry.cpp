@@ -101,7 +101,7 @@ TestFactoryRegistry::getRegistry( const std::string &name )
 
 
 void 
-TestFactoryRegistry::registerFactory( const std::string &name,
+TestFactoryRegistry::registerFactory( const std::string &,
                                       TestFactory *factory )
 {
   registerFactory( factory );

@@ -493,7 +493,7 @@ there was an error.
 \link CppUnit::TextUi::TestRunner::run() TestRunner::run() \endlink returns 
 a boolean indicating if the run was successful.
 
-Updating our main programm, we obtains:
+Updating our main programm, we obtain:
 \code
 #include <cppunit/extensions/TestFactoryRegistry.h>
 #include <cppunit/ui/text/TestRunner.h>

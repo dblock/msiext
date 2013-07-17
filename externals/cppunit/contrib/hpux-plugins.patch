@@ -1,0 +1,281 @@
+diff -Naur cppunit-1.9.11/config/ac_dll.m4 cppunit-1.9.11.hp/config/ac_dll.m4
+--- cppunit-1.9.11/config/ac_dll.m4	1969-12-31 16:00:00.000000000 -0800
++++ cppunit-1.9.11.hp/config/ac_dll.m4	2003-04-14 10:02:10.000000000 -0700
+@@ -0,0 +1,47 @@
++
++# AC_LTDL_DLLIB
++# -------------
++AC_DEFUN([AC_LTDL_DLLIB],
++[LIBADD_DL=
++AC_SUBST(LIBADD_DL)
++
++AC_CHECK_FUNC([shl_load],
++      [AC_DEFINE([HAVE_SHL_LOAD], [1],
++		 [Define if you have the shl_load function.])],
++  [AC_CHECK_LIB([dld], [shl_load],
++	[AC_DEFINE([HAVE_SHL_LOAD], [1],
++		   [Define if you have the shl_load function.])
++	LIBADD_DL="$LIBADD_DL -ldld"],
++    [AC_CHECK_LIB([dl], [dlopen],
++	  [AC_DEFINE([HAVE_LIBDL], [1],
++		     [Define if you have the libdl library or equivalent.])
++	  LIBADD_DL="-ldl"],
++      [AC_TRY_LINK([#if HAVE_DLFCN_H
++#  include <dlfcn.h>
++#endif
++      ],
++	[dlopen(0, 0);],
++	    [AC_DEFINE([HAVE_LIBDL], [1],
++		       [Define if you have the libdl library or equivalent.])],
++	[AC_CHECK_LIB([svld], [dlopen],
++	      [AC_DEFINE([HAVE_LIBDL], [1],
++			 [Define if you have the libdl library or equivalent.])
++	      LIBADD_DL="-lsvld"],
++	  [AC_CHECK_LIB([dld], [dld_link],
++	        [AC_DEFINE([HAVE_DLD], [1],
++			   [Define if you have the GNU dld library.])
++	 	LIBADD_DL="$LIBADD_DL -ldld"
++          ])
++        ])
++      ])
++    ])
++  ])
++])
++
++if test "x$ac_cv_func_dlopen" = xyes || test "x$ac_cv_lib_dl_dlopen" = xyes; then
++ LIBS_SAVE="$LIBS"
++ LIBS="$LIBS $LIBADD_DL"
++ AC_CHECK_FUNCS(dlerror)
++ LIBS="$LIBS_SAVE"
++fi
++])# AC_LTDL_DLLIB
+diff -Naur cppunit-1.9.11/configure.in cppunit-1.9.11.hp/configure.in
+--- cppunit-1.9.11/configure.in	2002-09-05 00:40:04.000000000 -0700
++++ cppunit-1.9.11.hp/configure.in	2003-04-14 10:18:11.000000000 -0700
+@@ -59,6 +59,9 @@
+ 
+ AC_PROG_LIBTOOL
+ 
++# check for dlopen,dlsym... or shl_load, shl_findsym...
++AC_LTDL_DLLIB
++
+ # check for doxygen
+ BB_ENABLE_DOXYGEN
+ 
+diff -Naur cppunit-1.9.11/examples/cppunittest/Makefile.am cppunit-1.9.11.hp/examples/cppunittest/Makefile.am
+--- cppunit-1.9.11/examples/cppunittest/Makefile.am	2003-03-15 06:54:34.000000000 -0800
++++ cppunit-1.9.11.hp/examples/cppunittest/Makefile.am	2003-04-14 10:26:48.000000000 -0700
+@@ -76,6 +76,6 @@
+ cppunittestmain_LDADD= \
+   $(top_builddir)/src/cppunit/libcppunit.la 
+ 
+-cppunittestmain_LDFLAGS = -ldl
++cppunittestmain_LDFLAGS = $(LIBADD_DL)
+ 
+ 
+diff -Naur cppunit-1.9.11/examples/hierarchy/Makefile.am cppunit-1.9.11.hp/examples/hierarchy/Makefile.am
+--- cppunit-1.9.11/examples/hierarchy/Makefile.am	2002-04-20 15:26:56.000000000 -0700
++++ cppunit-1.9.11.hp/examples/hierarchy/Makefile.am	2003-04-14 10:26:30.000000000 -0700
+@@ -16,4 +16,4 @@
+ hierarchy_LDADD= \
+   $(top_builddir)/src/cppunit/libcppunit.la 
+ 
+-hierarchy_LDFLAGS = -ldl
++hierarchy_LDFLAGS = $(LIBADD_DL)
+diff -Naur cppunit-1.9.11/examples/money/Makefile.am cppunit-1.9.11.hp/examples/money/Makefile.am
+--- cppunit-1.9.11/examples/money/Makefile.am	2002-04-21 05:50:44.000000000 -0700
++++ cppunit-1.9.11.hp/examples/money/Makefile.am	2003-04-14 10:27:14.000000000 -0700
+@@ -17,5 +17,5 @@
+ MoneyApp_LDADD= \
+   $(top_builddir)/src/cppunit/libcppunit.la 
+ 
+-MoneyApp_LDFLAGS = $(CPPUNIT_LIBS) -ldl
++MoneyApp_LDFLAGS = $(CPPUNIT_LIBS) $(LIBADD_DL)
+ 
+diff -Naur cppunit-1.9.11/examples/simple/Makefile.am cppunit-1.9.11.hp/examples/simple/Makefile.am
+--- cppunit-1.9.11/examples/simple/Makefile.am	2002-04-20 14:51:33.000000000 -0700
++++ cppunit-1.9.11.hp/examples/simple/Makefile.am	2003-04-14 10:27:05.000000000 -0700
+@@ -9,4 +9,4 @@
+ simple_LDADD= \
+   $(top_builddir)/src/cppunit/libcppunit.la 
+ 
+-simple_LDFLAGS = -ldl
+\ No newline at end of file
++simple_LDFLAGS = $(LIBADD_DL)
+diff -Naur cppunit-1.9.11/include/cppunit/config/SelectDllLoader.h cppunit-1.9.11.hp/include/cppunit/config/SelectDllLoader.h
+--- cppunit-1.9.11/include/cppunit/config/SelectDllLoader.h	2002-04-20 14:51:33.000000000 -0700
++++ cppunit-1.9.11.hp/include/cppunit/config/SelectDllLoader.h	2003-04-14 11:29:38.000000000 -0700
+@@ -54,8 +54,12 @@
+ #elif defined(__BEOS__)
+ #define CPPUNIT_HAVE_BEOS_DLL_LOADER 1
+ 
++// Is Unix platform and have shl_load()
++#elif defined(CPPUNIT_HAVE_SHL_LOAD)
++#define CPPUNIT_HAVE_UNIX_SHL_LOADER 1
++
+ // Is Unix platform and have include <dlfcn.h>
+-#elif defined(CPPUNIT_HAVE_DLFCN_H)
++#elif defined(CPPUNIT_HAVE_LIBDL)
+ #define CPPUNIT_HAVE_UNIX_DLL_LOADER 1
+ 
+ // Otherwise, disable support for DllLoader
+diff -Naur cppunit-1.9.11/include/cppunit/plugin/TestPlugIn.h cppunit-1.9.11.hp/include/cppunit/plugin/TestPlugIn.h
+--- cppunit-1.9.11/include/cppunit/plugin/TestPlugIn.h	2002-08-29 12:27:07.000000000 -0700
++++ cppunit-1.9.11.hp/include/cppunit/plugin/TestPlugIn.h	2003-04-14 10:10:23.000000000 -0700
+@@ -157,7 +157,7 @@
+   typedef char __CppUnitPlugInImplementMainDummyTypeDef
+ 
+ // Unix
+-#elif defined(CPPUNIT_HAVE_UNIX_DLL_LOADER)
++#elif defined(CPPUNIT_HAVE_UNIX_DLL_LOADER) || defined(HAVE_UNIX_SHL_LOADER)
+ #define CPPUNIT_PLUGIN_IMPLEMENT_MAIN()               \
+   int main( int argc, char *argv[] )                  \
+   {                                                   \
+diff -Naur cppunit-1.9.11/include/cppunit/tools/Algorithm.h cppunit-1.9.11.hp/include/cppunit/tools/Algorithm.h
+--- cppunit-1.9.11/include/cppunit/tools/Algorithm.h	2003-03-15 01:23:34.000000000 -0800
++++ cppunit-1.9.11.hp/include/cppunit/tools/Algorithm.h	2003-04-14 11:37:38.000000000 -0700
+@@ -20,4 +20,4 @@
+ CPPUNIT_NS_END
+ 
+ 
+-#endif // CPPUNIT_TOOLS_ALGORITHM_H_INCLUDED
+\ No newline at end of file
++#endif // CPPUNIT_TOOLS_ALGORITHM_H_INCLUDED
+diff -Naur cppunit-1.9.11/Makefile.am cppunit-1.9.11.hp/Makefile.am
+--- cppunit-1.9.11/Makefile.am	2002-08-30 13:05:14.000000000 -0700
++++ cppunit-1.9.11.hp/Makefile.am	2003-04-14 10:05:22.000000000 -0700
+@@ -26,7 +26,8 @@
+ 	config/ac_cxx_namespaces.m4			\
+ 	config/ac_cxx_rtti.m4				\
+ 	config/ac_cxx_string_compare_string_first.m4	\
+-	config/bb_enable_doxygen.m4
++	config/bb_enable_doxygen.m4			\
++	config/ac_dll.m4
+ 
+ m4datadir = $(datadir)/aclocal
+ m4data_DATA = cppunit.m4
+diff -Naur cppunit-1.9.11/src/cppunit/BeOsDynamicLibraryManager.cpp cppunit-1.9.11.hp/src/cppunit/BeOsDynamicLibraryManager.cpp
+--- cppunit-1.9.11/src/cppunit/BeOsDynamicLibraryManager.cpp	2002-07-11 22:59:57.000000000 -0700
++++ cppunit-1.9.11.hp/src/cppunit/BeOsDynamicLibraryManager.cpp	2003-04-14 11:36:45.000000000 -0700
+@@ -46,4 +46,4 @@
+ CPPUNIT_NS_END
+ 
+ 
+-#endif // defined(CPPUNIT_HAVE_BEOS_DLL_LOADER)
+\ No newline at end of file
++#endif // defined(CPPUNIT_HAVE_BEOS_DLL_LOADER)
+diff -Naur cppunit-1.9.11/src/cppunit/Makefile.am cppunit-1.9.11.hp/src/cppunit/Makefile.am
+--- cppunit-1.9.11/src/cppunit/Makefile.am	2002-08-28 15:20:52.000000000 -0700
++++ cppunit-1.9.11.hp/src/cppunit/Makefile.am	2003-04-14 15:28:34.000000000 -0700
+@@ -54,6 +54,7 @@
+   TextTestRunner.cpp \
+   TypeInfoHelper.cpp \
+   UnixDynamicLibraryManager.cpp \
++  ShlDynamicLibraryManager.cpp \
+   XmlDocument.cpp \
+   XmlElement.cpp \
+   XmlOutputter.cpp \
+diff -Naur cppunit-1.9.11/src/cppunit/ShlDynamicLibraryManager.cpp cppunit-1.9.11.hp/src/cppunit/ShlDynamicLibraryManager.cpp
+--- cppunit-1.9.11/src/cppunit/ShlDynamicLibraryManager.cpp	1969-12-31 16:00:00.000000000 -0800
++++ cppunit-1.9.11.hp/src/cppunit/ShlDynamicLibraryManager.cpp	2003-04-14 10:07:33.000000000 -0700
+@@ -0,0 +1,52 @@
++#include <cppunit/Portability.h>
++
++#if defined(CPPUNIT_HAVE_UNIX_SHL_LOADER)
++#include <cppunit/plugin/DynamicLibraryManager.h>
++
++#include <dl.h>
++#include <unistd.h>
++
++
++CPPUNIT_NS_BEGIN
++
++
++DynamicLibraryManager::LibraryHandle 
++DynamicLibraryManager::doLoadLibrary( const std::string &libraryName )
++{
++   return ::shl_load(libraryName.c_str(), BIND_IMMEDIATE, 0L);
++   //return ::dlopen( libraryName.c_str(), RTLD_NOW );   // RTLD_LAZY ?
++}
++
++
++void 
++DynamicLibraryManager::doReleaseLibrary()
++{
++  ::shl_unload( (shl_t)m_libraryHandle);
++  //::dlclose( m_libraryHandle);
++}
++
++
++DynamicLibraryManager::Symbol 
++DynamicLibraryManager::doFindSymbol( const std::string &symbol )
++{
++   DynamicLibraryManager::Symbol L_symaddr = 0;
++   if ( ::shl_findsym ( (shl_t*)(&m_libraryHandle), symbol.c_str(), TYPE_UNDEFINED, &L_symaddr ) == 0 ) {
++      return L_symaddr;
++   } else {
++      return 0;
++   }
++   //return ::dlsym ( m_libraryHandle, symbol.c_str() );
++}
++
++
++std::string 
++DynamicLibraryManager::getLastErrorDetail() const
++{
++  return "";
++}
++
++
++CPPUNIT_NS_END
++
++
++#endif // defined(CPPUNIT_HAVE_UNIX_SHL_LOADER)
+diff -Naur cppunit-1.9.11/src/cppunit/TestDecorator.cpp cppunit-1.9.11.hp/src/cppunit/TestDecorator.cpp
+--- cppunit-1.9.11/src/cppunit/TestDecorator.cpp	2002-08-03 08:47:52.000000000 -0700
++++ cppunit-1.9.11.hp/src/cppunit/TestDecorator.cpp	2003-04-14 11:36:25.000000000 -0700
+@@ -50,4 +50,4 @@
+ }
+ 
+ 
+-CPPUNIT_NS_END
+\ No newline at end of file
++CPPUNIT_NS_END
+diff -Naur cppunit-1.9.11/src/cppunit/UnixDynamicLibraryManager.cpp cppunit-1.9.11.hp/src/cppunit/UnixDynamicLibraryManager.cpp
+--- cppunit-1.9.11/src/cppunit/UnixDynamicLibraryManager.cpp	2002-07-11 22:59:58.000000000 -0700
++++ cppunit-1.9.11.hp/src/cppunit/UnixDynamicLibraryManager.cpp	2003-04-14 11:37:50.000000000 -0700
+@@ -41,4 +41,4 @@
+ CPPUNIT_NS_END
+ 
+ 
+-#endif // defined(CPPUNIT_HAVE_UNIX_DLL_LOADER)
+\ No newline at end of file
++#endif // defined(CPPUNIT_HAVE_UNIX_DLL_LOADER)
+diff -Naur cppunit-1.9.11/src/cppunit/Win32DynamicLibraryManager.cpp cppunit-1.9.11.hp/src/cppunit/Win32DynamicLibraryManager.cpp
+--- cppunit-1.9.11/src/cppunit/Win32DynamicLibraryManager.cpp	2002-07-11 22:59:58.000000000 -0700
++++ cppunit-1.9.11.hp/src/cppunit/Win32DynamicLibraryManager.cpp	2003-04-14 11:38:01.000000000 -0700
+@@ -67,4 +67,4 @@
+ CPPUNIT_NS_END
+ 
+ 
+-#endif // defined(CPPUNIT_HAVE_WIN32_DLL_LOADER)
+\ No newline at end of file
++#endif // defined(CPPUNIT_HAVE_WIN32_DLL_LOADER)
+diff -Naur cppunit-1.9.11/src/DllPlugInTester/Makefile.am cppunit-1.9.11.hp/src/DllPlugInTester/Makefile.am
+--- cppunit-1.9.11/src/DllPlugInTester/Makefile.am	2002-04-21 03:57:52.000000000 -0700
++++ cppunit-1.9.11.hp/src/DllPlugInTester/Makefile.am	2003-04-14 10:26:09.000000000 -0700
+@@ -14,7 +14,7 @@
+ DllPlugInTester_LDADD= \
+   $(top_builddir)/src/cppunit/libcppunit.la
+ 
+-DllPlugInTester_LDFLAGS = -ldl
++DllPlugInTester_LDFLAGS = $(LIBADD_DL)
+ 
+ DllPlugInTesterTest_SOURCES = DllPlugInTesterTest.cpp \
+ 	CommandLineParser.cpp \
+@@ -25,4 +25,4 @@
+ DllPlugInTesterTest_LDADD= \
+   $(top_builddir)/src/cppunit/libcppunit.la
+ 
+-DllPlugInTesterTest_LDFLAGS = -ldl
++DllPlugInTesterTest_LDFLAGS = $(LIBADD_DL)

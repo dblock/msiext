@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?include ..\..\..\src\Version\Version.wxi ?>
 <?define BinDir=$(var.MSBuildProjectDirectory)\target\$(var.Configuration)\bin ?>
-<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi" xmlns:AppSecInc="http://schemas.appsecinc.com/wix/DataSourceExtension">
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi" 
+     xmlns:AppSecInc="http://schemas.appsecinc.com/wix/DataSourceExtension">
     <Product Id="E502B9BE-ACDA-4e39-945D-D79251DBCA69" Name="Access Database Demo MSI" Language="1033" Version="$(var.ProductVersion)" Manufacturer="$(var.CompanyName)" UpgradeCode="FE80C0FC-4FD8-49e1-882F-7630E95FB068">
         <Package InstallerVersion="200" Compressed="yes" />
         <Media Id="1" Cabinet="AccessDatabaseMsi.cab" EmbedCab="yes" />

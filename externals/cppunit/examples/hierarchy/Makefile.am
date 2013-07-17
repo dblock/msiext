@@ -16,6 +16,5 @@ hierarchy_SOURCES= BoardGame.cpp \
                    ChessTest.h
 
 hierarchy_LDADD= \
-  $(top_builddir)/src/cppunit/libcppunit.la 
-
-hierarchy_LDFLAGS = $(LIBADD_DL)
+  $(top_builddir)/src/cppunit/libcppunit.la \
+  $(LIBADD_DL)

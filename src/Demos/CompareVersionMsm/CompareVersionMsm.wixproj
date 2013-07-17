@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <ProductVersion>3.0</ProductVersion>
@@ -9,6 +9,7 @@
     <OutputType>Module</OutputType>
     <WixTargetsPath Condition=" '$(WixTargetsPath)' == '' ">..\..\..\externals\wix\Wix.targets</WixTargetsPath>
     <WixToolPath>..\..\..\externals\wix\</WixToolPath>
+    <GenerateResourceNeverLockTypeAssemblies>true</GenerateResourceNeverLockTypeAssemblies>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
     <OutputPath>..\..\..\target\Debug\bin\</OutputPath>
@@ -86,12 +87,26 @@
     <LinkerVerboseOutput>False</LinkerVerboseOutput>
     <WixVariables />
   </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
+    <CompilerAdditionalOptions>-ext ..\..\..\target\$(Configuration)\bin\WixSystemToolsExtension.dll</CompilerAdditionalOptions>
+    <LinkerAdditionalOptions>-ext ..\..\..\target\$(Configuration)\bin\WixSystemToolsExtension.dll</LinkerAdditionalOptions>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
+    <CompilerAdditionalOptions>-ext ..\..\..\target\$(Configuration)\bin\WixSystemToolsExtension.dll</CompilerAdditionalOptions>
+    <LinkerAdditionalOptions>-ext ..\..\..\target\$(Configuration)\bin\WixSystemToolsExtension.dll</LinkerAdditionalOptions>
+  </PropertyGroup>
   <ItemGroup>
     <Compile Include="CompareVersionMsm.wxs" />
-    <WixExtension Include="WixSystemToolsExtension">
-      <HintPath>$(OutDir)\WixSystemToolsExtension.dll</HintPath>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\WixExtensions\SystemToolsExtension\wixext\WixSystemToolsExtension.csproj">
       <Name>WixSystemToolsExtension</Name>
-    </WixExtension>
+      <Project>{69972f7f-f1cf-44aa-8f76-b4a5a4f1b309}</Project>
+      <Private>True</Private>
+      <DoNotHarvest>True</DoNotHarvest>
+      <RefProjectOutputGroups>Binaries;Content;Satellites</RefProjectOutputGroups>
+      <RefTargetDir>INSTALLFOLDER</RefTargetDir>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(WixTargetsPath)" />
   <!--

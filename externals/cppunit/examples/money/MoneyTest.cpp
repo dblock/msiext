@@ -79,5 +79,5 @@ MoneyTest::testAddThrow()
 
   // Process
   Money money( 123, "USD" );
-  money += money123FF;        // should throw an exception
+  CPPUNIT_ASSERT_THROW( money += money123FF, IncompatibleMoneyError );
 }

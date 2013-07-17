@@ -25,7 +25,7 @@ TestSuccessListener::reset()
 
 
 void 
-TestSuccessListener::addFailure( const TestFailure &failure )
+TestSuccessListener::addFailure( const TestFailure & )
 {
   ExclusiveZone zone( m_syncObject );
   m_success = false;

@@ -12,9 +12,8 @@ DllPlugInTester_SOURCES= DllPlugInTester.cpp \
 	CommandLineParser.cpp
 
 DllPlugInTester_LDADD= \
-  $(top_builddir)/src/cppunit/libcppunit.la
-
-DllPlugInTester_LDFLAGS = $(LIBADD_DL)
+  $(top_builddir)/src/cppunit/libcppunit.la \
+  $(LIBADD_DL)
 
 DllPlugInTesterTest_SOURCES = DllPlugInTesterTest.cpp \
 	CommandLineParser.cpp \
@@ -23,6 +22,5 @@ DllPlugInTesterTest_SOURCES = DllPlugInTesterTest.cpp \
 	CommandLineParserTest.h
 
 DllPlugInTesterTest_LDADD= \
-  $(top_builddir)/src/cppunit/libcppunit.la
-
-DllPlugInTesterTest_LDFLAGS = $(LIBADD_DL)
+  $(top_builddir)/src/cppunit/libcppunit.la \
+  $(LIBADD_DL)

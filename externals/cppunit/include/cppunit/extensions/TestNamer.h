@@ -37,7 +37,10 @@
               CPPUNIT_NS::TestNamer variableName( std::string(#FixtureType) )
 #endif
 
-
+#if CPPUNIT_NEED_DLL_DECL
+#pragma warning( push )
+#pragma warning( disable: 4251 )  // X needs to have dll-interface to be used by clients of class Z
+#endif 
 
 CPPUNIT_NS_BEGIN
 
@@ -84,6 +87,10 @@ protected:
 
 
 CPPUNIT_NS_END
+
+#if CPPUNIT_NEED_DLL_DECL
+#pragma warning( pop )
+#endif
 
 #endif // CPPUNIT_EXTENSIONS_TESTNAMER_H
 

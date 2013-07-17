@@ -2,7 +2,8 @@ Frequently Asked Questions: See doc/FAQ
 
 
 At the current time, the only supported WIN32 platform is 
-Microsoft Visual C++. You must have VC++ 6.0 at least.
+Microsoft Visual C++. Supported compilers are currenty VC++ 6.0
+through VS2010.
 
 Quick Steps to compile & run a sample using the GUI TestRunner:
 - Open examples/examples.dsw in VC++ (contains all the samples).

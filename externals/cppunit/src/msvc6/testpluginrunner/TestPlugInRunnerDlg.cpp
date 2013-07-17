@@ -147,7 +147,7 @@ TestPlugInRunnerDlg::getCommandLineArguments()
   for( int index = 0; index < argc; index++ ) 
     arguments.push_back( std::string( CString( argv[index] ) ) );
 
-  ::GlobalFree( argv );
+  ::LocalFree( argv );
 
   return arguments;
 } 

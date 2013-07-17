@@ -1,0 +1,45 @@
+		Making a SourceForge Release
+		----------------------------
+
+* create files to distribute and copy them to sourceforge
+
+	Bump up release version in:
+	 - include/cppunit/Portability.h
+	 - configure.in
+	 - doc/makedox.bat
+	 - NEWS
+
+	make distcheck
+	make doc-dist
+	scp cppunit*tar.gz <account>@cppunit.sourceforge.net:
+
+
+* ftp the files to sourceforge; did this from the sourceforge
+  shell account because my home machine is masqueraded (a.k.a. NATed)
+
+	ftp upload
+	cd incoming
+	mput cppunit*tar.gz 
+
+
+* go through the file release process: select "Admin", then
+  "Edit/Add File Releases"
+  - name of release is version number
+  - make take 30 minutes to show up on downloads page
+
+
+* update web pages; this is done on cppunit.sourceforge.net
+
+	cd /home/groups/c/cp/cppunit
+	mv htdocs htdocs-$(oldversion)
+	mkdir htdocs
+	cd htdocs
+	tar xzf ~/cppunit-docs-$(newversion).tar.gz
+
+
+* tag the CVS sources for release x.y.z
+
+	cvs tag REL_x_y_z
+
+
+* bump the version in configure.in and commit the change

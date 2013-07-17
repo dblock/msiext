@@ -6,7 +6,6 @@
 #include <string.h>		// for memcpy and memmove
 
 #ifdef _MSC_VER
-	#include <stdlib.h>
 	#if _MSC_VER >= 1400
 		// VC2005 workaround: disable declarations that conflict with winnt.h
 		#define _interlockedbittestandset CRYPTOPP_DISABLED_INTRINSIC_1
@@ -101,9 +100,9 @@ struct NewObject
 	T* operator()() const {return new T;}
 };
 
-/*! This function safely initializes a static object in a multithreaded environment without using locks.
-	It may leak memory when two threads try to initialize the static object at the same time
-	but this should be acceptable since each static object is only initialized once per session.
+/*! This function safely initializes a static object in a multithreaded environment without using locks (for portability).
+	Note that if two threads call Ref() at the same time, they may get back different references, and one object 
+	may end up being memory leaked. This is by design.
 */
 template <class T, class F = NewObject<T>, int instance=0>
 class Singleton
@@ -121,36 +120,28 @@ private:
 template <class T, class F, int instance>
 const T & Singleton<T, F, instance>::Ref(CRYPTOPP_NOINLINE_DOTDOTDOT) const
 {
-	static simple_ptr<T> s_pObject;
-	static char s_objectState = 0;
+	static volatile simple_ptr<T> s_pObject;
+	T *p = s_pObject.m_p;
 
-retry:
-	switch (s_objectState)
+	if (p)
+		return *p;
+
+	T *newObject = m_objectFactory();
+	p = s_pObject.m_p;
+
+	if (p)
 	{
-	case 0:
-		s_objectState = 1;
-		try
-		{
-			s_pObject.m_p = m_objectFactory();
-		}
-		catch(...)
-		{
-			s_objectState = 0;
-			throw;
-		}
-		s_objectState = 2;
-		break;
-	case 1:
-		goto retry;
-	default:
-		break;
+		delete newObject;
+		return *p;
 	}
-	return *s_pObject.m_p;
+
+	s_pObject.m_p = newObject;
+	return *newObject;
 }
 
 // ************** misc functions ***************
 
-#if (!__STDC_WANT_SECURE_LIB__)
+#if (!__STDC_WANT_SECURE_LIB__ && !defined(_MEMORY_S_DEFINED))
 inline void memcpy_s(void *dest, size_t sizeInBytes, const void *src, size_t count)
 {
 	if (count > sizeInBytes)
@@ -164,6 +155,12 @@ inline void memmove_s(void *dest, size_t sizeInBytes, const void *src, size_t co
 		throw InvalidArgument("memmove_s: buffer overflow");
 	memmove(dest, src, count);
 }
+
+#if __BORLANDC__ >= 0x620
+// C++Builder 2010 workaround: can't use std::memcpy_s because it doesn't allow 0 lengths
+#define memcpy_s CryptoPP::memcpy_s
+#define memmove_s CryptoPP::memmove_s
+#endif
 #endif
 
 inline void * memset_z(void *ptr, int value, size_t num)
@@ -255,6 +252,38 @@ unsigned int BitPrecision(const T &value)
 	}
 
 	return h;
+}
+
+inline unsigned int TrailingZeros(word32 v)
+{
+#if defined(__GNUC__) && CRYPTOPP_GCC_VERSION >= 30400
+	return __builtin_ctz(v);
+#elif defined(_MSC_VER) && _MSC_VER >= 1400
+	unsigned long result;
+	_BitScanForward(&result, v);
+	return result;
+#else
+	// from http://graphics.stanford.edu/~seander/bithacks.html#ZerosOnRightMultLookup
+	static const int MultiplyDeBruijnBitPosition[32] = 
+	{
+	  0, 1, 28, 2, 29, 14, 24, 3, 30, 22, 20, 15, 25, 17, 4, 8, 
+	  31, 27, 13, 23, 21, 19, 16, 7, 26, 12, 18, 6, 11, 5, 10, 9
+	};
+	return MultiplyDeBruijnBitPosition[((word32)((v & -v) * 0x077CB531U)) >> 27];
+#endif
+}
+
+inline unsigned int TrailingZeros(word64 v)
+{
+#if defined(__GNUC__) && CRYPTOPP_GCC_VERSION >= 30400
+	return __builtin_ctzll(v);
+#elif defined(_MSC_VER) && _MSC_VER >= 1400 && (defined(_M_X64) || defined(_M_IA64))
+	unsigned long result;
+	_BitScanForward64(&result, v);
+	return result;
+#else
+	return word32(v) ? TrailingZeros(word32(v)) : 32 + TrailingZeros(word32(v>>32));
+#endif
 }
 
 template <class T>
@@ -427,18 +456,137 @@ inline void IncrementCounterByOne(byte *output, const byte *input, unsigned int 
 	memcpy_s(output, s, input, i+1);
 }
 
+template <class T>
+inline void ConditionalSwap(bool c, T &a, T &b)
+{
+	T t = c * (a ^ b);
+	a ^= t;
+	b ^= t;
+}
+
+template <class T>
+inline void ConditionalSwapPointers(bool c, T &a, T &b)
+{
+	ptrdiff_t t = c * (a - b);
+	a -= t;
+	b += t;
+}
+
+// see http://www.dwheeler.com/secure-programs/Secure-Programs-HOWTO/protect-secrets.html
+// and https://www.securecoding.cert.org/confluence/display/cplusplus/MSC06-CPP.+Be+aware+of+compiler+optimization+when+dealing+with+sensitive+data
+template <class T>
+void SecureWipeBuffer(T *buf, size_t n)
+{
+	// GCC 4.3.2 on Cygwin optimizes away the first store if this loop is done in the forward direction
+	volatile T *p = buf+n;
+	while (n--)
+		*(--p) = 0;
+}
+
+#if (_MSC_VER >= 1400 || defined(__GNUC__)) && (CRYPTOPP_BOOL_X64 || CRYPTOPP_BOOL_X86)
+
+template<> inline void SecureWipeBuffer(byte *buf, size_t n)
+{
+	volatile byte *p = buf;
+#ifdef __GNUC__
+	asm volatile("rep stosb" : "+c"(n), "+D"(p) : "a"(0) : "memory");
+#else
+	__stosb((byte *)(size_t)p, 0, n);
+#endif
+}
+
+template<> inline void SecureWipeBuffer(word16 *buf, size_t n)
+{
+	volatile word16 *p = buf;
+#ifdef __GNUC__
+	asm volatile("rep stosw" : "+c"(n), "+D"(p) : "a"(0) : "memory");
+#else
+	__stosw((word16 *)(size_t)p, 0, n);
+#endif
+}
+
+template<> inline void SecureWipeBuffer(word32 *buf, size_t n)
+{
+	volatile word32 *p = buf;
+#ifdef __GNUC__
+	asm volatile("rep stosl" : "+c"(n), "+D"(p) : "a"(0) : "memory");
+#else
+	__stosd((unsigned long *)(size_t)p, 0, n);
+#endif
+}
+
+template<> inline void SecureWipeBuffer(word64 *buf, size_t n)
+{
+#if CRYPTOPP_BOOL_X64
+	volatile word64 *p = buf;
+#ifdef __GNUC__
+	asm volatile("rep stosq" : "+c"(n), "+D"(p) : "a"(0) : "memory");
+#else
+	__stosq((word64 *)(size_t)p, 0, n);
+#endif
+#else
+	SecureWipeBuffer((word32 *)buf, 2*n);
+#endif
+}
+
+#endif	// #if (_MSC_VER >= 1400 || defined(__GNUC__)) && (CRYPTOPP_BOOL_X64 || CRYPTOPP_BOOL_X86)
+
+template <class T>
+inline void SecureWipeArray(T *buf, size_t n)
+{
+	if (sizeof(T) % 8 == 0 && GetAlignmentOf<T>() % GetAlignmentOf<word64>() == 0)
+		SecureWipeBuffer((word64 *)buf, n * (sizeof(T)/8));
+	else if (sizeof(T) % 4 == 0 && GetAlignmentOf<T>() % GetAlignmentOf<word32>() == 0)
+		SecureWipeBuffer((word32 *)buf, n * (sizeof(T)/4));
+	else if (sizeof(T) % 2 == 0 && GetAlignmentOf<T>() % GetAlignmentOf<word16>() == 0)
+		SecureWipeBuffer((word16 *)buf, n * (sizeof(T)/2));
+	else
+		SecureWipeBuffer((byte *)buf, n * sizeof(T));
+}
+
+// this function uses wcstombs(), which assumes that setlocale() has been called
+static std::string StringNarrow(const wchar_t *str, bool throwOnError = true)
+{
+#ifdef _MSC_VER
+#pragma warning(push)
+#pragma warning(disable: 4996)	//  'wcstombs': This function or variable may be unsafe.
+#endif
+	size_t size = wcstombs(NULL, str, 0);
+	if (size == size_t(0)-1)
+	{
+		if (throwOnError)
+			throw InvalidArgument("StringNarrow: wcstombs() call failed");
+		else
+			return std::string();
+	}
+	std::string result(size, 0);
+	wcstombs(&result[0], str, size);
+	return result;
+#ifdef _MSC_VER
+#pragma warning(pop)
+#endif
+}
+
+#if CRYPTOPP_BOOL_ALIGN16_ENABLED
+CRYPTOPP_DLL void * CRYPTOPP_API AlignedAllocate(size_t size);
+CRYPTOPP_DLL void CRYPTOPP_API AlignedDeallocate(void *p);
+#endif
+
+CRYPTOPP_DLL void * CRYPTOPP_API UnalignedAllocate(size_t size);
+CRYPTOPP_DLL void CRYPTOPP_API UnalignedDeallocate(void *p);
+
 // ************** rotate functions ***************
 
 template <class T> inline T rotlFixed(T x, unsigned int y)
 {
 	assert(y < sizeof(T)*8);
-	return T((x<<y) | (x>>(sizeof(T)*8-y)));
+	return y ? T((x<<y) | (x>>(sizeof(T)*8-y))) : x;
 }
 
 template <class T> inline T rotrFixed(T x, unsigned int y)
 {
 	assert(y < sizeof(T)*8);
-	return T((x>>y) | (x<<(sizeof(T)*8-y)));
+	return y ? T((x>>y) | (x<<(sizeof(T)*8-y))) : x;
 }
 
 template <class T> inline T rotlVariable(T x, unsigned int y)

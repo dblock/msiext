@@ -57,7 +57,7 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="ws2_32.lib Iphlpapi.lib crypt32.lib"
-				AdditionalLibraryDirectories="&quot;$(SolutionDir)externals\boost\lib\Win32\VS8_0&quot;"
+				AdditionalLibraryDirectories="&quot;$(SolutionDir)externals\boost\lib\Win32\VS10_0&quot;"
 			/>
 			<Tool
 				Name="VCALinkTool"
@@ -130,7 +130,7 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="ws2_32.lib Iphlpapi.lib crypt32.lib"
-				AdditionalLibraryDirectories="&quot;$(SolutionDir)externals\boost\lib\Win32\VS8_0&quot;"
+				AdditionalLibraryDirectories="&quot;$(SolutionDir)externals\boost\lib\Win32\VS10_0&quot;"
 			/>
 			<Tool
 				Name="VCALinkTool"

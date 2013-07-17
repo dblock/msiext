@@ -238,33 +238,33 @@ public:
   {
   }
 
-  void beginDocument( CPPUNIT_NS::XmlDocument *document )
+  void beginDocument( CPPUNIT_NS::XmlDocument * )
   {
     ++m_beginCalls;
   }
 
-  void endDocument( CPPUNIT_NS::XmlDocument *document )
+  void endDocument( CPPUNIT_NS::XmlDocument * )
   {
     ++m_endCalls;
   }
 
-  void failTestAdded( CPPUNIT_NS::XmlDocument *document,
-                      CPPUNIT_NS::XmlElement *testElement,
-                      CPPUNIT_NS::Test *test,
-                      CPPUNIT_NS::TestFailure *failure )
+  void failTestAdded( CPPUNIT_NS::XmlDocument *,
+                      CPPUNIT_NS::XmlElement *,
+                      CPPUNIT_NS::Test *,
+                      CPPUNIT_NS::TestFailure * )
   {
     ++m_failedTestCalls;
   }
 
-  void successfulTestAdded( CPPUNIT_NS::XmlDocument *document,
-                            CPPUNIT_NS::XmlElement *testElement,
-                            CPPUNIT_NS::Test *test )
+  void successfulTestAdded( CPPUNIT_NS::XmlDocument *,
+                            CPPUNIT_NS::XmlElement *,
+                            CPPUNIT_NS::Test * )
   {
     ++m_successfulTestCalls;
   }
 
-  void statisticsAdded( CPPUNIT_NS::XmlDocument *document,
-                        CPPUNIT_NS::XmlElement *statisticsElement )
+  void statisticsAdded( CPPUNIT_NS::XmlDocument *,
+                        CPPUNIT_NS::XmlElement * )
   {
     ++m_statisticsCalls;
   }

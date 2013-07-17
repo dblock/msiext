@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="Windows-1252"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
-	Version="8.00"
+	Version="9.00"
 	Name="cppunit"
-	ProjectGUID="{C3DD8A73-A25D-46A0-89AF-AAC885262686}"
-	RootNamespace="cppunit"
+	ProjectGUID="{9E6FC828-023C-4776-9EF1-6FEB45B88BF4}"
+	TargetFrameworkVersion="0"
 	>
 	<Platforms>
 		<Platform
@@ -46,7 +46,7 @@
 				PreprocessorDefinitions="_DEBUG;_LIB;WIN32"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
-				RuntimeLibrary="1"
+				RuntimeLibrary="3"
 				RuntimeTypeInfo="true"
 				PrecompiledHeaderFile=".\Debug/cppunit.pch"
 				AssemblerListingLocation=".\Debug/"
@@ -89,7 +89,7 @@
 			<Tool
 				Name="VCPostBuildEventTool"
 				Description="Copying target to lib/"
-				CommandLine="if not exist ..\..\lib mkdir ..\..\lib&#x0D;&#x0A;copy &quot;$(TargetPath)&quot; ..\..\lib\$(TargetName).lib"
+				CommandLine="copy &quot;$(TargetPath)&quot; ..\..\lib\$(TargetName).lib"
 			/>
 		</Configuration>
 		<Configuration
@@ -124,7 +124,7 @@
 				AdditionalIncludeDirectories="..\..\include"
 				PreprocessorDefinitions="NDEBUG;_LIB;WIN32"
 				StringPooling="true"
-				RuntimeLibrary="0"
+				RuntimeLibrary="2"
 				EnableFunctionLevelLinking="true"
 				RuntimeTypeInfo="true"
 				PrecompiledHeaderFile=".\Release/cppunit.pch"
@@ -168,7 +168,7 @@
 			<Tool
 				Name="VCPostBuildEventTool"
 				Description="Copying target to lib/"
-				CommandLine="if not exist ..\..\lib mkdir ..\..\lib&#x0D;&#x0A;copy &quot;$(TargetPath)&quot; ..\..\lib\$(TargetName).lib"
+				CommandLine="copy &quot;$(TargetPath)&quot; ..\..\lib\$(TargetName).lib"
 			/>
 		</Configuration>
 	</Configurations>

@@ -1,7 +1,7 @@
 /*
  *
- * Copyright (c) 2004
- * John Maddock
+ * Copyright (c) 2004 John Maddock
+ * Copyright 2011 Garmin Ltd. or its subsidiaries
  *
  * Use, modification and distribution are subject to the 
  * Boost Software License, Version 1.0. (See accompanying file 
@@ -20,6 +20,7 @@
 #define BOOST_CPP_REGEX_TRAITS_HPP_INCLUDED
 
 #include <boost/config.hpp>
+#include <boost/integer.hpp>
 
 #ifndef BOOST_NO_STD_LOCALE
 
@@ -56,7 +57,7 @@
 
 #ifdef BOOST_MSVC
 #pragma warning(push)
-#pragma warning(disable:4786)
+#pragma warning(disable:4786 4251)
 #endif
 
 namespace boost{ 
@@ -107,12 +108,14 @@ template<class charT, class traits>
 typename parser_buf<charT, traits>::pos_type
 parser_buf<charT, traits>::seekoff(off_type off, ::std::ios_base::seekdir way, ::std::ios_base::openmode which)
 {
+   typedef typename boost::int_t<sizeof(way) * CHAR_BIT>::least cast_type;
+
    if(which & ::std::ios_base::out)
       return pos_type(off_type(-1));
    std::ptrdiff_t size = this->egptr() - this->eback();
    std::ptrdiff_t pos = this->gptr() - this->eback();
    charT* g = this->eback();
-   switch(way)
+   switch(static_cast<cast_type>(way))
    {
    case ::std::ios_base::beg:
       if((off < 0) || (off > size))
@@ -187,6 +190,7 @@ struct cpp_regex_traits_base
 #ifndef BOOST_NO_STD_MESSAGES
          if(m_pmessages == b.m_pmessages)
          {
+            return m_pcollate < b.m_pcollate;
          }
          return m_pmessages < b.m_pmessages;
 #else
@@ -212,7 +216,7 @@ std::locale cpp_regex_traits_base<charT>::imbue(const std::locale& l)
    m_locale = l;
    m_pctype = &BOOST_USE_FACET(std::ctype<charT>, l);
 #ifndef BOOST_NO_STD_MESSAGES
-   m_pmessages = &BOOST_USE_FACET(std::messages<charT>, l);
+   m_pmessages = BOOST_HAS_FACET(std::messages<charT>, l) ? &BOOST_USE_FACET(std::messages<charT>, l) : 0;
 #endif
    m_pcollate = &BOOST_USE_FACET(std::collate<charT>, l);
    return result;
@@ -276,7 +280,7 @@ void cpp_regex_traits_char_layer<charT>::init()
    typename std::messages<charT>::catalog cat = reinterpret_cast<std::messages<char>::catalog>(-1);
 #endif
    std::string cat_name(cpp_regex_traits<charT>::get_catalog_name());
-   if(cat_name.size())
+   if(cat_name.size() && (this->m_pmessages != 0))
    {
       cat = this->m_pmessages->open(
          cat_name, 
@@ -309,7 +313,8 @@ void cpp_regex_traits_char_layer<charT>::init()
       }
       catch(...)
       {
-         this->m_pmessages->close(cat);
+         if(this->m_pmessages)
+            this->m_pmessages->close(cat);
          throw;
       }
 #endif
@@ -509,7 +514,9 @@ typename cpp_regex_traits_implementation<charT>::string_type
    // however at least one std lib will always throw
    // std::bad_alloc for certain arguments...
    //
+#ifndef BOOST_NO_EXCEPTIONS
    try{
+#endif
       //
       // What we do here depends upon the format of the sort key returned by
       // sort key returned by this->transform:
@@ -544,7 +551,9 @@ typename cpp_regex_traits_implementation<charT>::string_type
             result.erase(i);
             break;
       }
+#ifndef BOOST_NO_EXCEPTIONS
    }catch(...){}
+#endif
    while(result.size() && (charT(0) == *result.rbegin()))
       result.erase(result.size() - 1);
    if(result.empty())
@@ -574,7 +583,9 @@ typename cpp_regex_traits_implementation<charT>::string_type
    // std::bad_alloc for certain arguments...
    //
    string_type result;
+#ifndef BOOST_NO_EXCEPTIONS
    try{
+#endif
       result = this->m_pcollate->transform(p1, p2);
       //
       // Borland's STLPort version returns a NULL-terminated
@@ -591,10 +602,12 @@ typename cpp_regex_traits_implementation<charT>::string_type
          result.erase(result.size() - 1);
 #endif
       BOOST_ASSERT(std::find(result.begin(), result.end(), charT(0)) == result.end());
+#ifndef BOOST_NO_EXCEPTIONS
    }
    catch(...)
    {
    }
+#endif
    return result;
 }
 
@@ -653,7 +666,7 @@ void cpp_regex_traits_implementation<charT>::init()
    typename std::messages<charT>::catalog cat = reinterpret_cast<std::messages<char>::catalog>(-1);
 #endif
    std::string cat_name(cpp_regex_traits<charT>::get_catalog_name());
-   if(cat_name.size())
+   if(cat_name.size() && (this->m_pmessages != 0))
    {
       cat = this->m_pmessages->open(
          cat_name, 
@@ -716,7 +729,7 @@ void cpp_regex_traits_implementation<charT>::init()
          cpp_regex_traits_implementation<charT>::mask_unicode,
       };
 #else
-      static const char_class_type masks[14] = 
+      static const char_class_type masks[16] = 
       {
          ::boost::re_detail::char_class_alnum,
          ::boost::re_detail::char_class_alpha,
@@ -825,20 +838,20 @@ template <class charT>
 bool cpp_regex_traits_implementation<charT>::isctype(const charT c, char_class_type mask) const
 {
    return
-      ((mask & ::boost::re_detail::char_class_space) && (m_pctype->is(std::ctype<charT>::space, c)))
-      || ((mask & ::boost::re_detail::char_class_print) && (m_pctype->is(std::ctype<charT>::print, c)))
-      || ((mask & ::boost::re_detail::char_class_cntrl) && (m_pctype->is(std::ctype<charT>::cntrl, c)))
-      || ((mask & ::boost::re_detail::char_class_upper) && (m_pctype->is(std::ctype<charT>::upper, c)))
-      || ((mask & ::boost::re_detail::char_class_lower) && (m_pctype->is(std::ctype<charT>::lower, c)))
-      || ((mask & ::boost::re_detail::char_class_alpha) && (m_pctype->is(std::ctype<charT>::alpha, c)))
-      || ((mask & ::boost::re_detail::char_class_digit) && (m_pctype->is(std::ctype<charT>::digit, c)))
-      || ((mask & ::boost::re_detail::char_class_punct) && (m_pctype->is(std::ctype<charT>::punct, c)))
-      || ((mask & ::boost::re_detail::char_class_xdigit) && (m_pctype->is(std::ctype<charT>::xdigit, c)))
-      || ((mask & ::boost::re_detail::char_class_blank) && (m_pctype->is(std::ctype<charT>::space, c)) && !::boost::re_detail::is_separator(c))
+      ((mask & ::boost::re_detail::char_class_space) && (this->m_pctype->is(std::ctype<charT>::space, c)))
+      || ((mask & ::boost::re_detail::char_class_print) && (this->m_pctype->is(std::ctype<charT>::print, c)))
+      || ((mask & ::boost::re_detail::char_class_cntrl) && (this->m_pctype->is(std::ctype<charT>::cntrl, c)))
+      || ((mask & ::boost::re_detail::char_class_upper) && (this->m_pctype->is(std::ctype<charT>::upper, c)))
+      || ((mask & ::boost::re_detail::char_class_lower) && (this->m_pctype->is(std::ctype<charT>::lower, c)))
+      || ((mask & ::boost::re_detail::char_class_alpha) && (this->m_pctype->is(std::ctype<charT>::alpha, c)))
+      || ((mask & ::boost::re_detail::char_class_digit) && (this->m_pctype->is(std::ctype<charT>::digit, c)))
+      || ((mask & ::boost::re_detail::char_class_punct) && (this->m_pctype->is(std::ctype<charT>::punct, c)))
+      || ((mask & ::boost::re_detail::char_class_xdigit) && (this->m_pctype->is(std::ctype<charT>::xdigit, c)))
+      || ((mask & ::boost::re_detail::char_class_blank) && (this->m_pctype->is(std::ctype<charT>::space, c)) && !::boost::re_detail::is_separator(c))
       || ((mask & ::boost::re_detail::char_class_word) && (c == '_'))
       || ((mask & ::boost::re_detail::char_class_unicode) && ::boost::re_detail::is_extended(c))
-      || ((mask & ::boost::re_detail::char_class_vertical) && (is_separator(c) || (c == '\v')))
-      || ((mask & ::boost::re_detail::char_class_horizontal) && m_pctype->is(std::ctype<charT>::space, c) && !(is_separator(c) || (c == '\v')));
+      || ((mask & ::boost::re_detail::char_class_vertical_space) && (is_separator(c) || (c == '\v')))
+      || ((mask & ::boost::re_detail::char_class_horizontal_space) && this->m_pctype->is(std::ctype<charT>::space, c) && !(is_separator(c) || (c == '\v')));
 }
 #endif
 

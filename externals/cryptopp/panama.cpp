@@ -31,7 +31,8 @@ void Panama_SSE2_Pull(size_t count, word32 *state, word32 *z, const word32 *y);
 
 #ifdef CRYPTOPP_GENERATE_X64_MASM
 	Panama_SSE2_Pull	PROC FRAME
-	alloc_stack(2*16+8)
+	rex_push_reg rdi
+	alloc_stack(2*16)
 	save_xmm128 xmm6, 0h
 	save_xmm128 xmm7, 10h
 	.endprolog
@@ -39,8 +40,8 @@ void Panama_SSE2_Pull(size_t count, word32 *state, word32 *z, const word32 *y);
 #pragma warning(disable: 4731)	// frame pointer register 'ebp' modified by inline assembly code
 void CRYPTOPP_NOINLINE Panama_SSE2_Pull(size_t count, word32 *state, word32 *z, const word32 *y)
 {
-#ifdef __GNUC__
-	__asm__ __volatile__
+#ifdef CRYPTOPP_GNU_STYLE_INLINE_ASSEMBLY
+	asm __volatile__
 	(
 		".intel_syntax noprefix;"
 		AS_PUSH_IF86(	bx)
@@ -284,7 +285,7 @@ void CRYPTOPP_NOINLINE Panama_SSE2_Pull(size_t count, word32 *state, word32 *z, 
 	#endif
 	ASL(5)
 
-#ifdef __GNUC__
+#ifdef CRYPTOPP_GNU_STYLE_INLINE_ASSEMBLY
 		AS_POP_IF86(	bx)
 		".att_syntax prefix;"
 			:
@@ -300,7 +301,8 @@ void CRYPTOPP_NOINLINE Panama_SSE2_Pull(size_t count, word32 *state, word32 *z, 
 #ifdef CRYPTOPP_GENERATE_X64_MASM
 	movdqa	xmm6, [rsp + 0h]
 	movdqa	xmm7, [rsp + 10h]
-	add		rsp, 2*16+8
+	add rsp, 2*16
+	pop	rdi
 	ret
 	Panama_SSE2_Pull ENDP
 #else
@@ -311,7 +313,7 @@ void CRYPTOPP_NOINLINE Panama_SSE2_Pull(size_t count, word32 *state, word32 *z, 
 #ifndef CRYPTOPP_GENERATE_X64_MASM
 
 template <class B>
-void Panama<B>::Iterate(size_t count, const word32 *p, word32 *z, const word32 *y)
+void Panama<B>::Iterate(size_t count, const word32 *p, byte *output, const byte *input, KeystreamOperation operation)
 {
 	word32 bstart = m_state[17];
 	word32 *const aPtr = m_state;
@@ -327,9 +329,6 @@ void Panama<B>::Iterate(size_t count, const word32 *p, word32 *z, const word32 *
 // b: 0 4 | 1 5 | 2 6 | 3 7
 #define b(i, j) b##i[(j)*2%8 + (j)/4]
 
-// output
-#define OA(i) z[i] = ConditionalByteReverse(B::ToEnum(), a(i+9))
-#define OX(i) z[i] = y[i] ^ ConditionalByteReverse(B::ToEnum(), a(i+9))
 // buffer update
 #define US(i) {word32 t=b(0,i); b(0,i)=ConditionalByteReverse(B::ToEnum(), p[i])^t; b(25,(i+6)%8)^=t;}
 #define UL(i) {word32 t=b(0,i); b(0,i)=a(i+1)^t; b(25,(i+6)%8)^=t;}
@@ -343,18 +342,20 @@ void Panama<B>::Iterate(size_t count, const word32 *p, word32 *z, const word32 *
 
 	while (count--)
 	{
-		if (z)
+		if (output)
 		{
-			if (y)
-			{
-				OX(0); OX(1); OX(2); OX(3); OX(4); OX(5); OX(6); OX(7);
-				y += 8;
-			}
-			else
-			{
-				OA(0); OA(1); OA(2); OA(3); OA(4); OA(5); OA(6); OA(7);
-			}
-			z += 8;
+#define PANAMA_OUTPUT(x)	\
+	CRYPTOPP_KEYSTREAM_OUTPUT_WORD(x, B::ToEnum(), 0, a(0+9));\
+	CRYPTOPP_KEYSTREAM_OUTPUT_WORD(x, B::ToEnum(), 1, a(1+9));\
+	CRYPTOPP_KEYSTREAM_OUTPUT_WORD(x, B::ToEnum(), 2, a(2+9));\
+	CRYPTOPP_KEYSTREAM_OUTPUT_WORD(x, B::ToEnum(), 3, a(3+9));\
+	CRYPTOPP_KEYSTREAM_OUTPUT_WORD(x, B::ToEnum(), 4, a(4+9));\
+	CRYPTOPP_KEYSTREAM_OUTPUT_WORD(x, B::ToEnum(), 5, a(5+9));\
+	CRYPTOPP_KEYSTREAM_OUTPUT_WORD(x, B::ToEnum(), 6, a(6+9));\
+	CRYPTOPP_KEYSTREAM_OUTPUT_WORD(x, B::ToEnum(), 7, a(7+9));
+
+			typedef word32 WordType;
+			CRYPTOPP_KEYSTREAM_OUTPUT_SWITCH(PANAMA_OUTPUT, 4*8);
 		}
 
 		word32 *const b16 = (word32 *)(bPtr+((bstart+16*32) & 31*32));
@@ -420,14 +421,14 @@ void PanamaHash<B>::TruncatedFinal(byte *hash, size_t size)
 {
 	this->ThrowIfInvalidTruncatedSize(size);
 
-	PadLastBlock(this->BLOCKSIZE, 0x01);
+	this->PadLastBlock(this->BLOCKSIZE, 0x01);
 	
 	HashEndianCorrectedBlock(this->m_data);
 
 	this->Iterate(32);	// pull
 
 	FixedSizeSecBlock<word32, 8> buf;
-	this->Iterate(1, NULL, buf, NULL);
+	this->Iterate(1, NULL, buf.BytePtr(), NULL);
 
 	memcpy(hash, buf, size);
 
@@ -461,7 +462,7 @@ void PanamaCipherPolicy<B>::CipherResynchronize(byte *keystreamBuffer, const byt
 	}
 
 #if CRYPTOPP_BOOL_SSE2_ASM_AVAILABLE || defined(CRYPTOPP_X64_MASM_AVAILABLE)
-	if (B::ToEnum() == LITTLE_ENDIAN_ORDER && HasSSE2())
+	if (B::ToEnum() == LITTLE_ENDIAN_ORDER && HasSSE2() && !IsP4())		// SSE2 code is slower on P4 Prescott
 		Panama_SSE2_Pull(32, this->m_state, NULL, NULL);
 	else
 #endif
@@ -489,7 +490,7 @@ void PanamaCipherPolicy<B>::OperateKeystream(KeystreamOperation operation, byte 
 		Panama_SSE2_Pull(iterationCount, this->m_state, (word32 *)output, (const word32 *)input);
 	else
 #endif
-		this->Iterate(iterationCount, NULL, (word32 *)output, (const word32 *)input);
+		this->Iterate(iterationCount, NULL, output, input, operation);
 }
 
 template class Panama<BigEndian>;

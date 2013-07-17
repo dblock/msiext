@@ -92,7 +92,7 @@ private:
    *
    * Should be overriden to check the exception.
    */
-  virtual void checkException( ExpectedExceptionType &e )
+  virtual void checkException( ExpectedExceptionType & )
   {
   }
 };

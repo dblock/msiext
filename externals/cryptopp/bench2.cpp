@@ -1,7 +1,7 @@
 // bench2.cpp - written and placed in the public domain by Wei Dai
 
 #include "bench.h"
-#include "rng.h"
+#include "validate.h"
 #include "files.h"
 #include "hex.h"
 
@@ -35,15 +35,14 @@ void OutputResultOperations(const char *name, const char *operation, bool pc, un
 void BenchMarkEncryption(const char *name, PK_Encryptor &key, double timeTotal, bool pc=false)
 {
 	unsigned int len = 16;
-	LC_RNG rng((word32)time(NULL));
 	SecByteBlock plaintext(len), ciphertext(key.CiphertextLength(len));
-	rng.GenerateBlock(plaintext, len);
+	GlobalRNG().GenerateBlock(plaintext, len);
 
 	clock_t start = clock();
 	unsigned int i;
 	double timeTaken;
 	for (timeTaken=(double)0, i=0; timeTaken < timeTotal; timeTaken = double(clock() - start) / CLOCK_TICKS_PER_SECOND, i++)
-		key.Encrypt(rng, plaintext, len, ciphertext);
+		key.Encrypt(GlobalRNG(), plaintext, len, ciphertext);
 
 	OutputResultOperations(name, "Encryption", pc, i, timeTaken);
 
@@ -57,17 +56,16 @@ void BenchMarkEncryption(const char *name, PK_Encryptor &key, double timeTotal, 
 void BenchMarkDecryption(const char *name, PK_Decryptor &priv, PK_Encryptor &pub, double timeTotal)
 {
 	unsigned int len = 16;
-	LC_RNG rng((word32)time(NULL));
 	SecByteBlock ciphertext(pub.CiphertextLength(len));
 	SecByteBlock plaintext(pub.MaxPlaintextLength(ciphertext.size()));
-	rng.GenerateBlock(plaintext, len);
-	pub.Encrypt(rng, plaintext, len, ciphertext);
+	GlobalRNG().GenerateBlock(plaintext, len);
+	pub.Encrypt(GlobalRNG(), plaintext, len, ciphertext);
 
 	clock_t start = clock();
 	unsigned int i;
 	double timeTaken;
 	for (timeTaken=(double)0, i=0; timeTaken < timeTotal; timeTaken = double(clock() - start) / CLOCK_TICKS_PER_SECOND, i++)
-		priv.Decrypt(rng, ciphertext, ciphertext.size(), plaintext);
+		priv.Decrypt(GlobalRNG(), ciphertext, ciphertext.size(), plaintext);
 
 	OutputResultOperations(name, "Decryption", false, i, timeTaken);
 }
@@ -75,15 +73,14 @@ void BenchMarkDecryption(const char *name, PK_Decryptor &priv, PK_Encryptor &pub
 void BenchMarkSigning(const char *name, PK_Signer &key, double timeTotal, bool pc=false)
 {
 	unsigned int len = 16;
-	LC_RNG rng((word32)time(NULL));
 	AlignedSecByteBlock message(len), signature(key.SignatureLength());
-	rng.GenerateBlock(message, len);
+	GlobalRNG().GenerateBlock(message, len);
 
 	clock_t start = clock();
 	unsigned int i;
 	double timeTaken;
 	for (timeTaken=(double)0, i=0; timeTaken < timeTotal; timeTaken = double(clock() - start) / CLOCK_TICKS_PER_SECOND, i++)
-		key.SignMessage(rng, message, len, signature);
+		key.SignMessage(GlobalRNG(), message, len, signature);
 
 	OutputResultOperations(name, "Signature", pc, i, timeTaken);
 
@@ -97,10 +94,9 @@ void BenchMarkSigning(const char *name, PK_Signer &key, double timeTotal, bool p
 void BenchMarkVerification(const char *name, const PK_Signer &priv, PK_Verifier &pub, double timeTotal, bool pc=false)
 {
 	unsigned int len = 16;
-	LC_RNG rng((word32)time(NULL));
 	AlignedSecByteBlock message(len), signature(pub.SignatureLength());
-	rng.GenerateBlock(message, len);
-	priv.SignMessage(rng, message, len, signature);
+	GlobalRNG().GenerateBlock(message, len);
+	priv.SignMessage(GlobalRNG(), message, len, signature);
 
 	clock_t start = clock();
 	unsigned int i;
@@ -119,14 +115,13 @@ void BenchMarkVerification(const char *name, const PK_Signer &priv, PK_Verifier 
 
 void BenchMarkKeyGen(const char *name, SimpleKeyAgreementDomain &d, double timeTotal, bool pc=false)
 {
-	LC_RNG rng((word32)time(NULL));
 	SecByteBlock priv(d.PrivateKeyLength()), pub(d.PublicKeyLength());
 
 	clock_t start = clock();
 	unsigned int i;
 	double timeTaken;
 	for (timeTaken=(double)0, i=0; timeTaken < timeTotal; timeTaken = double(clock() - start) / CLOCK_TICKS_PER_SECOND, i++)
-		d.GenerateKeyPair(rng, priv, pub);
+		d.GenerateKeyPair(GlobalRNG(), priv, pub);
 
 	OutputResultOperations(name, "Key-Pair Generation", pc, i, timeTaken);
 
@@ -139,14 +134,13 @@ void BenchMarkKeyGen(const char *name, SimpleKeyAgreementDomain &d, double timeT
 
 void BenchMarkKeyGen(const char *name, AuthenticatedKeyAgreementDomain &d, double timeTotal, bool pc=false)
 {
-	LC_RNG rng((word32)time(NULL));
 	SecByteBlock priv(d.EphemeralPrivateKeyLength()), pub(d.EphemeralPublicKeyLength());
 
 	clock_t start = clock();
 	unsigned int i;
 	double timeTaken;
 	for (timeTaken=(double)0, i=0; timeTaken < timeTotal; timeTaken = double(clock() - start) / CLOCK_TICKS_PER_SECOND, i++)
-		d.GenerateEphemeralKeyPair(rng, priv, pub);
+		d.GenerateEphemeralKeyPair(GlobalRNG(), priv, pub);
 
 	OutputResultOperations(name, "Key-Pair Generation", pc, i, timeTaken);
 
@@ -159,11 +153,10 @@ void BenchMarkKeyGen(const char *name, AuthenticatedKeyAgreementDomain &d, doubl
 
 void BenchMarkAgreement(const char *name, SimpleKeyAgreementDomain &d, double timeTotal, bool pc=false)
 {
-	LC_RNG rng((word32)time(NULL));
 	SecByteBlock priv1(d.PrivateKeyLength()), priv2(d.PrivateKeyLength());
 	SecByteBlock pub1(d.PublicKeyLength()), pub2(d.PublicKeyLength());
-	d.GenerateKeyPair(rng, priv1, pub1);
-	d.GenerateKeyPair(rng, priv2, pub2);
+	d.GenerateKeyPair(GlobalRNG(), priv1, pub1);
+	d.GenerateKeyPair(GlobalRNG(), priv2, pub2);
 	SecByteBlock val(d.AgreedValueLength());
 
 	clock_t start = clock();
@@ -180,15 +173,14 @@ void BenchMarkAgreement(const char *name, SimpleKeyAgreementDomain &d, double ti
 
 void BenchMarkAgreement(const char *name, AuthenticatedKeyAgreementDomain &d, double timeTotal, bool pc=false)
 {
-	LC_RNG rng((word32)time(NULL));
 	SecByteBlock spriv1(d.StaticPrivateKeyLength()), spriv2(d.StaticPrivateKeyLength());
 	SecByteBlock epriv1(d.EphemeralPrivateKeyLength()), epriv2(d.EphemeralPrivateKeyLength());
 	SecByteBlock spub1(d.StaticPublicKeyLength()), spub2(d.StaticPublicKeyLength());
 	SecByteBlock epub1(d.EphemeralPublicKeyLength()), epub2(d.EphemeralPublicKeyLength());
-	d.GenerateStaticKeyPair(rng, spriv1, spub1);
-	d.GenerateStaticKeyPair(rng, spriv2, spub2);
-	d.GenerateEphemeralKeyPair(rng, epriv1, epub1);
-	d.GenerateEphemeralKeyPair(rng, epriv2, epub2);
+	d.GenerateStaticKeyPair(GlobalRNG(), spriv1, spub1);
+	d.GenerateStaticKeyPair(GlobalRNG(), spriv2, spub2);
+	d.GenerateEphemeralKeyPair(GlobalRNG(), epriv1, epub1);
+	d.GenerateEphemeralKeyPair(GlobalRNG(), epriv2, epub2);
 	SecByteBlock val(d.AgreedValueLength());
 
 	clock_t start = clock();
@@ -286,8 +278,7 @@ void BenchmarkAll2(double t, double hertz)
 
 	cout << "\n<TBODY style=\"background: white\">";
 	{
-		RandomPool rng;		// not seeded
-		ECIES<ECP>::Decryptor cpriv(rng, ASN1::secp256k1());
+		ECIES<ECP>::Decryptor cpriv(GlobalRNG(), ASN1::secp256k1());
 		ECIES<ECP>::Encryptor cpub(cpriv);
 		ECDSA<ECP, SHA>::Signer spriv(cpriv);
 		ECDSA<ECP, SHA>::Verifier spub(spriv);
@@ -306,8 +297,7 @@ void BenchmarkAll2(double t, double hertz)
 
 	cout << "<TBODY style=\"background: yellow\">" << endl;
 	{
-		RandomPool rng;		// not seeded
-		ECIES<EC2N>::Decryptor cpriv(rng, ASN1::sect233r1());
+		ECIES<EC2N>::Decryptor cpriv(GlobalRNG(), ASN1::sect233r1());
 		ECIES<EC2N>::Encryptor cpub(cpriv);
 		ECDSA<EC2N, SHA>::Signer spriv(cpriv);
 		ECDSA<EC2N, SHA>::Verifier spub(spriv);
@@ -316,8 +306,8 @@ void BenchmarkAll2(double t, double hertz)
 
 		BenchMarkEncryption("ECIES over GF(2^n) 233", cpub, t);
 		BenchMarkDecryption("ECIES over GF(2^n) 233", cpriv, cpub, t);
-		BenchMarkSigning("ECNR over GF(2^n) 233", spriv, t);
-		BenchMarkVerification("ECNR over GF(2^n) 233", spriv, spub, t);
+		BenchMarkSigning("ECDSA over GF(2^n) 233", spriv, t);
+		BenchMarkVerification("ECDSA over GF(2^n) 233", spriv, spub, t);
 		BenchMarkKeyGen("ECDHC over GF(2^n) 233", ecdhc, t);
 		BenchMarkAgreement("ECDHC over GF(2^n) 233", ecdhc, t);
 		BenchMarkKeyGen("ECMQVC over GF(2^n) 233", ecmqvc, t);

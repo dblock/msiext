@@ -15,7 +15,7 @@ void
 assertion_traitsTest::test_toString()
 {
     CPPUNIT_ASSERT_EQUAL( std::string( "abc" ), 
-			  CPPUNIT_NS::assertion_traits<char*>::toString( "abc" ) );
+			  CPPUNIT_NS::assertion_traits<const char*>::toString( "abc" ) );
 
     CPPUNIT_ASSERT_EQUAL( std::string( "33" ), 
 			  CPPUNIT_NS::assertion_traits<int>::toString( 33 ) );

@@ -33,7 +33,6 @@
 #include "cast.h"
 #include "rc6.h"
 #include "mars.h"
-#include "shacal2.h"
 #include "des.h"
 #include "idea.h"
 #include "rc5.h"
@@ -47,6 +46,7 @@
 #include "seal.h"
 #include "crc.h"
 #include "adler32.h"
+#include "sha3.h"
 
 USING_NAMESPACE(CryptoPP)
 
@@ -73,9 +73,17 @@ void RegisterFactories()
 	RegisterDefaultFactoryFor<HashTransformation, RIPEMD256>();
 	RegisterDefaultFactoryFor<HashTransformation, Weak::PanamaHash<LittleEndian> >();
 	RegisterDefaultFactoryFor<HashTransformation, Weak::PanamaHash<BigEndian> >();
+	RegisterDefaultFactoryFor<HashTransformation, SHA3_224>();
+	RegisterDefaultFactoryFor<HashTransformation, SHA3_256>();
+	RegisterDefaultFactoryFor<HashTransformation, SHA3_384>();
+	RegisterDefaultFactoryFor<HashTransformation, SHA3_512>();
 	RegisterDefaultFactoryFor<MessageAuthenticationCode, HMAC<Weak::MD5> >();
 	RegisterDefaultFactoryFor<MessageAuthenticationCode, HMAC<SHA1> >();
 	RegisterDefaultFactoryFor<MessageAuthenticationCode, HMAC<RIPEMD160> >();
+	RegisterDefaultFactoryFor<MessageAuthenticationCode, HMAC<SHA224> >();
+	RegisterDefaultFactoryFor<MessageAuthenticationCode, HMAC<SHA256> >();
+	RegisterDefaultFactoryFor<MessageAuthenticationCode, HMAC<SHA384> >();
+	RegisterDefaultFactoryFor<MessageAuthenticationCode, HMAC<SHA512> >();
 	RegisterDefaultFactoryFor<MessageAuthenticationCode, TTMAC>();
 	RegisterDefaultFactoryFor<MessageAuthenticationCode, VMAC<AES> >();
 	RegisterDefaultFactoryFor<MessageAuthenticationCode, VMAC<AES, 64> >();
@@ -86,7 +94,11 @@ void RegisterFactories()
 	RegisterDefaultFactoryFor<MessageAuthenticationCode, CMAC<DES_EDE3> >();
 	RegisterAsymmetricCipherDefaultFactories<RSAES<OAEP<SHA1> > >("RSA/OAEP-MGF1(SHA-1)");
 	RegisterAsymmetricCipherDefaultFactories<DLIES<> >("DLIES(NoCofactorMultiplication, KDF2(SHA-1), XOR, HMAC(SHA-1), DHAES)");
-	RegisterSignatureSchemeDefaultFactories<DSA>("DSA(1363)");
+	RegisterSignatureSchemeDefaultFactories<DSA>();
+	RegisterSignatureSchemeDefaultFactories<DSA2<SHA224> >();
+	RegisterSignatureSchemeDefaultFactories<DSA2<SHA256> >();
+	RegisterSignatureSchemeDefaultFactories<DSA2<SHA384> >();
+	RegisterSignatureSchemeDefaultFactories<DSA2<SHA512> >();
 	RegisterSignatureSchemeDefaultFactories<NR<SHA1> >("NR(1363)/EMSA1(SHA-1)");
 	RegisterSignatureSchemeDefaultFactories<GDSA<SHA1> >("DSA-1363/EMSA1(SHA-1)");
 	RegisterSignatureSchemeDefaultFactories<RSASS<PKCS1v15, Weak::MD2> >("RSA/PKCS1-1.5(MD2)");
@@ -111,6 +123,7 @@ void RegisterFactories()
 	RegisterSymmetricCipherDefaultFactories<Sosemanuk>();
 	RegisterSymmetricCipherDefaultFactories<Weak::MARC4>();
 	RegisterSymmetricCipherDefaultFactories<WAKE_OFB<LittleEndian> >();
+	RegisterSymmetricCipherDefaultFactories<WAKE_OFB<BigEndian> >();
 	RegisterSymmetricCipherDefaultFactories<SEAL<LittleEndian> >();
 	RegisterAuthenticatedSymmetricCipherDefaultFactories<CCM<AES> >();
 	RegisterAuthenticatedSymmetricCipherDefaultFactories<GCM<AES> >();
@@ -120,6 +133,7 @@ void RegisterFactories()
 	RegisterSymmetricCipherDefaultFactories<CTR_Mode<Serpent> >();
 	RegisterSymmetricCipherDefaultFactories<CTR_Mode<CAST256> >();
 	RegisterSymmetricCipherDefaultFactories<CTR_Mode<RC6> >();
+	RegisterSymmetricCipherDefaultFactories<ECB_Mode<MARS> >();
 	RegisterSymmetricCipherDefaultFactories<CTR_Mode<MARS> >();
 	RegisterSymmetricCipherDefaultFactories<CTR_Mode<SHACAL2> >();
 	RegisterSymmetricCipherDefaultFactories<CTR_Mode<DES> >();

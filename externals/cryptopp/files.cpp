@@ -12,31 +12,54 @@ NAMESPACE_BEGIN(CryptoPP)
 
 using namespace std;
 
+#ifndef NDEBUG
 void Files_TestInstantiations()
 {
 	FileStore f0;
 	FileSource f1;
 	FileSink f2;
 }
+#endif
 
 void FileStore::StoreInitialize(const NameValuePairs &parameters)
 {
+	m_waiting = false;
+	m_stream = NULL;
+	m_file.release();
+
+	const char *fileName = NULL;
+#if defined(CRYPTOPP_UNIX_AVAILABLE) || _MSC_VER >= 1400
+	const wchar_t *fileNameWide = NULL;
+	if (!parameters.GetValue(Name::InputFileNameWide(), fileNameWide))
+#endif
+		if (!parameters.GetValue(Name::InputFileName(), fileName))
+		{
+			parameters.GetValue(Name::InputStreamPointer(), m_stream);
+			return;
+		}
+
+	ios::openmode binary = parameters.GetValueWithDefault(Name::InputBinaryMode(), true) ? ios::binary : ios::openmode(0);
 	m_file.reset(new std::ifstream);
-	const char *fileName;
-	if (parameters.GetValue(Name::InputFileName(), fileName))
+#ifdef CRYPTOPP_UNIX_AVAILABLE
+	std::string narrowed;
+	if (fileNameWide)
+		fileName = (narrowed = StringNarrow(fileNameWide)).c_str();
+#endif
+#if _MSC_VER >= 1400
+	if (fileNameWide)
 	{
-		ios::openmode binary = parameters.GetValueWithDefault(Name::InputBinaryMode(), true) ? ios::binary : ios::openmode(0);
+		m_file->open(fileNameWide, ios::in | binary);
+		if (!*m_file)
+			throw OpenErr(StringNarrow(fileNameWide, false));
+	}
+#endif
+	if (fileName)
+	{
 		m_file->open(fileName, ios::in | binary);
 		if (!*m_file)
 			throw OpenErr(fileName);
-		m_stream = m_file.get();
 	}
-	else
-	{
-		m_stream = NULL;
-		parameters.GetValue(Name::InputStreamPointer(), m_stream);
-	}
-	m_waiting = false;
+	m_stream = m_file.get();
 }
 
 lword FileStore::MaxRetrievable() const
@@ -72,7 +95,7 @@ size_t FileStore::TransferTo2(BufferedTransformation &target, lword &transferByt
 
 		m_stream->read((char *)m_space, (unsigned int)STDMIN(size, (lword)spaceSize));
 		}
-		m_len = m_stream->gcount();
+		m_len = (size_t)m_stream->gcount();
 		size_t blockedBytes;
 output:
 		blockedBytes = target.ChannelPutModifiable2(channel, m_space, m_len, 0, blocking);
@@ -144,6 +167,9 @@ size_t FileStore::CopyRangeTo2(BufferedTransformation &target, lword &begin, lwo
 
 lword FileStore::Skip(lword skipMax)
 {
+	if (!m_stream)
+		return 0;
+
 	lword oldPos = m_stream->tellg();
 	std::istream::off_type offset;
 	if (!SafeConvert(skipMax, offset))
@@ -154,21 +180,42 @@ lword FileStore::Skip(lword skipMax)
 
 void FileSink::IsolatedInitialize(const NameValuePairs &parameters)
 {
+	m_stream = NULL;
+	m_file.release();
+
+	const char *fileName = NULL;
+#if defined(CRYPTOPP_UNIX_AVAILABLE) || _MSC_VER >= 1400
+	const wchar_t *fileNameWide = NULL;
+	if (!parameters.GetValue(Name::OutputFileNameWide(), fileNameWide))
+#endif
+		if (!parameters.GetValue(Name::OutputFileName(), fileName))
+		{
+			parameters.GetValue(Name::OutputStreamPointer(), m_stream);
+			return;
+		}
+
+	ios::openmode binary = parameters.GetValueWithDefault(Name::OutputBinaryMode(), true) ? ios::binary : ios::openmode(0);
 	m_file.reset(new std::ofstream);
-	const char *fileName;
-	if (parameters.GetValue(Name::OutputFileName(), fileName))
+#ifdef CRYPTOPP_UNIX_AVAILABLE
+	std::string narrowed;
+	if (fileNameWide)
+		fileName = (narrowed = StringNarrow(fileNameWide)).c_str();
+#endif
+#if _MSC_VER >= 1400
+	if (fileNameWide)
 	{
-		ios::openmode binary = parameters.GetValueWithDefault(Name::OutputBinaryMode(), true) ? ios::binary : ios::openmode(0);
+		m_file->open(fileNameWide, ios::out | ios::trunc | binary);
+		if (!*m_file)
+			throw OpenErr(StringNarrow(fileNameWide, false));
+	}
+#endif
+	if (fileName)
+	{
 		m_file->open(fileName, ios::out | ios::trunc | binary);
 		if (!*m_file)
 			throw OpenErr(fileName);
-		m_stream = m_file.get();
 	}
-	else
-	{
-		m_stream = NULL;
-		parameters.GetValue(Name::OutputStreamPointer(), m_stream);
-	}
+	m_stream = m_file.get();
 }
 
 bool FileSink::IsolatedFlush(bool hardFlush, bool blocking)
@@ -195,7 +242,7 @@ size_t FileSink::Put2(const byte *inString, size_t length, int messageEnd, bool 
 			size = numeric_limits<std::streamsize>::max();
 		m_stream->write((const char *)inString, size);
 		inString += size;
-		length -= size;
+		length -= (size_t)size;
 	}
 
 	if (messageEnd)

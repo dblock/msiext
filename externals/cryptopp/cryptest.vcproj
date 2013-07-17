@@ -53,6 +53,7 @@
 				InlineFunctionExpansion="2"
 				EnableIntrinsicFunctions="true"
 				OmitFramePointers="true"
+				WholeProgramOptimization="false"
 				PreprocessorDefinitions="NDEBUG;_CONSOLE;WIN32"
 				StringPooling="true"
 				RuntimeLibrary="0"
@@ -781,6 +782,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\TestVectors\mars.txt"
+				>
+			</File>
+			<File
 				RelativePath=".\TestVectors\nr.txt"
 				>
 			</File>
@@ -825,6 +830,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\TestVectors\sha3.txt"
+				>
+			</File>
+			<File
 				RelativePath=".\TestVectors\shacal2.txt"
 				>
 			</File>
@@ -842,6 +851,10 @@
 			</File>
 			<File
 				RelativePath=".\TestVectors\vmac.txt"
+				>
+			</File>
+			<File
+				RelativePath=".\TestVectors\wake.txt"
 				>
 			</File>
 			<File

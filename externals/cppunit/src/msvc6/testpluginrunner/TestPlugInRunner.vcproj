@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="Windows-1252"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
-	Version="8.00"
+	Version="9.00"
 	Name="TestPlugInRunner"
-	ProjectGUID="{35047489-913D-4CB5-9208-CBEE29B8B8AB}"
+	ProjectGUID="{8982E220-3042-4D5F-AD17-02DB61FC90B7}"
 	Keyword="MFCProj"
+	TargetFrameworkVersion="0"
 	>
 	<Platforms>
 		<Platform
@@ -85,6 +86,8 @@
 				GenerateDebugInformation="true"
 				ProgramDatabaseFile=".\Debug/TestPlugInRunnerd.pdb"
 				SubSystem="2"
+				RandomizedBaseAddress="1"
+				DataExecutionPrevention="0"
 				TargetMachine="1"
 			/>
 			<Tool
@@ -106,9 +109,6 @@
 			/>
 			<Tool
 				Name="VCAppVerifierTool"
-			/>
-			<Tool
-				Name="VCWebDeploymentTool"
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
@@ -187,6 +187,8 @@
 				AdditionalLibraryDirectories="../../../lib/"
 				ProgramDatabaseFile=".\Release/TestPlugInRunner.pdb"
 				SubSystem="2"
+				RandomizedBaseAddress="1"
+				DataExecutionPrevention="0"
 				TargetMachine="1"
 			/>
 			<Tool
@@ -208,9 +210,6 @@
 			/>
 			<Tool
 				Name="VCAppVerifierTool"
-			/>
-			<Tool
-				Name="VCWebDeploymentTool"
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"

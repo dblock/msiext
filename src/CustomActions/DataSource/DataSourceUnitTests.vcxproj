@@ -1,0 +1,219 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{6F3905B3-43A1-4B22-A08E-34FA3710034D}</ProjectGuid>
+    <RootNamespace>DataSourceUnitTests</RootNamespace>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseOfMfc>false</UseOfMfc>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseOfMfc>false</UseOfMfc>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="$(SolutionDir)build\vsprops\ASI_UnitTest_Exe_$(Configuration).props" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="$(SolutionDir)build\vsprops\ASI_UnitTest_Exe_$(Configuration).props" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup>
+    <_ProjectFileVersion>10.0.40219.1</_ProjectFileVersion>
+    <CodeAnalysisRuleSet Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">AllRules.ruleset</CodeAnalysisRuleSet>
+    <CodeAnalysisRules Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" />
+    <CodeAnalysisRuleAssemblies Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" />
+    <CodeAnalysisRuleSet Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">AllRules.ruleset</CodeAnalysisRuleSet>
+    <CodeAnalysisRules Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" />
+    <CodeAnalysisRuleAssemblies Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" />
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Midl>
+      <TypeLibraryName>$(ProjectName).tlb</TypeLibraryName>
+      <HeaderFileName>
+      </HeaderFileName>
+    </Midl>
+    <ClCompile>
+      <AdditionalIncludeDirectories>$(SolutionDir)externals\sqlserver\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PrecompiledHeaderFile>StdAfxUnitTests.h</PrecompiledHeaderFile>
+    </ClCompile>
+    <Link>
+      <AdditionalDependencies>crypt32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDir)externals\boost\lib\Win32\VS10_0;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+    </Link>
+    <PostBuildEvent>
+      <Command>if not exist "$(TargetDir)TestData_$(ProjectName)" mkdir "$(TargetDir)TestData_$(ProjectName)"
+xcopy "$(ProjectDir)TestData\*.*" "$(TargetDir)TestData_$(ProjectName)" /y /s
+</Command>
+    </PostBuildEvent>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Midl>
+      <TypeLibraryName>$(ProjectName).tlb</TypeLibraryName>
+      <HeaderFileName>
+      </HeaderFileName>
+    </Midl>
+    <ClCompile>
+      <AdditionalIncludeDirectories>$(SolutionDir)externals\sqlserver\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PrecompiledHeaderFile>StdAfxUnitTests.h</PrecompiledHeaderFile>
+    </ClCompile>
+    <Link>
+      <AdditionalDependencies>crypt32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDir)externals\boost\lib\Win32\VS10_0;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+    </Link>
+    <PostBuildEvent>
+      <Command>if not exist "$(TargetDir)TestData_$(ProjectName)" mkdir "$(TargetDir)TestData_$(ProjectName)"
+xcopy "$(ProjectDir)TestData\*.*" "$(TargetDir)TestData_$(ProjectName)" /y /s
+</Command>
+    </PostBuildEvent>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClCompile Include="BinaryIdPathResolver.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+      </PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+      </PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="ConfigDataSourceUnitTests.cpp" />
+    <ClCompile Include="CreateDatabasesUnitTests.cpp" />
+    <ClCompile Include="DataFileUnitTests.cpp" />
+    <ClCompile Include="DataSourceUnitTests.cpp" />
+    <ClCompile Include="DSNUnitTests.cpp" />
+    <ClCompile Include="SqlDMOUnitTests.cpp" />
+    <ClCompile Include="SqlODBCUnitTests.cpp" />
+    <ClCompile Include="StdAfxUnitTests.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">StdAfxUnitTests.h</PrecompiledHeaderFile>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">StdAfxUnitTests.h</PrecompiledHeaderFile>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="DataSourceUnitTests.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="BinaryIdPathResolver.h" />
+    <ClInclude Include="ConfigDataSourceUnitTests.h" />
+    <ClInclude Include="CreateDatabasesUnitTests.h" />
+    <ClInclude Include="DataFileUnitTests.h" />
+    <ClInclude Include="DSNUnitTests.h" />
+    <ClInclude Include="SqlDMOUnitTests.h" />
+    <ClInclude Include="SqlODBCUnitTests.h" />
+    <ClInclude Include="StdAfxUnitTests.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="TestData\AccessDatabase.idt" />
+    <None Include="TestData\Binary.idt" />
+    <None Include="TestData\ComboBox.idt" />
+    <None Include="TestData\DatabaseConnectionString.idt" />
+    <None Include="TestData\MSSQL_CreateTable_Another.sql" />
+    <None Include="TestData\MSSQL_CreateTable_NotEncoded.sql" />
+    <None Include="TestData\MSSQLDatabase.idt" />
+    <None Include="TestData\MSSQLDatabaseFileSpec.idt" />
+    <None Include="TestData\MSSQLDatabaseOption.idt" />
+    <None Include="TestData\MSSQLDataFile.idt" />
+    <None Include="TestData\MSSQLDataFileParameter.idt" />
+    <None Include="TestData\ODBCDataSourceConfig.idt" />
+    <None Include="TestData\ODBCExecute.idt" />
+    <None Include="TestData\RawOutput.xslt" />
+    <None Include="TestData\Test.mdb" />
+    <None Include="TestData\Binary\Access_CreateTable_NotEncoded.ibd" />
+    <None Include="TestData\Binary\Access_ExecuteManyGoStatements.ibd" />
+    <None Include="TestData\Binary\MSSQL_BinarySqlIncluded.ibd" />
+    <None Include="TestData\Binary\MSSQL_BinarySqlWithInclude.ibd" />
+    <None Include="TestData\Binary\MSSQL_BinaryTable.ibd" />
+    <None Include="TestData\Binary\MSSQL_BinaryTable2.ibd" />
+    <None Include="TestData\Binary\MSSQL_CreateTable_Encoded.ibd" />
+    <None Include="TestData\Binary\MSSQL_CreateTable_NotEncoded.ibd" />
+    <None Include="TestData\Binary\MSSQL_ExecuteIgnoreErrors.ibd" />
+    <None Include="TestData\Binary\MSSQL_ExecuteManyGoStatements.ibd" />
+    <None Include="TestData\Binary\MSSQL_Select.ibd" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\externals\cppunit\src\cppunit\cppunit.vcxproj">
+      <Project>{c3dd8a73-a25d-46a0-89af-aac885262686}</Project>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\externals\cryptopp\cryptlib.vcxproj">
+      <Project>{3423ec9a-52e4-4a4d-9753-edebc38785ef}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\externals\msi\lib\3rd_Party_Lib_Msi.vcxproj">
+      <Project>{fb47840d-b1df-4f35-a7b6-9652bffbbac8}</Project>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Common\AtlCom\AtlCom.vcxproj">
+      <Project>{e99338ac-7bd1-4f44-90d3-ce1b9df37564}</Project>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Common\CppUnitTests\CppUnitTests.vcxproj">
+      <Project>{5e81850b-e6b8-4fcd-83ec-3bbc04736ea9}</Project>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Common\Crypt\Crypt.vcxproj">
+      <Project>{9650b307-4cbb-40d2-b0d7-b366b8679eff}</Project>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Common\Exception\Exception.vcxproj">
+      <Project>{deb517c1-b8b4-481a-a521-f0cac63ac62b}</Project>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Common\File\File.vcxproj">
+      <Project>{06498701-4459-4045-a31b-f448ef7475c4}</Project>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Common\ODBC\ODBC.vcxproj">
+      <Project>{d5ca80a5-af79-48b0-a19f-92e6bf9e2e51}</Project>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Common\Registry\Registry.vcxproj">
+      <Project>{b040e3bd-ce05-48d7-8f89-d7de3c0a96aa}</Project>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Common\String\String.vcxproj">
+      <Project>{43e36397-b2e6-44be-aad2-ed10f228f285}</Project>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Common\Xml\Xml.vcxproj">
+      <Project>{d4e537cb-ac78-4c3c-986e-d978beee9f09}</Project>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Framework\MsiShim\MsiShim.vcxproj">
+      <Project>{dcbac59f-7ffc-4991-89e3-df8b6f711f89}</Project>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Framework\Msi\Msi.vcxproj">
+      <Project>{2739e0d7-c92f-4caa-b5e7-9a97750b9f0e}</Project>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Version\Version.csproj">
+      <Project>{df9b8e13-ad32-4fea-83cb-5048234fc2f3}</Project>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+    </ProjectReference>
+    <ProjectReference Include="DataSource.vcxproj">
+      <Project>{f2bb43b1-af64-4831-995f-2ff1f21e3701}</Project>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>
