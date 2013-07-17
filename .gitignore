@@ -12,3 +12,4 @@ doc/Doxyfile
 externals/cppunit/lib
 *.ncb
 *.suo
+/msi.sdf

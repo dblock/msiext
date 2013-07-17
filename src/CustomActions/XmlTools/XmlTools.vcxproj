@@ -52,6 +52,7 @@
     </ClCompile>
     <Link>
       <ModuleDefinitionFile>XmlTools.def</ModuleDefinitionFile>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -60,6 +61,7 @@
     </ClCompile>
     <Link>
       <ModuleDefinitionFile>XmlTools.def</ModuleDefinitionFile>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
