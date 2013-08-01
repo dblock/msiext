@@ -1,7 +1,12 @@
 ###  Next Release
 
+  * **Features**:
+    * Upgraded to Wix 3.7 - [@thcristo](https://github.com/thcristo).
   * **Bugs**: 
     * Bug: `TcpIp_ListAddresses` fails for computer names with exactly 15 characters (max length) - [@dblock](https://github.com/dblock).
+  * **Dev**:
+    * Project requires Visual Studio 2010 to build - [@thcristo](https://github.com/thcristo).
+    * Upgraded Boost, CryptLib and CppUnit - [@thcristo](https://github.com/thcristo).
 
 ###  1.3.529.0 (5/29/2012)
 
