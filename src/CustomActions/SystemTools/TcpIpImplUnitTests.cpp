@@ -23,7 +23,7 @@ void TcpIpImplUnitTests::Test_TcpIp_BindSocket_Local()
 
 	wchar_t computername[MAX_COMPUTERNAME_LENGTH + 1] = { 0 };
 	int port = 20002;
-	DWORD size = MAX_COMPUTERNAME_LENGTH;
+	DWORD size = MAX_COMPUTERNAME_LENGTH + 1;
 	CPPUNIT_ASSERT(::GetComputerName(computername, & size));
 	std::wcout << std::endl << L"Binding " << computername << L":" << port;
 	msiInstall.SetProperty(L"TCP_IPADDRESS", computername);
