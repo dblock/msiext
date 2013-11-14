@@ -1,4 +1,4 @@
-###  Next Release
+###  1.4.1114.0 (11/14/2013)
 
   * **Features**:
     * Upgraded to Wix 3.7 - [@thcristo](https://github.com/thcristo).
