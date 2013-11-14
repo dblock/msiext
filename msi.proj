@@ -90,7 +90,7 @@
   <Target Name="zip" DependsOnTargets="version">
     <CreateItem Include="$(DropDir)\**\*" Exclude="$(DropDir)\*.zip">
       <Output TaskParameter="Include" ItemName="PackageFiles" />
-    </CreateItem>
-    <Zip WorkingDirectory="$(DropDir)" ZipFileName="$(DropDir)\msiext-$(Major).$(Minor).zip" Files="@(PackageFiles)" />
+    </CreateItem> 
+    <Zip WorkingDirectory="$(DropDir)" ZipFileName="$(DropDir)\msiext-$(Major).$(Minor).zip" Files="@(PackageFiles)" ParallelCompression="false" />
   </Target>
 </Project>
