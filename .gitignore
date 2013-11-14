@@ -13,3 +13,5 @@ externals/cppunit/lib
 *.ncb
 *.suo
 /msi.sdf
+/msi.opensdf
+/ipch
