@@ -6,4 +6,4 @@
 #include <TcpIp/Socket.h>
 #include <TcpIp/DNS.h>
 #include <TcpIp/NetBIOS.h>
-
+#include <String/StringUtils.h>

@@ -154,6 +154,8 @@ void DnsUnitTests::testGetHostName()
 	std::wcout << std::endl << L"Computer: " << computername;
     std::wstring hostname = AppSecInc::TcpIp::DNS::GetHostNameW();
 	std::wcout << std::endl << L"Host: " << hostname;    
+	AppSecInc::StringUtils::lowercase(computername);
+	AppSecInc::StringUtils::lowercase(hostname);
     CPPUNIT_ASSERT(computername == hostname);
 }
 
