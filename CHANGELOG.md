@@ -1,3 +1,10 @@
+###  1.5 (Next Release)
+
+  * **Features**:
+  * **Bugs**: 
+  * **Misc**:
+    * [#5] (https://github.com/dblock/msiext/pull/5) - Fixed WiX UI extension screens: texts, icons, margins, spacing - [@romanws](https://github.com/romanws).
+
 ###  1.4.1114.0 (11/14/2013)
 
   * **Features**:
