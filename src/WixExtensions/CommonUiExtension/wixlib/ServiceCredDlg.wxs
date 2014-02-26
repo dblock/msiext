@@ -1,26 +1,28 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
     <Fragment>
+
         <Property Id="SERVICE_LOGON_TYPE" Value="ServiceLocalSystem" />
         <Property Id="SERVICE_DISPLAY_USERNAME" Value="LocalSystem" />
-
+    
         <Property Id="LOGON_PASSWORD" Hidden="yes" />
         <Property Id="SERVICE_PASSWORD" Hidden="yes" />
+
         <UI>
-			<!--
-		   Prompts for service credentials.
-		   
-		   \param SERVICE_LOGON_TYPE one of ServiceAccount or ServiceLocalSystem
-		   \param SERVICE_LOGON_BROWSE show the Browse button
-		   \return SERVICE_USERNAME verified service username, blank if LocalSystem
-		   \return SERVICE_PASSWORD verified service password, blank if LocalSystem
-		   \return SERVICE_DISPLAY_USERNAME service username, LocalSystem if ServiceLocalSystem
-		   
-		   Custom action CheckCredentials is used to test for username/password combination.
-		   Custom action CheckPrivilege is used to test whether username has log on as service rights.
-		   Custom action DirectoryObjectPicker is used to select a user from Active Directory.
-		   -->
-            <Dialog Id="ServiceCredDlg" Width="370" Height="270" Title="!(loc.ServiceDlg_Header)">
+            <!--
+                Prompts for service credentials.
+    
+                \param SERVICE_LOGON_TYPE one of ServiceAccount or ServiceLocalSystem
+                \param SERVICE_LOGON_BROWSE show the Browse button
+                \return SERVICE_USERNAME verified service username, blank if LocalSystem
+                \return SERVICE_PASSWORD verified service password, blank if LocalSystem
+                \return SERVICE_DISPLAY_USERNAME service username, LocalSystem if ServiceLocalSystem
+    
+                Custom action CheckCredentials is used to test for username/password combination.
+                Custom action CheckPrivilege is used to test whether username has log on as service rights.
+                Custom action DirectoryObjectPicker is used to select a user from Active Directory.
+            -->
+            <Dialog Id="ServiceCredDlg" Width="370" Height="270" Title="!(loc.ServiceCredDlg_Header)">
                 <Control Id="Next" Type="PushButton" X="236" Y="243" Width="56" Height="17" Default="yes" Text="!(loc.WixUINext)">
                     <Publish Property="SERVICE_LOGON_TYPE" Value="[SERVICE_LOGON_TYPE]">1</Publish>
                     <Publish Property="SERVICE_USERNAME" Value="[SERVICE_USERNAME]"><![CDATA[SERVICE_LOGON_TYPE = "ServiceAccount"]]></Publish>
@@ -36,24 +38,27 @@
                 <Control Id="Cancel" Type="PushButton" X="304" Y="243" Width="56" Height="17" Cancel="yes" Text="!(loc.WixUICancel)">
                     <Publish Event="SpawnDialog" Value="CancelDlg">1</Publish>
                 </Control>
-                <Control Id="Description" Type="Text" X="25" Y="23" Width="280" Height="15" Transparent="yes" NoPrefix="yes" Text="!(loc.ServiceDlg_SubTitle)" />
-                <Control Id="Title" Type="Text" X="15" Y="6" Width="200" Height="15" Transparent="yes" NoPrefix="yes" Text="!(loc.ServiceDlg_Title)" />
-                <Control Id="BannerBitmap" Type="Bitmap" X="0" Y="0" Width="370" Height="44" TabSkip="no" Text="!(loc.ServiceDlg_BannerBitmap)" />
+                <Control Id="Title" Type="Text" X="15" Y="6" Width="220" Height="15" Transparent="yes" NoPrefix="yes" Text="!(loc.ServiceCredDlg_Title)" />
+                <Control Id="SubTitle" Type="Text" X="25" Y="23" Width="200" Height="20" Transparent="yes" NoPrefix="yes" Text="!(loc.ServiceCredDlg_SubTitle)" />
+                <Control Id="BannerBitmap" Type="Bitmap" X="0" Y="0" Width="370" Height="44" TabSkip="no" Text="!(loc.ServiceCredDlg_BannerBitmap)" />
                 <Control Id="BannerLine" Type="Line" X="0" Y="44" Width="370" Height="0" />
                 <Control Id="BottomLine" Type="Line" X="0" Y="234" Width="370" Height="0" />
 
-                <Control Id="ServiceType" Type="RadioButtonGroup" X="20" Y="60" Width="290" Height="40" Property="SERVICE_LOGON_TYPE">
+                <Control Id="Description" Type="Text" X="20" Y="55" Width="330" Height="40" Text="!(loc.ServiceCredDlg_Description)" />
+
+                <Control Id="SelectorLabel" Type="Text" X="20" Y="103" Width="330" Height="10" Text="!(loc.ServiceCredDlg_SelectorLabel)" />
+                <Control Id="ServiceType" Type="RadioButtonGroup" X="20" Y="118" Width="290" Height="30" Property="SERVICE_LOGON_TYPE">
                     <RadioButtonGroup Property="SERVICE_LOGON_TYPE">
-                        <RadioButton Value="ServiceLocalSystem" X="0" Y="0" Width="290" Height="10" Text="!(loc.ServiceDlg_LocalSystemText)" />
-                        <RadioButton Value="ServiceAccount" X="0" Y="20" Width="290" Height="10" Text="!(loc.ServiceDlg_AccountText)" />
+                        <RadioButton Value="ServiceLocalSystem" X="0" Y="0" Width="290" Height="15" Text="!(loc.ServiceCredDlg_LocalSystemText)" />
+                        <RadioButton Value="ServiceAccount" X="0" Y="15" Width="290" Height="15" Text="!(loc.ServiceCredDlg_AccountText)" />
                     </RadioButtonGroup>
                 </Control>
 
-                <Control Id="UsernameLabel" Type="Text" X="45" Y="95" Width="50" Height="10" TabSkip="no" Text="!(loc.ServiceDlg_UsernameLabel)">
+                <Control Id="UsernameLabel" Type="Text" X="40" Y="155" Width="41" Height="10" TabSkip="no" Text="!(loc.ServiceCredDlg_UsernameLabel)">
                     <Condition Action="disable"><![CDATA[SERVICE_LOGON_TYPE <> "ServiceAccount"]]></Condition>
                     <Condition Action="enable"><![CDATA[SERVICE_LOGON_TYPE = "ServiceAccount"]]></Condition>
                 </Control>
-                <Control Id="Username" Type="Edit" X="95" Y="95" Width="150" Height="15" Property="SERVICE_USERNAME" Text="{64}">
+                <Control Id="Username" Type="Edit" X="81" Y="153" Width="150" Height="15" Property="SERVICE_USERNAME" Text="{64}">
                     <Condition Action="disable"><![CDATA[SERVICE_LOGON_TYPE <> "ServiceAccount"]]></Condition>
                     <Condition Action="enable"><![CDATA[SERVICE_LOGON_TYPE = "ServiceAccount"]]></Condition>
                     <Publish Property="LOGON_VALID" Value="0">1</Publish>
@@ -63,7 +68,7 @@
                     <Publish Event="DoAction" Value="AsiUI_Regex_Match"><![CDATA[SERVICE_USERNAME <> ""]]></Publish>
                     <Publish Property="SERVICE_USERNAME" Value="[ComputerName]\[SERVICE_USERNAME]"><![CDATA[SERVICE_USERNAME <> "" AND REGEX_MATCH_RESULT = "0"]]></Publish>
                 </Control>
-                <Control Id="UsernameBrowse" Type="PushButton" X="265" Y="95" Width="50" Height="15" Text="!(loc.ServiceDlg_UsernameBrowse)">
+                <Control Id="UsernameBrowse" Type="PushButton" X="236" Y="153" Width="56" Height="15" Text="!(loc.ServiceCredDlg_UsernameBrowse)">
                     <Condition Action="disable"><![CDATA[SERVICE_LOGON_TYPE <> "ServiceAccount"]]></Condition>
                     <Condition Action="enable"><![CDATA[SERVICE_LOGON_TYPE = "ServiceAccount"]]></Condition>
                     <Condition Action="show"><![CDATA[SERVICE_LOGON_BROWSE]]></Condition>
@@ -78,23 +83,18 @@
                     <Publish Property="SERVICE_USERNAME" Value="[DSOP_NAME]" Order="3"><![CDATA[DSOP_NAME <> "" AND DSOP_UPN = ""]]></Publish>
                 </Control>
 
-                <Control Id="PasswordLabel" Type="Text" X="45" Y="110" Width="50" Height="15" TabSkip="no" Text="!(loc.ServiceDlg_PasswordLabel)">
+                <Control Id="PasswordLabel" Type="Text" X="40" Y="170" Width="41" Height="10" TabSkip="no" Text="!(loc.ServiceCredDlg_PasswordLabel)">
                     <Condition Action="disable"><![CDATA[SERVICE_LOGON_TYPE <> "ServiceAccount"]]></Condition>
                     <Condition Action="enable"><![CDATA[SERVICE_LOGON_TYPE = "ServiceAccount"]]></Condition>
                 </Control>
-                <Control Id="Password" Password="yes" Type="Edit" X="95" Y="110" Width="150" Height="15" Property="SERVICE_PASSWORD">
+                <Control Id="Password" Password="yes" Type="Edit" X="81" Y="168" Width="150" Height="15" Property="SERVICE_PASSWORD">
                     <Condition Action="disable"><![CDATA[SERVICE_LOGON_TYPE <> "ServiceAccount"]]></Condition>
                     <Condition Action="enable"><![CDATA[SERVICE_LOGON_TYPE = "ServiceAccount"]]></Condition>
                     <Publish Property="LOGON_VALID" Value="0">1</Publish>
                 </Control>
 
-                <Control Id="TestPrompt" Type="Text" X="180" Y="138" Width="155" Height="10" Text="!(loc.ServiceDlg_TestPrompt)">
-                    <Condition Action="hide"><![CDATA[(LOGON_VALID = "1" AND LOGON_HAS_PRIVILEGE = "1" AND LOGON_IS_MEMBER = "1") OR SERVICE_LOGON_TYPE <> "ServiceAccount"]]></Condition>
-                    <Condition Action="show"><![CDATA[(LOGON_VALID = "0" OR LOGON_HAS_PRIVILEGE = "0" OR LOGON_IS_MEMBER = "0") AND SERVICE_LOGON_TYPE = "ServiceAccount"]]></Condition>
-                </Control>
-
                 <!-- \todo Testing credentials on Vista requires elevation, ElevationShield just puts a pretty icon here -->
-                <Control Id="Test" Type="PushButton" X="45" Y="135" Width="100" Height="15" Text="!(loc.ServiceDlg_AccountTestLabel)">
+                <Control Id="Test" Type="PushButton" X="40" Y="193" Width="100" Height="15" Text="!(loc.ServiceCredDlg_AccountTestLabel)">
                     <Condition Action="disable"><![CDATA[SERVICE_LOGON_TYPE <> "ServiceAccount" OR LOGON_VALID = "1"]]></Condition>
                     <Condition Action="enable"><![CDATA[SERVICE_LOGON_TYPE = "ServiceAccount" AND LOGON_VALID <> "1"]]></Condition>
                     <Condition Action="hide"><![CDATA[VersionNT <= 500]]></Condition>
@@ -106,16 +106,16 @@
                     <Publish Event="DoAction" Value="AsiUI_CheckCredentials" Order="2">1</Publish>
                     <Publish Property="ERROR_MESSAGE" Order="3">1</Publish>
                     <Publish Property="USERNAME_PASSWORD_VALID" Value="[LOGON_VALID]" Order="4">1</Publish>
-                    <Publish Property="ERROR_TITLE" Value="!(loc.InvalidLoginError_Title)" Order="5">1</Publish>
+                    <Publish Property="ERROR_TITLE" Value="!(loc.ServiceCredDlg_InvalidLogonErrorTitle)" Order="5">1</Publish>
                     <Publish Property="ERROR_MESSAGE" Value="[LOGON_ERROR]" Order="6"><![CDATA[LOGON_ERROR <> "" AND USERNAME_PASSWORD_VALID = "0"]]></Publish>
-                    <Publish Property="ERROR_MESSAGE" Value="!(loc.ServiceDlg_InvalidLogonError)" Order="7"><![CDATA[LOGON_ERROR = "" AND USERNAME_PASSWORD_VALID = "0"]]></Publish>
+                    <Publish Property="ERROR_MESSAGE" Value="!(loc.ServiceCredDlg_InvalidLogonError)" Order="7"><![CDATA[LOGON_ERROR = "" AND USERNAME_PASSWORD_VALID = "0"]]></Publish>
 
                     <!-- check whether this user has logon as a service privilege, only if username/password is valid -->
                     <Publish Property="LOGON_TYPE" Value="LOGON32_LOGON_SERVICE" Order="8"><![CDATA[USERNAME_PASSWORD_VALID = "1"]]></Publish>
                     <Publish Property="ERROR_MESSAGE" Order="8"><![CDATA[USERNAME_PASSWORD_VALID = "1"]]></Publish>
                     <Publish Event="DoAction" Value="AsiUI_CheckCredentialsWithPrivilege" Order="9"><![CDATA[USERNAME_PASSWORD_VALID = "1"]]></Publish>
                     <Publish Property="LOGON_HAS_PRIVILEGE" Value="[LOGON_VALID]" Order="10"><![CDATA[USERNAME_PASSWORD_VALID = "1"]]></Publish>
-                    <Publish Property="ERROR_MESSAGE" Value="!(loc.ServiceDlg_AccountDoesNotHaveLogonAsServiceRights)" Order="11"><![CDATA[USERNAME_PASSWORD_VALID = "1" AND LOGON_HAS_PRIVILEGE = "0"]]></Publish>
+                    <Publish Property="ERROR_MESSAGE" Value="!(loc.ServiceCredDlg_AccountDoesNotHaveLogonAsServiceRights)" Order="11"><![CDATA[USERNAME_PASSWORD_VALID = "1" AND LOGON_HAS_PRIVILEGE = "0"]]></Publish>
 
                     <!-- check whether this user is an administrator. S-1-5-32-544 is the SID of the Administrators group -->
                     <Publish Property="IMPERSONATE_LOGON_TYPE" Value="LOGON32_LOGON_NETWORK" Order="21"><![CDATA[SERVICE_REQUIRE_ADMIN AND SERVICE_LOGON_TYPE = "ServiceAccount"]]></Publish>
@@ -123,7 +123,7 @@
                     <Publish Property="IMPERSONATE_PASSWORD" Value="[SERVICE_PASSWORD]" Order="22"><![CDATA[SERVICE_REQUIRE_ADMIN AND SERVICE_LOGON_TYPE = "ServiceAccount"]]></Publish>
                     <Publish Property="SID" Value="S-1-5-32-544" Order="23"><![CDATA[SERVICE_REQUIRE_ADMIN AND SERVICE_LOGON_TYPE = "ServiceAccount"]]></Publish>
                     <Publish Event="DoAction" Value="AsiUI_CheckMembership" Order="24"><![CDATA[SERVICE_REQUIRE_ADMIN AND USERNAME_PASSWORD_VALID = "1" AND LOGON_HAS_PRIVILEGE="1"]]></Publish>
-                    <Publish Property="ERROR_MESSAGE" Value="!(loc.ServiceDlg_AccountNotInAdministratorsGroup)" Order="26"><![CDATA[SERVICE_REQUIRE_ADMIN AND USERNAME_PASSWORD_VALID = "1" AND LOGON_HAS_PRIVILEGE = "1" AND LOGON_IS_MEMBER = "0" AND ERROR_MESSAGE = ""]]></Publish>
+                    <Publish Property="ERROR_MESSAGE" Value="!(loc.ServiceCredDlg_AccountNotInAdministratorsGroup)" Order="26"><![CDATA[SERVICE_REQUIRE_ADMIN AND USERNAME_PASSWORD_VALID = "1" AND LOGON_HAS_PRIVILEGE = "1" AND LOGON_IS_MEMBER = "0" AND ERROR_MESSAGE = ""]]></Publish>
 
                     <!-- Need to publish this so that the installer can move on if adminstrative user is not required -->
                     <Publish Property="LOGON_IS_MEMBER" Value="1">NOT SERVICE_REQUIRE_ADMIN</Publish>
@@ -134,15 +134,20 @@
                     <Publish Property="IMPERSONATE_USERNAME" Order="32">1</Publish>
                     <Publish Property="IMPERSONATE_PASSWORD" Order="33">1</Publish>
                 </Control>
-                <Control Id="TestResult_Success" Type="Icon" IconSize="16" X="160" Y="135" Width="12" Height="12" Text="AsiUI_SuccessIco">
+                <Control Id="TestResult_Success" Type="Icon" IconSize="16" X="145" Y="194" Width="12" Height="12" Text="AsiUI_SuccessIco">
                     <Condition Action="hide"><![CDATA[LOGON_VALID = "0" OR LOGON_HAS_PRIVILEGE = "0" OR LOGON_IS_MEMBER = "0" OR SERVICE_LOGON_TYPE <> "ServiceAccount"]]></Condition>
                     <Condition Action="show"><![CDATA[LOGON_VALID = "1" AND LOGON_HAS_PRIVILEGE = "1" AND LOGON_IS_MEMBER = "1" AND SERVICE_LOGON_TYPE = "ServiceAccount"]]></Condition>
                 </Control>
-                <Control Id="TestResult_Failure" Type="Icon" IconSize="16" X="160" Y="135" Width="12" Height="12" Text="AsiUI_ErrorIco">
+                <Control Id="TestResult_Failure" Type="Icon" IconSize="16" X="145" Y="194" Width="12" Height="12" Text="AsiUI_ErrorIco">
                     <Condition Action="hide"><![CDATA[(LOGON_VALID = "1" AND LOGON_HAS_PRIVILEGE = "1" AND LOGON_IS_MEMBER = "1") OR SERVICE_LOGON_TYPE <> "ServiceAccount"]]></Condition>
                     <Condition Action="show"><![CDATA[(LOGON_VALID = "0" OR LOGON_HAS_PRVILEGE = "0" OR LOGON_IS_MEMBER = "0") AND SERVICE_LOGON_TYPE = "ServiceAccount"]]></Condition>
                 </Control>
+                <Control Id="TestPrompt" Type="Text" X="160" Y="196" Width="155" Height="10" Text="!(loc.ServiceCredDlg_TestPrompt)">
+                    <Condition Action="hide"><![CDATA[(LOGON_VALID = "1" AND LOGON_HAS_PRIVILEGE = "1" AND LOGON_IS_MEMBER = "1") OR SERVICE_LOGON_TYPE <> "ServiceAccount"]]></Condition>
+                    <Condition Action="show"><![CDATA[(LOGON_VALID = "0" OR LOGON_HAS_PRIVILEGE = "0" OR LOGON_IS_MEMBER = "0") AND SERVICE_LOGON_TYPE = "ServiceAccount"]]></Condition>
+                </Control>
             </Dialog>
         </UI>
+
     </Fragment>
 </Wix>
