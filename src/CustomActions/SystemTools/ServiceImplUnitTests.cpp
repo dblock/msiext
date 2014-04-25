@@ -21,6 +21,7 @@ void ServiceImplUnitTests::Test_EntryPoints()
 	CPPUNIT_ASSERT(NULL != GetProcAddress(h, "Service_Delete"));
 	CPPUNIT_ASSERT(NULL != GetProcAddress(h, "Service_GetConfig"));
 	CPPUNIT_ASSERT(NULL != GetProcAddress(h, "Service_Exists"));
+	CPPUNIT_ASSERT(NULL != GetProcAddress(h, "Service_GetStatus"));
 	::FreeLibrary(h);
 }
 
@@ -217,4 +218,22 @@ void ServiceImplUnitTests::Test_Service_Exists()
 	msiInstall.SetProperty(L"SERVICE_NAME", AppSecInc::Com::GenerateGUIDStringW());
 	CPPUNIT_ASSERT(ERROR_SUCCESS == hInstall.ExecuteCA(L"SystemTools.dll", L"Service_Exists"));
 	CPPUNIT_ASSERT(L"0" == msiInstall.GetProperty(L"SERVICE_EXISTS"));
+}
+
+void ServiceImplUnitTests::Test_Service_GetStatus()
+{
+	AppSecInc::Msi::MsiShim hInstall;
+	MsiInstall msiInstall(hInstall);
+
+	msiInstall.SetProperty(L"SERVICE_NAME", L"W32Time");
+	CPPUNIT_ASSERT(ERROR_SUCCESS == hInstall.ExecuteCA(L"SystemTools.dll", L"Service_GetStatus"));
+	CPPUNIT_ASSERT(L"Running" == msiInstall.GetProperty(L"SERVICE_STATUS"));
+
+	msiInstall.SetProperty(L"SERVICE_NAME", L"WerSvc");
+	CPPUNIT_ASSERT(ERROR_SUCCESS == hInstall.ExecuteCA(L"SystemTools.dll", L"Service_GetStatus"));
+	CPPUNIT_ASSERT(L"Stopped" == msiInstall.GetProperty(L"SERVICE_STATUS"));
+
+	msiInstall.SetProperty(L"SERVICE_NAME", AppSecInc::Com::GenerateGUIDStringW());
+	CPPUNIT_ASSERT(ERROR_SUCCESS == hInstall.ExecuteCA(L"SystemTools.dll", L"Service_GetStatus"));
+	CPPUNIT_ASSERT(L"Absent" == msiInstall.GetProperty(L"SERVICE_STATUS"));
 }
