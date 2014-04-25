@@ -100,3 +100,12 @@ CA_API UINT __stdcall Service_GetConfig(MSIHANDLE hInstall);
 \return SERVICE_EXISTS set to "1" if service exists, "0" otherwise
 */
 CA_API UINT __stdcall Service_Exists(MSIHANDLE hInstall);
+
+/*! 
+
+\brief Get status of a service
+\param SERVICE_NAME service name
+\return SERVICE_STATUS set to one of: Stopped, Starting, Stopping, Running, Resuming, Pausing, Paused depending on the current service state. If service does not exist SERVICE_STATUS is set to Absent.
+*/
+CA_API UINT __stdcall Service_GetStatus(MSIHANDLE hInstall);
+

@@ -35,6 +35,7 @@ EXPORTS
 	Service_ChangeDescription
 	Service_GetConfig
 	Service_Exists
+	Service_GetStatus
 	TemplateFiles_Immediate
 	TemplateFiles_Deferred
 	Registry_CopyBranch

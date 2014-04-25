@@ -171,3 +171,56 @@ CA_API UINT __stdcall Service_Exists(MSIHANDLE hInstall)
 	MSI_EXCEPTION_HANDLER_EPILOG;
     return ERROR_SUCCESS;
 }
+
+
+using AppSecInc::Service::ServiceStatusProcess;
+
+static std::shared_ptr<ServiceStatusProcess> getServiceStatus(const std::wstring& service_name)
+{
+	AppSecInc::Service::ServiceManager scm;
+	scm.Open(SC_MANAGER_CONNECT|SC_MANAGER_ENUMERATE_SERVICE);
+	std::list<ServiceStatusProcess> &services = scm.GetServices();
+
+	for each(const ServiceStatusProcess& sp in services) {
+		if (sp.name == service_name) {
+			return std::shared_ptr<ServiceStatusProcess>(new ServiceStatusProcess( sp ));
+		}
+	}
+	return std::shared_ptr<ServiceStatusProcess>();
+}
+
+
+static std::wstring serviceStatusString(DWORD dwCurrentState)
+{
+	const wchar_t* st = L"Unknown";
+
+	switch (dwCurrentState) {
+		case SERVICE_STOPPED:          st = L"Stopped";  break;
+		case SERVICE_START_PENDING:    st = L"Starting"; break;
+		case SERVICE_STOP_PENDING:     st = L"Stopping"; break;
+		case SERVICE_RUNNING:          st = L"Running";  break;
+		case SERVICE_CONTINUE_PENDING: st = L"Resuming"; break;
+		case SERVICE_PAUSE_PENDING:    st = L"Pausing";  break;
+		case SERVICE_PAUSED:           st = L"Paused";   break;
+	}
+	return st;
+}
+
+CA_API UINT __stdcall Service_GetStatus(MSIHANDLE hInstall)
+{
+	MSI_EXCEPTION_HANDLER_PROLOG;
+	MsiInstall msiInstall(hInstall);
+
+	std::wstring service_name = msiInstall.GetProperty(L"SERVICE_NAME");
+	std::shared_ptr<ServiceStatusProcess> pst = getServiceStatus( service_name );
+	if (pst) {
+		msiInstall.SetProperty(L"SERVICE_STATUS", serviceStatusString(pst->status_process.dwCurrentState));
+	}
+	else {
+		msiInstall.SetProperty(L"SERVICE_STATUS", L"Absent");
+	}
+
+	MSI_EXCEPTION_HANDLER_EPILOG;
+	return ERROR_SUCCESS;
+}
+
