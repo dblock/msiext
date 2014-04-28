@@ -1,6 +1,7 @@
 ###  1.5 (Next Release)
 
   * **Features**:
+
     * [#8](https://github.com/dblock/msiext/pull/8) - Added `Service_GetStatus` immediate custom action - [@vladaver](https://github.com/vladaver).
   * **Bugs**:
   * **Misc**:
