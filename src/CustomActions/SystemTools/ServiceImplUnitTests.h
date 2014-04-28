@@ -19,6 +19,7 @@ namespace AppSecInc
 				CPPUNIT_TEST( Test_Service_GetConfig );
 				CPPUNIT_TEST( Test_Service_Exists );
 				CPPUNIT_TEST( Test_Service_GetStatus );
+				CPPUNIT_TEST( Test_Service_GetStatus_accepts_SERVICE_NAME );
 				CPPUNIT_TEST_SUITE_END();
 			private:
 				std::wstring service_name;
@@ -35,6 +36,7 @@ namespace AppSecInc
 				void Test_Service_GetConfig();
 				void Test_Service_Exists();
 				void Test_Service_GetStatus();
+				void Test_Service_GetStatus_accepts_SERVICE_NAME();
 			};
 		}
 	}

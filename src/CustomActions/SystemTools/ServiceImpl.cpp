@@ -173,23 +173,6 @@ CA_API UINT __stdcall Service_Exists(MSIHANDLE hInstall)
 }
 
 
-using AppSecInc::Service::ServiceStatusProcess;
-
-static std::shared_ptr<ServiceStatusProcess> getServiceStatus(const std::wstring& service_name)
-{
-	AppSecInc::Service::ServiceManager scm;
-	scm.Open(SC_MANAGER_CONNECT|SC_MANAGER_ENUMERATE_SERVICE);
-	std::list<ServiceStatusProcess> &services = scm.GetServices();
-
-	for each(const ServiceStatusProcess& sp in services) {
-		if (sp.name == service_name) {
-			return std::shared_ptr<ServiceStatusProcess>(new ServiceStatusProcess( sp ));
-		}
-	}
-	return std::shared_ptr<ServiceStatusProcess>();
-}
-
-
 static std::wstring serviceStatusString(DWORD dwCurrentState)
 {
 	const wchar_t* st = L"Unknown";
@@ -211,14 +194,19 @@ CA_API UINT __stdcall Service_GetStatus(MSIHANDLE hInstall)
 	MSI_EXCEPTION_HANDLER_PROLOG;
 	MsiInstall msiInstall(hInstall);
 
-	std::wstring service_name = msiInstall.GetProperty(L"SERVICE_NAME");
-	std::shared_ptr<ServiceStatusProcess> pst = getServiceStatus( service_name );
-	if (pst) {
-		msiInstall.SetProperty(L"SERVICE_STATUS", serviceStatusString(pst->status_process.dwCurrentState));
+	std::wstring service_name = msiInstall.GetProperty(L"SERVICE_STATUS_SERVICE_NAME");
+	if (service_name.empty()) {
+		service_name = msiInstall.GetProperty(L"SERVICE_NAME");
 	}
-	else {
-		msiInstall.SetProperty(L"SERVICE_STATUS", L"Absent");
-	}
+
+	AppSecInc::Service::ServiceManager scm;
+	scm.Open(SC_MANAGER_CONNECT|STANDARD_RIGHTS_READ);
+	AppSecInc::Service::ServiceInstance service;
+	service.Open( scm, service_name );
+	SERVICE_STATUS_PROCESS st;
+	service.GetServiceProcessStatus( &st );
+	
+	msiInstall.SetProperty(L"SERVICE_STATUS", serviceStatusString(st.dwCurrentState));
 
 	MSI_EXCEPTION_HANDLER_EPILOG;
 	return ERROR_SUCCESS;

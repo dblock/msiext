@@ -225,15 +225,31 @@ void ServiceImplUnitTests::Test_Service_GetStatus()
 	AppSecInc::Msi::MsiShim hInstall;
 	MsiInstall msiInstall(hInstall);
 
+	msiInstall.SetProperty(L"SERVICE_STATUS_SERVICE_NAME", L"W32Time");
+	CPPUNIT_ASSERT(ERROR_SUCCESS == hInstall.ExecuteCA(L"SystemTools.dll", L"Service_GetStatus"));
+	CPPUNIT_ASSERT(L"Running" == msiInstall.GetProperty(L"SERVICE_STATUS"));
+
+	msiInstall.SetProperty(L"SERVICE_STATUS_SERVICE_NAME", L"Wecsvc");
+	CPPUNIT_ASSERT(ERROR_SUCCESS == hInstall.ExecuteCA(L"SystemTools.dll", L"Service_GetStatus"));
+	CPPUNIT_ASSERT(L"Stopped" == msiInstall.GetProperty(L"SERVICE_STATUS"));
+
+	msiInstall.SetProperty(L"SERVICE_STATUS_SERVICE_NAME", AppSecInc::Com::GenerateGUIDStringW());
+	CPPUNIT_ASSERT(ERROR_SUCCESS != hInstall.ExecuteCA(L"SystemTools.dll", L"Service_GetStatus"));
+	// SERVICE_STATUS should remain unchainged
+	CPPUNIT_ASSERT(L"Stopped" == msiInstall.GetProperty(L"SERVICE_STATUS"));
+}
+
+void ServiceImplUnitTests::Test_Service_GetStatus_accepts_SERVICE_NAME()
+{
+	AppSecInc::Msi::MsiShim hInstall;
+	MsiInstall msiInstall(hInstall);
+
 	msiInstall.SetProperty(L"SERVICE_NAME", L"W32Time");
 	CPPUNIT_ASSERT(ERROR_SUCCESS == hInstall.ExecuteCA(L"SystemTools.dll", L"Service_GetStatus"));
 	CPPUNIT_ASSERT(L"Running" == msiInstall.GetProperty(L"SERVICE_STATUS"));
 
-	msiInstall.SetProperty(L"SERVICE_NAME", L"WerSvc");
+	// more specific name should override generic one:
+	msiInstall.SetProperty(L"SERVICE_STATUS_SERVICE_NAME", L"Wecsvc");
 	CPPUNIT_ASSERT(ERROR_SUCCESS == hInstall.ExecuteCA(L"SystemTools.dll", L"Service_GetStatus"));
 	CPPUNIT_ASSERT(L"Stopped" == msiInstall.GetProperty(L"SERVICE_STATUS"));
-
-	msiInstall.SetProperty(L"SERVICE_NAME", AppSecInc::Com::GenerateGUIDStringW());
-	CPPUNIT_ASSERT(ERROR_SUCCESS == hInstall.ExecuteCA(L"SystemTools.dll", L"Service_GetStatus"));
-	CPPUNIT_ASSERT(L"Absent" == msiInstall.GetProperty(L"SERVICE_STATUS"));
 }

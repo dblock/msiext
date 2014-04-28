@@ -104,8 +104,9 @@ CA_API UINT __stdcall Service_Exists(MSIHANDLE hInstall);
 /*! 
 
 \brief Get status of a service
-\param SERVICE_NAME service name
-\return SERVICE_STATUS set to one of: Stopped, Starting, Stopping, Running, Resuming, Pausing, Paused depending on the current service state. If service does not exist SERVICE_STATUS is set to Absent.
+\param SERVICE_STATUS_SERVICE_NAME service name
+\param SERVICE_NAME alternative property for service name, used when SERVICE_STATUS_SERVICE_NAME is not set
+\return SERVICE_STATUS set to one of: Stopped, Starting, Stopping, Running, Resuming, Pausing, Paused depending on the current service state. Fails if service does not exist; SERVICE_STATUS is unchanged in this case.
 */
 CA_API UINT __stdcall Service_GetStatus(MSIHANDLE hInstall);
 
