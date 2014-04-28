@@ -45,7 +45,7 @@ void ServiceInstanceUnitTests::testGetServiceStateString()
     ServiceManager scm;
     scm.Open();
     ServiceInstance instance;
-    instance.Open(scm, L"W32Time");
+    instance.Open(scm, L"Eventlog");
     std::wstring state = instance.GetServiceStateString();
     CPPUNIT_ASSERT( L"Running" == state );
 }

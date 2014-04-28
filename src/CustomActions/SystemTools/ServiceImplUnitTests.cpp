@@ -225,7 +225,7 @@ void ServiceImplUnitTests::Test_Service_GetStatus()
 	AppSecInc::Msi::MsiShim hInstall;
 	MsiInstall msiInstall(hInstall);
 
-	msiInstall.SetProperty(L"SERVICE_STATUS_SERVICE_NAME", L"W32Time");
+	msiInstall.SetProperty(L"SERVICE_STATUS_SERVICE_NAME", L"Eventlog");
 	CPPUNIT_ASSERT(ERROR_SUCCESS == hInstall.ExecuteCA(L"SystemTools.dll", L"Service_GetStatus"));
 	CPPUNIT_ASSERT(L"Running" == msiInstall.GetProperty(L"SERVICE_STATUS"));
 
