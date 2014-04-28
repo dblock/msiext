@@ -134,6 +134,29 @@ DWORD ServiceInstance::GetServiceState() const
     return status.dwCurrentState;
 }
 
+std::wstring ServiceInstance::GetServiceStateString()
+{
+	switch (GetServiceState()) 
+	{
+	case SERVICE_STOPPED:
+		return L"Stopped";
+	case SERVICE_START_PENDING:
+		return L"Starting";
+	case SERVICE_STOP_PENDING:
+		return L"Stopping";
+	case SERVICE_RUNNING:
+		return L"Running";
+	case SERVICE_CONTINUE_PENDING:
+		return L"Resuming";
+	case SERVICE_PAUSE_PENDING:
+		return L"Pausing";
+	case SERVICE_PAUSED:
+		return L"Paused";
+	default:
+		return L"Unknown";
+	}
+}
+
 bool ServiceInstance::Wait(DWORD timeout) const
 {
     DWORD slept = 0;
