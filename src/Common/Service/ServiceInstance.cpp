@@ -134,6 +134,7 @@ DWORD ServiceInstance::GetServiceState() const
     return status.dwCurrentState;
 }
 
+
 std::wstring ServiceInstance::GetServiceStateString()
 {
 	switch (GetServiceState()) 
@@ -155,6 +156,7 @@ std::wstring ServiceInstance::GetServiceStateString()
 	default:
 		return L"Unknown";
 	}
+
 }
 
 bool ServiceInstance::Wait(DWORD timeout) const

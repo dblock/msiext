@@ -173,35 +173,13 @@ CA_API UINT __stdcall Service_Exists(MSIHANDLE hInstall)
 }
 
 
-<<<<<<< HEAD
 
-=======
-static std::wstring serviceStatusString(DWORD dwCurrentState)
-{
-	const wchar_t* st = L"Unknown";
-
-	switch (dwCurrentState) {
-		case SERVICE_STOPPED:          st = L"Stopped";  break;
-		case SERVICE_START_PENDING:    st = L"Starting"; break;
-		case SERVICE_STOP_PENDING:     st = L"Stopping"; break;
-		case SERVICE_RUNNING:          st = L"Running";  break;
-		case SERVICE_CONTINUE_PENDING: st = L"Resuming"; break;
-		case SERVICE_PAUSE_PENDING:    st = L"Pausing";  break;
-		case SERVICE_PAUSED:           st = L"Paused";   break;
-	}
-	return st;
-}
-
->>>>>>> addressed issues mentioned in pull request
 CA_API UINT __stdcall Service_GetStatus(MSIHANDLE hInstall)
 {
 	MSI_EXCEPTION_HANDLER_PROLOG;
 	MsiInstall msiInstall(hInstall);
 
-<<<<<<< HEAD
 
-=======
->>>>>>> addressed issues mentioned in pull request
 	std::wstring service_name = msiInstall.GetProperty(L"SERVICE_STATUS_SERVICE_NAME");
 	if (service_name.empty()) {
 		service_name = msiInstall.GetProperty(L"SERVICE_NAME");
@@ -211,17 +189,11 @@ CA_API UINT __stdcall Service_GetStatus(MSIHANDLE hInstall)
 	scm.Open(SC_MANAGER_CONNECT|STANDARD_RIGHTS_READ);
 	AppSecInc::Service::ServiceInstance service;
 	service.Open( scm, service_name );
-<<<<<<< HEAD
+
 	std::wstring state = service.GetServiceStateString();
 	
 	msiInstall.SetProperty(L"SERVICE_STATUS", state);
 
-=======
-	SERVICE_STATUS_PROCESS st;
-	service.GetServiceProcessStatus( &st );
-	
-	msiInstall.SetProperty(L"SERVICE_STATUS", serviceStatusString(st.dwCurrentState));
->>>>>>> addressed issues mentioned in pull request
 
 	MSI_EXCEPTION_HANDLER_EPILOG;
 	return ERROR_SUCCESS;

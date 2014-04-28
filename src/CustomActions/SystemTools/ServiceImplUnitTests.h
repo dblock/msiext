@@ -21,6 +21,7 @@ namespace AppSecInc
 				CPPUNIT_TEST( Test_Service_GetStatus );
 
 
+
 				CPPUNIT_TEST( Test_Service_GetStatus_Accepts_SERVICE_NAME );
 
 				CPPUNIT_TEST_SUITE_END();
@@ -41,8 +42,8 @@ namespace AppSecInc
 				void Test_Service_GetStatus();
 
 
-				void Test_Service_GetStatus_Accepts_SERVICE_NAME();
 
+				void Test_Service_GetStatus_Accepts_SERVICE_NAME();
 			};
 		}
 	}
