@@ -173,22 +173,6 @@ CA_API UINT __stdcall Service_Exists(MSIHANDLE hInstall)
 }
 
 
-static std::wstring serviceStatusString(DWORD dwCurrentState)
-{
-	const wchar_t* st = L"Unknown";
-
-	switch (dwCurrentState) {
-		case SERVICE_STOPPED:          st = L"Stopped";  break;
-		case SERVICE_START_PENDING:    st = L"Starting"; break;
-		case SERVICE_STOP_PENDING:     st = L"Stopping"; break;
-		case SERVICE_RUNNING:          st = L"Running";  break;
-		case SERVICE_CONTINUE_PENDING: st = L"Resuming"; break;
-		case SERVICE_PAUSE_PENDING:    st = L"Pausing";  break;
-		case SERVICE_PAUSED:           st = L"Paused";   break;
-	}
-	return st;
-}
-
 CA_API UINT __stdcall Service_GetStatus(MSIHANDLE hInstall)
 {
 	MSI_EXCEPTION_HANDLER_PROLOG;
@@ -203,10 +187,9 @@ CA_API UINT __stdcall Service_GetStatus(MSIHANDLE hInstall)
 	scm.Open(SC_MANAGER_CONNECT|STANDARD_RIGHTS_READ);
 	AppSecInc::Service::ServiceInstance service;
 	service.Open( scm, service_name );
-	SERVICE_STATUS_PROCESS st;
-	service.GetServiceProcessStatus( &st );
+	std::wstring state = service.GetServiceStateString();
 	
-	msiInstall.SetProperty(L"SERVICE_STATUS", serviceStatusString(st.dwCurrentState));
+	msiInstall.SetProperty(L"SERVICE_STATUS", state);
 
 	MSI_EXCEPTION_HANDLER_EPILOG;
 	return ERROR_SUCCESS;

@@ -13,6 +13,7 @@ namespace AppSecInc
 				CPPUNIT_TEST( testCreateDelete );
                 CPPUNIT_TEST( testOpenClose );
                 CPPUNIT_TEST( testGetServiceProcessStatus );
+                CPPUNIT_TEST( testGetServiceStateString );
                 CPPUNIT_TEST( testControl );
 				CPPUNIT_TEST( testGetConfig );
 				CPPUNIT_TEST( testGetDescription );
@@ -23,6 +24,7 @@ namespace AppSecInc
                 void testOpenClose();
                 void testControl();
                 void testGetServiceProcessStatus();
+                void testGetServiceStateString();
 				void testGetConfig();
 				void testGetDescription();
 			};

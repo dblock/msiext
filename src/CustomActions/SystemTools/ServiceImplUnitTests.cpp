@@ -235,11 +235,11 @@ void ServiceImplUnitTests::Test_Service_GetStatus()
 
 	msiInstall.SetProperty(L"SERVICE_STATUS_SERVICE_NAME", AppSecInc::Com::GenerateGUIDStringW());
 	CPPUNIT_ASSERT(ERROR_SUCCESS != hInstall.ExecuteCA(L"SystemTools.dll", L"Service_GetStatus"));
-	// SERVICE_STATUS should remain unchainged
+	// SERVICE_STATUS should remain unchanged
 	CPPUNIT_ASSERT(L"Stopped" == msiInstall.GetProperty(L"SERVICE_STATUS"));
 }
 
-void ServiceImplUnitTests::Test_Service_GetStatus_accepts_SERVICE_NAME()
+void ServiceImplUnitTests::Test_Service_GetStatus_Accepts_SERVICE_NAME()
 {
 	AppSecInc::Msi::MsiShim hInstall;
 	MsiInstall msiInstall(hInstall);
