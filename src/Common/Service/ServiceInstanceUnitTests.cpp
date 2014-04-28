@@ -40,6 +40,16 @@ void ServiceInstanceUnitTests::testGetServiceProcessStatus()
     CPPUNIT_ASSERT(0 != status.dwProcessId);
 }
 
+void ServiceInstanceUnitTests::testGetServiceStateString()
+{
+    ServiceManager scm;
+    scm.Open();
+    ServiceInstance instance;
+    instance.Open(scm, L"W32Time");
+    std::wstring state = instance.GetServiceStateString();
+    CPPUNIT_ASSERT( L"Running" == state );
+}
+
 void ServiceInstanceUnitTests::testControl()
 {
     ServiceManager scm;

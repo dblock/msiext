@@ -171,3 +171,27 @@ CA_API UINT __stdcall Service_Exists(MSIHANDLE hInstall)
 	MSI_EXCEPTION_HANDLER_EPILOG;
     return ERROR_SUCCESS;
 }
+
+
+CA_API UINT __stdcall Service_GetStatus(MSIHANDLE hInstall)
+{
+	MSI_EXCEPTION_HANDLER_PROLOG;
+	MsiInstall msiInstall(hInstall);
+
+	std::wstring service_name = msiInstall.GetProperty(L"SERVICE_STATUS_SERVICE_NAME");
+	if (service_name.empty()) {
+		service_name = msiInstall.GetProperty(L"SERVICE_NAME");
+	}
+
+	AppSecInc::Service::ServiceManager scm;
+	scm.Open(SC_MANAGER_CONNECT|STANDARD_RIGHTS_READ);
+	AppSecInc::Service::ServiceInstance service;
+	service.Open( scm, service_name );
+	std::wstring state = service.GetServiceStateString();
+	
+	msiInstall.SetProperty(L"SERVICE_STATUS", state);
+
+	MSI_EXCEPTION_HANDLER_EPILOG;
+	return ERROR_SUCCESS;
+}
+

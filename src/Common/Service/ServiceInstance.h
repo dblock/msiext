@@ -42,6 +42,8 @@ namespace AppSecInc
             void Continue();
             //! return the service state
             DWORD GetServiceState() const;
+            //! return string presentation of the service state
+            std::wstring GetServiceStateString();
             //! returns true if the service is started
             bool IsStarted() const { return (GetServiceState() == SERVICE_RUNNING); }
             //! returns true if the service is stopped
