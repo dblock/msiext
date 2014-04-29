@@ -174,13 +174,13 @@ CA_API UINT __stdcall Service_Exists(MSIHANDLE hInstall)
 
 
 
-CA_API UINT __stdcall Service_GetStatus(MSIHANDLE hInstall)
+CA_API UINT __stdcall Service_GetState(MSIHANDLE hInstall)
 {
 	MSI_EXCEPTION_HANDLER_PROLOG;
 	MsiInstall msiInstall(hInstall);
 
 
-	std::wstring service_name = msiInstall.GetProperty(L"SERVICE_STATUS_SERVICE_NAME");
+	std::wstring service_name = msiInstall.GetProperty(L"SERVICE_STATE_SERVICE_NAME");
 	if (service_name.empty()) {
 		service_name = msiInstall.GetProperty(L"SERVICE_NAME");
 	}
@@ -192,7 +192,7 @@ CA_API UINT __stdcall Service_GetStatus(MSIHANDLE hInstall)
 
 	std::wstring state = service.GetServiceStateString();
 	
-	msiInstall.SetProperty(L"SERVICE_STATUS", state);
+	msiInstall.SetProperty(L"SERVICE_STATE", state);
 
 
 	MSI_EXCEPTION_HANDLER_EPILOG;

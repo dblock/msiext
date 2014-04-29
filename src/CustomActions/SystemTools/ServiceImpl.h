@@ -102,14 +102,10 @@ CA_API UINT __stdcall Service_GetConfig(MSIHANDLE hInstall);
 CA_API UINT __stdcall Service_Exists(MSIHANDLE hInstall);
 
 /*! 
-
-\brief Get status of a service
-
-
-\param SERVICE_STATUS_SERVICE_NAME service name
-\param SERVICE_NAME alternative property for service name, used when SERVICE_STATUS_SERVICE_NAME is not set
-\return SERVICE_STATUS set to one of: Stopped, Starting, Stopping, Running, Resuming, Pausing, Paused depending on the current service state. Fails if service does not exist; SERVICE_STATUS is unchanged in this case.
-
+\brief Get state of a service
+\param SERVICE_STATE_SERVICE_NAME service name
+\param SERVICE_NAME alternative property for service name, used when SERVICE_STATE_SERVICE_NAME is not set
+\return SERVICE_STATE set to one of: Stopped, Starting, Stopping, Running, Resuming, Pausing, Paused depending on the current service state. Fails if service does not exist; SERVICE_STATUS is unchanged in this case.
 */
-CA_API UINT __stdcall Service_GetStatus(MSIHANDLE hInstall);
+CA_API UINT __stdcall Service_GetState(MSIHANDLE hInstall);
 
