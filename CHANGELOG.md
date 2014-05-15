@@ -1,6 +1,7 @@
 ###  1.5 (Next Release)
 
   * **Features**:
+    * Added `SERVICE_NAME` as an alternative property for specifying service name in Service_Change... calls  - [@vladaver](https://github.com/vladaver).
     * [#8](https://github.com/dblock/msiext/pull/8) - Added `Service_GetState` immediate custom action - [@vladaver](https://github.com/vladaver).
   * **Bugs**:
   * **Misc**:

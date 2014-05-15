@@ -12,6 +12,7 @@ namespace AppSecInc
 				CPPUNIT_TEST( Test_EntryPoints );
 				CPPUNIT_TEST( Test_Service_RenameRegistryEntry );
 				CPPUNIT_TEST( Test_Service_ChangeBinaryPathName );
+				CPPUNIT_TEST( Test_Service_ChangeBinaryPathName_Accepts_SERVICE_NAME );
 				CPPUNIT_TEST( Test_Service_ChangeDisplayName );
 				CPPUNIT_TEST( Test_Service_ChangeDescription );
                 CPPUNIT_TEST( Test_Service_Control );
@@ -29,6 +30,7 @@ namespace AppSecInc
 				void Test_EntryPoints();
 				void Test_Service_RenameRegistryEntry();
 				void Test_Service_ChangeBinaryPathName();
+				void Test_Service_ChangeBinaryPathName_Accepts_SERVICE_NAME();
 				void Test_Service_ChangeDisplayName();
 				void Test_Service_ChangeDescription();
 				void Test_Service_Delete();
