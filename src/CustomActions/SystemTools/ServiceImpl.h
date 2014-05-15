@@ -20,9 +20,10 @@ CA_API UINT __stdcall Service_RenameRegistryEntry(MSIHANDLE hInstall);
 \brief Change the path to the service binary file of a service
 
 The path to the service binary file of the service specified in
-SERVICE_CHANGE_SERVICE_NAME is set to SERVICE_CHANGE_BINARY_PATH_NAME.
+SERVICE_CHANGE_SERVICE_NAME or SERVICE_NAME is set to SERVICE_CHANGE_BINARY_PATH_NAME.
 
 \param SERVICE_CHANGE_SERVICE_NAME name of the service
+\param SERVICE_NAME alternative property for service name, used when SERVICE_CHANGE_SERVICE_NAME is not set
 \param SERVICE_CHANGE_BINARY_PATH_NAME new fully qualified path to the service binary file.
 
 \return check CA_ERROR on function failure
@@ -34,10 +35,11 @@ CA_API UINT __stdcall Service_ChangeBinaryPathName(MSIHANDLE hInstall);
 
 \brief Change the display name of a service
 
-Changes the display name of the service specified in SERVICE_CHANGE_SERVICE_NAME.
+Changes the display name of the service specified in SERVICE_CHANGE_SERVICE_NAME or SERVICE_NAME.
 The display name is changed to SERVICE_CHANGE_DISPLAY_NAME.
 
 \param SERVICE_CHANGE_SERVICE_NAME name of the service
+\param SERVICE_NAME alternative property for service name, used when SERVICE_CHANGE_SERVICE_NAME is not set
 \param SERVICE_CHANGE_DISPLAY_NAME new display name
 
 \return check CA_ERROR on function failure
@@ -49,10 +51,11 @@ CA_API UINT __stdcall Service_ChangeDisplayName(MSIHANDLE hInstall);
 
 \brief Change the description of a service
 
-Changes the description of the service specified in SERVICE_CHANGE_SERVICE_NAME.
+Changes the description of the service specified in SERVICE_CHANGE_SERVICE_NAME or SERVICE_NAME.
 The description is changed to SERVICE_CHANGE_DESCRIPTION.
 
 \param SERVICE_CHANGE_SERVICE_NAME name of the service
+\param SERVICE_NAME alternative property for service name, used when SERVICE_CHANGE_SERVICE_NAME is not set
 \param SERVICE_CHANGE_DESCRIPTION new description
 
 \return check CA_ERROR on function failure

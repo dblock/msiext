@@ -74,6 +74,30 @@ void ServiceImplUnitTests::Test_Service_ChangeBinaryPathName()
 	CPPUNIT_ASSERT(testinstance.GetConfig().binary_path_name == L"C:\\test.exe");
 }
 
+void ServiceImplUnitTests::Test_Service_ChangeBinaryPathName_Accepts_SERVICE_NAME()
+{
+    AppSecInc::Msi::MsiShim hInstall;
+    MsiInstall msiInstall(hInstall);
+
+	std::wstring serviceBinaryPathName = L"";
+	std::wstring serviceDisplayName = L"";
+	std::wstring serviceDescription = L"";
+
+	AppSecInc::Service::ServiceManager scm;
+	scm.Open();
+	AppSecInc::Service::ServiceInstance testinstance;
+	testinstance.Open(scm, service_name);
+
+	CPPUNIT_ASSERT(testinstance.GetConfig().binary_path_name != L"C:\\test.exe");
+
+	msiInstall.SetProperty(L"SERVICE_NAME", service_name);
+	msiInstall.SetProperty(L"SERVICE_CHANGE_BINARY_PATH_NAME", L"C:\\test.exe");
+
+	CPPUNIT_ASSERT(ERROR_SUCCESS == hInstall.ExecuteCA(L"SystemTools.dll", L"Service_ChangeBinaryPathName"));
+
+	CPPUNIT_ASSERT(testinstance.GetConfig().binary_path_name == L"C:\\test.exe");
+}
+
 void ServiceImplUnitTests::Test_Service_ChangeDisplayName()
 {
     AppSecInc::Msi::MsiShim hInstall;
