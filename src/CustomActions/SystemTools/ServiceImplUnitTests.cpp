@@ -21,6 +21,7 @@ void ServiceImplUnitTests::Test_EntryPoints()
 	CPPUNIT_ASSERT(NULL != GetProcAddress(h, "Service_Delete"));
 	CPPUNIT_ASSERT(NULL != GetProcAddress(h, "Service_GetConfig"));
 	CPPUNIT_ASSERT(NULL != GetProcAddress(h, "Service_Exists"));
+	CPPUNIT_ASSERT(NULL != GetProcAddress(h, "Service_GetState"));
 	::FreeLibrary(h);
 }
 
@@ -66,6 +67,30 @@ void ServiceImplUnitTests::Test_Service_ChangeBinaryPathName()
 	CPPUNIT_ASSERT(testinstance.GetConfig().binary_path_name != L"C:\\test.exe");
 
 	msiInstall.SetProperty(L"SERVICE_CHANGE_SERVICE_NAME", service_name);
+	msiInstall.SetProperty(L"SERVICE_CHANGE_BINARY_PATH_NAME", L"C:\\test.exe");
+
+	CPPUNIT_ASSERT(ERROR_SUCCESS == hInstall.ExecuteCA(L"SystemTools.dll", L"Service_ChangeBinaryPathName"));
+
+	CPPUNIT_ASSERT(testinstance.GetConfig().binary_path_name == L"C:\\test.exe");
+}
+
+void ServiceImplUnitTests::Test_Service_ChangeBinaryPathName_Accepts_SERVICE_NAME()
+{
+    AppSecInc::Msi::MsiShim hInstall;
+    MsiInstall msiInstall(hInstall);
+
+	std::wstring serviceBinaryPathName = L"";
+	std::wstring serviceDisplayName = L"";
+	std::wstring serviceDescription = L"";
+
+	AppSecInc::Service::ServiceManager scm;
+	scm.Open();
+	AppSecInc::Service::ServiceInstance testinstance;
+	testinstance.Open(scm, service_name);
+
+	CPPUNIT_ASSERT(testinstance.GetConfig().binary_path_name != L"C:\\test.exe");
+
+	msiInstall.SetProperty(L"SERVICE_NAME", service_name);
 	msiInstall.SetProperty(L"SERVICE_CHANGE_BINARY_PATH_NAME", L"C:\\test.exe");
 
 	CPPUNIT_ASSERT(ERROR_SUCCESS == hInstall.ExecuteCA(L"SystemTools.dll", L"Service_ChangeBinaryPathName"));
@@ -217,4 +242,38 @@ void ServiceImplUnitTests::Test_Service_Exists()
 	msiInstall.SetProperty(L"SERVICE_NAME", AppSecInc::Com::GenerateGUIDStringW());
 	CPPUNIT_ASSERT(ERROR_SUCCESS == hInstall.ExecuteCA(L"SystemTools.dll", L"Service_Exists"));
 	CPPUNIT_ASSERT(L"0" == msiInstall.GetProperty(L"SERVICE_EXISTS"));
+}
+
+void ServiceImplUnitTests::Test_Service_GetState()
+{
+	AppSecInc::Msi::MsiShim hInstall;
+	MsiInstall msiInstall(hInstall);
+
+	msiInstall.SetProperty(L"SERVICE_STATE_SERVICE_NAME", L"Eventlog");
+	CPPUNIT_ASSERT(ERROR_SUCCESS == hInstall.ExecuteCA(L"SystemTools.dll", L"Service_GetState"));
+	CPPUNIT_ASSERT(L"Running" == msiInstall.GetProperty(L"SERVICE_STATE"));
+
+	msiInstall.SetProperty(L"SERVICE_STATE_SERVICE_NAME", L"Wecsvc");
+	CPPUNIT_ASSERT(ERROR_SUCCESS == hInstall.ExecuteCA(L"SystemTools.dll", L"Service_GetState"));
+	CPPUNIT_ASSERT(L"Stopped" == msiInstall.GetProperty(L"SERVICE_STATE"));
+
+	msiInstall.SetProperty(L"SERVICE_STATE_SERVICE_NAME", AppSecInc::Com::GenerateGUIDStringW());
+	CPPUNIT_ASSERT(ERROR_SUCCESS != hInstall.ExecuteCA(L"SystemTools.dll", L"Service_GetState"));
+	// SERVICE_STATE should remain unchanged
+	CPPUNIT_ASSERT(L"Stopped" == msiInstall.GetProperty(L"SERVICE_STATE"));
+}
+
+void ServiceImplUnitTests::Test_Service_GetState_Accepts_SERVICE_NAME()
+{
+	AppSecInc::Msi::MsiShim hInstall;
+	MsiInstall msiInstall(hInstall);
+
+	msiInstall.SetProperty(L"SERVICE_NAME", L"W32Time");
+	CPPUNIT_ASSERT(ERROR_SUCCESS == hInstall.ExecuteCA(L"SystemTools.dll", L"Service_GetState"));
+	CPPUNIT_ASSERT(L"Running" == msiInstall.GetProperty(L"SERVICE_STATE"));
+
+	// more specific name should override generic one:
+	msiInstall.SetProperty(L"SERVICE_STATE_SERVICE_NAME", L"Wecsvc");
+	CPPUNIT_ASSERT(ERROR_SUCCESS == hInstall.ExecuteCA(L"SystemTools.dll", L"Service_GetState"));
+	CPPUNIT_ASSERT(L"Stopped" == msiInstall.GetProperty(L"SERVICE_STATE"));
 }

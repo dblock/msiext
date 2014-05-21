@@ -6,7 +6,7 @@
   </PropertyGroup>
   <PropertyGroup>
     <MajorVersion>1</MajorVersion>
-    <MinorVersion>3</MinorVersion>
+    <MinorVersion>4</MinorVersion>
  	  <RevisionVersion>0</RevisionVersion>
     <ObjDir>target\$(Configuration)\obj</ObjDir>
     <BinDir>target\$(Configuration)\bin</BinDir>
@@ -90,7 +90,7 @@
   <Target Name="zip" DependsOnTargets="version">
     <CreateItem Include="$(DropDir)\**\*" Exclude="$(DropDir)\*.zip">
       <Output TaskParameter="Include" ItemName="PackageFiles" />
-    </CreateItem>
-    <Zip WorkingDirectory="$(DropDir)" ZipFileName="$(DropDir)\msiext-$(Major).$(Minor).zip" Files="@(PackageFiles)" />
+    </CreateItem> 
+    <Zip WorkingDirectory="$(DropDir)" ZipFileName="$(DropDir)\msiext-$(Major).$(Minor).zip" Files="@(PackageFiles)" ParallelCompression="false" />
   </Target>
 </Project>

@@ -5,35 +5,36 @@
         <Property Id="DefaultDatabaseServer" Value="(local)" />
 
         <UI>
-			<!--
-			Prompts for database location
-			Also pre-populates the list of available SQL servers via DMO.
-			\return DATABASE_SERVER: database server (for MSSQL)
-			\return ODBC_SERVER:     database server suitable for ODBC-based custom actions (for MSSQL)
-			-->
+            <!--
+                Prompts for database location.
+                Also pre-populates the list of available SQL servers via DMO.
+
+                \return DATABASE_SERVER: database server (for MSSQL)
+                \return ODBC_SERVER:     database server suitable for ODBC-based custom actions (for MSSQL)
+            -->
             <Dialog Id="SelectDbDlg" Width="370" Height="270" Title="!(loc.SelectDbDlg_Header)">
                 <Control Id="BannerBitmap" Type="Bitmap" X="0" Y="0" Width="370" Height="44" TabSkip="no" Text="!(loc.SelectDbDlg_BannerBitmap)" />
                 <Control Id="BannerLine" Type="Line" X="0" Y="44" Width="370" Height="0" />
                 <Control Id="BottomLine" Type="Line" X="0" Y="234" Width="370" Height="0" />
 
                 <Control Id="Title" Type="Text" X="15" Y="6" Width="200" Height="15" Transparent="yes" NoPrefix="yes" Text="!(loc.SelectDbDlg_Title)" />
-                <Control Id="SubTitle" Type="Text" X="25" Y="21" Width="200" Height="20" Transparent="yes" NoPrefix="yes" Text="!(loc.SelectDbDlg_SubTitle)" />
+                <Control Id="SubTitle" Type="Text" X="25" Y="23" Width="200" Height="20" Transparent="yes" NoPrefix="yes" Text="!(loc.SelectDbDlg_SubTitle)" />
 
                 <Control Id="Back" Type="PushButton" X="180" Y="243" Width="56" Height="17" Text="!(loc.WixUIBack)" />
                 <Control Id="Cancel" Type="PushButton" X="304" Y="243" Width="56" Height="17" Cancel="yes" Text="!(loc.WixUICancel)">
                     <Publish Event="SpawnDialog" Value="CancelDlg">1</Publish>
                 </Control>
 
-                <Control Id="Description" Type="Text" X="20" Y="55" Width="340" Height="30" Text="!(loc.SelectDbDlg_Description)" />
+                <Control Id="Description" Type="Text" X="20" Y="55" Width="330" Height="40" Text="!(loc.SelectDbDlg_Description)" />
 
-                <Control Id="ServerLabel" Type="Text" X="50" Y="90" Width="90" Height="10" Text="!(loc.SelectDbDlg_ServerLabel)" />
-                <Control Id="Server" Type="ComboBox" X="140" Y="90" Width="140" Height="15" Property="DATABASE_SERVER">
+                <Control Id="SelectorLabel" Type="Text" X="20" Y="103" Width="90" Height="10" Text="!(loc.SelectDbDlg_SelectorLabel)" />
+                <Control Id="Server" Type="ComboBox" X="20" Y="115" Width="150" Height="15" Property="DATABASE_SERVER">
                     <ComboBox Property="DATABASE_SERVER">
                         <ListItem Text="[DefaultDatabaseServer]" Value="[DefaultDatabaseServer]" />
                     </ComboBox>
                 </Control>
 
-                <Control Id="ServerBrowse" Type="PushButton" X="290" Y="90" Width="60" Height="15" Text="!(loc.SelectDbDlg_DbBrowse)">
+                <Control Id="ServerBrowse" Type="PushButton" X="175" Y="115" Width="56" Height="15" Text="!(loc.SelectDbDlg_DbBrowse)">
                     <Publish Property="DSOP_SCOPE_TYPES" Value="DSOP_SCOPE_TYPE_USER_ENTERED_UPLEVEL_SCOPE|DSOP_SCOPE_TYPE_USER_ENTERED_DOWNLEVEL_SCOPE|DSOP_SCOPE_TYPE_GLOBAL_CATALOG|DSOP_SCOPE_TYPE_EXTERNAL_UPLEVEL_DOMAIN|DSOP_SCOPE_TYPE_EXTERNAL_DOWNLEVEL_DOMAIN">1</Publish>
                     <Publish Property="DSOP_SCOPE_TYPES" Value="[DSOP_SCOPE_TYPES]|DSOP_SCOPE_TYPE_WORKGROUP|DSOP_SCOPE_TYPE_UPLEVEL_JOINED_DOMAIN|DSOP_SCOPE_TYPE_DOWNLEVEL_JOINED_DOMAIN">1</Publish>
                     <Publish Property="DSOP_SCOPE_FLAGS">1</Publish>
@@ -48,8 +49,7 @@
                     <Publish Property="DATABASE_SERVER" Value="[ComputerName]">DATABASE_SERVER = "(local)"</Publish>
                     <Publish Property="DATABASE_SERVER" Value="[DATABASE_SERVER]">NOT (DATABASE_SERVER = "(local)")</Publish>
 
-					<!-- Make sure server is not empty and there are no '(local)' after the above replacement
-			     (synatx '(local):1234' is not acceptable) -->
+                    <!-- Make sure server is not empty and there are no '(local)' after the above replacement (synatx '(local):1234' is not acceptable) -->
                     <Publish Property="ERROR_MESSAGE">1</Publish>
                     <Publish Property="ERROR_MESSAGE" Value="!(loc.SelectDbDlg_EmptyServer)">NOT DATABASE_SERVER</Publish>
                     <Publish Property="ERROR_MESSAGE" Value="!(loc.SelectDbDlg_InvalidSyntax)"><![CDATA[DATABASE_SERVER >< "(" OR DATABASE_SERVER >< ")"]]></Publish>
@@ -73,7 +73,7 @@
             </Dialog>
         </UI>
 
-        <!-- Custom actions to populate initial values and available servers list -->
+        <!-- Custom actions to populate initial values and available servers list. -->
         <CustomAction Id="SetDefaultDbServer" Property="DefaultDatabaseServer" Value="[DATABASE_SERVER]" />
 
         <CustomAction Id="SetSqlDmoListLocal" Property="SQLDMO_LIST_LOCAL" Value="[DefaultDatabaseServer]" />
@@ -90,5 +90,6 @@
             <Custom Action="SetSqlDmoListIndex" Before="AsiUI_SQLDMO_ListAvailableSQLServers" />
             <Custom Action="AsiUI_SQLDMO_ListAvailableSQLServers" Before="CostInitialize">NOT Installed AND NOT (DBTYPE = "Access")</Custom>
         </InstallUISequence>
+
     </Fragment>
 </Wix>

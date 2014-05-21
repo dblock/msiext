@@ -1,4 +1,13 @@
-###  Next Release
+###  1.5 (Next Release)
+
+  * **Features**:
+    * Added `SERVICE_NAME` as an alternative property for specifying service name in Service_Change... calls  - [@vladaver](https://github.com/vladaver).
+    * [#8](https://github.com/dblock/msiext/pull/8) - Added `Service_GetState` immediate custom action - [@vladaver](https://github.com/vladaver).
+  * **Bugs**:
+  * **Misc**:
+    * [#5](https://github.com/dblock/msiext/pull/5) - Fixed WiX UI extension screens: texts, icons, margins, spacing - [@romanws](https://github.com/romanws).
+
+###  1.4.1114.0 (11/14/2013)
 
   * **Features**:
     * Upgraded to Wix 3.7 - [@thcristo](https://github.com/thcristo).

@@ -12,12 +12,15 @@ namespace AppSecInc
 				CPPUNIT_TEST( Test_EntryPoints );
 				CPPUNIT_TEST( Test_Service_RenameRegistryEntry );
 				CPPUNIT_TEST( Test_Service_ChangeBinaryPathName );
+				CPPUNIT_TEST( Test_Service_ChangeBinaryPathName_Accepts_SERVICE_NAME );
 				CPPUNIT_TEST( Test_Service_ChangeDisplayName );
 				CPPUNIT_TEST( Test_Service_ChangeDescription );
                 CPPUNIT_TEST( Test_Service_Control );
 				CPPUNIT_TEST( Test_Service_Delete );
 				CPPUNIT_TEST( Test_Service_GetConfig );
 				CPPUNIT_TEST( Test_Service_Exists );
+				CPPUNIT_TEST( Test_Service_GetState );
+				CPPUNIT_TEST( Test_Service_GetState_Accepts_SERVICE_NAME );
 				CPPUNIT_TEST_SUITE_END();
 			private:
 				std::wstring service_name;
@@ -27,12 +30,15 @@ namespace AppSecInc
 				void Test_EntryPoints();
 				void Test_Service_RenameRegistryEntry();
 				void Test_Service_ChangeBinaryPathName();
+				void Test_Service_ChangeBinaryPathName_Accepts_SERVICE_NAME();
 				void Test_Service_ChangeDisplayName();
 				void Test_Service_ChangeDescription();
 				void Test_Service_Delete();
                 void Test_Service_Control();
 				void Test_Service_GetConfig();
 				void Test_Service_Exists();
+				void Test_Service_GetState();
+				void Test_Service_GetState_Accepts_SERVICE_NAME();
 			};
 		}
 	}

@@ -1,14 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
     <Fragment xmlns="http://schemas.microsoft.com/wix/2006/wi">
+
         <Property Id="HOSTNAME" Value="localhost" />
+
         <UI>
-			<!--
-	Prompts for Tomcat Service Port
-		\param CURRENTPORTNUMBER optional current port number, in use, that should not be checked. 
-			This is useful for upgrades when the service is currently running on a given port.
-		\return PORTNUMBER port number selected by the user.
-	-->
+            <!--
+                Prompts for a service port number.
+
+                \param CURRENTPORTNUMBER optional current port number, in use, that should not be checked. 
+                       This is useful for upgrades when the service is currently running on a given port.
+                \return PORTNUMBER port number selected by the user.
+            -->
             <Dialog Id="ServicePortDlg" Width="370" Height="270" Title="!(loc.ServicePortDlg_Header)">
                 <Control Id="Next" Type="PushButton" X="236" Y="243" Width="56" Height="17" Default="yes" Text="!(loc.WixUINext)">
                     <!-- Next button is enabled only if the connection succeeds to the user specified console host and port. -->
@@ -21,18 +24,20 @@
                     <Publish Event="SpawnDialog" Value="CancelDlg">1</Publish>
                 </Control>
 
-                <Control Id="Description" Type="Text" X="25" Y="23" Width="280" Height="15" Transparent="yes" NoPrefix="yes" Text="!(loc.ServicePortDlg_SubTitle)" />
                 <Control Id="Title" Type="Text" X="15" Y="6" Width="200" Height="15" Transparent="yes" NoPrefix="yes" Text="!(loc.ServicePortDlg_Title)" />
-                <Control Id="BannerBitmap" Type="Bitmap" X="0" Y="0" Width="370" Height="44" TabSkip="no" Text="!(loc.ServiceDlg_BannerBitmap)" />
+                <Control Id="SubTitle" Type="Text" X="25" Y="23" Width="200" Height="20" Transparent="yes" NoPrefix="yes" Text="!(loc.ServicePortDlg_SubTitle)" />
+                <Control Id="BannerBitmap" Type="Bitmap" X="0" Y="0" Width="370" Height="44" TabSkip="no" Text="!(loc.ServicePortDlg_BannerBitmap)" />
                 <Control Id="BannerLine" Type="Line" X="0" Y="44" Width="370" Height="0" />
                 <Control Id="BottomLine" Type="Line" X="0" Y="234" Width="370" Height="0" />
-                <Control Id="PortDescription" Type="Text" X="20" Y="60" Width="330" Height="40" Text="!(loc.ServicePortDlg_Description)" />
-                <Control Id="PortLabel" Type="Text" X="20" Y="110" Width="290" Height="20" Text="!(loc.ServicePortDlg_PortNumberLabel)" />
-                <Control Id="Port" Type="Edit" X="30" Y="130" Width="75" Height="18" Property="PORTNUMBER" Text="{6}">
+
+                <Control Id="Description" Type="Text" X="20" Y="55" Width="330" Height="40" Text="!(loc.ServicePortDlg_Description)" />
+
+                <Control Id="SelectorLabel" Type="Text" X="20" Y="103" Width="330" Height="10" Text="!(loc.ServicePortDlg_SelectorLabel)" />
+                <Control Id="Port" Type="Edit" X="20" Y="115" Width="75" Height="15" Property="PORTNUMBER" Text="{6}">
                     <Publish Property="BIND_SUCCEEDED" Value="0">1</Publish>
                 </Control>
 
-                <Control Id="Test" Type="PushButton" X="30" Y="160" Width="75" Height="17" Text="!(loc.ServicePortDlg_TestPortLabel)">
+                <Control Id="Test" Type="PushButton" X="20" Y="140" Width="100" Height="15" Text="!(loc.ServicePortDlg_TestPortLabel)">
                     <Condition Action="disable"><![CDATA[BIND_SUCCEEDED = "1"]]></Condition>
                     <Condition Action="enable"><![CDATA[BIND_SUCCEEDED <> "1"]]></Condition>
                     <Publish Property="STRING_TRIM_INPUT" Value="[PORTNUMBER]" Order="2">1</Publish>
@@ -58,18 +63,18 @@
                 </Control>
 
                 <!-- Display success bitmap in the UI if socket bind succeeds. -->
-                <Control Id="TestResult_Success" Type="Icon" IconSize="16" X="120" Y="160" Width="12" Height="12" Text="AsiUI_SuccessIco">
+                <Control Id="TestResult_Success" Type="Icon" IconSize="16" X="125" Y="141" Width="12" Height="12" Text="AsiUI_SuccessIco">
                     <Condition Action="hide"><![CDATA[BIND_SUCCEEDED <> "1"]]></Condition>
                     <Condition Action="show"><![CDATA[BIND_SUCCEEDED = "1"]]></Condition>
                 </Control>
 
                 <!-- Display warning bitmap in the UI if socket bind fails. -->
-                <Control Id="TestResult_Failure" Type="Icon" IconSize="16" X="120" Y="160" Width="12" Height="12" Text="AsiUI_ErrorIco">
+                <Control Id="TestResult_Failure" Type="Icon" IconSize="16" X="125" Y="141" Width="12" Height="12" Text="AsiUI_ErrorIco">
                     <Condition Action="hide"><![CDATA[BIND_SUCCEEDED = "1"]]></Condition>
                     <Condition Action="show"><![CDATA[BIND_SUCCEEDED <> "1"]]></Condition>
                 </Control>
 
-                <Control Id="TestPrompt" Type="Text" X="140" Y="163" Width="197" Height="10" Text="!(loc.ServicePortDlg_TestPrompt)">
+                <Control Id="TestPrompt" Type="Text" X="140" Y="143" Width="197" Height="10" Text="!(loc.ServicePortDlg_TestPrompt)">
                     <Condition Action="hide"><![CDATA[BIND_SUCCEEDED = "1"]]></Condition>
                     <Condition Action="show"><![CDATA[BIND_SUCCEEDED <> "1"]]></Condition>
                 </Control>
@@ -77,5 +82,6 @@
                 <Control Id="Recomendation" Type="Text" X="20" Y="182" Width="330" Height="20" Text="!(loc.ServicePortDlg_Recomendation)" />
             </Dialog>
         </UI>
+
     </Fragment>
 </Wix>

@@ -45,6 +45,10 @@ void ODBCConnectionUnitTests::testGetError()
 	MSSQLConnectionInfo info(L"127.0.0.1", -2);
     try { conn.Connect(info); throw "Expected exception"; } catch (std::exception&) { }
     std::wcout << std::endl << L"Error => {" << std::endl << conn.GetError() << L"}";
+	std::wstring sql2008error = L"SQLSTATE: 08001, Native error: 17, Message: [Microsoft][ODBC SQL Server Driver][DBNETLIB]" \
+			L"SQL Server does not exist or access denied.\n" \
+		L"SQLSTATE: 01000, Native error: 67, Message: [Microsoft][ODBC SQL Server Driver][DBNETLIB]" \
+			L"ConnectionOpen (Connect()).";
 	std::wstring sql2005error = L"SQLSTATE: 08001, Native error: 17, Message: [Microsoft][ODBC SQL Server Driver][DBNETLIB]" \
 			L"SQL Server does not exist or access denied.\n" \
 		L"SQLSTATE: 01000, Native error: 53, Message: [Microsoft][ODBC SQL Server Driver][DBNETLIB]" \
@@ -53,7 +57,7 @@ void ODBCConnectionUnitTests::testGetError()
 			L"SQL Server does not exist or access denied.\n" \
 		L"SQLSTATE: 01000, Native error: 1231, Message: [Microsoft][ODBC SQL Server Driver][DBNETLIB]" \
 			L"ConnectionOpen (Connect()).";
-	CPPUNIT_ASSERT(conn.GetError() == sql2005error || conn.GetError() == sql2000error);
+	CPPUNIT_ASSERT(conn.GetError() == sql2005error || conn.GetError() == sql2000error || conn.GetError() == sql2008error);
     std::vector<ODBCError> errors = conn.GetErrors();
 	CPPUNIT_ASSERT(2 == errors.size());
 	CPPUNIT_ASSERT(errors[0].state == L"08001");
@@ -62,7 +66,7 @@ void ODBCConnectionUnitTests::testGetError()
 	CPPUNIT_ASSERT(errors[0].message == L"[Microsoft][ODBC SQL Server Driver][DBNETLIB]" \
 		L"SQL Server does not exist or access denied.");
 	CPPUNIT_ASSERT(errors[1].state == L"01000");
-	CPPUNIT_ASSERT(errors[1].native_error == 53 || errors[1].native_error == 1231);
+	CPPUNIT_ASSERT(errors[1].native_error == 53 || errors[1].native_error == 1231 || errors[1].native_error == 67);
 	std::wcout << std::endl << errors[1].message;
 	CPPUNIT_ASSERT(errors[1].message == L"[Microsoft][ODBC SQL Server Driver][DBNETLIB]" \
 		L"ConnectionOpen (Connect()).");
