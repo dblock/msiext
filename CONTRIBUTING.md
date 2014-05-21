@@ -14,7 +14,7 @@ This is an open source project, please contribute.
 
 #### Build Project
 
-Run `build all /p:Confguration=Release` from the command-line.
+Run `build all /p:Configuration=Release` from the command-line.
 
 #### Contributing Workflow
 
