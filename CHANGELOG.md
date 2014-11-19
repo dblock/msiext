@@ -4,6 +4,7 @@
     * Added `SERVICE_NAME` as an alternative property for specifying service name in Service_Change... calls  - [@vladaver](https://github.com/vladaver).
     * [#8](https://github.com/dblock/msiext/pull/8) - Added `Service_GetState` immediate custom action - [@vladaver](https://github.com/vladaver).
   * **Bugs**:
+    * [#9](https://github.com/dblock/msiext/issues/9) - Fixed build failures if WiX Toolset v3.7 or MSBuild Community Tasks are not installed - [@icnocop](https://github.com/icnocop).
   * **Misc**:
     * [#5](https://github.com/dblock/msiext/pull/5) - Fixed WiX UI extension screens: texts, icons, margins, spacing - [@romanws](https://github.com/romanws).
 
