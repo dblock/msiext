@@ -223,6 +223,8 @@ namespace AppSecInc
 	    bool endsWith(const std::string& ss, const std::string& what);
 	    bool endsWith(const std::wstring& ss, const std::wstring& what);
 
+	    std::wstring escape(std::wstring const &s);
+
 	    //! Convert any streamable data into a UNICODE string.
 	    template<class T>
 	    std::wstring toWString(const T& t)
