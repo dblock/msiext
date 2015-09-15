@@ -10,7 +10,7 @@ This is an open source project, please contribute.
 * SQL DMO from SQL 2005 Backward Compatibility Components
 * Java Development Kit 32-bit
 * [MSXML4 SP3](http://www.microsoft.com/en-us/download/details.aspx?id=15697)
-* [Doxygen 1.85](http://ftp.stack.nl/pub/users/dimitri/doxygen-1.8.5-setup.exe)
+* [Doxygen 1.8.5](http://ftp.stack.nl/pub/users/dimitri/doxygen-1.8.5-setup.exe)
 
 #### Build Project
 

@@ -1,4 +1,7 @@
 <Project DefaultTargets="all" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" >
+  <PropertyGroup>
+    <MSBuildCommunityTasksPath>$(MSBuildProjectDirectory)\externals\MSBuildCommunityTasks</MSBuildCommunityTasksPath>
+  </PropertyGroup>
   <Import Project="externals\MSBuildCommunityTasks\MSBuild.Community.Tasks.Targets"/>
   <Import Project="version.proj"/>
   <PropertyGroup Condition="'$(Configuration)'==''">
@@ -6,8 +9,8 @@
   </PropertyGroup>
   <PropertyGroup>
     <MajorVersion>1</MajorVersion>
-    <MinorVersion>4</MinorVersion>
- 	  <RevisionVersion>0</RevisionVersion>
+    <MinorVersion>5</MinorVersion>
+    <RevisionVersion>0</RevisionVersion>
     <ObjDir>target\$(Configuration)\obj</ObjDir>
     <BinDir>target\$(Configuration)\bin</BinDir>
     <DropDir>target\$(Configuration)\drop</DropDir>
@@ -68,7 +71,7 @@
     <Message Text="Building Documentation ..." />
     <MakeDir Directories="$(DropDir)\Docs" />
     <TemplateFile Template="doc\Doxyfile.template" OutputFilename="Doxyfile" Tokens="@(AssemblyInfoTokens)"/>
-    <Exec WorkingDirectory="doc" Command="doxygen.exe Doxyfile" />
+    <Exec WorkingDirectory="doc" Command="$(MSBuildProjectDirectory)\externals\doxygen-1.8.5\doxygen.exe Doxyfile" />
     <CreateItem Include="$(DropDir)\Docs\**">
       <Output TaskParameter="Include" ItemName="DocFiles" />
     </CreateItem>

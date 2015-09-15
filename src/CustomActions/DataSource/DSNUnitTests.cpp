@@ -81,9 +81,9 @@ void DSNUnitTests::Test_CreateRemoveDSN_SQLServer()
     msiInstall.SetProperty(L"DSN_NAME", guid);
     msiInstall.SetProperty(L"DSN_MSSQL_DATABASE", L"master");
     msiInstall.SetProperty(L"DSN_MSSQL_DESCRIPTION", L"test");
-    msiInstall.SetProperty(L"DSN_MSSQL_SERVER", L"(local)");
+    msiInstall.SetProperty(L"DSN_MSSQL_SERVER", L"localhost");
     msiInstall.SetProperty(L"DSN_MSSQL_NETWORK", L"(default)");
-    msiInstall.SetProperty(L"DSN_MSSQL_ADDRESS", L"(default)");
+    msiInstall.SetProperty(L"DSN_MSSQL_ADDRESS", L"localhost,1433");
     msiInstall.SetProperty(L"DSN_MSSQL_TRUSTED_CONNECTION", L"yes");
 
     msiInstall.SetProperty(L"ODBC_FLAG", L"ODBC_ADD_DSN");

@@ -1,0 +1,147 @@
+version: '{build}'
+init:
+- ps: >-
+    # MSXML 4.0 Service Pack 3 (Microsoft XML Core Services)
+
+    Write-Host "Downloading MSXML 4.0 Service Pack 3 (Microsoft XML Core Services)..." -ForegroundColor Green
+
+    $msiFilePath = "$($env:USERPROFILE)\msxml.msi"
+
+    $logFilePath = "$($env:TEMP)\msxml.txt"
+
+    (New-Object Net.WebClient).DownloadFile('http://download.microsoft.com/download/A/2/D/A2D8587D-0027-4217-9DAD-38AFDB0A177E/msxml.msi', $msiFilePath)
+
+    $process = (Start-Process -FilePath "msiexec.exe" -ArgumentList "/i $msiFilePath /quiet /l*v $logFilePath" -Wait -Passthru)
+
+    $exitCode = $process.ExitCode
+
+    if ($exitCode -ne 0)
+
+    {
+      Get-Content $logFilePath
+      throw "Command failed with exit code $exitCode."
+    }
+
+    del $msiFilePath
+
+    del $logFilePath
+
+    Write-Host "MSXML 4.0 Service Pack 3 (Microsoft XML Core Services) installed successfully" -ForegroundColor Green
+
+
+    # SQL DMO from SQL 2005 Backward Compatibility Components
+
+    Write-Host "Downloading SQL DMO from SQL 2005 Backward Compatibility Components..." -ForegroundColor Green
+
+    $msiFilePath = "$($env:USERPROFILE)\SQLServer2005_BC_x64.msi"
+
+    $logFilePath = "$($env:TEMP)\SQLServer2005_BC_x64.txt"
+
+    (New-Object Net.WebClient).DownloadFile('http://download.microsoft.com/download/3/1/6/316FADB2-E703-4351-8E9C-E0B36D9D697E/SQLServer2005_BC_x64.msi', $msiFilePath)
+
+    $process = (Start-Process -FilePath "msiexec.exe" -ArgumentList "/i $msiFilePath /quiet /l*v $logFilePath" -Wait -Passthru)
+
+    $exitCode = $process.ExitCode
+
+    if ($exitCode -ne 0)
+
+    {
+      Get-Content $logFilePath
+      throw "Command failed with exit code $exitCode."
+    }
+
+    del $msiFilePath
+
+    del $logFilePath
+
+    Write-Host "SQL DMO from SQL 2005 Backward Compatibility Components installed successfully" -ForegroundColor Green
+
+
+    # Source: http://geekswithblogs.net/TedStatham/archive/2014/06/13/setting-the-ports-for-a-named-sql-server-instance-using.aspx
+
+    # Set the $instanceName value below to the name of the instance you
+
+    # want to configure a static port for. This could conceivably be
+
+    # passed into the script as a parameter.
+
+    [reflection.assembly]::LoadWithPartialName("Microsoft.SqlServer.Smo") | Out-Null
+
+    [reflection.assembly]::LoadWithPartialName("Microsoft.SqlServer.SqlWmiManagement") | Out-Null
+
+
+    $instanceName = 'SQL2008R2SP2'
+
+    $computerName = $env:COMPUTERNAME
+
+    $smo = 'Microsoft.SqlServer.Management.Smo.'
+
+    $wmi = New-Object ($smo + 'Wmi.ManagedComputer')
+
+
+    # For the named instance, on the current computer, for the TCP protocol,
+
+    # loop through all the IPs and configure them to use the standard port
+
+    # of 1433.
+
+    $uri = "ManagedComputer[@Name='$computerName']/ ServerInstance[@Name='$instanceName']/ServerProtocol[@Name='Tcp']"
+
+    $Tcp = $wmi.GetSmoObject($uri)
+
+    $Tcp.IsEnabled = $true
+
+    foreach ($ipAddress in $Tcp.IPAddresses)
+
+    {
+        $ipAddress.IPAddressProperties["TcpDynamicPorts"].Value = ""
+        $ipAddress.IPAddressProperties["TcpPort"].Value = "1433"
+    }
+
+    $Tcp.Alter()
+
+
+    # Enable named pipes
+
+    $uri = "ManagedComputer[@Name='$computerName']/ ServerInstance[@Name='$instanceName']/ServerProtocol[@Name='Np']"
+
+    $Np = $wmi.GetSmoObject($uri)
+
+    $Np.IsEnabled = $true
+
+    $pipeName = $Np.ProtocolProperties | Where Name -eq "PipeName"
+
+    $pipeName.Value = "\\.\pipe\sql\query"
+
+    $Np.Alter()
+
+
+    # Enable shared memory
+
+    $uri = "ManagedComputer[@Name='$computerName']/ ServerInstance[@Name='$instanceName']/ServerProtocol[@Name='Sm']"
+
+    $Sm = $wmi.GetSmoObject($uri)
+
+    $Sm.IsEnabled = $true
+
+    $Sm.Alter()
+
+
+    # Restart the named instance of SQL Server to enable the changes.
+
+    # Start services
+
+    Set-Service SQLBrowser -StartupType Manual
+
+    Start-Service SQLBrowser
+
+    Start-Service "MSSQL`$$instanceName"
+nuget:
+  disable_publish_on_pr: true
+build_script:
+- build.cmd all /p:Configuration=Release
+test: off
+artifacts:
+- path: target\Release\drop\msiext*.zip
+  name: zip
+deploy: off

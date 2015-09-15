@@ -1,4 +1,4 @@
-###  1.5 (Next Release)
+###  1.5 (9/18/2015)
 
   * **Features**:
     * Added `SERVICE_NAME` as an alternative property for specifying service name in Service_Change... calls  - [@vladaver](https://github.com/vladaver).
@@ -8,6 +8,11 @@
     * [#9](https://github.com/dblock/msiext/issues/9) - Fixed build failures if WiX Toolset v3.7 or MSBuild Community Tasks are not installed - [@icnocop](https://github.com/icnocop).
   * **Misc**:
     * [#5](https://github.com/dblock/msiext/pull/5) - Fixed WiX UI extension screens: texts, icons, margins, spacing - [@romanws](https://github.com/romanws).
+    * [#22](https://github.com/dblock/msiext/issues/22) - Added MSBuildCommunityTasksPath msbuild property to allow building without requiring the MSBuild Community Tasks to be installed  
+            Added WinDDK 7600.16385.1, and importing msi.props in projects to set up additional include and library directories to allow building without Visual Studio 2010 to be installed  
+            Updated atlbase.h to fix warning LNK4254: section 'ATL' (50000040) merged into '.rdata' (40000040) with different attributes  
+            Added doxygen 1.8.10 to allow building without requiring doxygen to be installed  
+            Using "localhost" for the DSN ODBC SQL Server address and explicitly specifying the default port number to support accessing a named instance from the default port without specifying the instance name - [@icnocop](https://github.com/icnocop)
 
 ###  1.4.1114.0 (11/14/2013)
 
