@@ -406,6 +406,11 @@ bool MsiInstall::IsRollback()
     return (TRUE == ::MsiGetMode(_h, MSIRUNMODE_ROLLBACK));
 }
 
+bool MsiInstall::IsReInstalling()
+{
+	return EvaluateCondition(L"Installed AND NOT REMOVE~=\"ALL\"");
+}
+
 bool MsiInstall::IsUnInstalling()
 {
 	//! \todo This has to be wrong for reinstall

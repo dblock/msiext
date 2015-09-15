@@ -41,6 +41,8 @@ public:
     bool EvaluateCondition(const std::wstring& condition);
 	//! returns true if the product is being installed
 	bool IsInstalling();
+	//! returns true if the product is being reinstalled
+	bool IsReInstalling();	
 	//! returns true if the product is being uninstalled
 	bool IsUnInstalling();	
 	//! returns true if the current state is rollback

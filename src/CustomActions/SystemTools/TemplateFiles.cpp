@@ -6,7 +6,7 @@ enum ExecuteAttributes
     ExecuteOnInstall = 1,
     ExecuteOnUnInstall = 2,
     // ExecuteOnRollback = 4,
-    // ExecuteOnReInstall = 8,
+    ExecuteOnReInstall = 8,
 };
 
 CA_API UINT __stdcall TemplateFiles_Immediate(MSIHANDLE hInstall)
@@ -47,10 +47,13 @@ CA_API UINT __stdcall TemplateFiles_Immediate(MSIHANDLE hInstall)
             bool execute_per_component_install = (component_id.empty() || msiInstall.IsComponentInstalling(component_id));
             // execute on uninstall
             bool execute_per_component_uninstall = (component_id.empty() || msiInstall.IsComponentUnInstalling(component_id));
+            // execute on reinstall
+            bool execute_per_component_reinstall = (component_id.empty() || msiInstall.IsComponentReInstalling(component_id));
 
             bool execute = execute_per_condition && (
                 (execute_per_component_install && (attributes & ExecuteOnInstall) && msiInstall.IsInstalling()) 
                 || (execute_per_component_uninstall && (attributes & ExecuteOnUnInstall) && msiInstall.IsUnInstalling())
+                || (execute_per_component_reinstall && (attributes & ExecuteOnReInstall) && msiInstall.IsReInstalling())
                 );
 
 		    MSXML2::IXMLDOMNodePtr templatefile_node = combined_xml_document.AppendChild(L"TemplateFile", combined_xml_root);

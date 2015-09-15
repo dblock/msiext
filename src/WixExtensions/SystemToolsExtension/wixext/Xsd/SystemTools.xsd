@@ -548,6 +548,11 @@ TemplateFileProperty with a value.
           <xs:documentation>Process the template file at uninstall time.</xs:documentation>
         </xs:annotation>
       </xs:attribute>
+      <xs:attribute name="ExecuteOnReInstall" use="optional" type="YesNoType">
+        <xs:annotation>
+          <xs:documentation>Process the template file at reinstall time.</xs:documentation>
+        </xs:annotation>
+      </xs:attribute>
       <!--
       <xs:attribute name="ExecuteOnRollback" use="optional" type="YesNoType">
         <xs:annotation>
