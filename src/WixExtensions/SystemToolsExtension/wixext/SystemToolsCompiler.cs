@@ -769,7 +769,7 @@ namespace AppSecInc.Wix.Extensions
             ExecuteOnInstall = 1,
             ExecuteOnUnInstall = 2,
             // ExecuteOnRollback = 4,
-            // ExecuteOnReInstall = 16,
+            ExecuteOnReInstall = 8,
         };
 
         private void ParseTemplateFileElement(string componentid, XmlElement node)
@@ -808,12 +808,12 @@ namespace AppSecInc.Wix.Extensions
                                 attributes |= (int)TemplateFileAttributes.ExecuteOnUnInstall;
                             }
                             break;
-                        //case "ExecuteOnReInstall":
-                        //    if (this.Core.GetAttributeYesNoValue(sourceLineNumbers, attrib) == YesNoType.Yes)
-                        //    {
-                        //        attributes |= (int)TemplateFileAttributes.ExecuteOnReInstall;
-                        //    }
-                        //    break;
+                        case "ExecuteOnReInstall":
+                            if (this.Core.GetAttributeYesNoValue(sourceLineNumbers, attrib) == YesNoType.Yes)
+                            {
+                                attributes |= (int)TemplateFileAttributes.ExecuteOnReInstall;
+                            }
+                            break;
                         //case "ExecuteOnRollback":
                         //    if (this.Core.GetAttributeYesNoValue(sourceLineNumbers, attrib) == YesNoType.Yes)
                         //    {
