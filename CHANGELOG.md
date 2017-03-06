@@ -4,6 +4,7 @@
     * Added `SERVICE_NAME` as an alternative property for specifying service name in Service_Change... calls  - [@vladaver](https://github.com/vladaver).
     * [#8](https://github.com/dblock/msiext/pull/8) - Added `Service_GetState` immediate custom action - [@vladaver](https://github.com/vladaver).
     * [#21](https://github.com/dblock/msiext/pull/21) - Added `ExecuteOnReinstall` for SystemTools::TemplateFile - [@wojwal](https://github.com/wojwal).
+    * [#23](https://github.com/dblock/msiext/pull/23) - Added optional attribute "Escape" to TemplateFileProperty - [@wojwal](https://github.com/wojwal).
   * **Bugs**:
     * [#9](https://github.com/dblock/msiext/issues/9) - Fixed build failures if WiX Toolset v3.7 or MSBuild Community Tasks are not installed - [@icnocop](https://github.com/icnocop).
   * **Misc**:

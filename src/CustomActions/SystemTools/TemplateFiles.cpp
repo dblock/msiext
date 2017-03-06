@@ -97,9 +97,12 @@ CA_API UINT __stdcall TemplateFiles_Immediate(MSIHANDLE hInstall)
 
 		            std::wstring name = xmlPropertiesDocument.GetNodeValue(L"Data[@Column=\"Name\"]", property_row);
 		            std::wstring value = xmlPropertiesDocument.GetNodeValue(L"Data[@Column=\"Value\"]", property_row);
+		            std::wstring escape = xmlPropertiesDocument.GetNodeValue(L"Data[@Column=\"Escape\"]", property_row);
+
                     MSXML2::IXMLDOMNodePtr property_node = combined_xml_document.AppendChild(L"Property", properties_node);
                     combined_xml_document.SetAttribute(L"name", name, property_node);
                     combined_xml_document.SetAttribute(L"value", value, property_node);
+                    combined_xml_document.SetAttribute(L"escape", escape, property_node);
 		        }
             }
         }
@@ -144,7 +147,8 @@ CA_API UINT __stdcall TemplateFiles_Deferred(MSIHANDLE hInstall)
             {
                 std::wstring name = xmlDocument.GetAttributeValue(L"name", property_row);
                 std::wstring value = xmlDocument.GetAttributeValue(L"value", property_row);
-                properties[name] = value;
+                long escape = AppSecInc::StringUtils::stringToLong(xmlDocument.GetAttributeValue(L"escape", property_row, L"0"));
+                properties[name] = escape == 1 ? AppSecInc::StringUtils::escape(value) : value;
             }
         }
 

@@ -551,3 +551,17 @@ void AppSecInc::StringUtils::ebcdic2s(unsigned char * s, unsigned long len)
 	    s[i] = EBCDIC_to_ASCII[s[i]];
     }
 }
+
+std::wstring AppSecInc::StringUtils::escape(std::wstring const &s)
+{
+    std::size_t n = s.length();
+    std::wstring escaped;
+    escaped.reserve(n * 2);        // pessimistic preallocation
+
+    for (std::size_t i = 0; i < n; ++i) {
+        if (s[i] == L'\\' || s[i] == L'"')
+            escaped += L'\\';
+        escaped += s[i];
+    }
+    return escaped;
+}

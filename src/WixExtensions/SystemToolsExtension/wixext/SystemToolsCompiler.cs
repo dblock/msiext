@@ -883,6 +883,7 @@ namespace AppSecInc.Wix.Extensions
             string id = null;
             string name = null;
             string value = null;
+            int escape = 0;
 
             foreach (XmlAttribute attrib in node.Attributes)
             {
@@ -898,6 +899,9 @@ namespace AppSecInc.Wix.Extensions
                             break;
                         case "Value":
                             value = this.Core.GetAttributeValue(sourceLineNumbers, attrib);
+                            break;
+                        case "Escape":
+                            escape = this.Core.GetAttributeYesNoValue(sourceLineNumbers, attrib) == YesNoType.Yes ? 1 : 0;
                             break;
                         default:
                             this.Core.UnexpectedAttribute(sourceLineNumbers, attrib);
@@ -943,6 +947,7 @@ namespace AppSecInc.Wix.Extensions
                 row[1] = templatefileid;
                 row[2] = name;
                 row[3] = value;
+                row[4] = escape;
             }
         }
 

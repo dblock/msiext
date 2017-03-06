@@ -590,6 +590,11 @@ TemplateFileProperty with a value.
               <xs:documentation>Value of the property.</xs:documentation>
             </xs:annotation>
           </xs:attribute>
+          <xs:attribute name="Escape" type="YesNoType" use="optional">
+            <xs:annotation>
+              <xs:documentation>Escape value.</xs:documentation>
+            </xs:annotation>
+          </xs:attribute>
         </xs:extension>
       </xs:simpleContent>
     </xs:complexType>

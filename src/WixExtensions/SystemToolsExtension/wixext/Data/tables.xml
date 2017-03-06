@@ -55,6 +55,7 @@
     <columnDefinition name="TemplateFileId" type="string" length="72" modularize="column" category="identifier" keyTable="TemplateFiles" keyColumn="1" />
     <columnDefinition name="Name" type="string" length="0" modularize="property" category="formatted" />
     <columnDefinition name="Value" type="string" length="0" modularize="property" category="formatted" nullable="yes" />
+    <columnDefinition name="Escape" type="number" length="2" nullable="yes" minValue="0" maxValue="1" />
   </tableDefinition>
   <tableDefinition name="RegistryCopy">
     <columnDefinition name="Id" type="string" length="72" primaryKey="yes" modularize="column" category="identifier" />
