@@ -123,7 +123,7 @@ Properties:
 \li \c SERVICE_PASSWORD				(read only) database username (with WinAuth)
 \li \c DATABASE_NAME				(read only) The dialog will check that the specified user has permission to this database
 
-You must specify the RUNTIME_DATABASE_LOGIN_TYPE to use this dialog.
+You must specify the RUNTIME_DATABASE_LOGON_TYPE to use this dialog.
 
 \par DbCreateCredDlg
 Prompts for database creation credentials. 
