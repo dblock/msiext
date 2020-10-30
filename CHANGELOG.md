@@ -1,3 +1,9 @@
+###  1.6 (Next Release)
+  * **Bugs**:
+    * [#27](https://github.com/dblock/msiext/issues/27) - Fixed that the username control in `ServiceCredDlg` doesn't get refreshed after user has previously typed in the control - [@atwayne](https://github.com/atwayne)
+  * **Breaking Changes**: 
+    * `ServiceCredDlg` now should be used along with `ServiceCredTwinDlg` with same setup.
+
 ###  1.5 (9/18/2015)
 
   * **Features**:

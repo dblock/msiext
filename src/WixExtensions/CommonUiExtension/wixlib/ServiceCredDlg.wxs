@@ -9,7 +9,8 @@
         <Property Id="SERVICE_PASSWORD" Hidden="yes" />
 
         <UI>
-            <!--
+          <DialogRef Id="ServiceCredTwinDlg"/>
+          <!--
                 Prompts for service credentials.
     
                 \param SERVICE_LOGON_TYPE one of ServiceAccount or ServiceLocalSystem
@@ -81,6 +82,8 @@
                     <Publish Event="DoAction" Value="AsiUI_DirectoryObjectPicker" Order="2">1</Publish>
                     <Publish Property="SERVICE_USERNAME" Value="[DSOP_UPN]" Order="3"><![CDATA[DSOP_UPN <> ""]]></Publish>
                     <Publish Property="SERVICE_USERNAME" Value="[DSOP_NAME]" Order="3"><![CDATA[DSOP_NAME <> "" AND DSOP_UPN = ""]]></Publish>
+                    <!-- launch another identical dialog to refresh the value of Username Control -->
+                    <Publish Event="NewDialog" Value="ServiceCredTwinDlg">1</Publish>
                 </Control>
 
                 <Control Id="PasswordLabel" Type="Text" X="40" Y="170" Width="41" Height="10" TabSkip="no" Text="!(loc.ServiceCredDlg_PasswordLabel)">
