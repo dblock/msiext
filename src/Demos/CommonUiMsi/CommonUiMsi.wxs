@@ -44,6 +44,7 @@
             <DialogRef Id="RuntimeDbCredDlg" />
             <DialogRef Id="DbCreateCredDlg" />
             <DialogRef Id="ServiceCredDlg" />
+            <DialogRef Id="ServiceCredTwinDlg" />
             <DialogRef Id="ServicePortDlg" />
             <DialogRef Id="GenericErrorDlg" />
 
@@ -61,6 +62,9 @@
 
             <Publish Dialog="ServiceCredDlg" Control="Next" Event="NewDialog" Value="ServicePortDlg">NOT Installed</Publish>
             <Publish Dialog="ServiceCredDlg" Control="Back" Event="NewDialog" Value="WelcomeDlg">NOT Installed</Publish>
+
+            <Publish Dialog="ServiceCredTwinDlg" Control="Next" Event="NewDialog" Value="ServicePortDlg">NOT Installed</Publish>
+            <Publish Dialog="ServiceCredTwinDlg" Control="Back" Event="NewDialog" Value="WelcomeDlg">NOT Installed</Publish>
 
             <Publish Dialog="ServicePortDlg" Control="Next" Event="NewDialog" Value="SelectDbDlg">NOT Installed</Publish>
             <Publish Dialog="ServicePortDlg" Control="Back" Event="NewDialog" Value="ServiceCredDlg">NOT Installed</Publish>

@@ -12,6 +12,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Common.wxs" />
+    <Compile Include="ServiceCredTwinDlg.wxs" />
     <Compile Include="GenericErrorDlg.wxs" />
     <Compile Include="RuntimeDbCredDlg.wxs" />
     <Compile Include="ServiceCredDlg.wxs" />
