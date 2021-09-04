@@ -11,7 +11,7 @@ Essentials
 ----------
 
 * [Download v1.5](https://github.com/dblock/msiext/releases/download/1.5/msiext-1.5.zip)
-* [v1.5 Documentation](http://dblock.github.com/msiext/docs/1.5/)
+* [v1.5 Documentation](http://dblock.github.io/msiext/docs/1.5/)
 * [Lots of MSI Demos](src/Demos)
 * [Need Help? Google Group](https://groups.google.com/group/msiext)
 * [Old CodePlex Site](http://msiext.codeplex.com)
